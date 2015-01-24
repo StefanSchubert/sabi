@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sabi-parent</artifactId>
+        <groupId>de.bluewhale</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <description>Dient dem Setup des benötigten DB-Schemas und der Schemaevolution</description>
+    <artifactId>sabi-database</artifactId>
+    <name>sabi-database</name>
+
+    <properties>
+        <mysql-connector-java.version>5.1.17</mysql-connector-java.version>
+        <db.mysql.schema>sabi</db.mysql.schema>
+        <db.mysql.server.app.username>sabiapp</db.mysql.server.app.username>
+        <db.mysql.server.app.password>sabiapp</db.mysql.server.app.password>
+        <!--
+                THESE SETTINGS ARE EXPECTED TO BE PROPERTIES IN YOU MAVEN SETTINGS.XML SO
+                THAT DEVELOPERS CAN USE THEIR FAVORITE DB PASSWD WITHOUT TELLING ALL OTHERS.
+
+                <db.mysql.server.name>localhost</db.mysql.server.name>
+                <db.mysql.server.port>3306</db.mysql.server.port>
+                <db.mysql.server.root.username>root</db.mysql.server.root.username>
+                <db.mysql.server.root.password>YOUR_ROOT_PASSWORD</db.mysql.server.root.password>
+        -->
+
+    </properties>
+
+    <profiles>
+        <profile>
+            <!-- Used to setup the local DB -->
+            <id>db_setup</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <url>jdbc:mysql://${db.mysql.server.name}:${db.mysql.server.port}/${db.mysql.schema}</url>
+                            <user>${db.mysql.server.app.username}</user>
+                            <password>${db.mysql.server.app.password}</password>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>clean database</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>init</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>update database</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>migrate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>${mysql-connector-java.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
+
+</project>
