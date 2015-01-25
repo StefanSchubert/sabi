@@ -29,15 +29,22 @@ against sabi. However to start with this project involves a
 * REST
 * JPA
 * Glassfish
-* MySQL or MariaDB
+* MariaDB
 
 ----
 
 ## Setting up the development environment
 
-todo
+### Database
+
+* Install a local MariaDB (latest version should do it)
+* Create a DB called sabi and and a user sabi app with permissions for localhost.
+* Use the password as specified by the database module pom.
+
 
 ## Used maven goals
 
-todo
+### Reinstall the database schema
+mvn clean install -P db_setup sabi_database
+
 

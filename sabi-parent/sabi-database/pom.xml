@@ -2,6 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>sabi-parent</artifactId>
         <groupId>de.bluewhale</groupId>
@@ -15,19 +17,11 @@
 
     <properties>
         <mysql-connector-java.version>5.1.17</mysql-connector-java.version>
-        <db.mysql.schema>sabi</db.mysql.schema>
-        <db.mysql.server.app.username>sabiapp</db.mysql.server.app.username>
-        <db.mysql.server.app.password>sabiapp</db.mysql.server.app.password>
-        <!--
-                THESE SETTINGS ARE EXPECTED TO BE PROPERTIES IN YOU MAVEN SETTINGS.XML SO
-                THAT DEVELOPERS CAN USE THEIR FAVORITE DB PASSWD WITHOUT TELLING ALL OTHERS.
-
-                <db.mysql.server.name>localhost</db.mysql.server.name>
-                <db.mysql.server.port>3306</db.mysql.server.port>
-                <db.mysql.server.root.username>root</db.mysql.server.root.username>
-                <db.mysql.server.root.password>YOUR_ROOT_PASSWORD</db.mysql.server.root.password>
-        -->
-
+        <mariadb.schema>sabi</mariadb.schema>
+        <mariadb.server.name>localhost</mariadb.server.name>
+        <mariadb.server.port>3306</mariadb.server.port>
+        <mariadb.server.app.username>sabiapp</mariadb.server.app.username>
+        <mariadb.server.app.password>sabiapp</mariadb.server.app.password>
     </properties>
 
     <profiles>
@@ -44,9 +38,9 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>3.1</version>
                         <configuration>
-                            <url>jdbc:mysql://${db.mysql.server.name}:${db.mysql.server.port}/${db.mysql.schema}</url>
-                            <user>${db.mysql.server.app.username}</user>
-                            <password>${db.mysql.server.app.password}</password>
+                            <url>jdbc:mysql://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
+                            <user>${mariadb.server.app.username}</user>
+                            <password>${mariadb.server.app.password}</password>
                         </configuration>
                         <executions>
                             <execution>
