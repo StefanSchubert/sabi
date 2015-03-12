@@ -22,7 +22,7 @@ So this is the project to build a platform, which helps to answer them.
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product
 against sabi. However to start with this project involves a
 
-* GWT based WebClient
+* JSF based WebClient
 
 ### Server side
 * JEE
