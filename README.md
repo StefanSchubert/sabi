@@ -41,6 +41,28 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sabi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
+### Glasfish
+ * Install a glassfish4
+ * Browse to the Admin GUI localhost:4848
+ * Add a Resources/JDBC/JDBC Connection Pools: "Sabi_DBPool"
+   * Resource Type: javax.sql.DataSourc
+   * Datasource Classname: org.mariadb.jdbc.MySQLDataSource
+   * Properties:
+   * User: sabiapp
+   * UserName: sabiapp
+   * Port 3306
+   * Servername: localhost
+   * Databasename: sabi
+   * URL: jdbc:mysql://localhost:3306/sabi
+   * Password: sabiapp
+
+  * Add a Resources/JDBC/JDBC/Resources
+  * JNDI-Name: sabi
+  * Poolname: "Sabi DBPool"
+
+## IDE
+* add sabi-exploded war as deployable to the glassfish
+
 
 ## Used maven goals
 
