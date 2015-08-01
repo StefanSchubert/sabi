@@ -16,6 +16,24 @@ There must be quite a lot of interesting questions, especially in the field of a
 
 So this is the project to build a platform, which helps to answer them.
 
+## Release Planning
+
+### First Release
+
+Being able to collect the basic values and to display them in a rather static reporting manner.
+
+### Second Release
+
+Offering some query mechanism to do some analysis. And maybe a set of some standard reports.
+If possible we might acquire support from one of the big BI vendors. 
+
+### Third Release 
+
+I have some siblings in my nano reef tank and need to do some gardening. But where to with the siblings? Where ar all the other aquarists and is there someone nearby?
+They are organized in standard internet forums, but what if there are someone near but not located in the same forum I use (more or less frequently).
+If they all could be motivated using sabi it should be possible to introduce them to each other for nearby support purposes.
+
+
 ## Technology Stack
 
 ### Client site
@@ -23,6 +41,7 @@ As you desire, the server API will be open, so that everyone might develop their
 against sabi. However to start with this project involves a
 
 * JSF based WebClient
+* Maybe a native approach on Android and iPhone
 
 ### Server side
 * JEE
@@ -41,7 +60,7 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sabi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
-### Glasfish
+### Glassfish
  * Install a glassfish4
  * Browse to the Admin GUI localhost:4848
  * Add a Resources/JDBC/JDBC Connection Pools: "Sabi_DBPool"
@@ -61,6 +80,7 @@ against sabi. However to start with this project involves a
   * Poolname: "Sabi DBPool"
 
 ## IDE
+
 * add sabi-exploded war as deployable to the glassfish
 
 
