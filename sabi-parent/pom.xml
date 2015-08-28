@@ -29,17 +29,27 @@
     </developers>
     <modules>
         <module>sabi-server</module>
-<!--    Excluded on purpose
-        <module>sabi-database</module>
--->
+        <module>sabi-boundary</module>
+        <module>sabi-restapi</module>
+        <!--    Excluded on purpose
+                <module>sabi-database</module>
+        -->
     </modules>
 
     <properties>
-        <java.version>1.7</java.version>
-        <pslot.version>1.0-SNAPSHOT</pslot.version>
+        <java.version>1.8</java.version>
+        <sabi.version>1.0-SNAPSHOT</sabi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>Glassfish</id>
+            <name>Glassfish Repository</name>
+            <url>http://download.java.net/maven/glassfish</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>

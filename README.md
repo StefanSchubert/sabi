@@ -5,9 +5,9 @@ Seawater Aquarium Business Intelligence (sabi) aims to gain insights from aquari
 ## Vision
 
 In seawater forums, wikis, books we got advice on the regular values (max,min) of the important mineral levels and so on.
-Some things we fully understand, while on others we have just a lot of guesses about the impact, but often it stays a guess, as the complete system is very complex.
-I was wondering, if we will be able to gain some more insights if we start to share our measurement data and placing some business intelligence style reporting on top of it.
-This should enable us to to answer some questions like:
+Some thinks we fully understand, while on others we have just a lot of guesses on the impact, but often it stays a guess, as the complete system is very complex.
+I was wondering, if we will be able to gain some more insight if we start to share our measurement data. And place some business intelligence like
+reporting on top of it. This should enable to to answer some questions like:
 
 * How often do all measure the KH-Value, when not using the Balling method?
 * Is there a thing in common when Alveoproa dies (are there similar PO4 levels)?
@@ -16,24 +16,6 @@ There must be quite a lot of interesting questions, especially in the field of a
 
 So this is the project to build a platform, which helps to answer them.
 
-## Release Planning
-
-### First Release
-
-Being able to collect the basic values and to display them in a rather static reporting manner.
-
-### Second Release
-
-Offering some query mechanism to do some analysis. And maybe a set of some standard reports.
-If possible we might acquire support from one of the big BI vendors. 
-
-### Third Release 
-
-I have some siblings in my nano reef tank and need to do some gardening. But where to with the siblings? Where ar all the other aquarists and is there someone nearby?
-They are organized in standard internet forums, but what if there are someone near but not located in the same forum I use (more or less frequently).
-If they all could be motivated using sabi it should be possible to introduce them to each other for nearby support purposes.
-
-
 ## Technology Stack
 
 ### Client site
@@ -41,13 +23,12 @@ As you desire, the server API will be open, so that everyone might develop their
 against sabi. However to start with this project involves a
 
 * JSF based WebClient
-* Maybe a native approach on Android and iPhone
 
 ### Server side
 * JEE
 * REST
 * JPA
-* Glassfish
+* Glassfish 4.1 (JDK8)
 * MariaDB
 
 ----
@@ -60,29 +41,12 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sabi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
-### Glassfish
- * Install a glassfish4
- * Browse to the Admin GUI localhost:4848
- * Add a Resources/JDBC/JDBC Connection Pools: "Sabi_DBPool"
-   * Resource Type: javax.sql.DataSourc
-   * Datasource Classname: org.mariadb.jdbc.MySQLDataSource
-   * Properties:
-   * User: sabiapp
-   * UserName: sabiapp
-   * Port 3306
-   * Servername: localhost
-   * Databasename: sabi
-   * URL: jdbc:mysql://localhost:3306/sabi
-   * Password: sabiapp
+### Setting up the glassfish
 
-  * Add a Resources/JDBC/JDBC/Resources
-  * JNDI-Name: sabi
-  * Poolname: "Sabi DBPool"
-
-## IDE
-
-* add sabi-exploded war as deployable to the glassfish
-
+* Install the 4.1 version
+* Download and copy the MariaDB Java Connector jar into glassfishs domain lib dir
+* Configure a jdbc/sabi datasource (Pool with: org.mariadb.jdbc.MySQLDataSource)
+  which will be addressed by the persistence.xml add runtime
 
 ## Used maven goals
 
