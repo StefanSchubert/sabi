@@ -90,7 +90,7 @@ public class FishEntity {
 
     private String observedBahavior;
 
-    @javax.persistence.Column(name = "observed_bahavior", nullable = true, insertable = true, updatable = true, length = 65535, precision = 0)
+    @javax.persistence.Column(name = "observed_behavior", nullable = true, insertable = true, updatable = true, length = 65535, precision = 0)
     @Basic
     public String getObservedBahavior() {
         return observedBahavior;

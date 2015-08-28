@@ -123,7 +123,7 @@ CREATE TABLE `fish` (
   `added_on`          DATETIME            NOT NULL,
   `exodus_on`         DATETIME,
   `nickname`          VARCHAR(60),
-  `observed_bahavior` TEXT,
+  `observed_behavior` TEXT,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (fish_catalouge_id) REFERENCES fish_catalogue (id)
@@ -133,7 +133,7 @@ CREATE TABLE `fish` (
   DEFAULT CHARSET =utf8;
 
 
--- todo: According classification, refactor so suite jpa inheritence model
+-- +todo: According classification, refactor so suite jpa inheritence model
 CREATE TABLE `coral_catalogue` (
   `id`              BIGINT(20) UNSIGNED         NOT NULL AUTO_INCREMENT,
   `scientific_name` VARCHAR(60),
