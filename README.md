@@ -39,10 +39,10 @@ against sabi. However to start with this project involves a
 * JSF based WebClient
 
 ### Server side
-* JEE
+* Spring 3.x
 * REST
-* JPA
-* Glassfish 4.1 (JDK8)
+* JPA 2.x
+* Tomcat (JDK8)
 * MariaDB
 
 ----

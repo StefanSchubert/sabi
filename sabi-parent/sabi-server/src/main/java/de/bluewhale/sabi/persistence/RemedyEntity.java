@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  * Time: 21:05
  * To change this template use File | Settings | File Templates.
  */
-@javax.persistence.Table(name = "remedy", schema = "", catalog = "sabi")
+@Table(name = "remedy", schema = "", catalog = "sabi")
 @Entity
 public class RemedyEntity {
 

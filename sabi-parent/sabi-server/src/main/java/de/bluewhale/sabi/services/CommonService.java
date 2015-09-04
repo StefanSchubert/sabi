@@ -1,17 +1,14 @@
-package de.bluewhale.sabi.de.bluewhale.sabi.internal.services;
-
-import org.glassfish.logging.annotation.LogMessagesResourceBundle;
-import org.glassfish.logging.annotation.LoggerInfo;
+package de.bluewhale.sabi.services;
 
 import java.util.logging.Logger;
 
 /**
- * Global class containing things which have all services in common.
+ * Global class containing things which have all internal.services in common.
  *
  * @author Stefan Schubert
  */
 public abstract class CommonService {
-
+          // FIXME STS Logging
     /**
      * The resourceBundle name to be used for the module's log messages
      * When the code is compiled a source level annotation processor processes the
@@ -29,15 +26,13 @@ public abstract class CommonService {
      * It is the key used to look up the string in the resource bundle.
      * It is the message ID that will accompany the log message in the log entry.
      */
-    @LogMessagesResourceBundle
     public static final String SHARED_LOGMESSAGE_RESOURCE =
-            "de.bluewhale.sabi.internal.services.LogMessages";
+            "de.bluewhale.sabi.services.LogMessages";
 
     /*
      * Logging HOWTO: https://wikis.oracle.com/display/GlassFish/Logging+Guide
      */
-    @LoggerInfo(subsystem = "services", description = "Backend services", publish = true)
-    public static final String SERVICE_LOGGER = "de.bluewhale.sabi.internal.services";
+    public static final String SERVICE_LOGGER = "de.bluewhale.sabi.services";
 
     public static final Logger LOGGER =
             Logger.getLogger(SERVICE_LOGGER, SHARED_LOGMESSAGE_RESOURCE);

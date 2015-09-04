@@ -11,9 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sabi-server</artifactId>
-    <version>${sabi.version}</version>
-    <packaging>jar</packaging>
-    <description>Internal CRUD Services Backend which will be used by the REST orchestration</description>
+    <packaging>war</packaging>
+    <description>Backend consistent of Internal CRUD Services which will be used by the REST service orchestration</description>
 
     <dependencies>
 
@@ -24,15 +23,64 @@
         </dependency>
 
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.glassfish.annotations</groupId>
-            <artifactId>logging-annotation-processor</artifactId>
-            <version>1.7</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>4.2.0.RELEASE</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.0.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+<!--        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>-->
+
+
+        <!-- Test dependencies -->
+
+        <!--
+            todo: Ggf. hsqldb zum test nehmen, dann muss die jndi.properties entsprechend angepasst werden.
+            <dependency>
+                   <groupId>org.hsqldb</groupId>
+                   <artifactId>hsqldb</artifactId>
+                   <version>2.3.3</version>
+                   <scope>test</scope>
+               </dependency>
+               -->
 
         <dependency>
             <groupId>junit</groupId>
@@ -42,7 +90,7 @@
     </dependencies>
 
     <build>
-        <finalName>sabi</finalName>
+        <finalName>sabi-backend</finalName>
 
         <plugins>
             <!-- clean extension for war:inplace -->

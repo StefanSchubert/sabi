@@ -10,9 +10,9 @@ import java.sql.Timestamp;
  * Time: 21:05
  * To change this template use File | Settings | File Templates.
  */
-@javax.persistence.Table(name = "users", schema = "", catalog = "sabi")
+@Table(name = "users", schema = "", catalog = "sabi")
 @Entity
-public class UsersEntity {
+public class UserEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -105,7 +105,7 @@ public class UsersEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UsersEntity that = (UsersEntity) o;
+        UserEntity that = (UserEntity) o;
 
         if (id != that.id) return false;
         if (validated != that.validated) return false;

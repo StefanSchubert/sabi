@@ -30,7 +30,6 @@
     <modules>
         <module>sabi-server</module>
         <module>sabi-boundary</module>
-        <module>sabi-restapi</module>
         <!--    Excluded on purpose
                 <module>sabi-database</module>
         -->
@@ -39,25 +38,20 @@
     <properties>
         <java.version>1.8</java.version>
         <sabi.version>1.0-SNAPSHOT</sabi.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>Glassfish</id>
-            <name>Glassfish Repository</name>
-            <url>http://download.java.net/maven/glassfish</url>
-        </repository>
-    </repositories>
+    <repositories />
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
+<!--            <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
                 <version>7.0</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
