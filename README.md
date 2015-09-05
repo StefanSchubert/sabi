@@ -32,6 +32,8 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 
 ## Technology Stack
 
+* JDK 1.8
+
 ### Client site
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product
 against sabi. However to start with this project involves a
@@ -39,11 +41,11 @@ against sabi. However to start with this project involves a
 * JSF based WebClient
 
 ### Server side
-* Spring 3.x
+* Spring 4
 * REST
 * JPA 2.x
-* Tomcat (JDK8)
-* MariaDB
+* Tomcat 7 (JDK8)
+* MariaDB 10.x
 
 ----
 
@@ -55,12 +57,14 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sabi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
-### Setting up the glassfish
+### Setting up the tomact 7
 
-* Install the 4.1 version
-* Download and copy the MariaDB Java Connector jar into glassfishs domain lib dir
-* Configure a jdbc/sabi datasource (Pool with: org.mariadb.jdbc.MySQLDataSource)
-  which will be addressed by the persistence.xml add runtime
+* Install the 7.x version
+* That's it ;-) ... Almost ... I encountered some problems with the deployment of the artefact through intelliJ
+  Make and Build had problems to accept the target bytecode release 1.8. As intermediate solution I deleted those
+  before launch action and choosed the maven package instead. Though even this should be obsolete in an
+  exploded deployment manner and having compiled it all before.
+
 
 ## Used maven goals
 
