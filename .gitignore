@@ -1,0 +1,5 @@
+.idea/**
+**/*.iml
+/sabi-parent/sabi-server/target
+/sabi-parent/sabi-server/src/main/webapp/WEB-INF/classes
+/sabi-parent/sabi-database/target
