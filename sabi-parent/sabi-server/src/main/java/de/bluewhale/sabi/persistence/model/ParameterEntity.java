@@ -1,4 +1,4 @@
-package de.bluewhale.sabi.persistence;
+package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

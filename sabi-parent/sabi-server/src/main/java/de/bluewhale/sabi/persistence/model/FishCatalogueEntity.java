@@ -1,4 +1,4 @@
-package de.bluewhale.sabi.persistence;
+package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -10,9 +10,9 @@ import java.sql.Timestamp;
  * Time: 21:05
  * To change this template use File | Settings | File Templates.
  */
-@Table(name = "users", schema = "", catalog = "sabi")
+@Table(name = "fish_catalogue", schema = "", catalog = "sabi")
 @Entity
-public class UserEntity {
+public class FishCatalogueEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,52 +28,40 @@ public class UserEntity {
         this.id = id;
     }
 
-    private String email;
+    private String scientificName;
 
-    @javax.persistence.Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
+    @javax.persistence.Column(name = "scientific_name", nullable = true, insertable = true, updatable = true, length = 60, precision = 0)
     @Basic
-    public String getEmail() {
-        return email;
+    public String getScientificName() {
+        return scientificName;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
 
-    private String password;
+    private String description;
 
-    @javax.persistence.Column(name = "password", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
+    @javax.persistence.Column(name = "description", nullable = true, insertable = true, updatable = true, length = 400, precision = 0)
     @Basic
-    public String getPassword() {
-        return password;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    private String validateToken;
+    private String meerwasserwikiUrl;
 
-    @javax.persistence.Column(name = "validate_token", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
+    @javax.persistence.Column(name = "meerwasserwiki_url", nullable = true, insertable = true, updatable = true, length = 120, precision = 0)
     @Basic
-    public String getValidateToken() {
-        return validateToken;
+    public String getMeerwasserwikiUrl() {
+        return meerwasserwikiUrl;
     }
 
-    public void setValidateToken(String validateToken) {
-        this.validateToken = validateToken;
-    }
-
-    private boolean validated;
-
-    @javax.persistence.Column(name = "validated", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
-    @Basic
-    public boolean isValidated() {
-        return validated;
-    }
-
-    public void setValidated(boolean validated) {
-        this.validated = validated;
+    public void setMeerwasserwikiUrl(String meerwasserwikiUrl) {
+        this.meerwasserwikiUrl = meerwasserwikiUrl;
     }
 
     private Timestamp createdOn;
@@ -105,15 +93,15 @@ public class UserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserEntity that = (UserEntity) o;
+        FishCatalogueEntity that = (FishCatalogueEntity) o;
 
         if (id != that.id) return false;
-        if (validated != that.validated) return false;
         if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (validateToken != null ? !validateToken.equals(that.validateToken) : that.validateToken != null)
+        if (meerwasserwikiUrl != null ? !meerwasserwikiUrl.equals(that.meerwasserwikiUrl) : that.meerwasserwikiUrl != null)
+            return false;
+        if (scientificName != null ? !scientificName.equals(that.scientificName) : that.scientificName != null)
             return false;
 
         return true;
@@ -122,10 +110,9 @@ public class UserEntity {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (validateToken != null ? validateToken.hashCode() : 0);
-        result = 31 * result + (validated ? 1 : 0);
+        result = 31 * result + (scientificName != null ? scientificName.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (meerwasserwikiUrl != null ? meerwasserwikiUrl.hashCode() : 0);
         result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
         result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
         return result;

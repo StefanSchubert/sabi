@@ -1,4 +1,4 @@
-package de.bluewhale.sabi.persistence;
+package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -10,9 +10,9 @@ import java.sql.Timestamp;
  * Time: 21:05
  * To change this template use File | Settings | File Templates.
  */
-@Table(name = "fish", schema = "", catalog = "sabi")
+@Table(name = "coral", schema = "", catalog = "sabi")
 @Entity
-public class FishEntity {
+public class CoralEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -40,16 +40,16 @@ public class FishEntity {
         this.aquariumId = aquariumId;
     }
 
-    private long fishCatalougeId;
+    private long coralCatalougeId;
 
-    @javax.persistence.Column(name = "fish_catalouge_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
+    @javax.persistence.Column(name = "coral_catalouge_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getFishCatalougeId() {
-        return fishCatalougeId;
+    public long getCoralCatalougeId() {
+        return coralCatalougeId;
     }
 
-    public void setFishCatalougeId(long fishCatalougeId) {
-        this.fishCatalougeId = fishCatalougeId;
+    public void setCoralCatalougeId(long coralCatalougeId) {
+        this.coralCatalougeId = coralCatalougeId;
     }
 
     private Timestamp addedOn;
@@ -90,7 +90,7 @@ public class FishEntity {
 
     private String observedBahavior;
 
-    @javax.persistence.Column(name = "observed_behavior", nullable = true, insertable = true, updatable = true, length = 65535, precision = 0)
+    @javax.persistence.Column(name = "observed_bahavior", nullable = true, insertable = true, updatable = true, length = 65535, precision = 0)
     @Basic
     public String getObservedBahavior() {
         return observedBahavior;
@@ -105,10 +105,10 @@ public class FishEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FishEntity that = (FishEntity) o;
+        CoralEntity that = (CoralEntity) o;
 
         if (aquariumId != that.aquariumId) return false;
-        if (fishCatalougeId != that.fishCatalougeId) return false;
+        if (coralCatalougeId != that.coralCatalougeId) return false;
         if (id != that.id) return false;
         if (addedOn != null ? !addedOn.equals(that.addedOn) : that.addedOn != null) return false;
         if (exodusOn != null ? !exodusOn.equals(that.exodusOn) : that.exodusOn != null) return false;
@@ -123,7 +123,7 @@ public class FishEntity {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (aquariumId ^ (aquariumId >>> 32));
-        result = 31 * result + (int) (fishCatalougeId ^ (fishCatalougeId >>> 32));
+        result = 31 * result + (int) (coralCatalougeId ^ (coralCatalougeId >>> 32));
         result = 31 * result + (addedOn != null ? addedOn.hashCode() : 0);
         result = 31 * result + (exodusOn != null ? exodusOn.hashCode() : 0);
         result = 31 * result + (nickname != null ? nickname.hashCode() : 0);

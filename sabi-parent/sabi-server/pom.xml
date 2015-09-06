@@ -36,12 +36,6 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>4.2.0.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -58,6 +52,17 @@
             <version>1.2.0</version>
         </dependency>
 
+        <!-- New spring abstraction layer...
+             to eliminate CRUD boilerplate code
+             Not yet! Sticks to Spring 4.0.9.RELEASE and we are using 4.2.x
+             So maby later...
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>1.8.2.RELEASE</version>
+        </dependency>-->
+
+        <!-- TODO StS: Logging-Strategy slf4j? -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>

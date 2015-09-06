@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Stefan Schubert
+ * Author: Stefan Schubert
  * Date: 05.09.15
  */
 @Configuration
@@ -28,7 +28,7 @@ public class PersistenceJPAConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[]{"de.bluewhale.sabi.persistence"});
+        em.setPackagesToScan(new String[]{"de.bluewhale.sabi.persistence.model"});
         em.setPersistenceUnitName("sabi");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();

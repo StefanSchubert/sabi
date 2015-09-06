@@ -1,7 +1,7 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.UserEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
