@@ -42,7 +42,7 @@ public class UserServiceTest {
 
         UserTo userTo = new UserTo("test@bluewhale.de", "NoPass123");
 
-        UserTo createdUser = userService.addUser(userTo);
+        UserTo createdUser = userService.createUser(userTo);
 
         Assert.assertNotNull("New user was not issued with a token.", createdUser.getValidateToken());
     }

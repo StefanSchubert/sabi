@@ -1,7 +1,5 @@
 package de.bluewhale.sabi.persistence.dao;
 
-import de.bluewhale.sabi.persistence.dao.GenericDao;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -10,8 +8,9 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * Author: Stefan Schubert
+ * Using DAO-Pattern: http://www.codeproject.com/Articles/251166/The-Generic-DAO-pattern-in-Java-with-Spring-3-and <br/>
+ * Licence: http://www.codeproject.com/info/cpol10.aspx <br />
+ * User: Stefan Schubert <br />
  * Date: 06.09.15
  */
 public abstract class GenericDaoImpl<T> implements GenericDao<T> {

@@ -2,6 +2,7 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,7 +18,11 @@ public class UserServiceImpl extends CommonService implements UserService {
     private EntityManager em;
 
 
-    public UserTo addUser(UserTo newUser) {
+    @Autowired
+    private de.bluewhale.sabi.persistence.dao.UserDao dao;
+
+    public UserTo createUser(UserTo newUser) {
+
         UserEntity userEntity = new UserEntity();
 
         // TODO StS 29.08.15: Using Dozer Mapper?
@@ -28,10 +33,10 @@ public class UserServiceImpl extends CommonService implements UserService {
         userEntity.setValidateToken(validateToken);
         userEntity.setValidated(false);
 
-        newUser.setValidateToken(validateToken);
-
         // TODO StS 29.08.15: Orchestrating Service should send the email delivering the token.
-        em.persist(userEntity);
+
+        dao.create(userEntity);
+        newUser.setValidateToken(validateToken);
         return newUser;
     }
 

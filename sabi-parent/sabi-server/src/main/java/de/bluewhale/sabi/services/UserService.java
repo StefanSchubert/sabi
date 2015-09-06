@@ -1,6 +1,7 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.UserTo;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Specifies CRUD internal.services required for UserManagement.
@@ -47,6 +48,7 @@ public interface UserService {
      * Creates a new User. The returned object contains the validation Token,
      * which will be used with the registration email.
      */
-    public UserTo addUser(UserTo newUser);
+    @Transactional
+    public UserTo createUser(UserTo newUser);
 
 }
