@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "fish_catalogue", schema = "", catalog = "sabi")
 @Entity
-public class FishCatalogueEntity {
+public class FishCatalogueEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -64,30 +64,6 @@ public class FishCatalogueEntity {
         this.meerwasserwikiUrl = meerwasserwikiUrl;
     }
 
-    private Timestamp createdOn;
-
-    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
-    @Basic
-    public Timestamp getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Timestamp createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    private Timestamp lastmodOn;
-
-    @javax.persistence.Column(name = "lastmod_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
-    @Basic
-    public Timestamp getLastmodOn() {
-        return lastmodOn;
-    }
-
-    public void setLastmodOn(Timestamp lastmodOn) {
-        this.lastmodOn = lastmodOn;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,9 +72,9 @@ public class FishCatalogueEntity {
         FishCatalogueEntity that = (FishCatalogueEntity) o;
 
         if (id != that.id) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
+        if (created_On != null ? !created_On.equals(that.created_On) : that.created_On != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
+        if (lastmod_On != null ? !lastmod_On.equals(that.lastmod_On) : that.lastmod_On != null) return false;
         if (meerwasserwikiUrl != null ? !meerwasserwikiUrl.equals(that.meerwasserwikiUrl) : that.meerwasserwikiUrl != null)
             return false;
         if (scientificName != null ? !scientificName.equals(that.scientificName) : that.scientificName != null)
@@ -113,8 +89,8 @@ public class FishCatalogueEntity {
         result = 31 * result + (scientificName != null ? scientificName.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (meerwasserwikiUrl != null ? meerwasserwikiUrl.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
-        result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
+        result = 31 * result + (created_On != null ? created_On.hashCode() : 0);
+        result = 31 * result + (lastmod_On != null ? lastmod_On.hashCode() : 0);
         return result;
     }
 }

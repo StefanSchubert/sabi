@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "parameter", schema = "", catalog = "sabi")
 @Entity
-public class ParameterEntity {
+public class ParameterEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -76,17 +76,6 @@ public class ParameterEntity {
         this.maxThreshold = maxThreshold;
     }
 
-    private Timestamp createdOn;
-
-    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
-    @Basic
-    public Timestamp getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Timestamp createdOn) {
-        this.createdOn = createdOn;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -97,7 +86,7 @@ public class ParameterEntity {
 
         if (id != that.id) return false;
         if (usedThresholdUnitId != that.usedThresholdUnitId) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
+        if (created_On != null ? !created_On.equals(that.created_On) : that.created_On != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (maxThreshold != null ? !maxThreshold.equals(that.maxThreshold) : that.maxThreshold != null) return false;
         if (minThreshold != null ? !minThreshold.equals(that.minThreshold) : that.minThreshold != null) return false;
@@ -112,7 +101,7 @@ public class ParameterEntity {
         result = 31 * result + usedThresholdUnitId;
         result = 31 * result + (minThreshold != null ? minThreshold.hashCode() : 0);
         result = 31 * result + (maxThreshold != null ? maxThreshold.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
+        result = 31 * result + (created_On != null ? created_On.hashCode() : 0);
         return result;
     }
 }

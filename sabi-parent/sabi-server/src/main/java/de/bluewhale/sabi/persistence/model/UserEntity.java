@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @Entity
 public class UserEntity {
 
+    // TODO StS 22.09.15: use UUID
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private long id;

@@ -2,6 +2,7 @@ package de.bluewhale.sabi.persistence.dao;
 
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * Author: Stefan Schubert
  * Date: 06.09.15
  */
-@Component("userDao")
+@Repository("userDao")
 public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
 
     public UserEntity loadUserByEmail(String email) {

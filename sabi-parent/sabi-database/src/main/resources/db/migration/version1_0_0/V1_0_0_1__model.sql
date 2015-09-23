@@ -19,7 +19,7 @@ CREATE TABLE `aquarium` (
   `size`           INTEGER,
   `size_unit`      VARCHAR(10),
   `validate_token` VARCHAR(255)                NOT NULL,
-  `active`         BOOLEAN                              DEFAULT FALSE,
+  `active`         BIT                         DEFAULT 0,
   `user_id`        BIGINT(20) UNSIGNED,
   `created_on`     TIMESTAMP DEFAULT 0         NOT NULL,
   `lastmod_on`     TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -37,6 +37,7 @@ CREATE TABLE `unit` (
   `name`        VARCHAR(15)      NOT NULL,
   `description` VARCHAR(255)     NOT NULL,
   `created_on`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`     TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE =InnoDB
@@ -50,6 +51,7 @@ CREATE TABLE `parameter` (
   `min_threshold`          FLOAT,
   `max_threshold`          FLOAT,
   `created_on`             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`     TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (used_threshold_unit_id) REFERENCES unit (id)
 )
@@ -153,7 +155,7 @@ CREATE TABLE `coral` (
   `added_on`           DATETIME            NOT NULL,
   `exodus_on`          DATETIME,
   `nickname`           VARCHAR(60),
-  `observed_bahavior`  TEXT,
+  `observed_behavior`  TEXT,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (coral_catalouge_id) REFERENCES coral_catalogue (id)
