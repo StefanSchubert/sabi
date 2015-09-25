@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "coral", schema = "", catalog = "sabi")
 @Entity
-public class CoralEntity {
+public class CoralEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -52,28 +52,28 @@ public class CoralEntity {
         this.coralCatalougeId = coralCatalougeId;
     }
 
-    private Timestamp added_On;
+    private Timestamp addedOn;
 
     @javax.persistence.Column(name = "added_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
-    public Timestamp getAdded_On() {
-        return added_On;
+    public Timestamp getAddedOn() {
+        return addedOn;
     }
 
-    public void setAdded_On(Timestamp added_On) {
-        this.added_On = added_On;
+    public void setAddedOn(Timestamp addedOn) {
+        this.addedOn = addedOn;
     }
 
-    private Timestamp exodus_On;
+    private Timestamp exodusOn;
 
     @javax.persistence.Column(name = "exodus_on", nullable = true, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
-    public Timestamp getExodus_On() {
-        return exodus_On;
+    public Timestamp getExodusOn() {
+        return exodusOn;
     }
 
-    public void setExodus_On(Timestamp exodus_On) {
-        this.exodus_On = exodus_On;
+    public void setExodusOn(Timestamp exodusOn) {
+        this.exodusOn = exodusOn;
     }
 
     private String nickname;
@@ -88,16 +88,16 @@ public class CoralEntity {
         this.nickname = nickname;
     }
 
-    private String observed_Behavior;
+    private String observedBehavior;
 
     @javax.persistence.Column(name = "observed_behavior", nullable = true, insertable = true, updatable = true, length = 65535, precision = 0)
     @Basic
-    public String getObserved_Behavior() {
-        return observed_Behavior;
+    public String getObservedBehavior() {
+        return observedBehavior;
     }
 
-    public void setObserved_Behavior(String observed_Behavior) {
-        this.observed_Behavior = observed_Behavior;
+    public void setObservedBehavior(String observedBehavior) {
+        this.observedBehavior = observedBehavior;
     }
 
     @Override
@@ -110,10 +110,10 @@ public class CoralEntity {
         if (aquariumId != that.aquariumId) return false;
         if (coralCatalougeId != that.coralCatalougeId) return false;
         if (id != that.id) return false;
-        if (added_On != null ? !added_On.equals(that.added_On) : that.added_On != null) return false;
-        if (exodus_On != null ? !exodus_On.equals(that.exodus_On) : that.exodus_On != null) return false;
+        if (addedOn != null ? !addedOn.equals(that.addedOn) : that.addedOn != null) return false;
+        if (exodusOn != null ? !exodusOn.equals(that.exodusOn) : that.exodusOn != null) return false;
         if (nickname != null ? !nickname.equals(that.nickname) : that.nickname != null) return false;
-        if (observed_Behavior != null ? !observed_Behavior.equals(that.observed_Behavior) : that.observed_Behavior != null)
+        if (observedBehavior != null ? !observedBehavior.equals(that.observedBehavior) : that.observedBehavior != null)
             return false;
 
         return true;
@@ -124,10 +124,10 @@ public class CoralEntity {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (aquariumId ^ (aquariumId >>> 32));
         result = 31 * result + (int) (coralCatalougeId ^ (coralCatalougeId >>> 32));
-        result = 31 * result + (added_On != null ? added_On.hashCode() : 0);
-        result = 31 * result + (exodus_On != null ? exodus_On.hashCode() : 0);
+        result = 31 * result + (addedOn != null ? addedOn.hashCode() : 0);
+        result = 31 * result + (exodusOn != null ? exodusOn.hashCode() : 0);
         result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
-        result = 31 * result + (observed_Behavior != null ? observed_Behavior.hashCode() : 0);
+        result = 31 * result + (observedBehavior != null ? observedBehavior.hashCode() : 0);
         return result;
     }
 }

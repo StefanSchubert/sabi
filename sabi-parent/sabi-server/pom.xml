@@ -36,14 +36,74 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
+            <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+<!--
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>5.0.1.Final</version>
+        </dependency>
+-->
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+
+
+        <!-- eclipselink -->
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>${eclipselink.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>commonj.sdo</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>javax.persistence</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <!-- JPA 2.0 -->
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <scope>compile</scope>
+            <version>1.0.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.7.4</version>
         </dependency>
 
         <dependency>
@@ -141,6 +201,31 @@
                 <configuration>
                     <webappDirectory>src/main/webapp</webappDirectory>
                 </configuration>
+            </plugin>
+            <!-- This plugin ensures the EclipseLink static weaving -->
+            <plugin>
+                <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
+                <groupId>au.com.alderaan</groupId>
+                <version>1.0.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>weave</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <logLevel>ALL</logLevel>
+                            <!-- <includeProjectClasspath>true</includeProjectClasspath> -->
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>eclipselink</artifactId>
+                        <version>${eclipselink.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
 

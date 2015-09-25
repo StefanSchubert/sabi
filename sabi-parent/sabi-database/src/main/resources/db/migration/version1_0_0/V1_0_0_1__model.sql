@@ -80,6 +80,7 @@ CREATE TABLE `remedy` (
   `productname` VARCHAR(60),
   `vendor`      VARCHAR(60),
   `created_on`  TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`      TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE =InnoDB
@@ -95,6 +96,8 @@ CREATE TABLE `treatment` (
   `unit_id`     INTEGER   UNSIGNED  NOT NULL,
   `remedy_id`   BIGINT(20) UNSIGNED NOT NULL,
   `description` VARCHAR(255),
+  `created_on`  TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`      TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (unit_id) REFERENCES unit (id),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
@@ -126,6 +129,8 @@ CREATE TABLE `fish` (
   `exodus_on`         DATETIME,
   `nickname`          VARCHAR(60),
   `observed_behavior` TEXT,
+  `created_on`  TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`      TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (fish_catalouge_id) REFERENCES fish_catalogue (id)
@@ -156,6 +161,8 @@ CREATE TABLE `coral` (
   `exodus_on`          DATETIME,
   `nickname`           VARCHAR(60),
   `observed_behavior`  TEXT,
+  `created_on`  TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`      TIMESTAMP                   NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (coral_catalouge_id) REFERENCES coral_catalogue (id)

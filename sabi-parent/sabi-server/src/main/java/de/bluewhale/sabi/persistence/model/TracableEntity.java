@@ -10,29 +10,29 @@ import java.sql.Timestamp;
  */
 public abstract class TracableEntity {
 
-    Timestamp created_On;
+    Timestamp createdOn;
 
     @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
-    public Timestamp getCreated_On() {
-        return created_On;
+    public Timestamp getCreatedOn() {
+        return createdOn;
     }
 
-    public void setCreated_On(Timestamp created_On) {
-        this.created_On = created_On;
+    public void setCreatedOn(Timestamp createdOn) {
+        this.createdOn = createdOn;
     }
 
 
-    Timestamp lastmod_On;
+    Timestamp lastmodOn;
 
     @javax.persistence.Column(name = "lastmod_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
-    public Timestamp getLastmod_On() {
-        return lastmod_On;
+    public Timestamp getLastmodOn() {
+        return lastmodOn;
     }
 
-    public void setLastmod_On(Timestamp lastmod_On) {
-        this.lastmod_On = lastmod_On;
+    public void setLastmodOn(Timestamp lastmodOn) {
+        this.lastmodOn = lastmodOn;
     }
 
 }

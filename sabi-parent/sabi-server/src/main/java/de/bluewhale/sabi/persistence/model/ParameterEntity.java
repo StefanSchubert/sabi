@@ -1,7 +1,6 @@
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
@@ -86,7 +85,7 @@ public class ParameterEntity extends TracableEntity {
 
         if (id != that.id) return false;
         if (usedThresholdUnitId != that.usedThresholdUnitId) return false;
-        if (created_On != null ? !created_On.equals(that.created_On) : that.created_On != null) return false;
+        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (maxThreshold != null ? !maxThreshold.equals(that.maxThreshold) : that.maxThreshold != null) return false;
         if (minThreshold != null ? !minThreshold.equals(that.minThreshold) : that.minThreshold != null) return false;
@@ -101,7 +100,7 @@ public class ParameterEntity extends TracableEntity {
         result = 31 * result + usedThresholdUnitId;
         result = 31 * result + (minThreshold != null ? minThreshold.hashCode() : 0);
         result = 31 * result + (maxThreshold != null ? maxThreshold.hashCode() : 0);
-        result = 31 * result + (created_On != null ? created_On.hashCode() : 0);
+        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
         return result;
     }
 }

@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "remedy", schema = "", catalog = "sabi")
 @Entity
-public class RemedyEntity {
+public class RemedyEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -50,18 +50,6 @@ public class RemedyEntity {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
-    }
-
-    private Timestamp createdOn;
-
-    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
-    @Basic
-    public Timestamp getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Timestamp createdOn) {
-        this.createdOn = createdOn;
     }
 
     @Override

@@ -39,28 +39,28 @@ public class AquariumEntity extends TracableEntity {
         this.size = size;
     }
 
-    private String size_Unit;
+    private String sizeUnit;
 
     @javax.persistence.Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
-    public String getSize_Unit() {
-        return size_Unit;
+    public String getSizeUnit() {
+        return sizeUnit;
     }
 
-    public void setSize_Unit(String size_Unit) {
-        this.size_Unit = size_Unit;
+    public void setSizeUnit(String sizeUnit) {
+        this.sizeUnit = sizeUnit;
     }
 
-    private String validate_Token;
+    private String validateToken;
 
     @javax.persistence.Column(name = "validate_token", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     @Basic
-    public String getValidate_Token() {
-        return validate_Token;
+    public String getValidateToken() {
+        return validateToken;
     }
 
-    public void setValidate_Token(String validate_Token) {
-        this.validate_Token = validate_Token;
+    public void setValidateToken(String validateToken) {
+        this.validateToken = validateToken;
     }
 
     private Boolean active;
@@ -74,16 +74,16 @@ public class AquariumEntity extends TracableEntity {
         this.active = active;
     }
 
-    private Long user_Id;
+    private Long userId;
 
     @javax.persistence.Column(name = "user_id", nullable = true, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public Long getUser_Id() {
-        return user_Id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser_Id(Long user_Id) {
-        this.user_Id = user_Id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
 
@@ -96,12 +96,12 @@ public class AquariumEntity extends TracableEntity {
 
         if (id != that.id) return false;
         if (active != null ? !active.equals(that.active) : that.active != null) return false;
-        if (created_On != null ? !created_On.equals(that.created_On) : that.created_On != null) return false;
-        if (lastmod_On != null ? !lastmod_On.equals(that.lastmod_On) : that.lastmod_On != null) return false;
+        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
+        if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
-        if (size_Unit != null ? !size_Unit.equals(that.size_Unit) : that.size_Unit != null) return false;
-        if (user_Id != null ? !user_Id.equals(that.user_Id) : that.user_Id != null) return false;
-        if (validate_Token != null ? !validate_Token.equals(that.validate_Token) : that.validate_Token != null)
+        if (sizeUnit != null ? !sizeUnit.equals(that.sizeUnit) : that.sizeUnit != null) return false;
+        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
+        if (validateToken != null ? !validateToken.equals(that.validateToken) : that.validateToken != null)
             return false;
 
         return true;
@@ -111,12 +111,12 @@ public class AquariumEntity extends TracableEntity {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (size != null ? size.hashCode() : 0);
-        result = 31 * result + (size_Unit != null ? size_Unit.hashCode() : 0);
-        result = 31 * result + (validate_Token != null ? validate_Token.hashCode() : 0);
+        result = 31 * result + (sizeUnit != null ? sizeUnit.hashCode() : 0);
+        result = 31 * result + (validateToken != null ? validateToken.hashCode() : 0);
         result = 31 * result + (active != null ? active.hashCode() : 0);
-        result = 31 * result + (user_Id != null ? user_Id.hashCode() : 0);
-        result = 31 * result + (created_On != null ? created_On.hashCode() : 0);
-        result = 31 * result + (lastmod_On != null ? lastmod_On.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
+        result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
         return result;
     }
 }

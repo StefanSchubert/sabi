@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "users", schema = "", catalog = "sabi")
 @Entity
-public class UserEntity {
+public class UserEntity extends TracableEntity {
 
     // TODO StS 22.09.15: use UUID
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,30 +73,6 @@ public class UserEntity {
 
     public void setValidated(boolean validated) {
         this.validated = validated;
-    }
-
-    private Timestamp createdOn;
-
-    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
-    @Basic
-    public Timestamp getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Timestamp createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    private Timestamp lastmodOn;
-
-    @javax.persistence.Column(name = "lastmod_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
-    @Basic
-    public Timestamp getLastmodOn() {
-        return lastmodOn;
-    }
-
-    public void setLastmodOn(Timestamp lastmodOn) {
-        this.lastmodOn = lastmodOn;
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "fish", schema = "", catalog = "sabi")
 @Entity
-public class FishEntity {
+public class FishEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -88,16 +88,16 @@ public class FishEntity {
         this.nickname = nickname;
     }
 
-    private String observedBahavior;
+    private String observedBehavior;
 
     @javax.persistence.Column(name = "observed_behavior", nullable = true, insertable = true, updatable = true, length = 65535, precision = 0)
     @Basic
-    public String getObservedBahavior() {
-        return observedBahavior;
+    public String getObservedBehavior() {
+        return observedBehavior;
     }
 
-    public void setObservedBahavior(String observedBahavior) {
-        this.observedBahavior = observedBahavior;
+    public void setObservedBehavior(String observedBehavior) {
+        this.observedBehavior = observedBehavior;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class FishEntity {
         if (addedOn != null ? !addedOn.equals(that.addedOn) : that.addedOn != null) return false;
         if (exodusOn != null ? !exodusOn.equals(that.exodusOn) : that.exodusOn != null) return false;
         if (nickname != null ? !nickname.equals(that.nickname) : that.nickname != null) return false;
-        if (observedBahavior != null ? !observedBahavior.equals(that.observedBahavior) : that.observedBahavior != null)
+        if (observedBehavior != null ? !observedBehavior.equals(that.observedBehavior) : that.observedBehavior != null)
             return false;
 
         return true;
@@ -127,7 +127,7 @@ public class FishEntity {
         result = 31 * result + (addedOn != null ? addedOn.hashCode() : 0);
         result = 31 * result + (exodusOn != null ? exodusOn.hashCode() : 0);
         result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
-        result = 31 * result + (observedBahavior != null ? observedBahavior.hashCode() : 0);
+        result = 31 * result + (observedBehavior != null ? observedBehavior.hashCode() : 0);
         return result;
     }
 }

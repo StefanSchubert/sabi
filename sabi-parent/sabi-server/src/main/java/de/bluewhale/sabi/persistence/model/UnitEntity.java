@@ -1,7 +1,6 @@
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,7 +60,7 @@ public class UnitEntity extends TracableEntity {
         UnitEntity that = (UnitEntity) o;
 
         if (id != that.id) return false;
-        if (created_On != null ? !created_On.equals(that.created_On) : that.created_On != null) return false;
+        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
@@ -73,7 +72,7 @@ public class UnitEntity extends TracableEntity {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (created_On != null ? created_On.hashCode() : 0);
+        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
         return result;
     }
 }

@@ -1,7 +1,6 @@
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,9 +60,9 @@ public class CoralCatalogueEntity extends TracableEntity {
         CoralCatalogueEntity that = (CoralCatalogueEntity) o;
 
         if (id != that.id) return false;
-        if (created_On != null ? !created_On.equals(that.created_On) : that.created_On != null) return false;
+        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (lastmod_On != null ? !lastmod_On.equals(that.lastmod_On) : that.lastmod_On != null) return false;
+        if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
         if (scientificName != null ? !scientificName.equals(that.scientificName) : that.scientificName != null)
             return false;
 
@@ -75,8 +74,8 @@ public class CoralCatalogueEntity extends TracableEntity {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (scientificName != null ? scientificName.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (created_On != null ? created_On.hashCode() : 0);
-        result = 31 * result + (lastmod_On != null ? lastmod_On.hashCode() : 0);
+        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
+        result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
         return result;
     }
 }

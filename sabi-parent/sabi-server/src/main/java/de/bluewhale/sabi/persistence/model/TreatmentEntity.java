@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "treatment", schema = "", catalog = "sabi")
 @Entity
-public class TreatmentEntity {
+public class TreatmentEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
