@@ -46,13 +46,6 @@
             <version>${spring.version}</version>
         </dependency>
 
-<!--
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.0.1.Final</version>
-        </dependency>
--->
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -81,20 +74,21 @@
         </dependency>
 
         <!-- JPA 2.0 -->
-        <dependency>
+
+ <!--       <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <scope>compile</scope>
             <version>1.0.1.Final</version>
         </dependency>
-
+-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-instrument</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>${aspectj.version}</version>
@@ -104,7 +98,7 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.7.4</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
@@ -129,11 +123,6 @@
             <version>1.2</version>
         </dependency>
 
-<!--        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-        </dependency>-->
-
 
         <!-- Test dependencies -->
 
@@ -147,14 +136,6 @@
                </dependency>
                -->
 
-<!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>1.2.6.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
--->
 
         <dependency>
             <groupId>org.springframework</groupId>

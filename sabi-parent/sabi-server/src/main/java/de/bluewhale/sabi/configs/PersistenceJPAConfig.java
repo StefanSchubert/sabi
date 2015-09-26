@@ -69,6 +69,7 @@ public class PersistenceJPAConfig {
         properties.setProperty("eclipselink.create-ddl-jdbc-file-name","createDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.drop-ddl-jdbc-file-name","dropDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.target-database","MYSQL");
+        properties.setProperty("eclipselink.weaving","static");
         return properties;
     }
 }
