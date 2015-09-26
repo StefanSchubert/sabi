@@ -3,3 +3,5 @@
 /sabi-parent/sabi-server/target
 /sabi-parent/sabi-server/src/main/webapp/WEB-INF/classes
 /sabi-parent/sabi-database/target
+/sabi-parent/createDDL_ddlGeneration.jdbc
+/sabi-parent/dropDDL_ddlGeneration.jdbc

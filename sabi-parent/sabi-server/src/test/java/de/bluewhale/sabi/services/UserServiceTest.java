@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,12 +54,14 @@ public class UserServiceTest {
 
     @Test
     @Transactional
+    @Rollback(false)
     public void testCreateUserViaDAO() throws Exception {
 
         // given
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("Test@bluewhale.de");
         userEntity.setPassword("Test123");
+        userEntity.setValidateToken("abc123");
         userEntity.setId(4711l);
 
         // when
