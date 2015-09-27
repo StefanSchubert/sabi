@@ -74,7 +74,6 @@
         </dependency>
 
         <!-- JPA 2.0 -->
-
  <!--       <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
@@ -88,32 +87,18 @@
             <version>${spring.version}</version>
         </dependency>
 
-<!--        <dependency>
-            <groupId>aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.7.4</version>
-        </dependency>-->
-
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>1.2.0</version>
         </dependency>
 
-        <!-- New spring abstraction layer...
-             to eliminate CRUD boilerplate code
-             Not yet! Sticks to Spring 4.0.9.RELEASE and we are using 4.2.x
-             So maby later...
+<!--        &lt;!&ndash; AUTOWIRING IS NOT WORKING WITH IT SO MAYBE LATER
+             So maby later...&ndash;&gt;
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>1.8.2.RELEASE</version>
+            <version>1.9.0.RELEASE</version>
         </dependency>-->
 
         <!-- TODO StS: Logging-Strategy slf4j? -->
@@ -127,7 +112,8 @@
         <!-- Test dependencies -->
 
         <!--
-            todo: Ggf. hsqldb zum test nehmen, dann muss die jndi.properties entsprechend angepasst werden.
+            TODO: Ggf. hsqldb zum test nehmen, erfordert eigene PersistenceJPAConfig
+
             <dependency>
                    <groupId>org.hsqldb</groupId>
                    <artifactId>hsqldb</artifactId>
@@ -135,7 +121,6 @@
                    <scope>test</scope>
                </dependency>
                -->
-
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -149,7 +134,6 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>junit</groupId>

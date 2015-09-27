@@ -6,6 +6,7 @@ import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
 import de.bluewhale.sabi.persistence.dao.UserDaoImpl;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -13,9 +14,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -34,6 +40,9 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
 public class UserServiceTest {
 
     // @Autowired
@@ -42,9 +51,11 @@ public class UserServiceTest {
     @Autowired
     UserDao userDao;
 
+/*
     @BeforeClass
     public static void init() throws NamingException {
     }
+*/
 
     @AfterClass
     public static void tearDownClass() throws Exception {
@@ -54,7 +65,7 @@ public class UserServiceTest {
 
     @Test
     @Transactional
-    @Rollback(false)
+    // @Rollback(false)
     public void testCreateUserViaDAO() throws Exception {
 
         // given
@@ -73,6 +84,31 @@ public class UserServiceTest {
         assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
 
     }
+
+/*
+    USED TO TEST SPRING-DATA-JPA APPROACH. CURRENTLY AUTOWIRING OF THE REPOSITORY IS NOT WORKING.
+    @Test
+    @Transactional
+    // @Rollback(false)
+    public void testCreateUserViaRepository() throws Exception {
+
+
+        // given
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail("Test@bluewhale.de");
+        userEntity.setPassword("Test123");
+        userEntity.setValidateToken("abc123");
+        userEntity.setId(4711l);
+
+        // when
+        repository.saveAndFlush(userEntity);
+
+        // then
+        UserEntity foundUserEntity = repository.findOne(userEntity.getId());
+
+        assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
+
+    }*/
 
     @Test
     @Ignore

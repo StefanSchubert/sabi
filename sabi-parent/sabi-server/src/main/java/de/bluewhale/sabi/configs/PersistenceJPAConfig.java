@@ -8,7 +8,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -64,17 +63,17 @@ public class PersistenceJPAConfig {
 
     Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("eclipselink.ddl-generation","create-or-extend-tables");
-        properties.setProperty("eclipselink.ddl-generation.output-mode","sql-script");
-        properties.setProperty("eclipselink.create-ddl-jdbc-file-name","createDDL_ddlGeneration.jdbc");
-        properties.setProperty("eclipselink.drop-ddl-jdbc-file-name","dropDDL_ddlGeneration.jdbc");
-        properties.setProperty("eclipselink.target-database","MYSQL");
-        properties.setProperty("eclipselink.weaving","static");
+        properties.setProperty("eclipselink.ddl-generation", "create-or-extend-tables");
+        properties.setProperty("eclipselink.ddl-generation.output-mode", "sql-script");
+        properties.setProperty("eclipselink.create-ddl-jdbc-file-name", "createDDL_ddlGeneration.jdbc");
+        properties.setProperty("eclipselink.drop-ddl-jdbc-file-name", "dropDDL_ddlGeneration.jdbc");
+        properties.setProperty("eclipselink.target-database", "MYSQL");
+        properties.setProperty("eclipselink.weaving", "static");
 
         // To Convert CamelCase on JavaProps to Camel_Case on DB-Level,
         // as the @Column(name=) annotation will only be used when generating
         // DDL but not on runtime to do the translation trick.
-        properties.setProperty("eclipselink.session.customizer","de.bluewhale.sabi.configs.JPACamelCaseNamingStrategy");
+        properties.setProperty("eclipselink.session.customizer", "de.bluewhale.sabi.configs.JPACamelCaseNamingStrategy");
 
         return properties;
     }
