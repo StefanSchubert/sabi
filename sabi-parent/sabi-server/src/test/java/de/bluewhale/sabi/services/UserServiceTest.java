@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -40,12 +42,10 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class})
+@WebAppConfiguration
 public class UserServiceTest {
 
-    // @Autowired
+    @Autowired
     UserService userService;
 
     @Autowired
@@ -57,11 +57,10 @@ public class UserServiceTest {
     }
 */
 
-    @AfterClass
+/*    @AfterClass
     public static void tearDownClass() throws Exception {
-        // Shutdown the embeddable container
-
     }
+*/
 
     @Test
     @Transactional
@@ -111,9 +110,8 @@ public class UserServiceTest {
     }*/
 
     @Test
-    @Ignore
+    @Transactional
     public void testAddUserViaService() throws Exception {
-
 
         UserTo userTo = new UserTo("test@bluewhale.de", "NoPass123");
 

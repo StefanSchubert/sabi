@@ -1,6 +1,7 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.UserTo;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

@@ -13,7 +13,6 @@ import javax.persistence.PersistenceContext;
  * User: Stefan Schubert
  * Date: 29.08.15
  */
-@Service("userService")
 public class UserServiceImpl extends CommonService implements UserService {
 
     @PersistenceContext(unitName = "sabi")
@@ -28,8 +27,8 @@ public class UserServiceImpl extends CommonService implements UserService {
         UserEntity userEntity = new UserEntity();
 
         // TODO StS 29.08.15: Using Dozer Mapper?
-        userEntity.setEmail(userEntity.getEmail());
-        userEntity.setPassword(userEntity.getPassword());
+        userEntity.setEmail(newUser.getEmail());
+        userEntity.setPassword(newUser.getPassword());
 
         String validateToken = generateValidationToken();
         userEntity.setValidateToken(validateToken);

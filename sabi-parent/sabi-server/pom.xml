@@ -36,6 +36,26 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- Jackson JSON Processor -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -165,9 +185,12 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <webappDirectory>src/main/webapp</webappDirectory>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
             <!-- This plugin ensures the EclipseLink static weaving -->
+<!--
+
             <plugin>
                 <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
                 <groupId>au.com.alderaan</groupId>
@@ -180,7 +203,7 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <logLevel>ALL</logLevel>
-                            <!-- <includeProjectClasspath>true</includeProjectClasspath> -->
+                            &lt;!&ndash; <includeProjectClasspath>true</includeProjectClasspath> &ndash;&gt;
                         </configuration>
                     </execution>
                 </executions>
@@ -192,6 +215,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+-->
         </plugins>
 
     </build>

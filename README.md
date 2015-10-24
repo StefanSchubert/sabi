@@ -32,6 +32,8 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 
 ## Technology Stack
 
+### Common
+
 * JDK 1.8
 
 ### Client site
@@ -43,7 +45,7 @@ against sabi. However to start with this project involves a
 ### Server side
 * Spring 4
 * REST
-* JPA 2.x
+* JPA 2.x (Eclipselink)
 * Tomcat 7 (JDK8)
 * MariaDB 10.x
 

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,6 +15,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  */
 @Configuration
 @ComponentScan(basePackages = "de.bluewhale.sabi")
+@EnableWebMvc
 // @ImportResource( { "classpath*:/rest_config.xml" } )
 // @PropertySource({ "classpath:rest.properties", "classpath:web.properties" })
 public class AppConfig {
