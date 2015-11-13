@@ -6,10 +6,8 @@ import javax.persistence.*;
  * Created with IntelliJ IDEA.
  * User: Stefan
  * Date: 12.03.15
- * Time: 21:05
- * To change this template use File | Settings | File Templates.
  */
-@Table(name = "unit", schema = "", catalog = "sabi")
+@Table(name = "unit", schema = "sabi")
 @Entity
 public class UnitEntity extends TracableEntity {
 

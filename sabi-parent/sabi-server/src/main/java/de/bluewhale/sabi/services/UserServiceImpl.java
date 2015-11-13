@@ -6,6 +6,7 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.persistence.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +16,7 @@ import javax.persistence.PersistenceContext;
  * User: Stefan Schubert
  * Date: 29.08.15
  */
+@Service
 public class UserServiceImpl extends CommonService implements UserService {
 
     @Autowired

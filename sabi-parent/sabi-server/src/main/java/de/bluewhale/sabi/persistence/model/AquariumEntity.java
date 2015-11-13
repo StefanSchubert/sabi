@@ -9,7 +9,7 @@ import javax.persistence.*;
  * Time: 21:05
  * To change this template use File | Settings | File Templates.
  */
-@Table(name = "aquarium", schema = "", catalog = "sabi")
+@Table(name = "aquarium", schema = "sabi")
 @Entity
 public class AquariumEntity extends TracableEntity {
 

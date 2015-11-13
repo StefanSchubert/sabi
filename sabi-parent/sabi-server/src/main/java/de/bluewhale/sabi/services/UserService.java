@@ -19,7 +19,7 @@ public interface UserService {
 
     /**
      * Drops the user and all of his not commonly shared data.
-     * @param pEmail
+     * @param pEmail unique business identifier of the user
      */
     void unregisterUserAndClearPersonalData(String pEmail);
 }

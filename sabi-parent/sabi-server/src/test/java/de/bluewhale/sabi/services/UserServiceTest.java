@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {AppConfig.class, PersistenceJPAConfig.class})
+@ContextConfiguration(classes = AppConfig.class)
 public class UserServiceTest {
 
     @Autowired
@@ -56,7 +56,7 @@ public class UserServiceTest {
         userEntity.setEmail("Test@bluewhale.de");
         userEntity.setPassword("Test123");
         userEntity.setValidateToken("abc123");
-        userEntity.setId(4711l);
+        userEntity.setId(4711L);
 
         // when
         userDao.create(userEntity);

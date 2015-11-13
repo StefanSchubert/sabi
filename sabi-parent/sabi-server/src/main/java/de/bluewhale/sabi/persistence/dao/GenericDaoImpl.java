@@ -29,15 +29,10 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
     @Override
     public long countAll(final Map<String, Object> params) {
 
-        final StringBuffer queryString = new StringBuffer(
-                "SELECT count(o) from ");
-
-        queryString.append(type.getSimpleName()).append(" o ");
-
         // TODO StS 06.09.15: Fix this method
         // queryString.append(this.getQueryClauses(params, null));
 
-        final Query query = this.em.createQuery(queryString.toString());
+        final Query query = this.em.createQuery("SELECT count(o) from " + type.getSimpleName() + " o ");
 
         return (Long) query.getSingleResult();
 

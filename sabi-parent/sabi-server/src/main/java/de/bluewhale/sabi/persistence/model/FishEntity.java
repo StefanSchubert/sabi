@@ -7,10 +7,8 @@ import java.sql.Timestamp;
  * Created with IntelliJ IDEA.
  * User: Stefan
  * Date: 12.03.15
- * Time: 21:05
- * To change this template use File | Settings | File Templates.
  */
-@Table(name = "fish", schema = "", catalog = "sabi")
+@Table(name = "fish", schema = "sabi")
 @Entity
 public class FishEntity extends TracableEntity {
 

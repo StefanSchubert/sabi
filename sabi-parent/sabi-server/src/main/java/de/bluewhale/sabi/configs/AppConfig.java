@@ -25,8 +25,4 @@ public class AppConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean
-    public UserService userService() {
-        return new UserServiceImpl();
-    }
 }

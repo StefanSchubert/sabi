@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  * Author: Stefan
  * Date: 12.03.15
  */
-@Table(name = "users", schema = "", catalog = "sabi")
+@Table(name = "users", schema = "sabi")
 @Entity
 public class UserEntity extends TracableEntity {
 

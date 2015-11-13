@@ -80,9 +80,4 @@ public class PersistenceJPAConfig {
 
         return properties;
     }
-
-    @Bean
-    public UserDao userDao(){
-        return new UserDaoImpl();
-    }
 }

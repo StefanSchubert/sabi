@@ -2,6 +2,7 @@ package de.bluewhale.sabi.exception;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,9 +40,7 @@ public class BusinessException extends Exception {
 
     public BusinessException(ExceptionCode pCode, Message... pMessages) {
         code = pCode;
-        for (Message msg : pMessages) {
-            messages.add(msg);
-        }
+        Collections.addAll(messages, pMessages);
     }
 
 // --------------------- GETTER / SETTER METHODS ---------------------

@@ -16,9 +16,9 @@ public class UserTo {
     private boolean validated;
 
 
-    public UserTo(String pEmail, String pPasswort) {
+    public UserTo(String pEmail, String pPassword) {
         this.email = pEmail;
-        this.password = pPasswort;
+        this.password = pPassword;
     }
 
 
