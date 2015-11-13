@@ -74,3 +74,66 @@ against sabi. However to start with this project involves a
 mvn clean install -P db_setup sabi_database
 
 
+## Architectural Notes
+
+First of all, for this little app the architecture is overblown for sure.
+However I would like to make it (almost) right at the beginning and 
+liked the idea to have a small blueprint at hand with it, to ease further projects.
+
+DAOs and ServiceLayer. A good introduction about it can be
+found e.g.: [here](http://bearprogrammer.com/2012/11/12/dao-repository-and-service-digging-deeper/)
+
+### Clients
+Expected to use the REST api, but maybe I intent to offer other interfaces too.
+The design need to ease these extensions in the future.
+
+### API Endpoints
+This is where the client is talking to, for the REST clients it's all kept in
+de.bluewhale.sabi.rest package.
+(html endpoint is planed, too)
+
+The Endpoints are responsible to do the i18n for the clients.
+
+### ServiceLayer
+Business logic like (validations, business rules, authentication, authorisation, BI and reporting stuff) that
+is shared by the different client technologies is being kept in here: de.bluewhale.sabi.services
+Though in the beginning all is running on one server, this design eases infrastructure refactorings,
+if we want to have the Client API frontends on multiple frontend servers, which will communicate to
+the (multiple) backend servers. If this business domain is growing we might introduce a domain cut,
+where each domain might run on different servers.
+
+This service layer is thought of containing higher business logic,
+meaning it orchestrates the persistent backend operations. Meaning no service on this level 
+will get an @Transactional. The methods work or don't.
+
+The ServiceLayer is working completely on TransportObjects. No Entity is allowed to be used within the
+ServiceLayer.
+
+#### Exception Handling 
+ In case of don't we will introduce a common BusinessException which contains the different reasons as messages, which will be used to signal 
+errors to the API-Endpoints which in turn have the responsibility to translate and deliver them back
+to the client. 
+
+#### Coming to i18n
+The API Layer is responsible to do all the translations. Thinking of 
+typical frontend backend machine scenario, I want to keep the traffic between those machines as small
+as possible, as transfering all translations to the webserver which in turn delivers one won't do it.
+
+Discarded Solution: Reaching a language context into the backend. This would do it. But I didn't liked 
+it. I was thinking about being able on the API-Layer to decide given back a small message (suitable for
+client constrains like small displays) or very detailed messages (maybe with solution suggestions).
+
+### DAO-Layer
+ 
+The DOAs are used as repositories, which are responsible to manage all CRUD and other persistence
+operations. The intention of this layer to isolate the application from the datalayer, through
+which we are allowed to do persistence refactorings (e.g. for performance sake) withing mingling
+with the object models used on the client site. Or in other words, we are able to
+evolve data and application layer independently. 
+So all DAOs will never return an entity, but TransportObjects.
+As the transport objects are part of the application model and therefore required by the server
+ans maybe the API Endpoints as well, you will find them in
+de.bluewhale.sabi.model of the sabi-boundary module.
+
+Our DAO layer is being kept in de.bluewhale.sabi.dao of the sabi-server module.
+

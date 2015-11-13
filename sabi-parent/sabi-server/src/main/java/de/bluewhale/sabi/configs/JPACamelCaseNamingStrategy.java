@@ -12,7 +12,7 @@ import org.eclipse.persistence.tools.schemaframework.IndexDefinition;
 
 /**
  * THANKS GOES TO: http://stackoverflow.com/questions/19896352/customize-jpa-field-name-mapping-using-eclipselink
- * From where I got this solution fro eclipselink.
+ * From where I got this solution for eclipselink.
  * To activate this strategy you need also to configure
  * your persistence class or xml with the following persistence property:
  * <i>properties.setProperty("eclipselink.session.customizer","pkg.JPACamelCaseNamingStrategy");</i>

@@ -17,6 +17,7 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
  * THAT I WOULD LIKE TO REFACTOR THIS AS SOON AS IT IS WORKING.
  *
  */
+@Deprecated
 public interface UserRepository { // extends JpaRepository<UserEntity, Long> {
 
 

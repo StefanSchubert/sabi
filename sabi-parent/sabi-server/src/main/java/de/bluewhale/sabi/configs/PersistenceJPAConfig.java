@@ -40,6 +40,7 @@ public class PersistenceJPAConfig {
 
     @Bean
     public DataSource dataSource() {
+        // FIXME: 13.11.2015 The credentials needs to be weaved later by an property replacer during the maven build. Where the crendentials com from an maven profile of th elocal settings.xml
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/sabi");
