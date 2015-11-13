@@ -1,5 +1,7 @@
 package de.bluewhale.sabi.configs;
 
+import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.persistence.dao.UserDaoImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -77,5 +79,10 @@ public class PersistenceJPAConfig {
         properties.setProperty("eclipselink.session.customizer", "de.bluewhale.sabi.configs.JPACamelCaseNamingStrategy");
 
         return properties;
+    }
+
+    @Bean
+    public UserDao userDao(){
+        return new UserDaoImpl();
     }
 }

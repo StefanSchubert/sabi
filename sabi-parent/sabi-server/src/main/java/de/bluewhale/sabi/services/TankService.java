@@ -1,10 +1,8 @@
-package de.bluewhale.sabi.de.bluewhale.sabi.internal.services;
+package de.bluewhale.sabi.services;
 
 /**
- * Specifies CRUD Services of the {@link de.bluewhale.sabi.persistence.model.AquariumEntity}
+ * Provides all required services for use cases around the {@link de.bluewhale.sabi.persistence.model.AquariumEntity}
  */
 public interface TankService {
-
-
 
 }

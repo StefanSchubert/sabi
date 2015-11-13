@@ -5,6 +5,7 @@ import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.services.UserService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static org.junit.Assert.fail;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
+@Ignore
 public class LoginTest {
 
 

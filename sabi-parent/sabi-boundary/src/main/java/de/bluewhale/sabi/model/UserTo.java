@@ -8,33 +8,54 @@ package de.bluewhale.sabi.model;
 public class UserTo {
 
     private String email;
+
     private String password;
+
     private String validateToken;
+
+    private boolean validated;
+
 
     public UserTo(String pEmail, String pPasswort) {
         this.email = pEmail;
         this.password = pPasswort;
     }
 
+
+    public boolean isValidated() {
+        return this.validated;
+    }
+
+
+    public void setValidated(final boolean pValidated) {
+        validated = pValidated;
+    }
+
+
     public String getEmail() {
         return email;
     }
+
 
     public void setEmail(String email) {
         this.email = email;
     }
 
+
     public String getPassword() {
         return password;
     }
+
 
     public void setPassword(String password) {
         this.password = password;
     }
 
+
     public String getValidateToken() {
         return validateToken;
     }
+
 
     public void setValidateToken(String validateToken) {
         this.validateToken = validateToken;

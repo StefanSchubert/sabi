@@ -15,8 +15,9 @@ import java.util.Map;
  */
 public abstract class GenericDaoImpl<T> implements GenericDao<T> {
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "sabi")
     protected EntityManager em;
+
     private Class<T> type;
 
     public GenericDaoImpl() {

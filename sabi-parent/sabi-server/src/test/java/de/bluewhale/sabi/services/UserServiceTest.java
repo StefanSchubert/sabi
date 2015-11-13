@@ -2,47 +2,30 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.configs.PersistenceJPAConfig;
+import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
-import de.bluewhale.sabi.persistence.dao.UserDaoImpl;
 import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-
-
-import javax.naming.Context;
-import javax.naming.NamingException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 
 /**
- * CRUD Tests within embedded EJB Container.
- * Requires a running database, as configured by jndi.properties
+ * Business and Persistence Layer Test. Requires a running database.
  * User: Stefan
  * Date: 30.08.15
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
 @WebAppConfiguration
+@ContextConfiguration(classes = {AppConfig.class, PersistenceJPAConfig.class})
 public class UserServiceTest {
 
     @Autowired
@@ -61,6 +44,7 @@ public class UserServiceTest {
     public static void tearDownClass() throws Exception {
     }
 */
+
 
     @Test
     @Transactional
@@ -109,14 +93,20 @@ public class UserServiceTest {
 
     }*/
 
+
     @Test
-    @Transactional
-    public void testAddUserViaService() throws Exception {
+    public void testRegisterUserViaService() throws Exception {
 
-        UserTo userTo = new UserTo("test@bluewhale.de", "NoPass123");
+        UserTo userTo = new UserTo("testservice@bluewhale.de", "NoPass123");
 
-        UserTo createdUser = userService.createUser(userTo);
+        final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
 
-        assertNotNull("New user was not issued with a token.", createdUser.getValidateToken());
+        assertNotNull(userToResultTo);
+        assertNotNull(userToResultTo.getValue());
+        assertNotNull("New user was not issued with a token.", userToResultTo.getValue().getValidateToken());
+
+        // cleanup
+        userService.unregisterUserAndClearPersonalData(userToResultTo.getValue().getEmail());
+
     }
 }
