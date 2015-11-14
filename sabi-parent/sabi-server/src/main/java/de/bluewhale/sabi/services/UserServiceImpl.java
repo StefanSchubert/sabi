@@ -1,10 +1,11 @@
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.util.EncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,7 +28,10 @@ public class UserServiceImpl extends CommonService implements UserService {
     @Autowired
     private UserDao dao;
 
-    public ResultTo<UserTo> registerNewUser(@NotNull  UserTo newUser) {
+    @Autowired
+    private EncryptionService encryptionService;
+
+    public ResultTo<UserTo> registerNewUser(@NotNull UserTo newUser) {
 
         String validateToken = generateValidationToken();
         newUser.setValidateToken(validateToken);
@@ -69,8 +74,14 @@ public class UserServiceImpl extends CommonService implements UserService {
 
 
     private String generateValidationToken() {
-        // TODO StS 29.08.15: random generation
-        return "Seagrass123";
+        // Thanks goes to: Mister Smith (http://stackoverflow.com/questions/14622622/generating-a-random-hex-string-of-length-50-in-java-me-j2me)
+        int numchars = 8;
+        Random r = new Random();
+        StringBuffer sb = new StringBuffer();
+        while (sb.length() < numchars) {
+            sb.append(Integer.toHexString(r.nextInt()));
+        }
+        return sb.toString().substring(0, numchars);
     }
 
 
@@ -106,25 +117,25 @@ public class UserServiceImpl extends CommonService implements UserService {
         final UserTo userTo = dao.loadUserByEmail(pEmail);
         if (userTo != null) {
             if (userTo.getPassword().equals(password)) {
-                String accessToken = generateAccessToken(pEmail, DEFAULT_ACCESSTOKEN_TTL_IN_SECONDS);
+                String accessToken = generateAccessToken(pEmail);
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEDED, pEmail);
                 return new ResultTo<String>(accessToken, successMessage);
-            } else {
+            }
+            else {
                 final Message errorMsg = Message.error(AuthMessageCodes.WRONG_PASSWORD, pEmail);
                 return new ResultTo<String>(null, errorMsg);
             }
-            
-            
-        } else {
+
+
+        }
+        else {
             final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmail);
             return new ResultTo<String>(null, errorMsg);
         }
-        
+
     }
 
-
-    private String generateAccessToken(final String pEmail, final int pTTLInSeconds) {
-        // FIXME: 14.11.2015 Do something sophisticated
-        return "It's me pal";
+    private String generateAccessToken(final String pEmail) {
+        return encryptionService.getEncryptedAccessTokenForUser(pEmail);
     }
 }

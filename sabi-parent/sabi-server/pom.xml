@@ -121,6 +121,14 @@
             <version>1.9.0.RELEASE</version>
         </dependency>-->
 
+        <!-- Encryption libs -->
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+
+
         <!-- TODO StS: Logging-Strategy slf4j? -->
         <dependency>
             <groupId>commons-logging</groupId>

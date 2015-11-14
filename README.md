@@ -73,6 +73,9 @@ against sabi. However to start with this project involves a
 ### Reinstall the database schema
 mvn clean install -P db_setup sabi_database
 
+## Preparing your productive environment
+
+Customize your own server.properties and do not checkin for security reasons.!
 
 ## Architectural Notes
 
