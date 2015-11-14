@@ -64,7 +64,7 @@ against sabi. However to start with this project involves a
 * Install the 7.x version
 * That's it ;-) ... Almost ... I encountered some problems with the deployment of the artefact through intelliJ
   Make and Build had problems to accept the target bytecode release 1.8. As intermediate solution I deleted those
-  before launch action and choosed the maven package instead. Though even this should be obsolete in an
+  before launch action and chooses the maven package instead. Though even this should be obsolete in an
   exploded deployment manner and having compiled it all before.
 
 
@@ -123,9 +123,10 @@ Discarded Solution: Reaching a language context into the backend. This would do 
 it. I was thinking about being able on the API-Layer to decide given back a small message (suitable for
 client constrains like small displays) or very detailed messages (maybe with solution suggestions).
 
-### DAO-Layer
- 
-The DOAs are used as repositories, which are responsible to manage all CRUD and other persistence
+### Persistence-Layer
+
+We are using JPA managed Entities in combination with DAOs. 
+The DAOs are used as repositories, which are responsible to manage all CRUD and other persistence
 operations. The intention of this layer to isolate the application from the datalayer, through
 which we are allowed to do persistence refactorings (e.g. for performance sake) withing mingling
 with the object models used on the client site. Or in other words, we are able to
@@ -135,5 +136,5 @@ As the transport objects are part of the application model and therefore require
 ans maybe the API Endpoints as well, you will find them in
 de.bluewhale.sabi.model of the sabi-boundary module.
 
-Our DAO layer is being kept in de.bluewhale.sabi.dao of the sabi-server module.
+Our persistence layer is being kept in de.bluewhale.sabi.persistence of the sabi-server module.
 
