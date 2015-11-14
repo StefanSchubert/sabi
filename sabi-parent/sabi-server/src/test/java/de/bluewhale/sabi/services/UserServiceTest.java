@@ -153,6 +153,7 @@ public class UserServiceTest {
 
 
     @Test
+    @Transactional
     public void testSignIn() throws Exception {
         // Given
         final String clearTextPassword = "NoPass123";
@@ -173,6 +174,7 @@ public class UserServiceTest {
 
 
     @Test
+    @Transactional
     public void testSignInWithUnknownUserName() throws Exception {
         // Given
         // Nothing
@@ -193,6 +195,7 @@ public class UserServiceTest {
 
 
     @Test
+    @Transactional
     public void testSignInWithUnknownPassword() throws Exception {
         // Given
         final String clearTextPassword = "NoPass123";
@@ -221,6 +224,7 @@ public class UserServiceTest {
      * @throws Exception
      */
     @Test
+    @Transactional
     public void testCheckValidToken() throws Exception {
         // Given
 

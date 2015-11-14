@@ -46,7 +46,7 @@ public class UserDAOTest {
     @Test
     @Transactional
     // @Rollback(false)
-    public void testCreateUserViaDAO() throws Exception {
+    public void testCreateUser() throws Exception {
 
         // given
         UserEntity userEntity = new UserEntity();
