@@ -7,6 +7,19 @@ package de.bluewhale.sabi.model;
  */
 public class UserTo {
 
+    private Long id;
+
+
+    public Long getId() {
+        return this.id;
+    }
+
+
+    public void setId(Long pId) {
+        this.id = pId;
+    }
+
+
     private String email;
 
     private String password;

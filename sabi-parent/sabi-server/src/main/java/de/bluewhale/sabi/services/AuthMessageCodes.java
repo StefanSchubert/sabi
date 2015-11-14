@@ -12,7 +12,8 @@ public enum AuthMessageCodes implements MessageCode {
     WRONG_PASSWORD(AuthExceptionCodes.AUTHENTICATION_FAILED),
     UNKNOWN_USERNAME(AuthExceptionCodes.AUTHENTICATION_FAILED),
     USER_CREATION_SUCCEEDED(),
-    USER_ALREADY_EXISTS(AuthExceptionCodes.USER_REGISTRATION_FAILED);
+    USER_ALREADY_EXISTS(AuthExceptionCodes.USER_REGISTRATION_FAILED),
+    SIGNIN_SUCCEDED();
 
 // ------------------------------ FIELDS ------------------------------
 

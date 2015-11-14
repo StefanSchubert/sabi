@@ -12,8 +12,6 @@ public class Message implements Serializable {
 
     private MessageCode code;
 
-    private BusinessException belongingException;
-
     private CATEGORY type;
 
     private Serializable[] args;
@@ -44,10 +42,6 @@ public class Message implements Serializable {
 
     public Object[] getArgs() {
         return this.args;
-    }
-
-    public BusinessException getBelongingException() {
-        return this.belongingException;
     }
 
     public MessageCode getCode() {

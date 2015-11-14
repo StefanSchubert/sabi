@@ -11,10 +11,8 @@ public enum AuthExceptionCodes implements ExceptionCode {
 
     AUTHENTICATION_FAILED(1),
     USER_LOCKED(2),
-    UNKNOWN_USER(3),
-    INSUFFICIENT_PERMISSIONS(4),
-    USER_REGISTRATION_FAILED(5)
-    ;
+    INSUFFICIENT_PERMISSIONS(3),
+    USER_REGISTRATION_FAILED(4);
 
     private int errorCode;
 
