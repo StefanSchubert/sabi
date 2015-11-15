@@ -19,11 +19,10 @@ import java.util.Random;
  * Created with IntelliJ IDEA.
  * User: Stefan Schubert
  * Date: 29.08.15
+ * TODO STS (15.11.2015): Consider refactoring the whole user management
  */
 @Service
 public class UserServiceImpl extends CommonService implements UserService {
-
-    private static final int DEFAULT_ACCESSTOKEN_TTL_IN_SECONDS = 18000;
 
     @Autowired
     private UserDao dao;
@@ -136,6 +135,6 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
     private String generateAccessToken(final String pEmail) {
-        return encryptionService.getEncryptedAccessTokenForUser(pEmail);
+        return encryptionService.getEncryptedAccessTokenForUser(pEmail, null);
     }
 }

@@ -8,7 +8,6 @@ import de.bluewhale.sabi.persistence.dao.UserDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -222,7 +221,7 @@ public class UserServiceTest {
      * After signin the user is issued a token, which he is required to pass with each request to get the user context through the REST APIs.
      * The token is supposed to be valid until his TTL has expired. If so the user need to relogin to refresh his token.
      *
-     * Idea of Tokenstructure:
+     * Idea of token structure:
      * Reason: REST principle, no server session
      * encoded: eMail|InvalidationTimeStamp
      * 2-Way encoded (The secret however is an injected property from local maven settings.xml and won't be visible ob github)
@@ -233,6 +232,8 @@ public class UserServiceTest {
     @Transactional
     public void testCheckValidToken() throws Exception {
         // Given
+
+
         // When
 
         // Then
