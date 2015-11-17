@@ -26,7 +26,6 @@ public class UserServiceImpl extends CommonService implements UserService {
 
     @Autowired
     private UserDao dao;
-
     @Autowired
     private EncryptionService encryptionService;
 
@@ -43,15 +42,13 @@ public class UserServiceImpl extends CommonService implements UserService {
             createdUser = dao.create(newUser, encryptedPassword);
             message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
             // TODO StS 29.08.15: Orchestrating Service should send the email delivering the token.
-        }
-        catch (BusinessException pE) {
+        } catch (BusinessException pE) {
             message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS, newUser.getEmail());
         }
 
         final ResultTo<UserTo> userToResultTo = new ResultTo<>(createdUser, message);
         return userToResultTo;
     }
-
 
     private String encryptPasswordForHeavensSake(final String pPassword) {
         // using MD5
@@ -65,12 +62,10 @@ public class UserServiceImpl extends CommonService implements UserService {
                 hashtext = "0" + hashtext;
             }
             return hashtext;
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     private String generateValidationToken() {
         // Thanks goes to: Mister Smith (http://stackoverflow.com/questions/14622622/generating-a-random-hex-string-of-length-50-in-java-me-j2me)
@@ -83,13 +78,11 @@ public class UserServiceImpl extends CommonService implements UserService {
         return sb.toString().substring(0, numchars);
     }
 
-
     @Override
     public void unregisterUserAndClearPersonalData(@NotNull String pEmail) {
         // Hook in here to delete other personal data
         dao.deleteByEmail(pEmail);
     }
-
 
     @Override
     public boolean validateUser(@NotNull final String pEmail, @NotNull final String pToken) {
@@ -100,15 +93,13 @@ public class UserServiceImpl extends CommonService implements UserService {
                 try {
                     dao.toggleValidationFlag(pEmail, true);
                     result = true;
-                }
-                catch (BusinessException pE) {
+                } catch (BusinessException pE) {
                     result = false;
                 }
             }
         }
         return result;
     }
-
 
     @Override
     public ResultTo<String> signIn(@NotNull final String pEmail, @NotNull final String pClearTextPassword) {
@@ -119,15 +110,13 @@ public class UserServiceImpl extends CommonService implements UserService {
                 String accessToken = generateAccessToken(pEmail);
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEDED, pEmail);
                 return new ResultTo<String>(accessToken, successMessage);
-            }
-            else {
+            } else {
                 final Message errorMsg = Message.error(AuthMessageCodes.WRONG_PASSWORD, pEmail);
                 return new ResultTo<String>(null, errorMsg);
             }
 
 
-        }
-        else {
+        } else {
             final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmail);
             return new ResultTo<String>(null, errorMsg);
         }
@@ -136,5 +125,28 @@ public class UserServiceImpl extends CommonService implements UserService {
 
     private String generateAccessToken(final String pEmail) {
         return encryptionService.getEncryptedAccessTokenForUser(pEmail, null);
+    }
+
+    @Override
+    public boolean isTokenValid(@NotNull String pAccessToken) {
+        EncryptionService.AccessToken decryptedToken = encryptionService.decryptAccessToken(pAccessToken);
+        return decryptedToken.isValid();
+    }
+
+    @Override
+    public ResultTo<String> checkToken(@NotNull String pAccessToken) {
+        ResultTo<String> resultTo;
+        EncryptionService.AccessToken decryptedToken = encryptionService.decryptAccessToken(pAccessToken);
+
+        if (decryptedToken == null) {
+            resultTo = new ResultTo<>(null, Message.error(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED, pAccessToken));
+        } else {
+            if (isTokenValid(pAccessToken)) {
+                resultTo = new ResultTo<>(decryptedToken.getUserIdentifier(), Message.info(AuthMessageCodes.TOKEN_VALID));
+            } else {
+                resultTo = new ResultTo<>(decryptedToken.getUserIdentifier(), Message.warning(AuthMessageCodes.TOKEN_EXPIRED));
+            }
+        }
+        return resultTo;
     }
 }

@@ -13,7 +13,10 @@ public enum AuthMessageCodes implements MessageCode {
     UNKNOWN_USERNAME(AuthExceptionCodes.AUTHENTICATION_FAILED),
     USER_CREATION_SUCCEEDED(),
     USER_ALREADY_EXISTS(AuthExceptionCodes.USER_REGISTRATION_FAILED),
-    SIGNIN_SUCCEDED();
+    SIGNIN_SUCCEDED(),
+    TOKEN_VALID(),
+    TOKEN_EXPIRED(AuthExceptionCodes.AUTHENTICATION_FAILED),
+    CORRUPTED_TOKEN_DETECTED(AuthExceptionCodes.AUTHENTICATION_FAILED);
 
 // ------------------------------ FIELDS ------------------------------
 

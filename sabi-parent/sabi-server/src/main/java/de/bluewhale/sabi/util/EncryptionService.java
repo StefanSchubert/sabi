@@ -96,6 +96,7 @@ public class EncryptionService {
         catch (org.jasypt.exceptions.EncryptionOperationNotPossibleException e) {
             System.out.println("### Could not decrypt Cipher(" + pCipher + ")");
             e.printStackTrace();
+            return null;
         }
         String userName = message.substring(DATE_TIME_LENGTH, message.length());
 

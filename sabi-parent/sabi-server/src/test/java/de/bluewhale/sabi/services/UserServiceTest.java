@@ -232,13 +232,23 @@ public class UserServiceTest {
     @Transactional
     public void testCheckValidToken() throws Exception {
         // Given
+        final String clearTextPassword = "NoPass123";
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
+        userService.registerNewUser(userTo);
+        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, clearTextPassword);
 
+        String accessToken = signInResult.getValue();
 
         // When
+        boolean tokenAccepted = userService.isTokenValid(accessToken);
+        ResultTo<String> checkResult = userService.checkToken(accessToken);
 
         // Then
-        fail("Complete implementation needed.");
+        assertTrue(tokenAccepted);
+        assertEquals("User switched?",TESTUSER_EMAIL, checkResult.getValue());
+        final Message message = checkResult.getMessage();
+        assertNotNull(message);
+        assertNotNull(message.getCode());
+        assertEquals(message.getCode(), AuthMessageCodes.TOKEN_VALID);
     }
-
-
 }
