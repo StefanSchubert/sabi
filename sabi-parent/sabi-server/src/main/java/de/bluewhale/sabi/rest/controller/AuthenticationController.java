@@ -4,15 +4,11 @@ import de.bluewhale.sabi.rest.model.SabiAuthToken;
 import de.bluewhale.sabi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 /**
- * Created with IntelliJ IDEA.
  * Author: Stefan Schubert
  * Date: 27.09.15
  */
@@ -24,6 +20,7 @@ public class AuthenticationController {
     UserService userService;
 
     @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
+    @ResponseBody
     public SabiAuthToken loginUser(@RequestParam(value = "email", required = true,
             defaultValue = "0") String email,
                                    @RequestParam(value = "password", required = true,
@@ -32,6 +29,7 @@ public class AuthenticationController {
         SabiAuthToken sabiAuthToken = new SabiAuthToken();
         sabiAuthToken.setToken(UUID.fromString(email).toString());
 
+        // TODO: 15.11.2015 return token or error message 
         return sabiAuthToken;
     }
 

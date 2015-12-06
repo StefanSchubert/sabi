@@ -9,7 +9,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * Author: Stefan Schubert
  * Date: 27.09.15
  */

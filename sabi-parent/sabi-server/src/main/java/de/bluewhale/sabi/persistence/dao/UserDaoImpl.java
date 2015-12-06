@@ -1,6 +1,5 @@
 package de.bluewhale.sabi.persistence.dao;
 
-import com.sun.istack.internal.Nullable;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.UserEntity;
@@ -12,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * Author: Stefan Schubert
  * Date: 06.09.15
  */
@@ -23,7 +22,6 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
 
 // --------------------- Interface UserDao ---------------------
 
-    @Nullable
     public UserTo loadUserByEmail(@NotNull String email) {
         Query query = em.createQuery("select u FROM UserEntity u where u.email = :email");
         query.setParameter("email", email);
@@ -75,7 +73,6 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @Nullable
     private UserEntity getUserByEmail(@NotNull String email) {
         Query query = em.createQuery("select u FROM UserEntity u where u.email = :email");
         query.setParameter("email", email);

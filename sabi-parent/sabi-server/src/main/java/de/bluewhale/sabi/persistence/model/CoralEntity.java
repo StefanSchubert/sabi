@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * User: Stefan
  * Date: 12.03.15
  */

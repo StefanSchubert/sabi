@@ -35,7 +35,7 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 ### Common
 
 * JDK 1.8
-
+ 
 ### Client site
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product
 against sabi. However to start with this project involves a
@@ -56,7 +56,7 @@ against sabi. However to start with this project involves a
 ### Database
 
 * Install a local MariaDB (latest version should do it)
-* Create a DB called sabi and and a user sabi app with permissions for localhost.
+* Create a DB called sabi and and a user sbi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
 ### Setting up the tomact 7
@@ -113,14 +113,14 @@ The ServiceLayer is working completely on TransportObjects. No Entity is allowed
 ServiceLayer.
 
 #### Exception Handling 
- In case of don't we will introduce a common BusinessException which contains the different reasons as messages, which will be used to signal 
-errors to the API-Endpoints which in turn have the responsibility to translate and deliver them back
+ In case of failures we will introduce a common BusinessException which contains the different reasons as messages, 
+which will be used to signal errors to the API-Endpoints which in turn have the responsibility to translate and deliver them back
 to the client. 
 
 #### Coming to i18n
 The API Layer is responsible to do all the translations. Thinking of 
 typical frontend backend machine scenario, I want to keep the traffic between those machines as small
-as possible, as transfering all translations to the webserver which in turn delivers one won't do it.
+as possible, as transfering all translations to the webserver which in turn delivers one to a specific client won't do it.
 
 Discarded Solution: Reaching a language context into the backend. This would do it. But I didn't liked 
 it. I was thinking about being able on the API-Layer to decide given back a small message (suitable for
@@ -136,8 +136,7 @@ with the object models used on the client site. Or in other words, we are able t
 evolve data and application layer independently. 
 So all DAOs will never return an entity, but TransportObjects.
 As the transport objects are part of the application model and therefore required by the server
-ans maybe the API Endpoints as well, you will find them in
+and maybe the API Endpoints as well, you will find them in
 de.bluewhale.sabi.model of the sabi-boundary module.
 
 Our persistence layer is being kept in de.bluewhale.sabi.persistence of the sabi-server module.
-

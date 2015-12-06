@@ -11,7 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * User: Stefan Schubert
  * Date: 04.09.15
  */

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * Author: Stefan Schubert
  * Date: 06.09.15
  */

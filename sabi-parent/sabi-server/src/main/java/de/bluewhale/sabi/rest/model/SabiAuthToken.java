@@ -1,7 +1,7 @@
 package de.bluewhale.sabi.rest.model;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * Author: Stefan Schubert
  * Date: 27.09.15
  */

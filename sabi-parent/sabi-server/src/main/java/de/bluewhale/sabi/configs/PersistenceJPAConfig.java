@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * Author: Stefan Schubert
  * Date: 05.09.15
  */

@@ -5,7 +5,7 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 // import org.springframework.stereotype.Repository;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * Author: Stefan Schubert
  * Date: 26.09.15
  *

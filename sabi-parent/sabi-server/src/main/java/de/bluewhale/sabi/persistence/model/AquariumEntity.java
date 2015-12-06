@@ -3,7 +3,7 @@ package de.bluewhale.sabi.persistence.model;
 import javax.persistence.*;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * User: Stefan
  * Date: 12.03.15
  * Time: 21:05

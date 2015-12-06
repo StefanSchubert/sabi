@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 /**
- * Created with IntelliJ IDEA.
+ *
  * User: Stefan Schubert
  * Date: 29.08.15
  * TODO STS (15.11.2015): Consider refactoring the whole user management

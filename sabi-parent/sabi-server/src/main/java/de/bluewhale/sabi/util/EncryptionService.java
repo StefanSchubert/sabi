@@ -1,6 +1,5 @@
 package de.bluewhale.sabi.util;
 
-import com.sun.istack.internal.Nullable;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.salt.SaltGenerator;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +51,7 @@ public class EncryptionService {
      *                              If null, we take the value from the server.properties (key: accessToken.TTL).
      * @return An encrypted AccessToken.
      */
-    public String getEncryptedAccessTokenForUser(@NotNull String pUserIdentifier, @Nullable final Long pValidPeriodInSeconds) {
+    public String getEncryptedAccessTokenForUser(@NotNull String pUserIdentifier, final Long pValidPeriodInSeconds) {
         // calculate validity period (1000 milliseconds per second)
         Date now = new Date();
 
