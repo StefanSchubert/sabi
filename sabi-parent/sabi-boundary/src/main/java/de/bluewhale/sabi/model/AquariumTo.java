@@ -1,24 +1,16 @@
-package de.bluewhale.sabi.persistence.model;
+package de.bluewhale.sabi.model;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
 /**
+ * Transport Object for Aquarium
  *
- * User: Stefan
- * Date: 12.03.15
- * Time: 21:05
- * To change this template use File | Settings | File Templates.
+ * @author Stefan Schubert
  */
-@Table(name = "aquarium", schema = "sabi")
-@Entity
-public class AquariumEntity extends TracableEntity {
+public class AquariumTo implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
     private long id;
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
     public long getId() {
         return id;
     }
@@ -29,8 +21,6 @@ public class AquariumEntity extends TracableEntity {
 
     private Integer size;
 
-    @javax.persistence.Column(name = "size", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Basic
     public Integer getSize() {
         return size;
     }
@@ -41,8 +31,6 @@ public class AquariumEntity extends TracableEntity {
 
     private String sizeUnit;
 
-    @javax.persistence.Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Basic
     public String getSizeUnit() {
         return sizeUnit;
     }
@@ -53,8 +41,6 @@ public class AquariumEntity extends TracableEntity {
 
     private String description;
 
-    @javax.persistence.Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
-    @Basic
     public String getDescription() {
         return description;
     }
@@ -65,7 +51,6 @@ public class AquariumEntity extends TracableEntity {
 
     private Boolean active;
 
-    @javax.persistence.Column(name = "active", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
     public Boolean getActive() {
         return active;
     }
@@ -76,8 +61,6 @@ public class AquariumEntity extends TracableEntity {
 
     private Long userId;
 
-    @javax.persistence.Column(name = "user_id", nullable = true, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
     public Long getUserId() {
         return userId;
     }
@@ -92,12 +75,10 @@ public class AquariumEntity extends TracableEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AquariumEntity that = (AquariumEntity) o;
+        AquariumTo that = (AquariumTo) o;
 
         if (id != that.id) return false;
         if (active != null ? !active.equals(that.active) : that.active != null) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (sizeUnit != null ? !sizeUnit.equals(that.sizeUnit) : that.sizeUnit != null) return false;
         if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
@@ -115,8 +96,6 @@ public class AquariumEntity extends TracableEntity {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (active != null ? active.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
-        result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
         return result;
     }
 }

@@ -18,7 +18,7 @@ CREATE TABLE `aquarium` (
   `id`             BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `size`           INTEGER,
   `size_unit`      VARCHAR(10),
-  `validate_token` VARCHAR(255)        NOT NULL,
+  `description` VARCHAR(255)        NOT NULL,
   `active`         BIT                          DEFAULT 0,
   `user_id`        BIGINT(20) UNSIGNED,
   `created_on`     TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,

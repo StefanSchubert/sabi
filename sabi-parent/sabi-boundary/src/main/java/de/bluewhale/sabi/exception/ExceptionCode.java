@@ -9,4 +9,11 @@ import java.io.Serializable;
  * @author schubert
  */
 public interface ExceptionCode extends Serializable {
+
+    /**
+     *
+     * @return unique code of occured error for further reference (logging etc..)
+     */
+    int getErrorCode();
+
 }

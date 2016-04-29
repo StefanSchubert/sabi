@@ -1,11 +1,13 @@
 package de.bluewhale.sabi.model;
 
+import java.io.Serializable;
+
 /**
  * DTO of the user
  * User: Stefan
  * Date: 29.08.15
  */
-public class UserTo {
+public class UserTo implements Serializable {
 
     private Long id;
 
