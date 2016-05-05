@@ -1,0 +1,23 @@
+@startuml
+
+package "User Environment" {
+:SeawaterAquarist: as saq
+saq -- [SeawaterTank] : measures
+saq - [Client] : uses
+interface HTTP
+Client -right..> HTTP : use
+
+note bottom of Client
+Could be WebBrowser or
+native mobile client.
+end note
+}
+
+package "Sabi Backend" {
+HTTP <.. [Sabi Services]: provides
+database storage
+[BI magic] --> storage
+[Sabi Services] --> storage
+}
+
+@enduml
