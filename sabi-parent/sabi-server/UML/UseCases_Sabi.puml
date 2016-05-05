@@ -1,0 +1,49 @@
+@startuml
+' Actors
+:Seawater Aquarist: as User
+:Admin: as Admin
+
+
+note right of Admin
+Responsible for security &
+Net offending Issues.
+end note
+
+
+' Use Cases
+(Register as new user) as (Reg)
+(export data) as (export)
+(Browse own tank data) as (listData)
+(Create new tank) as (addTank)
+(Enter tank data) as (maintainTank)
+(Browse static reports) as (reports)
+
+(lock User) as (lock)
+(Add/Maintain basic data) as (admin)
+
+' Uses
+User --> (Reg)
+User --> (export)
+User --> (listData)
+User --> (addTank)
+User --> (maintainTank)
+User --> (reports)
+
+Admin --> (lock)
+Admin --> (admin)
+
+note right of (lock)
+In case of misuse or
+viloation of leagal aspects.
+end note
+
+note right of (maintainTank)
+Add measurements
+Add marine life (fish corals)
+Describe treatments
+end note
+
+' note "This note is connected\nto several objects." as N2
+' (Start) .. N2
+' N2 .. (Use)
+@enduml
