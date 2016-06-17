@@ -1,21 +1,23 @@
 @startuml
 
 package "Sabi GUI" {
-HTTP - [HTML5-WebClient]
+HTTP - [HTML5-WebApp]
 }
 
 package "Sabi Backend" {
 title Level 1 view
 interface HTTP_REST as rest
 database db
-[HTML5-WebClient] ..> rest : use
+[HTML5-WebApp] ..> rest : use
 rest - [REST Facade]
 [REST Facade] -> [Services]
-[Services] -> [Repository]
 [Repository] --> db
 
+together {
+[Services] -> [Repository]
 [Reporting] -> [Repository]
 [BI Scheduler] -> [Repository]
+}
 
 }
 

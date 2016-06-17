@@ -1,0 +1,49 @@
+@startuml
+
+title Targeted Low-Budget Deployment for the Beginning
+
+cloud "Internet" {
+
+ node "Sabi Users PC" {
+   [WebBrowser] ..> HTTP : use
+ }
+}
+
+cloud "Home LAN" {
+
+  node "RaspberryPi1" {
+    package "Tomcat FE" {
+      interface HTTP
+      HTTP - [WebApp]
+      [WebApp] ..> rest : https
+    }
+  }
+
+  node "RaspberryPi2" {
+      package "Tomcat BE" {
+         interface HTTP_REST as rest
+         rest - [REST Facade]
+         [REST Facade] -> [Services]
+         [Services] -> [Repository]
+         [Repository] ..> db : jdbc
+      }
+  }
+
+
+  node "Router" {
+  }
+  note bottom of Router : Uses DnyDNS Service of \n my provider, to make the WebApp \n avaiable to the public
+
+}
+
+cloud "Remote Hosting Service" as strato {
+ [DynDNS]
+ database "MySQL" as db {
+    folder "SabiDB" {
+      [sabi-prod-db]
+      [sabi-stage-db]
+    }
+ }
+}
+
+@enduml

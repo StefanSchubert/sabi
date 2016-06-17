@@ -1,0 +1,28 @@
+@startuml
+
+title Distribution of rough components
+
+
+  node "RaspberryPi1" {
+    package "Tomcat FE" {
+      [Sabi WebApp] ..> [Tomcat BE] : uses
+    }
+  }
+
+  node "RaspberryPi2" {
+      package "Tomcat BE" {
+         [Sabi Backend] ..> db : uses
+      }
+   }
+
+ node "Sabi Users PC" {
+   [WebBrowser] ..> [Sabi WebApp] : uses
+ }
+
+ database "MySQL" as db {
+    folder "SabiDB" {
+      [sabi-prod-db]
+    }
+ }
+
+@enduml
