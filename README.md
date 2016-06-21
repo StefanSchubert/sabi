@@ -46,7 +46,7 @@ against sabi. However to start with this project involves a
 * Spring 4
 * REST
 * JPA 2.x (Eclipselink)
-* Tomcat 7 (JDK8)
+* Tomcat 8 (JDK8 - though not officially supported, will be with tomcat9)
 * MariaDB 10.x
 
 ----
@@ -59,9 +59,9 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sbi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
-### Setting up the tomact 7
+### Setting up the tomact 8
 
-* Install the 7.x version
+* Install the 8.x version
 * That's it ;-) ... Almost ... I encountered some problems with the deployment of the artefact through intelliJ
   Make and Build had problems to accept the target bytecode release 1.8. As intermediate solution I deleted those
   before launch action and chooses the maven package instead. Though even this should be obsolete in an
@@ -140,3 +140,8 @@ and maybe the API Endpoints as well, you will find them in
 de.bluewhale.sabi.model of the sabi-boundary module.
 
 Our persistence layer is being kept in de.bluewhale.sabi.persistence of the sabi-server module.
+
+### Test of a successfully deployed backend.
+ 
+ I use postman to test the login REST API.
+ 

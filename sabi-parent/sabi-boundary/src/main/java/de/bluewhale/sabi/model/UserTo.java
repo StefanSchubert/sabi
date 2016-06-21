@@ -28,13 +28,19 @@ public class UserTo implements Serializable {
 
     private String validateToken;
 
+    private String captchaCode;
+
     private boolean validated;
 
+
+    public UserTo() {
+    }
 
     public UserTo(String pEmail, String pPassword) {
         this.email = pEmail;
         this.password = pPassword;
     }
+
 
 
     public boolean isValidated() {
@@ -74,5 +80,15 @@ public class UserTo implements Serializable {
 
     public void setValidateToken(String validateToken) {
         this.validateToken = validateToken;
+    }
+
+
+    public String getCaptchaCode() {
+        return captchaCode;
+    }
+
+
+    public void setCaptchaCode(final String pCaptchaCode) {
+        captchaCode = pCaptchaCode;
     }
 }
