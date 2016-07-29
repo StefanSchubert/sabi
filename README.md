@@ -79,6 +79,11 @@ Customize your own server.properties and do not checkin for security reasons.!
 
 ## Architectural Notes
 
+Documentation has been moved to [wiki](https://github.com/StefanSchubert/sabi/wiki) which
+is based upon arc42 templates. The following sections are subjected to be checked for rework and will be moved soon, too.
+
+---
+
 First of all, for this little app the architecture is overblown for sure.
 However I would like to make it (almost) right at the beginning and 
 liked the idea to have a small blueprint at hand with it, to ease further projects.
