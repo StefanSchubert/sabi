@@ -3,19 +3,15 @@
 title Distribution of rough components
 
 
-  node "RaspberryPi1" {
-    package "Tomcat FE" {
-      [Sabi WebApp] ..> [Tomcat BE] : uses
-    }
-  }
+ package "Tomcat FE" {
+   [Sabi WebApp] ..> [Tomcat BE] : uses
+ }
 
-  node "RaspberryPi2" {
-      package "Tomcat BE" {
-         [Sabi Backend] ..> db : uses
-      }
+   package "Tomcat BE" {
+      [Sabi Backend] ..> db : uses
    }
 
- node "Sabi Users PC" {
+ package "Users PC" {
    [WebBrowser] ..> [Sabi WebApp] : uses
  }
 
@@ -23,6 +19,6 @@ title Distribution of rough components
     folder "SabiDB" {
       [sabi-prod-db]
     }
- }
+}
 
 @enduml

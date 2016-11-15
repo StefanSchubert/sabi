@@ -7,6 +7,11 @@ cloud "Internet" {
  node "Sabi Users PC" {
    [WebBrowser] ..> HTTP : use
  }
+
+   node "Router" {
+   }
+   note bottom of Router : Uses DnyDNS Service of \n my provider, to make the WebApp \n available to the public
+
 }
 
 cloud "Home LAN" {
@@ -25,25 +30,17 @@ cloud "Home LAN" {
          rest - [REST Facade]
          [REST Facade] -> [Services]
          [Services] -> [Repository]
-         [Repository] ..> db : jdbc
+         [Repository] --> db : jdbc
       }
   }
 
+node "RaspberryPi3" {
+     database "MySQL" as db {
+        folder "SabiDB" {
+          [sabi-prod-db]
+          [sabi-stage-db]
+        }
 
-  node "Router" {
-  }
-  note bottom of Router : Uses DnyDNS Service of \n my provider, to make the WebApp \n avaiable to the public
-
-}
-
-cloud "Remote Hosting Service" as strato {
- [DynDNS]
- database "MySQL" as db {
-    folder "SabiDB" {
-      [sabi-prod-db]
-      [sabi-stage-db]
-    }
- }
 }
 
 @enduml
