@@ -16,7 +16,7 @@ cloud "Internet" {
 
 cloud "Home LAN" {
 
-  node "RaspberryPi1" {
+  node "RaspberryPi-1" {
     package "Tomcat FE" {
       interface HTTP
       HTTP - [WebApp]
@@ -24,7 +24,7 @@ cloud "Home LAN" {
     }
   }
 
-  node "RaspberryPi2" {
+  node "RaspberryPi-2" {
       package "Tomcat BE" {
          interface HTTP_REST as rest
          rest - [REST Facade]
@@ -34,7 +34,7 @@ cloud "Home LAN" {
       }
   }
 
-node "RaspberryPi3" {
+node "RaspberryPi-3" {
      database "MySQL" as db {
         folder "SabiDB" {
           [sabi-prod-db]
