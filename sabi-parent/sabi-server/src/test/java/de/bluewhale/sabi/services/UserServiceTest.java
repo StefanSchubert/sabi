@@ -102,7 +102,7 @@ public class UserServiceTest {
         // Then
         assertNotNull(userToResultTo);
         assertNotNull(userToResultTo.getValue());
-        assertNotNull("New user was not issued with a token.", userToResultTo.getValue().getValidateToken());
+        assertNotNull("New user was not issued with a token.", userToResultTo.getValue().getxAuthToken());
     }
 
 
@@ -117,7 +117,7 @@ public class UserServiceTest {
         // Given
         UserTo userTo = new UserTo(TESTUSER_EMAIL, "NoPass123");
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
-        final String token = userToResultTo.getValue().getValidateToken();
+        final String token = userToResultTo.getValue().getxAuthToken();
 
         // When
         boolean isValidated = userService.validateUser(userTo.getEmail(), token);

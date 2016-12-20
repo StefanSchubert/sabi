@@ -1,11 +1,8 @@
 package de.bluewhale.sabi.persistence;
 
 import de.bluewhale.sabi.configs.AppConfig;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
 import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.services.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +12,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 
 /**
@@ -77,7 +73,7 @@ public class UserDAOTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("Test@bluewhale.de");
         userEntity.setPassword("Test123");
-        userEntity.setValidateToken("abc123");
+        userEntity.setxAuthToken("abc123");
         userEntity.setId(4711l);
 
         // when

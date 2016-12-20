@@ -1,5 +1,7 @@
 package de.bluewhale.sabi.model;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -26,7 +28,7 @@ public class UserTo implements Serializable {
 
     private String password;
 
-    private String validateToken;
+    private String xAuthToken;
 
     private String captchaCode;
 
@@ -53,16 +55,16 @@ public class UserTo implements Serializable {
     }
 
 
+    @ApiModelProperty(notes = "Users Email as ID", required = true)
     public String getEmail() {
         return email;
     }
-
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-
+    @ApiModelProperty(notes = "Users secret", required = true)
     public String getPassword() {
         return password;
     }
@@ -72,17 +74,17 @@ public class UserTo implements Serializable {
         this.password = password;
     }
 
-
-    public String getValidateToken() {
-        return validateToken;
+    @ApiModelProperty(notes = "If set, this token identifies the user and is to be sent as 'x-auth-token' within the request header on secured api calls.", required = false)
+    public String getxAuthToken() {
+        return xAuthToken;
     }
 
 
-    public void setValidateToken(String validateToken) {
-        this.validateToken = validateToken;
+    public void setxAuthToken(String validateToken) {
+        this.xAuthToken = validateToken;
     }
 
-
+    @ApiModelProperty(notes = "reserved - will be used for avoiding DOS-attacks in future", required = false)
     public String getCaptchaCode() {
         return captchaCode;
     }

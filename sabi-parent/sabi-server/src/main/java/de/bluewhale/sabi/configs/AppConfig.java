@@ -9,6 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  *
@@ -16,8 +17,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * Date: 04.09.15
  */
 @Configuration
-@ComponentScan(basePackages = "de.bluewhale.sabi")
 @EnableWebMvc
+@EnableSwagger2
+@ComponentScan(basePackages = "de.bluewhale.sabi")
 // @ImportResource( { "classpath*:/rest_config.xml" } )
 // @PropertySource({ "classpath:rest.properties", "classpath:web.properties" })
 // See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/PropertySource.html

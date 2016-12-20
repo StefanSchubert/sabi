@@ -155,7 +155,7 @@
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
+y
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -168,6 +168,27 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+
+        <!-- required by using SWAGGER -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml</groupId>
+            <artifactId>classmate</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>

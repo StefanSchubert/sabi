@@ -25,4 +25,18 @@ public class RESTConfiguration
     public org.springframework.web.servlet.ViewResolver viewResolver() {
         return new BeanNameViewResolver();
     }
+
+    /*
+
+    // NOT required! Through binding the dispatcher servlet of the WebAppInitializer
+    // to the "/api/*" for the rest controller, the swagger-ui can be handled.
+
+    @Bean
+    public ViewResolver internalResourceViewResolver() {
+        InternalResourceViewResolver bean = new InternalResourceViewResolver();
+        bean.setPrefix("/sabi/swagger");
+        bean.setSuffix("*.html");
+        return bean;
+    }*/
+
 }

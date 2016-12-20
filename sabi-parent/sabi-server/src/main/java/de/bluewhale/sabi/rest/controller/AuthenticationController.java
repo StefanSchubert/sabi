@@ -4,6 +4,7 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.services.UserService;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +28,17 @@ public class AuthenticationController {
     UserService userService;
 
 
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
+    @ApiOperation("login")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "email", value ="Users eMail as ID", required = true, dataType = "string"),
+            @ApiImplicitParam(name = "password", value ="Users password", required = true, dataType = "string")
+
+    })
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "Success - Extract user Token from Answer for further requests.", response = UserTo.class),
+            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = UserTo.class)
+    })
+    @RequestMapping(value = {"/login"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserTo> loginUser(@RequestParam(value = "email", required = true,
             defaultValue = "0") String email,
@@ -41,16 +52,16 @@ public class AuthenticationController {
         if (resultTo != null &&
             resultTo.getMessage() != null &&
             Message.CATEGORY.INFO.equals(resultTo.getMessage().getType())) {
-            userTo.setValidateToken(resultTo.getValue());
+            userTo.setxAuthToken(resultTo.getValue());
             return new ResponseEntity<UserTo>(userTo, HttpStatus.ACCEPTED);
         }
         else {
-            return new ResponseEntity<UserTo>(userTo, HttpStatus.CONFLICT);
+            return new ResponseEntity<UserTo>(userTo, HttpStatus.UNAUTHORIZED);
         }
     }
 
 
-    @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserTo> createUser(@RequestBody UserTo pUserTo) {
 

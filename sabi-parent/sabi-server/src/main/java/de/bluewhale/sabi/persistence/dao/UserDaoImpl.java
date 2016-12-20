@@ -44,7 +44,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
         final UserEntity userEntity = new UserEntity();
         userEntity.setEmail(pNewUser.getEmail());
         userEntity.setPassword(pPassword);
-        userEntity.setValidateToken(pNewUser.getValidateToken());
+        userEntity.setValidateToken(pNewUser.getxAuthToken());
         userEntity.setValidated(false);
 
         final UserEntity createdUser = create(userEntity);
@@ -86,7 +86,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
     private UserTo mapEntity2To(@NotNull final UserEntity pUserEntity) {
         // TODO: 14.11.2015 Introduce Dozer? If its transitive hibernate-core dependency makes no trouble with eclipslink. 
         final UserTo userTo = new UserTo(pUserEntity.getEmail(), pUserEntity.getPassword());
-        userTo.setValidateToken(pUserEntity.getValidateToken());
+        userTo.setxAuthToken(pUserEntity.getValidateToken());
         userTo.setValidated(pUserEntity.isValidated());
         userTo.setId(pUserEntity.getId());
         return userTo;

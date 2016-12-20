@@ -32,7 +32,7 @@ public class UserServiceImpl extends CommonService implements UserService {
     public ResultTo<UserTo> registerNewUser(@NotNull UserTo newUser) {
 
         String validateToken = generateValidationToken();
-        newUser.setValidateToken(validateToken);
+        newUser.setxAuthToken(validateToken);
         newUser.setValidated(false);
 
         UserTo createdUser = null;
@@ -89,7 +89,7 @@ public class UserServiceImpl extends CommonService implements UserService {
         boolean result = false;
         if (pEmail != null && pToken != null) {
             final UserTo userTo = dao.loadUserByEmail(pEmail);
-            if (pToken.equals(userTo.getValidateToken())) {
+            if (pToken.equals(userTo.getxAuthToken())) {
                 try {
                     dao.toggleValidationFlag(pEmail, true);
                     result = true;
