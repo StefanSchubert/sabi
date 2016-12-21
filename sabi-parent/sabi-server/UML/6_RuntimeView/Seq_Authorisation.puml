@@ -1,7 +1,24 @@
 @startuml
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+Client -> Sabi_WebAPP:Login(user,Pw)
+Sabi_WebAPP -> Sabi_REST_Facade:Login(user,Pw)
+Sabi_REST_Facade -> Sabi_Services:Login(user,Pw)
+Sabi_Services -> Sabi_REST_Facade:AuthToken
+Sabi_REST_Facade -> Sabi_WebAPP:AuthToken
+
+Sabi_WebAPP -> Sabi_WebAPP:personalize links with AuthToken
+note left: The WebAPP does not create\n long lasting sessions or\n sessions at all.\n Instead of a WebAPP it could\n be a native app.
+Client <- Sabi_WebAPP:personalized GUI
+
+...
+
+Client -> Sabi_WebAPP:somePostOrGetRequest(AuthToken)
+Sabi_WebAPP -> Sabi_REST_Facade:translatedRESTRequest(AuthToken)
+Sabi_REST_Facade -> Sabi_Services:handleRequest(AuthToken)
+Sabi_REST_Facade <- Sabi_Services:response(AuthToken)
+Sabi_WebAPP <- Sabi_REST_Facade:response(AuthToken)
+Sabi_WebAPP -> Sabi_WebAPP:render response and\n personalize links with AuthToken
+Client <- Sabi_WebAPP:personalized GUI
+
+
 @enduml
