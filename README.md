@@ -1,6 +1,6 @@
-# sabi
+# Seawater Aquarium Business Intelligence (sabi)
 
-Seawater Aquarium Business Intelligence (sabi) aims to gain insights from aquarium hobbyist for aquarium hobbyist according seawater measures.
+...aims to gain insights from aquarium hobbyist for aquarium hobbyist according seawater measures.
 
 ## Vision
 
@@ -35,6 +35,7 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 ### Common
 
 * JDK 1.8
+* openAPI (Swagger)
  
 ### Client site
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product
@@ -45,7 +46,8 @@ against sabi. However to start with this project involves a
 ### Server side
 * Spring 4
 * REST
-* JPA 2.x (Eclipselink)
+* JPA 2.x (Eclipselink
+* jUnit
 * Tomcat 8 (JDK8 - though not officially supported, will be with tomcat9)
 * MariaDB 10.x
 
