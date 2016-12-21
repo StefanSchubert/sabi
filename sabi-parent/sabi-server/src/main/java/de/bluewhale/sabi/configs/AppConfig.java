@@ -20,9 +20,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 @EnableSwagger2
 @ComponentScan(basePackages = "de.bluewhale.sabi")
-// @ImportResource( { "classpath*:/rest_config.xml" } )
-// @PropertySource({ "classpath:rest.properties", "classpath:web.properties" })
-// See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/PropertySource.html
 @PropertySource("classpath:server.properties")
 public class AppConfig {
 

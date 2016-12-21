@@ -28,7 +28,7 @@ public class AuthenticationController {
     UserService userService;
 
 
-    @ApiOperation("login")
+    @ApiOperation("/login")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "email", value ="Users eMail as ID", required = true, dataType = "string"),
             @ApiImplicitParam(name = "password", value ="Users password", required = true, dataType = "string")
