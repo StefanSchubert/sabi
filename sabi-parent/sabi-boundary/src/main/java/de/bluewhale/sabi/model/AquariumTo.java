@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.model;
 
 import java.io.Serializable;
@@ -9,13 +13,13 @@ import java.io.Serializable;
  */
 public class AquariumTo implements Serializable {
 
-    private long id;
+    private Long id;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -29,13 +33,13 @@ public class AquariumTo implements Serializable {
         this.size = size;
     }
 
-    private String sizeUnit;
+    private SizeUnit sizeUnit;
 
-    public String getSizeUnit() {
+    public SizeUnit getSizeUnit() {
         return sizeUnit;
     }
 
-    public void setSizeUnit(String sizeUnit) {
+    public void setSizeUnit(SizeUnit sizeUnit) {
         this.sizeUnit = sizeUnit;
     }
 

@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -16,6 +20,9 @@ public class UserEntity extends TracableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<AquariumEntity> aquariums;
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic

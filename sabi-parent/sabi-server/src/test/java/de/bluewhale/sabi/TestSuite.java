@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi;
 
 import de.bluewhale.sabi.persistence.UserDAOTest;
@@ -20,4 +24,6 @@ import org.junit.runners.Suite;
                      TankServiceTest.class,
                      LoginTest.class})
 public class TestSuite {
+
+    public static final String TESTUSER_EMAIL = "testservice@bluewhale.de";
 }

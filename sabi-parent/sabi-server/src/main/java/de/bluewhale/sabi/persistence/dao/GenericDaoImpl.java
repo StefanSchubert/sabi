@@ -1,10 +1,18 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.dao;
+
+import de.bluewhale.sabi.persistence.model.TracableEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -13,7 +21,7 @@ import java.util.Map;
  * User: Stefan Schubert <br />
  * Date: 06.09.15
  */
-public abstract class GenericDaoImpl<T> implements GenericDao<T> {
+public abstract class GenericDaoImpl<T extends TracableEntity> implements GenericDao<T> {
 
     @PersistenceContext(unitName = "sabi")
     protected EntityManager em;
@@ -33,14 +41,15 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
         // queryString.append(this.getQueryClauses(params, null));
 
         final Query query = this.em.createQuery("SELECT count(o) from " + type.getSimpleName() + " o ");
-
         return (Long) query.getSingleResult();
 
     }
 
     @Override
     public T create(final T t) {
+        t.setCreatedOn(new Timestamp(new Date().getTime()));
         this.em.persist(t);
+        em.flush(); // because we want to return the auto generated id.
         return t;
     }
 
@@ -56,6 +65,7 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
 
     @Override
     public T update(final T t) {
+        t.setLastmodOn(new Timestamp(new Date().getTime()));
         return this.em.merge(t);
     }
 }

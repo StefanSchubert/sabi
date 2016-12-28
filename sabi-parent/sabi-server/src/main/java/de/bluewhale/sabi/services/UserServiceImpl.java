@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.BusinessException;
@@ -19,7 +23,6 @@ import java.util.Random;
  *
  * User: Stefan Schubert
  * Date: 29.08.15
- * TODO STS (15.11.2015): Consider refactoring the whole user management
  */
 @Service
 public class UserServiceImpl extends CommonService implements UserService {
@@ -108,7 +111,7 @@ public class UserServiceImpl extends CommonService implements UserService {
         if (userTo != null) {
             if (userTo.getPassword().equals(password)) {
                 String accessToken = generateAccessToken(pEmail);
-                final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEDED, pEmail);
+                final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
                 return new ResultTo<String>(accessToken, successMessage);
             } else {
                 final Message errorMsg = Message.error(AuthMessageCodes.WRONG_PASSWORD, pEmail);

@@ -1,6 +1,15 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
+import de.bluewhale.sabi.exception.Message.CATEGORY;
+import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.SizeUnit;
+import de.bluewhale.sabi.model.UserTo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.fail;
+import static de.bluewhale.sabi.TestSuite.TESTUSER_EMAIL;
+import static org.junit.Assert.*;
 
 
 /**
@@ -23,10 +33,13 @@ import static org.junit.Assert.fail;
 public class TankServiceTest {
 // ------------------------------ FIELDS ------------------------------
 
-    private static final String TESTUSER_EMAIL = "testservice@bluewhale.de";
+
 
     @Autowired
     TankService tankService;
+
+    @Autowired
+    UserService userService;
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -46,11 +59,27 @@ public class TankServiceTest {
     @Transactional
     public void testRegisterNewTank() throws Exception {
         // Given
+        final String clearTextPassword = "NoPass123";
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
+        ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
+        UserTo registeredUser = userToResultTo.getValue();
+
+        AquariumTo aquariumTo = new AquariumTo();
+        aquariumTo.setDescription("Test Tank");
+        aquariumTo.setSize(40);
+        aquariumTo.setSizeUnit(SizeUnit.LITER);
 
         // When
+        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
 
         // Then
-        fail("Complete implementation needed.");
+        assertNotNull("ResultObject must not be empty",aquariumToResultTo);
+        AquariumTo aquarium = aquariumToResultTo.getValue();
+        assertNotNull("ResultObject had no Aquarium inside!",aquarium);
+        assertNotNull("Tank ID was not provided!",aquarium.getId());
+        assertEquals("User Assignment missing.",registeredUser.getId(), aquarium.getUserId());
+        assertEquals("Wrong message type.",CATEGORY.INFO, aquariumToResultTo.getMessage().getType());
+
     }
 
 

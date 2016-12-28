@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
@@ -13,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import static de.bluewhale.sabi.TestSuite.TESTUSER_EMAIL;
 import static org.junit.Assert.*;
 
 
@@ -26,8 +31,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = AppConfig.class)
 public class UserServiceTest {
 // ------------------------------ FIELDS ------------------------------
-
-    private static final String TESTUSER_EMAIL = "testservice@bluewhale.de";
 
     @Autowired
     UserService userService;
@@ -72,7 +75,7 @@ public class UserServiceTest {
     public void testRegisterExistingUser() throws Exception {
         // Given
         UserTo userTo1 = new UserTo(TESTUSER_EMAIL, "NoPass123");
-        final ResultTo<UserTo> firstuserResultTo = userService.registerNewUser(userTo1);
+        final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
         UserTo userTo2 = new UserTo(TESTUSER_EMAIL, "NoPass123");
@@ -102,6 +105,7 @@ public class UserServiceTest {
         // Then
         assertNotNull(userToResultTo);
         assertNotNull(userToResultTo.getValue());
+        assertNotNull("User did not got an Id!",userToResultTo.getValue().getId());
         assertNotNull("New user was not issued with a token.", userToResultTo.getValue().getxAuthToken());
     }
 
@@ -169,7 +173,7 @@ public class UserServiceTest {
         final Message message = signInResult.getMessage();
         assertNotNull(message);
         assertNotNull(message.getCode());
-        assertEquals(message.getCode(), AuthMessageCodes.SIGNIN_SUCCEDED);
+        assertEquals(message.getCode(), AuthMessageCodes.SIGNIN_SUCCEEDED);
     }
 
 

@@ -1,4 +1,10 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.model;
+
+import de.bluewhale.sabi.model.SizeUnit;
 
 import javax.persistence.*;
 
@@ -15,15 +21,15 @@ public class AquariumEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private long id;
+    private Long id;
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -39,15 +45,15 @@ public class AquariumEntity extends TracableEntity {
         this.size = size;
     }
 
-    private String sizeUnit;
+    private SizeUnit sizeUnit;
 
     @javax.persistence.Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Basic
-    public String getSizeUnit() {
+    @Enumerated(EnumType.STRING)
+    public SizeUnit getSizeUnit() {
         return sizeUnit;
     }
 
-    public void setSizeUnit(String sizeUnit) {
+    public void setSizeUnit(SizeUnit sizeUnit) {
         this.sizeUnit = sizeUnit;
     }
 
@@ -74,16 +80,22 @@ public class AquariumEntity extends TracableEntity {
         this.active = active;
     }
 
-    private Long userId;
 
-    @javax.persistence.Column(name = "user_id", nullable = true, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
-    public Long getUserId() {
-        return userId;
+    private UserEntity user;
+
+
+    /**
+     *
+     * @return
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
 
@@ -100,9 +112,8 @@ public class AquariumEntity extends TracableEntity {
         if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
         if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (sizeUnit != null ? !sizeUnit.equals(that.sizeUnit) : that.sizeUnit != null) return false;
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null)
-            return false;
+        if (user != null ? !user.equals(that.user) : that.user != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
 
         return true;
     }
@@ -114,7 +125,7 @@ public class AquariumEntity extends TracableEntity {
         result = 31 * result + (sizeUnit != null ? sizeUnit.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (active != null ? active.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
         result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
         result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
         return result;

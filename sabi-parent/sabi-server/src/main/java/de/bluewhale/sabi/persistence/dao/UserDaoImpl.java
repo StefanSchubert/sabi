@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016. by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.dao;
 
 import de.bluewhale.sabi.exception.BusinessException;
@@ -49,7 +53,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
 
         final UserEntity createdUser = create(userEntity);
         // Backward Mapping if we have dozer?
-        pNewUser.setId(userEntity.getId());
+        pNewUser.setId(createdUser.getId());
         pNewUser.setPassword(userEntity.getPassword());
         return pNewUser;
     }
