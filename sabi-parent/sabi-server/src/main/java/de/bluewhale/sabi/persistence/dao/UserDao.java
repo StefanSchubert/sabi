@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2016 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.dao;
 
-import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.exception.BusinessException;
+import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +25,7 @@ public interface UserDao extends GenericDao<UserEntity> {
      * @param email
      * @return
      */
-    public UserTo loadUserByEmail(@NotNull  String email);
+    UserTo loadUserByEmail(@NotNull String email);
 
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2016 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -14,6 +14,11 @@ import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static de.bluewhale.sabi.util.Mapper.mapAquariumEntity2To;
+import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 
 /**
  *
@@ -45,20 +50,61 @@ public class TankServiceImpl extends CommonService implements TankService {
         } else {
             UserEntity userEntity = userDao.find(pRegisteredUser.getId());
             AquariumEntity aquariumEntity = new AquariumEntity();
-            aquariumEntity.setSizeUnit(pAquariumTo.getSizeUnit());
-            aquariumEntity.setSize(pAquariumTo.getSize());
-            aquariumEntity.setDescription(pAquariumTo.getDescription());
+            mapAquariumTo2Entity(pAquariumTo, aquariumEntity);
             aquariumEntity.setUser(userEntity);
-            aquariumEntity.setActive(true);
+            aquariumEntity.setActive(true); // default for new ones
 
             AquariumEntity createdAquariumEntity = aquariumDao.create(aquariumEntity);
-            createdAquariumTo = pAquariumTo;
-            createdAquariumTo.setId(createdAquariumEntity.getId());
-            createdAquariumTo.setUserId(createdAquariumEntity.getUser().getId());
+
+            /*
+
+            // userEntity.getAquariums().add(createdAquariumEntity);
+
+            Does not work. OneToMany misconfigured? The Collection on Users side is empty!
+            Trying to set the relation ship from this side fails. JPA seems to expect a n:m for bidirectional navigation then:
+
+            Internal Exception: java.sql.SQLSyntaxErrorException: Table 'sabi.users_aquarium' doesn't exist
+            Error Code: 1146
+            Call: INSERT INTO users_aquarium (aquariums_ID, UserEntity_ID) VALUES (?, ?)
+	        bind => [2 parameters bound]
+            Query: DataModifyQuery(name="aquariums" sql="INSERT INTO users_aquarium (aquariums_ID, UserEntity_ID) VALUES (?, ?)")
+             */
+
+            createdAquariumTo = new AquariumTo();
+            mapAquariumEntity2To(createdAquariumEntity, createdAquariumTo);
             message = Message.info(TankMessageCodes.CREATE_SUCCEEDED, aquariumEntity.getId());
         }
 
         ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(createdAquariumTo, message);
         return aquariumToResultTo;
     }
+
+
+    @Override
+    public List<AquariumTo> listTanks(final Long pUserId) {
+
+        List<AquariumTo> tankList = aquariumDao.findUsersTanks(pUserId);
+
+        /*
+        Bidirectional side does not work. Wrong JPA Setup?
+
+        UserEntity userEntity = userDao.find(pUserId);
+        if (userEntity != null) {
+            List<AquariumEntity> aquariumEntities = userEntity.getAquariums();
+            for (AquariumEntity aquariumEntity : aquariumEntities) {
+                AquariumTo aquariumTo = new AquariumTo();
+                mapAquariumEntity2To(aquariumEntity,aquariumTo);
+                tankList.add(aquariumTo);
+            }
+        }
+
+         */
+        return tankList;
+    }
+
+
+
+
+
+
 }

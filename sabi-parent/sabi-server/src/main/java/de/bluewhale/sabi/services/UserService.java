@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2016 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,6 +22,7 @@ public interface UserService {
      * only if the message is of {@link CATEGORY#INFO}
      */
     @NotNull
+    @Transactional
     ResultTo<UserTo> registerNewUser(@NotNull UserTo newUser);
 
     /**
@@ -24,6 +30,7 @@ public interface UserService {
      *
      * @param pEmail unique business identifier of the user
      */
+    @Transactional
     void unregisterUserAndClearPersonalData(@NotNull String pEmail);
 
     /**
@@ -33,6 +40,7 @@ public interface UserService {
      * @param pToken
      * @return validation status, false if validation failed, true otherwise
      */
+    @Transactional
     boolean validateUser(@NotNull String pEmail, @NotNull String pToken);
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2016 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -18,46 +18,33 @@ import javax.persistence.*;
 @Table(name = "aquarium", schema = "sabi")
 @Entity
 public class AquariumEntity extends TracableEntity {
+// ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     private Integer size;
-
-    @javax.persistence.Column(name = "size", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Basic
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
 
     private SizeUnit sizeUnit;
 
-    @javax.persistence.Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Enumerated(EnumType.STRING)
-    public SizeUnit getSizeUnit() {
-        return sizeUnit;
-    }
-
-    public void setSizeUnit(SizeUnit sizeUnit) {
-        this.sizeUnit = sizeUnit;
-    }
-
     private String description;
+
+    private Boolean active;
+
+
+    private UserEntity user;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    @javax.persistence.Column(name = "active", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
     @javax.persistence.Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     @Basic
@@ -69,27 +56,42 @@ public class AquariumEntity extends TracableEntity {
         this.description = validateToken;
     }
 
-    private Boolean active;
-
-    @javax.persistence.Column(name = "active", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
-    public Boolean getActive() {
-        return active;
+    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
+    @Basic
+    public Long getId() {
+        return id;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setId(Long id) {
+        this.id = id;
     }
 
+    @javax.persistence.Column(name = "size", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
+    @Basic
+    public Integer getSize() {
+        return size;
+    }
 
-    private UserEntity user;
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 
+    @javax.persistence.Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
+    @Enumerated(EnumType.STRING)
+    public SizeUnit getSizeUnit() {
+        return sizeUnit;
+    }
+
+    public void setSizeUnit(SizeUnit sizeUnit) {
+        this.sizeUnit = sizeUnit;
+    }
 
     /**
-     *
+     * Owner-side of the relationship.
      * @return
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     public UserEntity getUser() {
         return user;
     }
@@ -98,6 +100,7 @@ public class AquariumEntity extends TracableEntity {
         this.user = user;
     }
 
+// ------------------------ CANONICAL METHODS ------------------------
 
     @Override
     public boolean equals(Object o) {

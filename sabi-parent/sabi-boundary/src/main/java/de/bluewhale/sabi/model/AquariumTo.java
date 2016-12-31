@@ -1,8 +1,10 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2016 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.model;
+
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -15,6 +17,7 @@ public class AquariumTo implements Serializable {
 
     private Long id;
 
+    @ApiModelProperty(notes = "ID this object for further reference.", required = false)
     public Long getId() {
         return id;
     }
@@ -25,6 +28,7 @@ public class AquariumTo implements Serializable {
 
     private Integer size;
 
+    @ApiModelProperty(notes = "Tanks volume", required = true)
     public Integer getSize() {
         return size;
     }
@@ -35,6 +39,7 @@ public class AquariumTo implements Serializable {
 
     private SizeUnit sizeUnit;
 
+    @ApiModelProperty(notes = "Unit of tanks volume size.", required = true)
     public SizeUnit getSizeUnit() {
         return sizeUnit;
     }
@@ -45,6 +50,7 @@ public class AquariumTo implements Serializable {
 
     private String description;
 
+    @ApiModelProperty(notes = "Description or Name of the tank, so the user can distinguish them.", required = true)
     public String getDescription() {
         return description;
     }
@@ -92,14 +98,4 @@ public class AquariumTo implements Serializable {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (size != null ? size.hashCode() : 0);
-        result = 31 * result + (sizeUnit != null ? sizeUnit.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (active != null ? active.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        return result;
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2016 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -10,15 +10,20 @@ import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.model.UserTo;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static de.bluewhale.sabi.TestSuite.TESTUSER_EMAIL;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.*;
 
 
@@ -30,6 +35,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = AppConfig.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TankServiceTest {
 // ------------------------------ FIELDS ------------------------------
 
@@ -82,16 +88,35 @@ public class TankServiceTest {
 
     }
 
-
-    @Test
-    @Transactional
-    public void testFetchAllTanks() throws Exception {
+   @Test
+   @Transactional
+    public void testListUsersTanks() throws Exception {
         // Given
+        final String clearTextPassword = "NoPass123";
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
+        ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
+        UserTo registeredUser = userToResultTo.getValue();
 
-        // When
+        AquariumTo aquariumTo1 = new AquariumTo();
+        aquariumTo1.setDescription("Small Test Tank");
+        aquariumTo1.setSize(40);
+        aquariumTo1.setSizeUnit(SizeUnit.LITER);
+
+        AquariumTo aquariumTo2 = new AquariumTo();
+        aquariumTo2.setDescription("Big Test Tank");
+        aquariumTo2.setSize(120);
+        aquariumTo2.setSizeUnit(SizeUnit.LITER);
+
+       ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo1, registeredUser);
+       ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser);
+
+       // When
+        List<AquariumTo> usersAquariums =  tankService.listTanks(registeredUser.getId());
 
         // Then
-        fail("Complete implementation needed.");
+        assertNotNull(usersAquariums);
+        assertEquals("Persisted Testdata?",2, usersAquariums.size());
+        assertThat(usersAquariums, hasItems(aquariumTo1,aquariumTo2));
     }
 
 
