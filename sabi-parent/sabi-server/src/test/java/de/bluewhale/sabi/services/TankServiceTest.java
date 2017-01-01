@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static de.bluewhale.sabi.TestSuite.TESTUSER_EMAIL;
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.*;
 
 
@@ -42,10 +41,10 @@ public class TankServiceTest {
 
 
     @Autowired
-    TankService tankService;
+    private TankService tankService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -65,26 +64,26 @@ public class TankServiceTest {
     @Transactional
     public void testRegisterNewTank() throws Exception {
         // Given
-        final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
-        ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
-        UserTo registeredUser = userToResultTo.getValue();
+        String clearTextPassword = "NoPass123";
+        final UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
+        final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
+        final UserTo registeredUser = userToResultTo.getValue();
 
-        AquariumTo aquariumTo = new AquariumTo();
+        final AquariumTo aquariumTo = new AquariumTo();
         aquariumTo.setDescription("Test Tank");
         aquariumTo.setSize(40);
         aquariumTo.setSizeUnit(SizeUnit.LITER);
 
         // When
-        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
 
         // Then
         assertNotNull("ResultObject must not be empty",aquariumToResultTo);
-        AquariumTo aquarium = aquariumToResultTo.getValue();
+        final AquariumTo aquarium = aquariumToResultTo.getValue();
         assertNotNull("ResultObject had no Aquarium inside!",aquarium);
         assertNotNull("Tank ID was not provided!",aquarium.getId());
         assertEquals("User Assignment missing.",registeredUser.getId(), aquarium.getUserId());
-        assertEquals("Wrong message type.",CATEGORY.INFO, aquariumToResultTo.getMessage().getType());
+        assertEquals("Wrong message type.", CATEGORY.INFO, aquariumToResultTo.getMessage().getType());
 
     }
 
@@ -116,7 +115,8 @@ public class TankServiceTest {
         // Then
         assertNotNull(usersAquariums);
         assertEquals("Persisted Testdata?",2, usersAquariums.size());
-        assertThat(usersAquariums, hasItems(aquariumTo1,aquariumTo2));
+        assertTrue(usersAquariums.get(0).getDescription() == aquariumTo1.getDescription());
+        assertTrue(usersAquariums.get(1).getDescription() == aquariumTo2.getDescription());
     }
 
 
