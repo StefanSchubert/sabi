@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2016 by Stefan Schubert
+  ~ Copyright (c) 2017 by Stefan Schubert
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -16,14 +16,30 @@
 
     <artifactId>sabi-server</artifactId>
     <packaging>war</packaging>
-    <description>Backend consistent of Internal CRUD Services which will be used by the REST service orchestration</description>
+    <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration</description>
 
     <dependencies>
+
+        <!-- SABI Modules -->
 
         <dependency>
             <groupId>de.bluewhale</groupId>
             <artifactId>sabi-boundary</artifactId>
             <version>${sabi.version}</version>
+        </dependency>
+
+        <!-- used Spring Framework -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
@@ -40,26 +56,6 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
-        <!-- Jackson JSON Processor -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.6.2</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -70,6 +66,36 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!--        &lt;!&ndash; AUTOWIRING IS NOT WORKING WITH IT SO MAYBE LATER
+             So maby later...&ndash;&gt;
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>1.9.0.RELEASE</version>
+        </dependency>-->
+
+        <!-- Standard Servlet Stuff -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- REST Utils like  Jackson JSON Processor -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+
+        <!-- used JPA Configuration / Implementation -->
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -77,8 +103,6 @@
             <version>${hibernate.validator.version}</version>
         </dependency>
 
-
-        <!-- eclipselink -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
@@ -97,33 +121,12 @@
             <version>${persistence.version}</version>
         </dependency>
 
-        <!-- JPA 2.0 -->
- <!--       <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <scope>compile</scope>
-            <version>1.0.1.Final</version>
-        </dependency>
--->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-instrument</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>1.2.0</version>
         </dependency>
 
-<!--        &lt;!&ndash; AUTOWIRING IS NOT WORKING WITH IT SO MAYBE LATER
-             So maby later...&ndash;&gt;
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>1.9.0.RELEASE</version>
-        </dependency>-->
 
         <!-- Encryption libs -->
         <dependency>
@@ -132,7 +135,7 @@
             <version>1.9.2</version>
         </dependency>
 
-
+        <!-- Common Stuff -->
         <!-- TODO StS: Logging-Strategy slf4j? -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -140,41 +143,7 @@
             <version>1.2</version>
         </dependency>
 
-
-        <!-- Test dependencies -->
-
-        <!--
-            TODO: Ggf. hsqldb zum test nehmen, erfordert eigene PersistenceJPAConfig
-
-            <dependency>
-                   <groupId>org.hsqldb</groupId>
-                   <artifactId>hsqldb</artifactId>
-                   <version>2.3.3</version>
-                   <scope>test</scope>
-               </dependency>
-               -->
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-
-        <!-- required by using SWAGGER -->
+        <!-- REST API-Doc using SWAGGER -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
@@ -214,6 +183,31 @@
             <artifactId>classmate</artifactId>
         </dependency>
 
+        <!-- Test dependencies -->
+
+        <!--
+            TODO: Ggf. hsqldb zum test nehmen, erfordert eigene PersistenceJPAConfig
+
+            <dependency>
+                   <groupId>org.hsqldb</groupId>
+                   <artifactId>hsqldb</artifactId>
+                   <version>2.3.3</version>
+                   <scope>test</scope>
+               </dependency>
+               -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -272,7 +266,6 @@
             </plugin>
 -->
         </plugins>
-
     </build>
 
 </project>

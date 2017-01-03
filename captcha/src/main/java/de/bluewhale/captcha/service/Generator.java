@@ -1,12 +1,16 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.captcha.service;
 
 import de.bluewhale.captcha.model.CaptchaChallengeTo;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-
 
 
 /**
@@ -15,21 +19,20 @@ import static java.lang.Boolean.TRUE;
  * If really required this is the part which needs to be more intelligent, meaning that
  * the right answer should not be probable throw brute-force and not
  * recognizable by AI approaches.
- *
+ * <p>
  * The current implementation contains commonly shared answers, where only
  * the question is being localized.
  *
  * @author Stefan Schubert
  */
+@Service
 public class Generator {
     private static final int TOKEN_SIZE = 5;
     // ------------------------------ FIELDS ------------------------------
-
-    // question -> AnswerSet ->
-    static Set<ChallengeData> dataSet = new HashSet<>();
-
     private static final Random random = new Random();
     private static final String CHARS = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ234567890!@#$";
+    // question -> AnswerSet ->
+    static Set<ChallengeData> dataSet = new HashSet<>();
 
 
 // -------------------------- STATIC METHODS --------------------------
@@ -38,29 +41,28 @@ public class Generator {
         // todo This pattern could be dynamically generated on the fly
         // as this is nonsense as the source is open...but for the start it's fine
         ChallengeData challenge1 = new ChallengeData();
-        challenge1.questionMap.put(Locale.GERMAN,"Was passt nicht?");
-        challenge1.questionMap.put(Locale.ENGLISH,"Which option does not fit");
-        challenge1.answerMap.put(FALSE, "A1-B2-C2D");
-        challenge1.answerMap.put(FALSE, "K8-V4-W7H");
-        challenge1.answerMap.put(TRUE, "J6-N8-9T9");
-        challenge1.answerMap.put(FALSE, "V1-J3-Q2P");
+        challenge1.questionMap.put(Locale.GERMAN, "Was passt nicht?");
+        challenge1.questionMap.put(Locale.ENGLISH, "Which option does not fit");
+        challenge1.answerMap.put("A1-B2-C2D", FALSE);
+        challenge1.answerMap.put("K8-V4-W7H", FALSE);
+        challenge1.answerMap.put("J6-N8-9T9", TRUE);
+        challenge1.answerMap.put("V1-J3-Q2P", FALSE);
 
-        ChallengeData challenge2= new ChallengeData();
-        challenge2.questionMap.put(Locale.GERMAN,"Was passt nicht?");
-        challenge2.questionMap.put(Locale.ENGLISH,"Which option does not fit");
-        challenge2.answerMap.put(FALSE, "Saturn");
-        challenge2.answerMap.put(FALSE, "Jupiter");
-        challenge2.answerMap.put(TRUE, "Moon");
-        challenge2.answerMap.put(FALSE, "Venus");
+        ChallengeData challenge2 = new ChallengeData();
+        challenge2.questionMap.put(Locale.GERMAN, "Was passt nicht?");
+        challenge2.questionMap.put(Locale.ENGLISH, "Which option does not fit");
+        challenge2.answerMap.put("Saturn", FALSE);
+        challenge2.answerMap.put("Jupiter", FALSE);
+        challenge2.answerMap.put("Moon", TRUE);
+        challenge2.answerMap.put("Venus", FALSE);
 
-        ChallengeData challenge3= new ChallengeData();
-        challenge3.questionMap.put(Locale.GERMAN,"Welcher Wert muss gering gehalten werden?");
-        challenge3.questionMap.put(Locale.ENGLISH,"Which Value is to be minimized?");
-        challenge3.answerMap.put(TRUE, "PO4");
-        challenge3.answerMap.put(FALSE, "Ca");
-        challenge3.answerMap.put(FALSE, "Mg");
-        challenge3.answerMap.put(FALSE, "NO3");
-
+        ChallengeData challenge3 = new ChallengeData();
+        challenge3.questionMap.put(Locale.GERMAN, "Welcher Wert muss gering gehalten werden?");
+        challenge3.questionMap.put(Locale.ENGLISH, "Which Value is to be minimized?");
+        challenge3.answerMap.put("PO4", TRUE);
+        challenge3.answerMap.put("Ca", FALSE);
+        challenge3.answerMap.put("Mg", FALSE);
+        challenge3.answerMap.put("NO3", FALSE);
 
         dataSet.add(challenge1);
         dataSet.add(challenge2);
@@ -72,6 +74,7 @@ public class Generator {
     /**
      * Generates a challenge set suitable for requested language.
      * If the language code is not available "en" will serve as default.
+     *
      * @param pLanguage 2char language code
      * @return Challenge object, consisting of the question and a set of answers and their one-pass submission key.
      */
@@ -89,24 +92,24 @@ public class Generator {
 
         try {
             locale = new Locale(pLanguage);
-        }
-        catch (Exception pE) {
+            locale.getISO3Language(); // semantic check
+        } catch (MissingResourceException pE) {
             locale = Locale.ENGLISH;
         }
         captchaChallengeTo.setLanguage(locale.getLanguage());
-        captchaChallengeTo.setQuestion(questionMap.get(locale.getLanguage()));
+        captchaChallengeTo.setQuestion(questionMap.get(locale));
 
-        // As for the answer map, we generate answer tokens an for th eright one
+        // As for the answer map, we generate answer tokens and for the right one
         // we register it with the ValidationCache.
         HashMap<String, String> answerMap = new HashMap<>(challengeData.answerMap.size());
-        Set<Map.Entry<Boolean, String>> answers = challengeData.answerMap.entrySet();
-        for (Map.Entry<Boolean, String> answer : answers) {
+        Set<Map.Entry<String, Boolean>> answers = challengeData.answerMap.entrySet();
+        for (Map.Entry<String, Boolean> answer : answers) {
 
             String token = createToken(TOKEN_SIZE);
-            if (answer.getKey().equals(TRUE)) {
+            if (answer.getValue().equals(TRUE)) {
                 ValidationCache.registerToken(token);
             }
-            answerMap.put(token, answer.getValue());
+            answerMap.put(token, answer.getKey());
         }
         captchaChallengeTo.setAnswers(answerMap);
 
@@ -125,12 +128,12 @@ public class Generator {
 // -------------------------- INNER CLASSES --------------------------
 
     static private class ChallengeData {
-        protected Map<Locale,String> questionMap;
-        protected Map<Boolean, String> answerMap; // the one marked with true is the right answer.
+        protected Map<Locale, String> questionMap;
+        protected Map<String, Boolean> answerMap; // the one marked with true is the right answer.
 
         public ChallengeData() {
             this.questionMap = new HashMap<Locale, String>();
-            this.answerMap = new HashMap<Boolean, String>();
+            this.answerMap = new HashMap<String, Boolean>();
         }
     }
 }

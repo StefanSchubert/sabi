@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.captcha.rest;
 
 import de.bluewhale.captcha.model.CaptchaChallengeTo;
@@ -24,7 +28,7 @@ public class CaptchaController {
     Generator generator;
 
 
-    @RequestMapping(value = "/generate", method = RequestMethod.GET)
+    @RequestMapping(value = "/challenge", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<CaptchaChallengeTo> getNewCaptchaChallenge(@RequestParam(value = "language",
             required = true, defaultValue = "en") String language) {

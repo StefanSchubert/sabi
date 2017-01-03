@@ -1,14 +1,19 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.captcha.service;
 
 import de.bluewhale.captcha.model.CaptchaChallengeTo;
 import org.junit.Test;
 
-import static junit.framework.TestCase.fail;
+import java.util.Locale;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * TODO STS: Add Description here...
+ * Functional and quality tests of the captcha controller
  *
  * @author Stefan Schubert
  */
@@ -16,9 +21,9 @@ public class GeneratorTest {
 
 
     @Test
-    public void provideChallengeForDefaultLanguage() throws Exception {
+    public void provideChallengeForDefaultFallbackLanguage() throws Exception {
         Generator generator = new Generator();
-        CaptchaChallengeTo captchaChallengeTo = generator.provideChallengeFor("XX");
+        CaptchaChallengeTo captchaChallengeTo = generator.provideChallengeFor("unknown");
 
         assertNotNull("Generator did not delivered a captcha", captchaChallengeTo);
         assertNotNull("Generator did not delivered a captcha question", captchaChallengeTo.getQuestion());
@@ -31,22 +36,17 @@ public class GeneratorTest {
     @Test
     public void testChallengeForRequestedLanguage() throws Exception {
         // Given
+        Generator generator = new Generator();
 
         // When
+        CaptchaChallengeTo captchaChallengeTo = generator.provideChallengeFor(Locale.GERMAN.getLanguage());
 
         // Then
-        fail("Complete implementation needed.");
+        assertNotNull("Generator did not delivered a captcha", captchaChallengeTo);
+        assertNotNull("Generator did not delivered a captcha question", captchaChallengeTo.getQuestion());
+        assertNotNull("Generator did not delivered captcha answer options", captchaChallengeTo.getAnswers());
+        assertNotNull("Generator did not specified the used language", captchaChallengeTo.getLanguage());
+        assertEquals("Did not get my language", "de", captchaChallengeTo.getLanguage());
     }
 
-
-    @Test
-    public void testExpireTokens() throws Exception {
-        // Given
-        ValidationCache.setTTL(500l); // 500ms
-
-        // When requesting tokes 1000ms long
-
-        // Then the cache size must be cleand up, meaning that it must contain less than "generated" tokens.
-        fail("Complete implementation needed.");
-    }
 }

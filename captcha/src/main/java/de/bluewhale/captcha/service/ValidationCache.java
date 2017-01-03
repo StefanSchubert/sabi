@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.captcha.service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -9,13 +16,17 @@ import java.util.*;
  *
  * @author Stefan Schubert
  */
+@Service
 public class ValidationCache {
 // ------------------------------ FIELDS ------------------------------
 
+    @Value("${cachesize.cleanup.threshold}")
+    public static long CLEANUP_THRESHOLD;
+
     static Map<String,Date> tokenCache = new HashMap<String, Date>(100);
 
-
-    static long TTL = 45 * 1000; // 45 seconds (in millis)
+    @Value("${token.TTL}")
+    static long TTL; // = 45 * 1000; // 45 seconds (in millis)
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -27,14 +38,18 @@ public class ValidationCache {
         ValidationCache.TTL = pTTL;
     }
 
-    public static boolean knowsCode(final String pCaptchaChoice) {
-        // TODO STS (21.06.16): Impl me
-        throw new UnsupportedOperationException("boolean knowsCode([pCaptchaChoice])");
+    public static void invalidateCode(final String pCaptchaChoice) {
+        if (knowsCode(pCaptchaChoice)) {
+            tokenCache.remove(pCaptchaChoice);
+        }
     }
 
-    public static void invalidateCode(final String pCaptchaChoice) {
-        // TODO STS (21.06.16): Impl Me
-        throw new UnsupportedOperationException("void invalidateCode([pCaptchaChoice])");
+    public static boolean knowsCode(final String pCaptchaChoice) {
+        return tokenCache.containsKey(pCaptchaChoice);
+    }
+
+    public static long getTTL() {
+        return ValidationCache.TTL;
     }
 
     /**
@@ -55,7 +70,7 @@ public class ValidationCache {
     private static void cleanupTokenBase() {
         int size = tokenCache.size();
         List<String> expiredTokens = new ArrayList<>();
-        if (size > 100) {
+        if (size > CLEANUP_THRESHOLD) {
             long now = new Date().getTime();
             synchronized (tokenCache) {
                 for (Map.Entry<String, Date> entry : tokenCache.entrySet()) {
@@ -69,5 +84,9 @@ public class ValidationCache {
                 }
             }
         }
+    }
+
+    public static void setCleanupThreshold(long cleanupThreshold) {
+        ValidationCache.CLEANUP_THRESHOLD = cleanupThreshold;
     }
 }
