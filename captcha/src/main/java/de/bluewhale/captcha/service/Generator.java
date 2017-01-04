@@ -38,7 +38,7 @@ public class Generator {
 // -------------------------- STATIC METHODS --------------------------
 
     static {
-        // todo This pattern could be dynamically generated on the fly
+        // This pattern challenge1 could be dynamically generated on the fly
         // as this is nonsense as the source is open...but for the start it's fine
         ChallengeData challenge1 = new ChallengeData();
         challenge1.questionMap.put(Locale.GERMAN, "Was passt nicht?");
@@ -62,11 +62,75 @@ public class Generator {
         challenge3.answerMap.put("PO4", TRUE);
         challenge3.answerMap.put("Ca", FALSE);
         challenge3.answerMap.put("Mg", FALSE);
-        challenge3.answerMap.put("NO3", FALSE);
+        challenge3.answerMap.put("NO3", FALSE);   
+        
+        ChallengeData challenge4 = new ChallengeData();
+        challenge4.questionMap.put(Locale.GERMAN, "Was ist das Ergebnis?");
+        challenge4.questionMap.put(Locale.ENGLISH, "Which is the outcome?");
+        challenge4.answerMap.put("+-0", TRUE);
+        challenge4.answerMap.put("#-#", FALSE);
+        challenge4.answerMap.put("+##", FALSE);
+        challenge4.answerMap.put("##0", FALSE);
+
+        ChallengeData challenge5 = new ChallengeData();
+        challenge5.questionMap.put(Locale.GERMAN, "Was passt nicht?");
+        challenge5.questionMap.put(Locale.ENGLISH, "Which option does not fit");
+        challenge5.answerMap.put(":-)", FALSE);
+        challenge5.answerMap.put(";-)", FALSE);
+        challenge5.answerMap.put(":-(", TRUE);
+        challenge5.answerMap.put(":-x", FALSE);
+
+        ChallengeData challenge6 = new ChallengeData();
+        challenge6.questionMap.put(Locale.GERMAN, "Platform 9 3/4 was passt dazu am besten?");
+        challenge6.questionMap.put(Locale.ENGLISH, "Platform 9 3/4 which association fits best?");
+        challenge6.answerMap.put("@@@@@", FALSE);
+        challenge6.answerMap.put("#####", FALSE);
+        challenge6.answerMap.put("+++++", FALSE);
+        challenge6.answerMap.put("=====", TRUE);
+
+        ChallengeData challenge7 = new ChallengeData();
+        challenge7.questionMap.put(Locale.GERMAN, "Was würdest du vermehren?");
+        challenge7.questionMap.put(Locale.ENGLISH, "Which one would you increase?");
+        challenge7.answerMap.put("@@@", FALSE);
+        challenge7.answerMap.put("§§§", FALSE);
+        challenge7.answerMap.put("%%%", FALSE);
+        challenge7.answerMap.put("$$$", TRUE);
+
+        ChallengeData challenge8 = new ChallengeData();
+        challenge8.questionMap.put(Locale.GERMAN, "Was nimmt mehr Fläche ein?");
+        challenge8.questionMap.put(Locale.ENGLISH, "Which one occupies the bigger space?");
+        challenge8.answerMap.put("C", FALSE);
+        challenge8.answerMap.put("W", TRUE);
+        challenge8.answerMap.put("I", FALSE);
+        challenge8.answerMap.put("L", FALSE);
+
+        ChallengeData challenge9 = new ChallengeData();
+        challenge9.questionMap.put(Locale.GERMAN, "Welche Option beschreibt den Operator?");
+        challenge9.questionMap.put(Locale.ENGLISH, "Which option describes the operator?");
+        challenge9.answerMap.put("8? = 64", FALSE);
+        challenge9.answerMap.put("? ~ X * X", TRUE);
+        challenge9.answerMap.put("4? = 16 ", FALSE);
+        challenge9.answerMap.put("? ~ X + X", FALSE);
+
+        ChallengeData challenge10 = new ChallengeData();
+        challenge10.questionMap.put(Locale.GERMAN, "Was wird immer besser ereichbar?");
+        challenge10.questionMap.put(Locale.ENGLISH, "Which one get's more and more reachable?");
+        challenge10.answerMap.put("Jupiter", FALSE);
+        challenge10.answerMap.put("Mars", TRUE);
+        challenge10.answerMap.put("Venus", FALSE);
+        challenge10.answerMap.put("Saturn", FALSE);
+
 
         dataSet.add(challenge1);
         dataSet.add(challenge2);
         dataSet.add(challenge3);
+        dataSet.add(challenge4);
+        dataSet.add(challenge5);
+        dataSet.add(challenge6);
+        dataSet.add(challenge7);
+        dataSet.add(challenge8);
+        dataSet.add(challenge9);
+        dataSet.add(challenge10);
     }
 
 // -------------------------- OTHER METHODS --------------------------

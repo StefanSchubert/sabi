@@ -33,17 +33,6 @@ public class AppConfig {
     @Autowired
     Environment env;
 
-    static {
-        System.out.println("######  Init AppConfig! ######");
-    }
-
-    /*
-    @Bean
-    public EncryptionService encryptionService() {
-        // @Value for constructor params is to late, so these needed to be handled here.
-        return new EncryptionService(env.getProperty("accessToken.salt"), env.getProperty("accessToken.password"));
-    }
-*/
 
     // Required, so that Spring @Value know how to interpret ${}
     @Bean

@@ -29,7 +29,7 @@ public class ApiDocumentationConfiguration {
                     .paths(PathSelectors.any())
                     // .paths(regex("/api/*"))
                     .build()
-                .pathMapping("/")
+                .pathMapping("/api/*")
                 .apiInfo(metadata());
     }
 
