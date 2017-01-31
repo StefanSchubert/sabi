@@ -64,11 +64,9 @@ CREATE TABLE `measurement` (
   `measured_on`    DATETIME            NOT NULL,
   `measured_value` FLOAT               NOT NULL,
   `unit_id`        INTEGER   UNSIGNED  NOT NULL,
-  `parameter_id`   INTEGER    UNSIGNED NOT NULL,
   `aquarium_id`    BIGINT(20) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (unit_id) REFERENCES unit (id),
-  FOREIGN KEY (parameter_id) REFERENCES parameter (id),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id)
 )
   ENGINE = InnoDB
