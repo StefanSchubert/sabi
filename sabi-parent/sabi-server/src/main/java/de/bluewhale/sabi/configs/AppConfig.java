@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.configs;
 
 import de.bluewhale.sabi.util.EncryptionService;
@@ -20,7 +24,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 @EnableSwagger2
 @ComponentScan(basePackages = "de.bluewhale.sabi")
-@PropertySource("classpath:server.properties")
+@PropertySource("classpath:application.properties")
 public class AppConfig {
 
     /*

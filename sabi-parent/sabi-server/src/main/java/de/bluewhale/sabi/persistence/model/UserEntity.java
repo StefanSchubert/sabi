@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -19,23 +19,34 @@ public class UserEntity extends TracableEntity {
 // ------------------------------ FIELDS ------------------------------
 
     // TODO StS 22.09.15: use UUID
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic
+    @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     private Long id;
 
-    private List<AquariumEntity> aquariums = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    private List<AquariumEntity> aquariums = new ArrayList<AquariumEntity>();
 
+    @Basic
+    @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String email;
 
+    @Basic
+    @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String password;
 
+    @Basic
+    @Column(name = "validate_token", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String validateToken;
 
+    @Basic
+    @Column(name = "validated", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
     private boolean validated;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+
     public List<AquariumEntity> getAquariums() {
         return this.aquariums;
     }
@@ -44,8 +55,7 @@ public class UserEntity extends TracableEntity {
         this.aquariums = pAquariums;
     }
 
-    @javax.persistence.Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
-    @Basic
+
     public String getEmail() {
         return email;
     }
@@ -54,8 +64,6 @@ public class UserEntity extends TracableEntity {
         this.email = email;
     }
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
     public Long getId() {
         return id;
     }
@@ -64,8 +72,6 @@ public class UserEntity extends TracableEntity {
         this.id = id;
     }
 
-    @javax.persistence.Column(name = "password", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
-    @Basic
     public String getPassword() {
         return password;
     }
@@ -74,8 +80,6 @@ public class UserEntity extends TracableEntity {
         this.password = password;
     }
 
-    @javax.persistence.Column(name = "validate_token", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
-    @Basic
     public String getValidateToken() {
         return validateToken;
     }
@@ -84,8 +88,6 @@ public class UserEntity extends TracableEntity {
         this.validateToken = validateToken;
     }
 
-    @javax.persistence.Column(name = "validated", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
-    @Basic
     public boolean isValidated() {
         return validated;
     }

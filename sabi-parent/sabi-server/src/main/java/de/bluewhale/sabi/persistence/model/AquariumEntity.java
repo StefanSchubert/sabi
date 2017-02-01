@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -8,36 +8,41 @@ import de.bluewhale.sabi.model.SizeUnit;
 
 import javax.persistence.*;
 
-/**
- *
- * User: Stefan
- * Date: 12.03.15
- * Time: 21:05
- * To change this template use File | Settings | File Templates.
- */
 @Table(name = "aquarium", schema = "sabi")
 @Entity
 public class AquariumEntity extends TracableEntity {
 // ------------------------------ FIELDS ------------------------------
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     private Long id;
 
+    @Basic
+    @Column(name = "size", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
     private Integer size;
 
+    @Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
+    @Enumerated(EnumType.STRING)
     private SizeUnit sizeUnit;
 
+    @Basic
+    @Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String description;
 
+    @Column(name = "active", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
     private Boolean active;
 
-
+    /**
+     * Owner-side of the relationship.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @javax.persistence.Column(name = "active", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
+
     public Boolean getActive() {
         return active;
     }
@@ -46,8 +51,6 @@ public class AquariumEntity extends TracableEntity {
         this.active = active;
     }
 
-    @javax.persistence.Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
-    @Basic
     public String getDescription() {
         return description;
     }
@@ -56,8 +59,6 @@ public class AquariumEntity extends TracableEntity {
         this.description = validateToken;
     }
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
     public Long getId() {
         return id;
     }
@@ -66,8 +67,6 @@ public class AquariumEntity extends TracableEntity {
         this.id = id;
     }
 
-    @javax.persistence.Column(name = "size", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Basic
     public Integer getSize() {
         return size;
     }
@@ -76,8 +75,6 @@ public class AquariumEntity extends TracableEntity {
         this.size = size;
     }
 
-    @javax.persistence.Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
-    @Enumerated(EnumType.STRING)
     public SizeUnit getSizeUnit() {
         return sizeUnit;
     }
@@ -86,12 +83,6 @@ public class AquariumEntity extends TracableEntity {
         this.sizeUnit = sizeUnit;
     }
 
-    /**
-     * Owner-side of the relationship.
-     * @return
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
     public UserEntity getUser() {
         return user;
     }

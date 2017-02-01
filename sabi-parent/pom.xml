@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2016 by Stefan Schubert
+  ~ Copyright (c) 2017 by Stefan Schubert
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -32,7 +32,7 @@
         </developer>
     </developers>
     <modules>
-        <module>sabi-server</module>
+        <!-- went into spring boot solo application <module>sabi-server</module> -->
         <module>sabi-boundary</module>
         <module>../captcha</module>
         <!--    Excluded on purpose
@@ -61,11 +61,11 @@
                 <artifactId>javaee-api</artifactId>
                 <version>7.0</version>
             </dependency>-->
-            <dependency>
+<!--            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.12</version>
-            </dependency>
+            </dependency>-->
 
             <!-- required by using SWAGGER -->
             <dependency>
