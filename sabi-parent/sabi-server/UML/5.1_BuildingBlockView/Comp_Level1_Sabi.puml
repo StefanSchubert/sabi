@@ -1,5 +1,8 @@
 @startuml
 
+skinparam monochrome true
+skinparam componentStyle uml2
+
 package "Sabi GUI" {
 HTTP - [HTML5-WebApp]
 }

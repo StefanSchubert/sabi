@@ -1,5 +1,8 @@
 @startuml
 
+skinparam monochrome true
+skinparam componentStyle uml2
+
 title Distribution of rough components
 
 

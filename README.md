@@ -2,7 +2,7 @@
 
 ...aims to gain insights from aquarium hobbyist for aquarium hobbyist according seawater measures.
 
-## Vision
+## Vision I
 
 In seawater forums, wikis, books we got advice on the regular values (max,min) of the important mineral levels and so on.
 Some things we fully understand, while on others we have just a lot of guesses about the impact, but often it stays a guess, as the complete system is very complex.
@@ -15,6 +15,27 @@ This should enable us to to answer some questions like:
 There must be quite a lot of interesting questions, especially in the field of aquaristic forensics.
 
 So this is the project to build a platform, which helps to answer them.
+
+## Vision 2.0 (in the next 10 years)
+
+In the first stage of the project (see Vision I) we enabled the community to collect and share data.
+We then added BI concepts on top for being able to explore the data, mining for new
+insights driven by human curiosity. 
+
+The next step adds KI concepts to sabi. Imagine the following scenario: 
+You have a cyano bacterium plague in your tank and you are planning to add a new fish
+or fiddling around with increasing the carbonate level. Sabis KI might advise you that your
+ plan will probably prolong the plague.
+  
+For being able to do so, sabis KI will compare your tank parameters and recent history 
+with the data of other users tanks who have done something similar to anticipate the outcome.
+ 
+The KI challenge here is, that if the human provided data on a given problem context is bad for
+ some reasons (e.g. missing of relevant parameters, inaccurate timelines and so on), then
+ the KI starts to provide advises that will lead to false treatments. So if users starts to reports
+ that advices were not successful the KI must revise the original training set and do some
+  recalibration by its own.
+
 
 ## Release Planning
 
@@ -44,11 +65,10 @@ against sabi. However to start with this project involves a
 * JSF based WebClient
 
 ### Server side
-* Spring 4
+* Spring-Boot-Application
 * REST
-* JPA 2.x (Eclipselink
+* JPA 2.x (Eclipselink instead of Hibernate)
 * jUnit
-* Tomcat 8 (JDK8 - though not officially supported, will be with tomcat9)
 * MariaDB 10.x
 
 ----
@@ -61,23 +81,21 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sbi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
-### Setting up the tomact 8
-
-* Install the 8.x version
-* That's it ;-) ... Almost ... I encountered some problems with the deployment of the artefact through intelliJ
-  Make and Build had problems to accept the target bytecode release 1.8. As intermediate solution I deleted those
-  before launch action and chooses the maven package instead. Though even this should be obsolete in an
-  exploded deployment manner and having compiled it all before.
-
-
 ## Used maven goals
 
 ### Reinstall the database schema
 mvn clean install -P db_setup sabi_database
 
-## Preparing your productive environment
+## Preparing your productive and IDE environment
 
 Customize your own server.properties and do not checkin for security reasons.!
+Because of eclipselink we are using weaving at runtime which required the following vm 
+option:
+
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/4.3.8.RELEASE/spring-instrument-4.3.8.RELEASE.jar
+
+You will need the agent for the springboot application run config in your IDE
+as well as VM parameter for you test runner config.
 
 ## Architectural Notes
 

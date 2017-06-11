@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.util;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -48,7 +52,7 @@ public class EncryptionService {
      *
      * @param pUserIdentifier       this may be a technical of business key of your user
      * @param pValidPeriodInSeconds if provided, this will be used to calculate the validation period.
-     *                              If null, we take the value from the server.properties (key: accessToken.TTL).
+     *                              If null, we take the value from the application.properties (key: accessToken.TTL).
      * @return An encrypted AccessToken.
      */
     public String getEncryptedAccessTokenForUser(@NotNull String pUserIdentifier, final Long pValidPeriodInSeconds) {

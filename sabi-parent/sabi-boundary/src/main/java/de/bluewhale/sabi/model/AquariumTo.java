@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.model;
@@ -14,41 +14,29 @@ import java.io.Serializable;
  * @author Stefan Schubert
  */
 public class AquariumTo implements Serializable {
+// ------------------------------ FIELDS ------------------------------
 
     private Long id;
 
-    @ApiModelProperty(notes = "ID this object for further reference.", required = false)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     private Integer size;
-
-    @ApiModelProperty(notes = "Tanks volume", required = true)
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
 
     private SizeUnit sizeUnit;
 
-    @ApiModelProperty(notes = "Unit of tanks volume size.", required = true)
-    public SizeUnit getSizeUnit() {
-        return sizeUnit;
-    }
-
-    public void setSizeUnit(SizeUnit sizeUnit) {
-        this.sizeUnit = sizeUnit;
-    }
-
     private String description;
+
+    private Boolean active;
+
+    private Long userId;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
     @ApiModelProperty(notes = "Description or Name of the tank, so the user can distinguish them.", required = true)
     public String getDescription() {
@@ -59,17 +47,32 @@ public class AquariumTo implements Serializable {
         this.description = validateToken;
     }
 
-    private Boolean active;
-
-    public Boolean getActive() {
-        return active;
+    @ApiModelProperty(notes = "ID this object for further reference.", required = false)
+    public Long getId() {
+        return id;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    private Long userId;
+    @ApiModelProperty(notes = "Tanks volume", required = true)
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    @ApiModelProperty(notes = "Unit of tanks volume size.", required = true)
+    public SizeUnit getSizeUnit() {
+        return sizeUnit;
+    }
+
+    public void setSizeUnit(SizeUnit sizeUnit) {
+        this.sizeUnit = sizeUnit;
+    }
 
     public Long getUserId() {
         return userId;
@@ -79,6 +82,7 @@ public class AquariumTo implements Serializable {
         this.userId = userId;
     }
 
+// ------------------------ CANONICAL METHODS ------------------------
 
     @Override
     public boolean equals(Object o) {
@@ -97,5 +101,4 @@ public class AquariumTo implements Serializable {
 
         return true;
     }
-
 }

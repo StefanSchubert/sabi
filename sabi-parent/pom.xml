@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2016 by Stefan Schubert
+  ~ Copyright (c) 2017 by Stefan Schubert
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -32,7 +32,7 @@
         </developer>
     </developers>
     <modules>
-        <module>sabi-server</module>
+        <!-- went into spring boot solo application <module>sabi-server</module> -->
         <module>sabi-boundary</module>
         <module>../captcha</module>
         <!--    Excluded on purpose
@@ -43,13 +43,14 @@
     <properties>
         <java.version>1.8</java.version>
         <sabi.version>1.0-SNAPSHOT</sabi.version>
-        <spring.version>4.2.1.RELEASE</spring.version>
+        <spring.version>4.3.8.RELEASE</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <eclipselink.version>2.6.4</eclipselink.version>
         <persistence.version>2.1.1</persistence.version>
         <aspectj.version>1.5.4</aspectj.version>
+        <swagger.version>2.7.0</swagger.version>
     </properties>
 
     <repositories />
@@ -71,14 +72,14 @@
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.6.1</version>
+                <version>${swagger.version}</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
-                <version>2.6.1</version>
+                <version>${swagger.version}</version>
                 <scope>compile</scope>
             </dependency>
 

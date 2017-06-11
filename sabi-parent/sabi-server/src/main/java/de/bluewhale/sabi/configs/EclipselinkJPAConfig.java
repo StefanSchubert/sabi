@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.configs;
 
 import org.springframework.context.annotation.Bean;
@@ -22,7 +26,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-public class PersistenceJPAConfig {
+public class EclipselinkJPAConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
@@ -31,6 +35,7 @@ public class PersistenceJPAConfig {
         em.setPackagesToScan(new String[]{"de.bluewhale.sabi.persistence.model"});
         em.setPersistenceUnitName("sabi");
 
+       //  JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         JpaVendorAdapter vendorAdapter = new EclipseLinkJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(additionalProperties());

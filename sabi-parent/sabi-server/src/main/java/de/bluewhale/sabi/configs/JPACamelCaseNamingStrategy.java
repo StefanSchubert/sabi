@@ -1,8 +1,9 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.configs;
 
-import java.sql.SQLException;
-import java.util.Locale;
-import java.util.Vector;
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.helper.DatabaseField;
@@ -10,9 +11,13 @@ import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.tools.schemaframework.IndexDefinition;
 
+import java.sql.SQLException;
+import java.util.Locale;
+import java.util.Vector;
+
 /**
  * THANKS GOES TO: http://stackoverflow.com/questions/19896352/customize-jpa-field-name-mapping-using-eclipselink
- * From where I got this solution for eclipselink.
+ * From where I got this solution for eclipselink which maps "fieldName" to "field_name"
  * To activate this strategy you need also to configure
  * your persistence class or xml with the following persistence property:
  * <i>properties.setProperty("eclipselink.session.customizer","pkg.JPACamelCaseNamingStrategy");</i>
