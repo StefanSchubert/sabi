@@ -65,11 +65,10 @@ against sabi. However to start with this project involves a
 * JSF based WebClient
 
 ### Server side
-* Spring 4
+* Spring-Boot-Application
 * REST
-* JPA 2.x (Eclipselink
+* JPA 2.x (Eclipselink instead of Hibernate)
 * jUnit
-* Tomcat 8 (JDK8 - though not officially supported, will be with tomcat9)
 * MariaDB 10.x
 
 ----
@@ -82,23 +81,21 @@ against sabi. However to start with this project involves a
 * Create a DB called sabi and and a user sbi app with permissions for localhost.
 * Use the password as specified by the database module pom.
 
-### Setting up the tomact 8
-
-* Install the 8.x version
-* That's it ;-) ... Almost ... I encountered some problems with the deployment of the artefact through intelliJ
-  Make and Build had problems to accept the target bytecode release 1.8. As intermediate solution I deleted those
-  before launch action and chooses the maven package instead. Though even this should be obsolete in an
-  exploded deployment manner and having compiled it all before.
-
-
 ## Used maven goals
 
 ### Reinstall the database schema
 mvn clean install -P db_setup sabi_database
 
-## Preparing your productive environment
+## Preparing your productive and IDE environment
 
 Customize your own server.properties and do not checkin for security reasons.!
+Because of eclipselink we are using weaving at runtime which required the following vm 
+option:
+
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/4.3.8.RELEASE/spring-instrument-4.3.8.RELEASE.jar
+
+You will need the agent for the springboot application run config in your IDE
+as well as VM parameter for you test runner config.
 
 ## Architectural Notes
 

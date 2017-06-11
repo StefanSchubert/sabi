@@ -78,11 +78,6 @@
             </exclusions>
         </dependency>
 
-<!--        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>-->
-
         <!-- Required for Rest -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -95,35 +90,27 @@
         </dependency>
 
         <!-- Standard Servlet Stuff -->
-
-  <!--      <dependency>
+        <!--
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
         </dependency>
--->
+        -->
         <!-- REST Utils like  Jackson JSON Processor -->
-<!--
+        <!--
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.6.2</version>
         </dependency>
--->
+        -->
 
         <!-- used JPA Configuration / Implementation -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipselink.version}</version>
-            <!--
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>commonj.sdo</artifactId>
-                </exclusion>
-            </exclusions>
-            -->
         </dependency>
 
         <dependency>
