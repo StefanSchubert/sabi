@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.4.RELEASE</version>
+        <version>1.5.3.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -23,6 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <swagger.version>2.7.0</swagger.version>
+        <eclipselink.version>2.6.4</eclipselink.version>
     </properties>
 
     <dependencyManagement>
@@ -32,14 +34,14 @@
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.6.1</version>
+                <version>${swagger.version}</version>
                 <scope>compile</scope>
             </dependency>
 
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
-                <version>2.6.1</version>
+                <version>${swagger.version}</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -67,6 +69,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <exclusions>
+                <!-- Because we want to use eclipselink instead -->
+                <exclusion>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                    <groupId>org.hibernate</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 <!--        <dependency>
@@ -103,32 +112,19 @@
 -->
 
         <!-- used JPA Configuration / Implementation -->
-
-<!--
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate.validator.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipselink.version}</version>
+            <!--
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.persistence</groupId>
                     <artifactId>commonj.sdo</artifactId>
                 </exclusion>
             </exclusions>
+            -->
         </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>${persistence.version}</version>
-        </dependency>
--->
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
@@ -195,44 +191,47 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <finalName>sabi-backend</finalName>
-
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-instrument</artifactId>
+                        <version>${spring.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <argLine>-javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar</argLine>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <!-- This plugin ensures the EclipseLink static weaving -->
-<!--
-
-            <plugin>
-                <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
-                <groupId>au.com.alderaan</groupId>
-                <version>1.0.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>weave</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                        <configuration>
-                            <logLevel>ALL</logLevel>
-                            &lt;!&ndash; <includeProjectClasspath>true</includeProjectClasspath> &ndash;&gt;
-                        </configuration>
-                    </execution>
-                </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>org.eclipse.persistence</groupId>
-                        <artifactId>eclipselink</artifactId>
-                        <version>${eclipselink.version}</version>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-instrument</artifactId>
+                        <version>${spring.version}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <agent>${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar</agent>
+                </configuration>
             </plugin>
--->
         </plugins>
     </build>
 

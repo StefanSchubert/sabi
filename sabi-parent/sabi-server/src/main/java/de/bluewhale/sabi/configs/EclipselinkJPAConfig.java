@@ -11,7 +11,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -26,7 +26,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-public class PersistenceJPAConfig {
+public class EclipselinkJPAConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
@@ -35,7 +35,8 @@ public class PersistenceJPAConfig {
         em.setPackagesToScan(new String[]{"de.bluewhale.sabi.persistence.model"});
         em.setPersistenceUnitName("sabi");
 
-        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+       //  JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        JpaVendorAdapter vendorAdapter = new EclipseLinkJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(additionalProperties());
 
