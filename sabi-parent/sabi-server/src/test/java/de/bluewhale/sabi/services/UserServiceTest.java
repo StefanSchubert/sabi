@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static de.bluewhale.sabi.TestSuite.TESTUSER_EMAIL;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL;
 import static org.junit.Assert.*;
 
 
