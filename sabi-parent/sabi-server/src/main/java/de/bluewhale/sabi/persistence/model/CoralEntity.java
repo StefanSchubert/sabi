@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
@@ -14,27 +18,27 @@ public class CoralEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private long id;
+    private Long id;
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    private long aquariumId;
+    private Long aquariumId;
 
     @javax.persistence.Column(name = "aquarium_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getAquariumId() {
+    public Long getAquariumId() {
         return aquariumId;
     }
 
-    public void setAquariumId(long aquariumId) {
+    public void setAquariumId(Long aquariumId) {
         this.aquariumId = aquariumId;
     }
 
@@ -42,11 +46,11 @@ public class CoralEntity extends TracableEntity {
 
     @javax.persistence.Column(name = "coral_catalouge_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getCoralCatalougeId() {
+    public Long getCoralCatalougeId() {
         return coralCatalougeId;
     }
 
-    public void setCoralCatalougeId(long coralCatalougeId) {
+    public void setCoralCatalougeId(Long coralCatalougeId) {
         this.coralCatalougeId = coralCatalougeId;
     }
 

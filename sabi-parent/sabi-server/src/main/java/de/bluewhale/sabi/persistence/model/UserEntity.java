@@ -21,7 +21,6 @@ public class UserEntity extends TracableEntity {
     // TODO StS 22.09.15: use UUID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic
     @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     private Long id;
 

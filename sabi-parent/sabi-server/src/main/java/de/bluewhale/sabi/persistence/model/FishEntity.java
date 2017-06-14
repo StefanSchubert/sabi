@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
@@ -14,40 +18,40 @@ public class FishEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private long id;
+    private Long id;
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    private long aquariumId;
+    private Long aquariumId;
 
     @javax.persistence.Column(name = "aquarium_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getAquariumId() {
+    public Long getAquariumId() {
         return aquariumId;
     }
 
-    public void setAquariumId(long aquariumId) {
+    public void setAquariumId(Long aquariumId) {
         this.aquariumId = aquariumId;
     }
 
-    private long fishCatalougeId;
+    private Long fishCatalogueId;
 
-    @javax.persistence.Column(name = "fish_catalouge_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
+    @javax.persistence.Column(name = "fish_catalogue_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getFishCatalougeId() {
-        return fishCatalougeId;
+    public Long getFishCatalogueId() {
+        return fishCatalogueId;
     }
 
-    public void setFishCatalougeId(long fishCatalougeId) {
-        this.fishCatalougeId = fishCatalougeId;
+    public void setFishCatalogueId(Long fishCatalogueId) {
+        this.fishCatalogueId = fishCatalogueId;
     }
 
     private Timestamp addedOn;
@@ -106,7 +110,7 @@ public class FishEntity extends TracableEntity {
         FishEntity that = (FishEntity) o;
 
         if (aquariumId != that.aquariumId) return false;
-        if (fishCatalougeId != that.fishCatalougeId) return false;
+        if (fishCatalogueId != that.fishCatalogueId) return false;
         if (id != that.id) return false;
         if (addedOn != null ? !addedOn.equals(that.addedOn) : that.addedOn != null) return false;
         if (exodusOn != null ? !exodusOn.equals(that.exodusOn) : that.exodusOn != null) return false;
@@ -121,7 +125,7 @@ public class FishEntity extends TracableEntity {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (aquariumId ^ (aquariumId >>> 32));
-        result = 31 * result + (int) (fishCatalougeId ^ (fishCatalougeId >>> 32));
+        result = 31 * result + (int) (fishCatalogueId ^ (fishCatalogueId >>> 32));
         result = 31 * result + (addedOn != null ? addedOn.hashCode() : 0);
         result = 31 * result + (exodusOn != null ? exodusOn.hashCode() : 0);
         result = 31 * result + (nickname != null ? nickname.hashCode() : 0);

@@ -19,35 +19,35 @@ public class MeasurementEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private long id;
+    private Long id;
 
     private Timestamp measuredOn;
 
     private float measuredValue;
 
-    private int unitId;
+    private Integer unitId;
 
-    private long aquariumId;
+    private Long aquariumId;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     @javax.persistence.Column(name = "aquarium_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getAquariumId() {
+    public Long getAquariumId() {
         return aquariumId;
     }
 
-    public void setAquariumId(long aquariumId) {
+    public void setAquariumId(Long aquariumId) {
         this.aquariumId = aquariumId;
     }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -73,11 +73,11 @@ public class MeasurementEntity {
 
     @javax.persistence.Column(name = "unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
-    public int getUnitId() {
+    public Integer getUnitId() {
         return unitId;
     }
 
-    public void setUnitId(int unitId) {
+    public void setUnitId(Integer unitId) {
         this.unitId = unitId;
     }
 

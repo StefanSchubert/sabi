@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
@@ -14,27 +18,27 @@ public class TreatmentEntity extends TracableEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private long id;
+    private Long id;
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    private long aquariumId;
+    private Long aquariumId;
 
     @javax.persistence.Column(name = "aquarium_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getAquariumId() {
+    public Long getAquariumId() {
         return aquariumId;
     }
 
-    public void setAquariumId(long aquariumId) {
+    public void setAquariumId(Long aquariumId) {
         this.aquariumId = aquariumId;
     }
 
@@ -62,27 +66,27 @@ public class TreatmentEntity extends TracableEntity {
         this.amount = amount;
     }
 
-    private int unitId;
+    private Integer unitId;
 
     @javax.persistence.Column(name = "unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
-    public int getUnitId() {
+    public Integer getUnitId() {
         return unitId;
     }
 
-    public void setUnitId(int unitId) {
+    public void setUnitId(Integer unitId) {
         this.unitId = unitId;
     }
 
-    private long remedyId;
+    private Long remedyId;
 
     @javax.persistence.Column(name = "remedy_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    public long getRemedyId() {
+    public Long getRemedyId() {
         return remedyId;
     }
 
-    public void setRemedyId(long remedyId) {
+    public void setRemedyId(Long remedyId) {
         this.remedyId = remedyId;
     }
 

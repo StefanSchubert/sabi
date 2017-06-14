@@ -122,7 +122,7 @@ CREATE TABLE `fish_catalogue` (
 CREATE TABLE `fish` (
   `id`                BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `aquarium_id`       BIGINT(20) UNSIGNED NOT NULL,
-  `fish_catalouge_id` BIGINT(20) UNSIGNED NOT NULL,
+  `fish_catalogue_id` BIGINT(20) UNSIGNED NOT NULL,
   `added_on`          DATETIME            NOT NULL,
   `exodus_on`         DATETIME,
   `nickname`          VARCHAR(60),
@@ -131,7 +131,7 @@ CREATE TABLE `fish` (
   `lastmod_on`        TIMESTAMP           NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
-  FOREIGN KEY (fish_catalouge_id) REFERENCES fish_catalogue (id)
+  FOREIGN KEY (fish_catalogue_id) REFERENCES fish_catalogue (id)
 )
   ENGINE = InnoDB
   AUTO_INCREMENT = 100

@@ -145,7 +145,7 @@ to the client.
 #### Coming to i18n
 The API Layer is responsible to do all the translations. Thinking of 
 typical frontend backend machine scenario, I want to keep the traffic between those machines as small
-as possible, as transfering all translations to the webserver which in turn delivers one to a specific client won't do it.
+as possible, as transferring all translations to the webserver which in turn delivers one to a specific client won't do it.
 
 Discarded Solution: Reaching a language context into the backend. This would do it. But I didn't liked 
 it. I was thinking about being able on the API-Layer to decide given back a small message (suitable for
@@ -156,7 +156,7 @@ client constrains like small displays) or very detailed messages (maybe with sol
 We are using JPA managed Entities in combination with DAOs. 
 The DAOs are used as repositories, which are responsible to manage all CRUD and other persistence
 operations. The intention of this layer to isolate the application from the datalayer, through
-which we are allowed to do persistence refactorings (e.g. for performance sake) withing mingling
+which we are allowed to do persistence refactorings (e.g. for performance sake) without mingling
 with the object models used on the client site. Or in other words, we are able to
 evolve data and application layer independently. 
 So all DAOs will never return an entity, but TransportObjects.

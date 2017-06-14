@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -13,7 +13,9 @@ import de.bluewhale.sabi.exception.ExceptionCode;
  */
 public enum TankExceptionCodes implements ExceptionCode {
 
-    CREATION_FAILED(1);
+    CREATION_FAILED(1),
+    ADDING_FISH_FAILED(2),
+    FRAUD_DETECTION(999);
 
     private int errorCode;
 

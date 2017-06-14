@@ -1,11 +1,15 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.util;
 
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.FishTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.FishEntity;
+
+import java.sql.Timestamp;
 
 /**
  * Mapping Util Functions.
@@ -17,6 +21,7 @@ public class Mapper {
 
     /**
      * Maps given Entity attributes into provided TO.
+     *
      * @param pAquariumEntity
      * @param pAquariumTo
      */
@@ -32,6 +37,7 @@ public class Mapper {
 
     /**
      * Mapping without user relationsship
+     *
      * @param pAquariumTo
      * @param pAquariumEntity
      */
@@ -40,6 +46,42 @@ public class Mapper {
         pAquariumEntity.setSize(pAquariumTo.getSize());
         pAquariumEntity.setDescription(pAquariumTo.getDescription());
         pAquariumEntity.setActive(pAquariumTo.getActive());
+    }
+
+
+    /**
+     * Mapping without flyweight relationsships to Aquarium and Catalogue
+     *
+     * @param pFishTo
+     * @param pFishEntity
+     */
+    public static void mapFishTo2Entity(final FishTo pFishTo, final FishEntity pFishEntity) {
+        pFishEntity.setAddedOn(Timestamp.valueOf(pFishTo.getAddedOn().atStartOfDay()));
+        if (pFishTo.getExodusOn() != null) {
+            pFishEntity.setExodusOn(Timestamp.valueOf(pFishTo.getExodusOn().atStartOfDay()));
+        } else {
+            pFishEntity.setExodusOn(null);
+        }
+        pFishEntity.setNickname(pFishTo.getNickname());
+        pFishEntity.setObservedBehavior(pFishTo.getObservedBehavior());
+        pFishEntity.setAquariumId(pFishTo.getAquariumId());
+        pFishEntity.setFishCatalogueId(pFishTo.getFishCatalogueId());
+    }
+
+    /**
+     * Maps given Entity attributes into provided TO.
+     *
+     * @param pFishTo
+     * @param pFishEntity
+     */
+    public static void mapFishEntity2To(final FishEntity pFishEntity, final FishTo pFishTo) {
+        pFishTo.setId(pFishEntity.getId());
+        pFishTo.setAddedOn(pFishEntity.getAddedOn().toLocalDateTime().toLocalDate());
+        pFishTo.setExodusOn(pFishEntity.getExodusOn() == null ? null : pFishEntity.getExodusOn().toLocalDateTime().toLocalDate());
+        pFishTo.setNickname(pFishEntity.getNickname());
+        pFishTo.setObservedBehavior(pFishEntity.getObservedBehavior());
+        pFishTo.setAquariumId(pFishEntity.getAquariumId());
+        pFishTo.setFishCatalogueId(pFishEntity.getFishCatalogueId());
     }
 
 }
