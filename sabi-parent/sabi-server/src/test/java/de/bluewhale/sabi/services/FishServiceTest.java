@@ -133,10 +133,27 @@ public class FishServiceTest {
     @Transactional
     public void testRemoveFish() throws Exception {
         // Given
+        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
+        final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
+
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+
+        final FishTo fish = new FishTo();
+        fish.setAddedOn(LocalDate.now());
+        fish.setFishCatalogueId(1L); // existing default Data
+        fish.setAquariumId(aquariumToResultTo.getValue().getId());
+        fish.setNickname("Green Latern");
+
+        // The user is required to check that he your she really posses the tank
+        final ResultTo<FishTo> fishResultTo = fishService.registerNewFish(fish,registeredUser);
 
         // When
+        Long fishId = fishResultTo.getValue().getId();
+        fishService.removeFish(fishId, registeredUser);
 
         // Then
-        fail("Complete implementation needed.");
+        FishTo removedFish = fishService.getUsersFish(fishId, registeredUser);
+        assertNull("Fish was not removed!", removedFish);
     }
 }

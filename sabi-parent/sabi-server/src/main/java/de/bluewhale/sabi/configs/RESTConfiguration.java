@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.configs;
 
 import org.springframework.context.annotation.Bean;
@@ -26,17 +30,5 @@ public class RESTConfiguration
         return new BeanNameViewResolver();
     }
 
-    /*
-
-    // NOT required! Through binding the dispatcher servlet of the WebAppInitializer
-    // to the "/api/*" for the rest controller, the swagger-ui can be handled.
-
-    @Bean
-    public ViewResolver internalResourceViewResolver() {
-        InternalResourceViewResolver bean = new InternalResourceViewResolver();
-        bean.setPrefix("/sabi/swagger");
-        bean.setSuffix("*.html");
-        return bean;
-    }*/
 
 }

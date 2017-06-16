@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -28,8 +28,8 @@ public class AquariumDaoImpl extends GenericDaoImpl<AquariumEntity> implements A
         ArrayList<AquariumTo> aquariumTos = new ArrayList<AquariumTo>();
 
         if (pUserId != null) {
-            Query query = em.createQuery("select a FROM AquariumEntity a where a.user.id = :userID");
-            query.setParameter("userID", pUserId);
+            Query query = em.createNamedQuery("Aquarium.getUsersAquariums");
+            query.setParameter("pUserID", pUserId);
             List<AquariumEntity> aquariumEntities = query.getResultList();
 
             for (AquariumEntity aquariumEntity : aquariumEntities) {
@@ -41,5 +41,20 @@ public class AquariumDaoImpl extends GenericDaoImpl<AquariumEntity> implements A
         }
 
         return aquariumTos;
+    }
+
+    @Override
+    public AquariumEntity getUsersAquarium(Long pPersistedTankId, Long pUserId) {
+        Query query = em.createNamedQuery("Aquarium.getAquarium");
+        query.setParameter("pUserID", pUserId);
+        query.setParameter("pTankId", pPersistedTankId);
+
+        AquariumEntity aquarium = null;
+        try {
+            aquarium = (AquariumEntity) query.getSingleResult();
+        } catch (Exception e) {
+            // todo some logging here (Idempotence double remove or fraud detection)
+        }
+        return aquarium;
     }
 }

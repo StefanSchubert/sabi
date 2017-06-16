@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
@@ -21,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  * Date: 27.09.15
  */
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "api/user")
 public class AuthenticationController {
 
     @Autowired

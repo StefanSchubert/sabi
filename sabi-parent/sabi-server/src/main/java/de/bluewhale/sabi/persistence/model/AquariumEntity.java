@@ -8,6 +8,10 @@ import de.bluewhale.sabi.model.SizeUnit;
 
 import javax.persistence.*;
 
+@NamedQueries({@NamedQuery(name = "Aquarium.getAquarium",
+        query = "select a from AquariumEntity a where a.id = :pTankId and a.user.id = :pUserID"),
+        @NamedQuery(name = "Aquarium.getUsersAquariums",
+                query = "select a FROM AquariumEntity a where a.user.id = :pUserID")})
 @Table(name = "aquarium", schema = "sabi")
 @Entity
 public class AquariumEntity extends TracableEntity {

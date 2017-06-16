@@ -5,6 +5,7 @@
 package de.bluewhale.sabi;
 
 import de.bluewhale.sabi.persistence.UserDAOTest;
+import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.TankServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         EncryptionServiceTest.class,
         TankServiceTest.class,
         FishServiceTest.class,
+        CoralServiceTest.class,
         LoginTest.class
 })
 public class TestSuite {

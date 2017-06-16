@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -25,5 +25,14 @@ public interface AquariumDao extends GenericDao<AquariumEntity> {
      */
     @NotNull
     List<AquariumTo> findUsersTanks(@NotNull Long pUserId);
+
+    /**
+     * Picks the aquarium of provided user.
+     * The underlying query ensured, that the user (in second parameter) is indeed the owner of the aquarium.
+     * @param pPersistedTankId
+     * @param pUserId
+     * @return null if the aquarium does not belong to the user, or does not exists.
+     */
+    AquariumEntity getUsersAquarium(Long pPersistedTankId, Long pUserId);
 
 }

@@ -38,4 +38,31 @@ public interface TankService {
     @NotNull
     List<AquariumTo> listTanks(@NotNull Long pUserId);
 
+    /**
+     * Updates some Tank-Properties
+     * @param aquariumTo
+     * @param registeredUser
+     * @return Composed result object containing the updated tank with a message. The tank has been updated successfully
+     * only if the message is of {@link Message.CATEGORY#INFO}
+     */
+    @NotNull
+    @Transactional
+    ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, UserTo registeredUser);
+
+    /**
+     * Retrieves the requested Tank of provided user
+     * @param aquariumId
+     * @param registeredUser
+     * @return Null if tank is not within given users tank list.
+     */
+    @NotNull
+    AquariumTo getTank(Long aquariumId, UserTo registeredUser);
+
+    /**
+     * Removes a tank from Users List (removes it physically)
+     * @param persistedTankId
+     * @param registeredUser
+     */
+    @Transactional
+    void removeTank(Long persistedTankId, UserTo registeredUser);
 }

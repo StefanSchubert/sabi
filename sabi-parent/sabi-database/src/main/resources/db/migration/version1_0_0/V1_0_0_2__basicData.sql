@@ -11,3 +11,4 @@ INSERT INTO remedy (id, productname, vendor) VALUES (1, 'KH+', 'Dupla');
 
 INSERT INTO fish_catalogue (id, scientific_name, description, meerwasserwiki_url)
 VALUES (1, 'Acreichthys tomentosus', 'Seegras Feilenfisch', 'http://meerwasserwiki.de/w/index.php?title=Acreichthys_tomentosus');
+

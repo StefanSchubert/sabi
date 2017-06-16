@@ -71,5 +71,24 @@ public class FishServiceImpl extends CommonService implements FishService {
         return fishToResultTo;
     }
 
+    @Override
+    public void removeFish(Long pFishId, UserTo pRegisteredUser) {
+        // This is to ensure that the user really ones the one he requests for removal.
+        FishEntity fishEntity = fishDao.findUsersFish(pFishId, pRegisteredUser.getId());
+        if (fishEntity != null) {
+            fishDao.delete(fishEntity.getId());
+        }
+    }
 
+    @Override
+    public FishTo getUsersFish(Long pFishId, UserTo registeredUser) {
+        FishTo fishTo = null;
+        FishEntity fishEntity = fishDao.findUsersFish(pFishId, registeredUser.getId());
+
+        if (fishEntity != null) {
+            mapFishEntity2To(fishEntity, fishTo);
+        }
+
+        return fishTo;
+    }
 }

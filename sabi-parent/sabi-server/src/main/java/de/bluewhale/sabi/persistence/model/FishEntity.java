@@ -12,6 +12,8 @@ import java.sql.Timestamp;
  * User: Stefan
  * Date: 12.03.15
  */
+@NamedQueries({@NamedQuery(name="Fish.getUsersFish",
+        query="select f from FishEntity f where :pUserId in (select a.user.id from AquariumEntity a where a.id = f.aquariumId) and f.id = :pFishId")})
 @Table(name = "fish", schema = "sabi")
 @Entity
 public class FishEntity extends TracableEntity {

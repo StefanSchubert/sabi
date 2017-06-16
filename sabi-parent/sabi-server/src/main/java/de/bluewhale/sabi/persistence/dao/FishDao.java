@@ -16,5 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface FishDao extends GenericDao<FishEntity> {
 
 
-
+    /**
+     * Returns the fish, only if it exists and the user is the Owner.
+     * @param pFishId
+     * @param pRegisteredUserId
+     * @return
+     */
+    FishEntity findUsersFish(Long pFishId, Long pRegisteredUserId);
 }

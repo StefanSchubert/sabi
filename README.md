@@ -130,12 +130,8 @@ if we want to have the Client API frontends on multiple frontend servers, which 
 the (multiple) backend servers. If this business domain is growing we might introduce a domain cut,
 where each domain might run on different servers.
 
-This service layer is thought of containing higher business logic,
-meaning it orchestrates the persistent backend operations. Meaning no service on this level 
-will get an @Transactional. The methods work or don't.
-
-The ServiceLayer is working completely on TransportObjects. No Entity is allowed to be used within the
-ServiceLayer.
+The ServiceLayer exposes only TransportObjects through the interfaces. 
+Entities will be used only within the ServiceLayer.
 
 #### Exception Handling 
  In case of failures we will introduce a common BusinessException which contains the different reasons as messages, 
@@ -166,7 +162,14 @@ de.bluewhale.sabi.model of the sabi-boundary module.
 
 Our persistence layer is being kept in de.bluewhale.sabi.persistence of the sabi-server module.
 
+
+### REST-API Doc
+As we are using swagger, you will find the API doc after starting the application here:
+http://localhost:8080/sabi/swagger-ui.html
+
 ### Test of a successfully deployed backend.
  
- I use postman to test the login REST API.
+I use postman to test the login REST API.
+
+
  

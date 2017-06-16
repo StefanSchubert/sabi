@@ -37,7 +37,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = AppConfig.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TankServiceTest {
-// ------------------------------ FIELDS ------------------------------
+    private static final String JABA_DABA_DOOOOO = "JabaDabaDooooo";
+    // ------------------------------ FIELDS ------------------------------
 
     @Autowired
     private TankService tankService;
@@ -46,35 +47,6 @@ public class TankServiceTest {
     private UserService userService;
 
 // -------------------------- OTHER METHODS --------------------------
-
-    @Test
-    @Transactional
-    public void testAddCoral() throws Exception {
-        // Given
-
-        // When
-
-        // Then
-        fail("Complete implementation needed.");
-    }
-
-
-
-    /**
-     * Yes, someone may write a kind of blog
-     *
-     * @throws Exception
-     */
-    @Test
-    @Transactional
-    public void testAddLogEntry() throws Exception {
-        // Given
-
-        // When
-
-        // Then
-        fail("Complete implementation needed.");
-    }
 
     /**
      * Tank properties are something like name, description, size.
@@ -86,11 +58,23 @@ public class TankServiceTest {
     @Transactional
     public void testAlterTankProperties() throws Exception {
         // Given
+        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
+
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
+        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
 
         // When
+        aquariumTo = aquariumToResultTo.getValue();
+        aquariumTo.setDescription(JABA_DABA_DOOOOO);
 
         // Then
-        fail("Complete implementation needed.");
+        aquariumToResultTo = tankService.updateTank(aquariumTo, registeredUser);
+
+        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), registeredUser);
+
+        // Then
+        assertEquals("Tank was not updated", aquariumTo.getDescription(), JABA_DABA_DOOOOO);
     }
 
    @Test
@@ -160,12 +144,22 @@ public class TankServiceTest {
     @Test
     @Transactional
     public void testRemoveTank() throws Exception {
+
         // Given
+        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
+        final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+
+        Long persistedTankId = aquariumToResultTo.getValue().getId();
+        tankService.removeTank(persistedTankId, registeredUser);
 
         // When
+        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, registeredUser);
 
         // Then
-        fail("Complete implementation needed.");
+        assertNull("Users tank was supposed to be removed!", tankAfterDeletion);
+
     }
 
 }

@@ -28,4 +28,20 @@ public interface FishService {
     @NotNull
     @Transactional
     ResultTo<FishTo> registerNewFish(@NotNull FishTo pFishTo, @NotNull UserTo pRegisteredUser);
+
+    /**
+     * Removes a fish from users records (e.g. tank)
+     * @param pFishId
+     * @param pRegisteredUser
+     */
+    @Transactional
+    void removeFish(Long pFishId, UserTo pRegisteredUser);
+
+    /**
+     * Retrieves a users fish, as long as he or she is the owner
+     * @param pFishId
+     * @param registeredUser
+     * @return null if the fish does not exists or if the user is not the owner.
+     */
+    FishTo getUsersFish(Long pFishId, UserTo registeredUser);
 }

@@ -43,8 +43,8 @@ public class AquariumTo implements Serializable {
         return description;
     }
 
-    public void setDescription(String validateToken) {
-        this.description = validateToken;
+    public void setDescription(String pDescription) {
+        this.description = pDescription;
     }
 
     @ApiModelProperty(notes = "ID this object for further reference.", required = false)

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.configs;
 
 import org.springframework.context.annotation.Bean;
@@ -25,7 +29,7 @@ public class ApiDocumentationConfiguration {
                     .paths(PathSelectors.any())
                     // .paths(regex("/api/*"))
                     .build()
-                .pathMapping("/api")
+                .pathMapping("/")
                 .apiInfo(metadata());
     }
 

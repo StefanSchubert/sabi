@@ -105,4 +105,51 @@ public class TankServiceImpl extends CommonService implements TankService {
         return tankList;
     }
 
+    @Override
+    public ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, UserTo registeredUser) {
+
+        Message message;
+
+        // Check if it's users tank
+        AquariumTo tank = getTank(aquariumTo.getId(), registeredUser);
+
+        if (tank != null) {
+
+            AquariumEntity aquariumEntity = aquariumDao.find(tank.getId());
+            mapAquariumTo2Entity(aquariumTo,aquariumEntity);
+            aquariumDao.update(aquariumEntity);
+
+            message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, aquariumTo.getDescription());
+        } else {
+            message = Message.error(TankMessageCodes.NOT_YOUR_TANK, aquariumTo.getDescription());
+        }
+
+        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(aquariumTo, message) ;
+        return aquariumToResultTo;
+    }
+
+    @Override
+    public AquariumTo getTank(Long aquariumId, UserTo registeredUser) {
+
+        AquariumEntity aquariumEntity = aquariumDao.find(aquariumId);
+        AquariumTo aquariumTo = null;
+
+        if (aquariumEntity != null && aquariumEntity.getUser().getId() == registeredUser.getId()) {
+
+            aquariumTo = new AquariumTo();
+            mapAquariumEntity2To(aquariumEntity, aquariumTo);
+
+        } else {
+            // TODO STS (16.06.17): Some logging here
+        }
+        return aquariumTo;
+    }
+
+    @Override
+    public void removeTank(Long persistedTankId, UserTo registeredUser) {
+        AquariumEntity aquariumEntity = aquariumDao.getUsersAquarium(persistedTankId, registeredUser.getId());
+        if (aquariumEntity != null) {
+            aquariumDao.delete(aquariumEntity.getId());
+        }
+    }
 }

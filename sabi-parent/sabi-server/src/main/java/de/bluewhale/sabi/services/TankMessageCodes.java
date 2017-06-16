@@ -18,7 +18,7 @@ public enum TankMessageCodes implements MessageCode {
     CREATE_SUCCEEDED,
     FISH_ALREADY_EXISTS(TankExceptionCodes.ADDING_FISH_FAILED),
     NOT_YOUR_TANK(TankExceptionCodes.FRAUD_DETECTION),
-    UNKNOWN_USER(TankExceptionCodes.FRAUD_DETECTION);
+    UNKNOWN_USER(TankExceptionCodes.FRAUD_DETECTION), UPDATE_SUCCEEDED;
 
 // ------------------------------ FIELDS ------------------------------
 
