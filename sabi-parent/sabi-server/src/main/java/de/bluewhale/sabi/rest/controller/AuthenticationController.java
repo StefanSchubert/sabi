@@ -81,8 +81,6 @@ public class AuthenticationController {
             return new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
         }
 
-
     }
-
 
 }

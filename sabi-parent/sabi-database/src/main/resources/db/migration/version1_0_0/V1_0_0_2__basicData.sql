@@ -12,3 +12,12 @@ INSERT INTO remedy (id, productname, vendor) VALUES (1, 'KH+', 'Dupla');
 INSERT INTO fish_catalogue (id, scientific_name, description, meerwasserwiki_url)
 VALUES (1, 'Acreichthys tomentosus', 'Seegras Feilenfisch', 'http://meerwasserwiki.de/w/index.php?title=Acreichthys_tomentosus');
 
+insert into users (id,email,password,validate_token, validated,created_on, lastmod_on)
+values (1, 'sabi@bluewhale.de', 'UNHASED_NONSENCE','NO_IDEA',1 ,CURRENT_DATE ,CURRENT_DATE );
+
+insert into aquarium (id,size,size_unit, description, active, user_id, created_on, lastmod_on)
+values (1,80,'LITER','Nano-Reef',1,1,CURRENT_DATE , CURRENT_DATE );
+
+insert into aquarium (id,size,size_unit, description, active, user_id, created_on, lastmod_on)
+values (2,200,'LITER','Freshwater',1,1,CURRENT_DATE , CURRENT_DATE );
+

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.model;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -13,16 +17,13 @@ public class UserTo implements Serializable {
 
     private Long id;
 
-
     public Long getId() {
         return this.id;
     }
 
-
     public void setId(Long pId) {
         this.id = pId;
     }
-
 
     private String email;
 
