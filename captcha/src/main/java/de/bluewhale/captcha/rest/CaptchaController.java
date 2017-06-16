@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Stefan Schubert
  */
 @RestController
-@RequestMapping(value = "/captcha")
+@RequestMapping(value = "api/captcha")
 public class CaptchaController {
 
     @Autowired

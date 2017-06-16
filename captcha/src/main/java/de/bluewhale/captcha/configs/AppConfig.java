@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -20,7 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Date: 04.09.15
  */
 @Configuration
-@EnableWebMvc
+// @EnableWebMvc WITH THIS SWAGGER WON'T WORK
 @EnableSwagger2
 @ComponentScan(basePackages = "de.bluewhale.captcha.*")
 @PropertySource("classpath:server.properties")
