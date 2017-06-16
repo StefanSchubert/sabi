@@ -8,6 +8,7 @@ title Targeted Low-Budget Deployment for the Beginning
 cloud "Internet" {
 
  node "Sabi Users PC" {
+   interface HTTP
    [WebBrowser] ..> HTTP : use
  }
 
@@ -19,22 +20,31 @@ cloud "Internet" {
 
 cloud "Home LAN" {
 
-  node "RaspberryPi-1" {
-    package "Tomcat FE" {
-      interface HTTP
-      HTTP - [WebApp]
-      [WebApp] ..> rest : https
-    }
-  }
 
   node "RaspberryPi-2" {
-      package "SpringBootApp" {
-         interface HTTP_REST as rest
+
+      package "SpringBootApp Captcha" {
+          interface "CAPTCHA REST API" as rest2
+          rest2 - [CAPTCHA]
+      }
+
+      package "SpringBootApp Sabi-BE" {
+      interface "SABI REST API" as rest
          rest - [REST Facade]
          [REST Facade] -> [Services]
          [Services] -> [Repository]
+         [Services] ..>rest2 : https
          [Repository] --> db : jdbc
       }
+
+  }
+
+  node "RaspberryPi-1" {
+    package "Tomcat FE" {
+      HTTP - [WebApp]
+      [WebApp] ..> rest : https
+      [WebApp] ..> rest2 : https
+    }
   }
 
 node "RaspberryPi-3" {

@@ -9,7 +9,7 @@ HTTP - [HTML5-WebApp]
 
 package "Sabi Backend" {
 title Level 1 view
-interface HTTP_REST as rest
+interface "SABI REST API" as rest
 database db
 [HTML5-WebApp] ..> rest : use
 rest - [REST Facade]
@@ -17,10 +17,16 @@ rest - [REST Facade]
 [Repository] --> db
 
 together {
-[Services] -> [Repository]
+[Services] --> [Repository]
 [Reporting] -> [Repository]
 [BI Scheduler] -> [Repository]
 }
+
+interface "CAPTCHA REST API" as rest2
+rest2 - [Captcha]
+
+[Services] ..> rest2 : use
+rest2 <.. [HTML5-WebApp] : use
 
 }
 

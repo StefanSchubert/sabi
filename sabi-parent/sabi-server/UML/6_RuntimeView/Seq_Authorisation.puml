@@ -3,6 +3,8 @@
 skinparam monochrome true
 skinparam componentStyle uml2
 
+actor Client
+
 Client -> Sabi_WebAPP:Login(user,Pw)
 Sabi_WebAPP -> Sabi_REST_Facade:Login(user,Pw)
 Sabi_REST_Facade -> Sabi_Services:Login(user,Pw)
