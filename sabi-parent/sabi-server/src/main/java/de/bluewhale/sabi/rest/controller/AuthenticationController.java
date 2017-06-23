@@ -7,8 +7,11 @@ package de.bluewhale.sabi.rest.controller;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.security.AccountCredentials;
 import de.bluewhale.sabi.services.UserService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,26 +36,20 @@ public class AuthenticationController {
 
 
     @ApiOperation("/login")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", value ="Users eMail as ID", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "password", value ="Users password", required = true, dataType = "string")
-
-    })
     @ApiResponses({
             @ApiResponse(code = 202, message = "Success - Extract user Token from Answer for further requests.", response = UserTo.class),
             @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = UserTo.class)
     })
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/login"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<UserTo> loginUser(@RequestParam(value = "email", required = true,
-            defaultValue = "0") String email,
-                                            @RequestParam(value = "password", required = true,
-                                                    defaultValue = "0") String password) {
+    public ResponseEntity<UserTo> loginUser(@RequestBody AccountCredentials loginData) {
 
 
-        final UserTo userTo = new UserTo(email, password);
+        // FIXME: 21.06.17 Der Filter hat im Vorfeld doch schon zugeschlagen,
+        // d.h. hier dürfte doch eigentlich nichts mehr passierden, oder?
+        final UserTo userTo = new UserTo(loginData.getUsername(), loginData.getPassword());
 
-        final ResultTo<String> resultTo = userService.signIn(email, password);
+        final ResultTo<String> resultTo = userService.signIn(loginData.getUsername(), loginData.getPassword());
         if (resultTo != null &&
             resultTo.getMessage() != null &&
             Message.CATEGORY.INFO.equals(resultTo.getMessage().getType())) {

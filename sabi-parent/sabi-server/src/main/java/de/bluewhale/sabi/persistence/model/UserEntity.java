@@ -35,7 +35,7 @@ public class UserEntity extends TracableEntity {
     @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String password;
 
-    // TODO STS (16.06.17): Do we really need this on entity basis? Nope rather delete it.
+    // This Token is used to validate the user registration (i.e. if the email is valid and belongs to the user.)
     @Basic
     @Column(name = "validate_token", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String validateToken;

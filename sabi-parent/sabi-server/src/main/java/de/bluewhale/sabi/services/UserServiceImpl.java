@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -9,7 +9,7 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
-import de.bluewhale.sabi.util.EncryptionService;
+import de.bluewhale.sabi.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class UserServiceImpl extends CommonService implements UserService {
     @Autowired
     private UserDao dao;
     @Autowired
-    private EncryptionService encryptionService;
+    private TokenAuthenticationService encryptionService;
 
     public ResultTo<UserTo> registerNewUser(@NotNull UserTo newUser) {
 
@@ -104,52 +104,24 @@ public class UserServiceImpl extends CommonService implements UserService {
         return result;
     }
 
-    @Override
+
     public ResultTo<String> signIn(@NotNull final String pEmail, @NotNull final String pClearTextPassword) {
         final String password = encryptPasswordForHeavensSake(pClearTextPassword);
         final UserTo userTo = dao.loadUserByEmail(pEmail);
         if (userTo != null) {
             if (userTo.getPassword().equals(password)) {
-                String accessToken = generateAccessToken(pEmail);
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
-                return new ResultTo<String>(accessToken, successMessage);
+                return new ResultTo<String>("Happy", successMessage);
             } else {
                 final Message errorMsg = Message.error(AuthMessageCodes.WRONG_PASSWORD, pEmail);
-                return new ResultTo<String>(null, errorMsg);
+                return new ResultTo<String>("Sad", errorMsg);
             }
-
 
         } else {
             final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmail);
-            return new ResultTo<String>(null, errorMsg);
+            return new ResultTo<String>("Fraud?", errorMsg);
         }
 
     }
 
-    private String generateAccessToken(final String pEmail) {
-        return encryptionService.getEncryptedAccessTokenForUser(pEmail, null);
-    }
-
-    @Override
-    public boolean isTokenValid(@NotNull String pAccessToken) {
-        EncryptionService.AccessToken decryptedToken = encryptionService.decryptAccessToken(pAccessToken);
-        return decryptedToken.isValid();
-    }
-
-    @Override
-    public ResultTo<String> checkToken(@NotNull String pAccessToken) {
-        ResultTo<String> resultTo;
-        EncryptionService.AccessToken decryptedToken = encryptionService.decryptAccessToken(pAccessToken);
-
-        if (decryptedToken == null) {
-            resultTo = new ResultTo<>(null, Message.error(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED, pAccessToken));
-        } else {
-            if (isTokenValid(pAccessToken)) {
-                resultTo = new ResultTo<>(decryptedToken.getUserIdentifier(), Message.info(AuthMessageCodes.TOKEN_VALID));
-            } else {
-                resultTo = new ResultTo<>(decryptedToken.getUserIdentifier(), Message.warning(AuthMessageCodes.TOKEN_EXPIRED));
-            }
-        }
-        return resultTo;
-    }
 }

@@ -75,7 +75,7 @@ public class UserTo implements Serializable {
         this.password = password;
     }
 
-    @ApiModelProperty(notes = "If set, this token identifies the user and is to be sent as 'x-auth-token' within the request header on secured api calls.", required = false)
+    @ApiModelProperty(notes = "If set, this token identifies the user and is to be sent as 'Authorization' within the request header on secured api calls.", required = false)
     public String getxAuthToken() {
         return xAuthToken;
     }

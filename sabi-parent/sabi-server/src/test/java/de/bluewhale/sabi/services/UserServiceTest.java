@@ -188,7 +188,6 @@ public class UserServiceTest {
 
         // Then
         assertNotNull(signInResult);
-        assertNull(signInResult.getValue());
         final Message message = signInResult.getMessage();
         assertNotNull(message);
         assertNotNull(message.getCode());
@@ -211,7 +210,6 @@ public class UserServiceTest {
 
         // Then
         assertNotNull(signInResult);
-        assertNull(signInResult.getValue());
         final Message message = signInResult.getMessage();
         assertNotNull(message);
         assertNotNull(message.getCode());
@@ -220,39 +218,4 @@ public class UserServiceTest {
         assertEquals(message.getCode(), AuthMessageCodes.WRONG_PASSWORD);
     }
 
-
-    /**
-     * After signin the user is issued a token, which he is required to pass with each request to get the user context through the REST APIs.
-     * The token is supposed to be valid until his TTL has expired. If so the user need to relogin to refresh his token.
-     *
-     * Idea of token structure:
-     * Reason: REST principle, no server session
-     * encoded: eMail|InvalidationTimeStamp
-     * 2-Way encoded (The secret however is an injected property from local maven settings.xml and won't be visible ob github)
-     *
-     * @throws Exception
-     */
-    @Test
-    @Transactional
-    public void testCheckValidToken() throws Exception {
-        // Given
-        final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
-        userService.registerNewUser(userTo);
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, clearTextPassword);
-
-        String accessToken = signInResult.getValue();
-
-        // When
-        boolean tokenAccepted = userService.isTokenValid(accessToken);
-        ResultTo<String> checkResult = userService.checkToken(accessToken);
-
-        // Then
-        assertTrue(tokenAccepted);
-        assertEquals("User switched?",TESTUSER_EMAIL, checkResult.getValue());
-        final Message message = checkResult.getMessage();
-        assertNotNull(message);
-        assertNotNull(message.getCode());
-        assertEquals(message.getCode(), AuthMessageCodes.TOKEN_VALID);
-    }
 }

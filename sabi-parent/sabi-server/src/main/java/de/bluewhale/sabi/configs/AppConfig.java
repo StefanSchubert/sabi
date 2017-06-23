@@ -4,7 +4,8 @@
 
 package de.bluewhale.sabi.configs;
 
-import de.bluewhale.sabi.util.EncryptionService;
+import de.bluewhale.sabi.security.SabiDoorKeeper;
+import de.bluewhale.sabi.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,9 +35,9 @@ public class AppConfig {
     Environment env;
 
     @Bean
-    public EncryptionService encryptionService() {
+    public TokenAuthenticationService encryptionService() {
         // @Value for constructor params is to late, so these needed to be handled here.
-        return new EncryptionService(env.getProperty("accessToken.salt"), env.getProperty("accessToken.password"));
+        return new TokenAuthenticationService(env.getProperty("accessToken.SECRET"), env.getProperty("accessToken.TTL"));
     }
 
     // Required, so that Spring @Value know how to interpret ${}
@@ -44,5 +45,11 @@ public class AppConfig {
     public static PropertySourcesPlaceholderConfigurer properties() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
+    // Used by Login-Door ;-)
+    @Bean
+    public SabiDoorKeeper sabiAuthenticationManager(){
+        return new SabiDoorKeeper();
+    } ;
 
 }

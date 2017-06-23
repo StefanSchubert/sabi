@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -48,27 +48,11 @@ public interface UserService {
      *
      * @param pEmail             his email address which is being used to login
      * @param pClearTextPassword his password
-     * @return ResultTo with an AccessToken as value which may be null and a result message.
+     * @return ResultTo with Authentication result. You need to check the message within the resultTo.
+     * The Message must contain the following message code {@link AuthMessageCodes#SIGNIN_SUCCEEDED} otherwise the login failed.
      */
     @NotNull
     ResultTo<String> signIn(@NotNull String pEmail, @NotNull String pClearTextPassword);
 
-    /**
-     * Checks if the token is still valid.
-     *
-     * @param accessToken
-     * @return false if token could not be decoded or has an expired TTL, true otherwise.
-     */
-    boolean isTokenValid(@NotNull String accessToken);
 
-    /**
-     * Extended check of the provided token.
-     *
-     * @param accessToken
-     * @return resultTo with the decoded userIdentifier as value and one of those messages
-     *         {@link AuthMessageCodes#TOKEN_VALID}, {@link AuthMessageCodes#TOKEN_EXPIRED} telling
-     *         if the token is valid or not.
-     *         If the token could not be decoded, the value will be null and a message {@link AuthMessageCodes#CORRUPTED_TOKEN_DETECTED}
-     */
-    ResultTo<String> checkToken(@NotNull String accessToken);
 }

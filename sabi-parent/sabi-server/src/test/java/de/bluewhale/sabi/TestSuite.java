@@ -10,7 +10,6 @@ import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.TankServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
 import de.bluewhale.sabi.services.rest.LoginTest;
-import de.bluewhale.sabi.util.EncryptionServiceTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({UserDAOTest.class,
         UserServiceTest.class,
-        EncryptionServiceTest.class,
         TankServiceTest.class,
         FishServiceTest.class,
         CoralServiceTest.class,

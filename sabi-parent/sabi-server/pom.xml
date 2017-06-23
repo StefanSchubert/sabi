@@ -7,6 +7,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.3.RELEASE</version>
@@ -89,6 +90,18 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
+        <!-- For spring-security in combination with JWT -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
         <!-- Standard Servlet Stuff -->
         <!--
         <dependency>
@@ -121,6 +134,7 @@
 
 
         <!-- Encryption libs -->
+        <!-- FIXME: can be removed after having spring security in place. -->
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
@@ -164,12 +178,13 @@
             </exclusions>
         </dependency>
 
-<!--
+
+        <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
         <dependency>
-            <groupId>com.fasterxml</groupId>
-            <artifactId>classmate</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>${spring.version}</version>
         </dependency>
--->
 
         <!-- Test dependencies -->
         <dependency>
@@ -178,12 +193,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-instrument</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
 
     </dependencies>
 
