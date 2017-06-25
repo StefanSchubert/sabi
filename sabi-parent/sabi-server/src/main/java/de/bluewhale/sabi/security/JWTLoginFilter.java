@@ -5,6 +5,8 @@
 package de.bluewhale.sabi.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.model.AccountCredentialsTo;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,10 +49,10 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     public Authentication attemptAuthentication(HttpServletRequest pRequest,
                                                 HttpServletResponse pResponse)
             throws AuthenticationException, IOException, ServletException {
-        AccountCredentials loginData = new ObjectMapper()
-                .readValue(pRequest.getInputStream(), AccountCredentials.class);
+        AccountCredentialsTo loginData = new ObjectMapper()
+                .readValue(pRequest.getInputStream(), AccountCredentialsTo.class);
 
-        // This constructur leaves the authenticated property to false
+        // This constructor leaves the authenticated property to false
         UsernamePasswordAuthenticationToken yetUnConfirmedCredentials = new UsernamePasswordAuthenticationToken(
                 loginData.getUsername(),
                 loginData.getPassword()
@@ -84,6 +86,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             Authentication auth) throws IOException, ServletException {
         if (auth.isAuthenticated()) {
             TokenAuthenticationService.addAuthentication(pResponse, auth.getName());
+            pResponse.setStatus(HttpStatus.ACCEPTED.value());
         } else {
             throw new javax.security.sasl.AuthenticationException("Authentication Object was not authenticated!");
         }

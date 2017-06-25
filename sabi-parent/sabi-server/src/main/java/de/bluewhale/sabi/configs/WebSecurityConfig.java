@@ -4,7 +4,6 @@
 
 package de.bluewhale.sabi.configs;
 
-import de.bluewhale.sabi.security.JWTAuthenticationFilter;
 import de.bluewhale.sabi.security.JWTLoginFilter;
 import de.bluewhale.sabi.security.SabiDoorKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,30 +31,40 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .antMatchers("/").permitAll()
+        http
+            .csrf()
+                .disable()
+            .sessionManagement()
+                // This will turn off creating sessions (as without it you would get a JSESSION-ID Cookie
+                // However we provide REST Services here, having an additional session would be absurd.
+                // NOTICE: With this it is pointless to use the SecurityContextHolder of Spring-Security,
+                //         as without session it won't keep Information there.
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+            .authorizeRequests()
+                // .antMatchers("/").permitAll()
                 // Allow Swagger api-doc access
-                .antMatchers("/api").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/user/register").permitAll()
-                // all others require authentication
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources",
+                        "/configuration/security", "/swagger-ui.html", "/webjars/**",
+                        "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security").permitAll()
+                // Registration and Login are accessible without JWT based authentication
+                .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                // all others require JWT authentication
                 .anyRequest().authenticated()
                 .and()
-                // We filter the api/login requests
-                .addFilterBefore(new JWTLoginFilter("/api/user/login", authenticationManager()),
+            // JWT based authentication by POST of {"username":"<name>","password":"<password>"} which sets the
+            // token header upon authentication
+            .addFilterBefore(new JWTLoginFilter("/api/auth/login", authenticationManager()),
                         UsernamePasswordAuthenticationFilter.class)
-                // as well as the api/register requests
-                .addFilterBefore(new JWTLoginFilter("/api/user/register", authenticationManager()),
-                        UsernamePasswordAuthenticationFilter.class)
-                // And filter other requests to check the presence of JWT in header
-                .addFilterBefore(new JWTAuthenticationFilter(),
+            // as well as the api/register requests
+            .addFilterBefore(new JWTLoginFilter("/api/auth/register", authenticationManager()),
                         UsernamePasswordAuthenticationFilter.class);
+            // And filter other requests to check the presence of JWT in header
+           //  .addFilterBefore(new JWTAuthenticationFilter(),
+              //          UsernamePasswordAuthenticationFilter.class);
 
-        // This will turn off creating sessions (as without it you would get a JSESSION-ID Cookie
-        // However we provide REST Services here, having an additional session would be absurd.
-        // NOTICE: With this it is pointless to use the SecurityContextHolder of Spring-Security,
-        //         as without session it won't keep Information there.
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
     }
 
     @Autowired

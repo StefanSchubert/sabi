@@ -5,9 +5,9 @@
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.AccountCredentialsTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.security.AccountCredentials;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  * Date: 27.09.15
  */
 @RestController
-@RequestMapping(value = "api/user")
+@RequestMapping(value = "api/auth")
 public class AuthenticationController {
 
     @Autowired
@@ -37,28 +37,18 @@ public class AuthenticationController {
 
     @ApiOperation("/login")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Success - Extract user Token from Answer for further requests.", response = UserTo.class),
-            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = UserTo.class)
+            @ApiResponse(code = 202, message = "Accepted - extract user Token from header for further requests.", response = AccountCredentialsTo.class),
+            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = AccountCredentialsTo.class)
     })
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<UserTo> loginUser(@RequestBody AccountCredentials loginData) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void loginUser(@RequestBody AccountCredentialsTo loginData) {
 
-
-        // FIXME: 21.06.17 Der Filter hat im Vorfeld doch schon zugeschlagen,
-        // d.h. hier dürfte doch eigentlich nichts mehr passierden, oder?
-        final UserTo userTo = new UserTo(loginData.getUsername(), loginData.getPassword());
-
+        // NOTICE: This Code is never reached, it solely purpose is to satisfy our api doc, so that we have the
+        // function documented. The real login is being processed by our JWTLoginFilter which has been
+        // configured as request filter for the /login path.
         final ResultTo<String> resultTo = userService.signIn(loginData.getUsername(), loginData.getPassword());
-        if (resultTo != null &&
-            resultTo.getMessage() != null &&
-            Message.CATEGORY.INFO.equals(resultTo.getMessage().getType())) {
-            userTo.setxAuthToken(resultTo.getValue());
-            return new ResponseEntity<UserTo>(userTo, HttpStatus.ACCEPTED);
-        }
-        else {
-            return new ResponseEntity<UserTo>(userTo, HttpStatus.UNAUTHORIZED);
-        }
+
     }
 
 

@@ -138,7 +138,7 @@ CREATE TABLE `fish` (
   DEFAULT CHARSET = utf8;
 
 
--- +todo: According classification, refactor so suite jpa inheritence model
+-- +todo: According classification, refactor to suite jpa inheritence model
 CREATE TABLE `coral_catalogue` (
   `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `scientific_name` VARCHAR(60),

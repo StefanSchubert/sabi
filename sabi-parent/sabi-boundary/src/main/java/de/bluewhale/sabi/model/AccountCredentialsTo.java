@@ -2,7 +2,7 @@
  * Copyright (c) 2017 by Stefan Schubert
  */
 
-package de.bluewhale.sabi.security;
+package de.bluewhale.sabi.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
  *
  * @author Stefan Schubert
  */
-public class AccountCredentials {
+public class AccountCredentialsTo {
 // ------------------------------ FIELDS ------------------------------
 
     private String username;
@@ -23,12 +23,12 @@ public class AccountCredentials {
         return this.password;
     }
 
-    @ApiModelProperty(notes = "Users password.", required = true)
+    @ApiModelProperty(notes = "Users password.", example="kSzu65#@!$§g642", required = true)
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @ApiModelProperty(notes = "We use users email address as unique username.", required = true)
+    @ApiModelProperty(notes = "We use users email address as unique username.", example="sabi@bluewhale.de", required = true)
     public String getUsername() {
         return this.username;
     }

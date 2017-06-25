@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
- * DTO of the user
+ * DTO of the user which will be used during registration process, or during maintenance of users properties.
  * User: Stefan
  * Date: 29.08.15
  */
