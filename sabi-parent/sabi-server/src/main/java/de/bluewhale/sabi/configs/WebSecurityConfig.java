@@ -50,15 +50,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // Registration and Login are accessible without JWT based authentication
                 .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                // Open statistics
+                .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()
                 // all others require JWT authentication
                 .anyRequest().authenticated()
                 .and()
             // JWT based authentication by POST of {"username":"<name>","password":"<password>"} which sets the
             // token header upon authentication
             .addFilterBefore(new JWTLoginFilter("/api/auth/login", authenticationManager()),
-                        UsernamePasswordAuthenticationFilter.class)
-            // as well as the api/register requests
-            .addFilterBefore(new JWTLoginFilter("/api/auth/register", authenticationManager()),
                         UsernamePasswordAuthenticationFilter.class);
             // And filter other requests to check the presence of JWT in header
            //  .addFilterBefore(new JWTAuthenticationFilter(),

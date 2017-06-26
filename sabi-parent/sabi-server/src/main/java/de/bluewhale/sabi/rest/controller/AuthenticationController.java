@@ -37,8 +37,8 @@ public class AuthenticationController {
 
     @ApiOperation("/login")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - extract user Token from header for further requests.", response = AccountCredentialsTo.class),
-            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = AccountCredentialsTo.class)
+            @ApiResponse(code = 202, message = "Accepted - extract user Token from header for further requests.", response = HttpStatus.class),
+            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -51,7 +51,11 @@ public class AuthenticationController {
 
     }
 
-
+    @ApiOperation("/register")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserTo.class),
+            @ApiResponse(code = 409, message = "Conflict - Username already exists.", response = HttpStatus.class)
+    })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<UserTo> createUser(@RequestBody UserTo pUserTo) {
