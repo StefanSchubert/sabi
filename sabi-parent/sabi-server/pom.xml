@@ -7,6 +7,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.3.RELEASE</version>
@@ -51,7 +52,6 @@
                 <version>1.3.3</version>
             </dependency>
 
-
         </dependencies>
     </dependencyManagement>
 
@@ -89,22 +89,18 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
-        <!-- Standard Servlet Stuff -->
-        <!--
+        <!-- For spring-security in combination with JWT -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        -->
-        <!-- REST Utils like  Jackson JSON Processor -->
-        <!--
+
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.6.2</version>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
         </dependency>
-        -->
+
 
         <!-- used JPA Configuration / Implementation -->
         <dependency>
@@ -119,13 +115,6 @@
             <version>1.2.0</version>
         </dependency>
 
-
-        <!-- Encryption libs -->
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt</artifactId>
-            <version>1.9.2</version>
-        </dependency>
 
         <!-- Common Stuff -->
 
@@ -164,12 +153,13 @@
             </exclusions>
         </dependency>
 
-<!--
+
+        <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
         <dependency>
-            <groupId>com.fasterxml</groupId>
-            <artifactId>classmate</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-instrument</artifactId>
+            <version>${spring.version}</version>
         </dependency>
--->
 
         <!-- Test dependencies -->
         <dependency>
@@ -178,12 +168,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-instrument</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
 
     </dependencies>
 

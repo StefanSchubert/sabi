@@ -5,10 +5,13 @@
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.AccountCredentialsTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.services.UserService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  * Date: 27.09.15
  */
 @RestController
-@RequestMapping(value = "api/user")
+@RequestMapping(value = "api/auth")
 public class AuthenticationController {
 
     @Autowired
@@ -33,35 +36,19 @@ public class AuthenticationController {
 
 
     @ApiOperation("/login")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", value ="Users eMail as ID", required = true, dataType = "string"),
-            @ApiImplicitParam(name = "password", value ="Users password", required = true, dataType = "string")
-
-    })
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Success - Extract user Token from Answer for further requests.", response = UserTo.class),
-            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = UserTo.class)
+            @ApiResponse(code = 202, message = "Accepted - extract user Token from header for further requests.", response = AccountCredentialsTo.class),
+            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = AccountCredentialsTo.class)
     })
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<UserTo> loginUser(@RequestParam(value = "email", required = true,
-            defaultValue = "0") String email,
-                                            @RequestParam(value = "password", required = true,
-                                                    defaultValue = "0") String password) {
+    @RequestMapping(value = {"/login"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void loginUser(@RequestBody AccountCredentialsTo loginData) {
 
+        // NOTICE: This Code is never reached, it solely purpose is to satisfy our api doc, so that we have the
+        // function documented. The real login is being processed by our JWTLoginFilter which has been
+        // configured as request filter for the /login path.
+        final ResultTo<String> resultTo = userService.signIn(loginData.getUsername(), loginData.getPassword());
 
-        final UserTo userTo = new UserTo(email, password);
-
-        final ResultTo<String> resultTo = userService.signIn(email, password);
-        if (resultTo != null &&
-            resultTo.getMessage() != null &&
-            Message.CATEGORY.INFO.equals(resultTo.getMessage().getType())) {
-            userTo.setxAuthToken(resultTo.getValue());
-            return new ResponseEntity<UserTo>(userTo, HttpStatus.ACCEPTED);
-        }
-        else {
-            return new ResponseEntity<UserTo>(userTo, HttpStatus.UNAUTHORIZED);
-        }
     }
 
 

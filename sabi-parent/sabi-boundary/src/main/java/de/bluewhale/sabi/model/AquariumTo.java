@@ -30,24 +30,27 @@ public class AquariumTo implements Serializable {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
+    @SuppressWarnings("UnqualifiedFieldAccess")
     public Boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(final Boolean active) {
         this.active = active;
     }
 
+    @SuppressWarnings("UnqualifiedFieldAccess")
     @ApiModelProperty(notes = "Description or Name of the tank, so the user can distinguish them.", required = true)
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String pDescription) {
-        this.description = pDescription;
+    @SuppressWarnings("UnqualifiedFieldAccess")    public void setDescription(final String pDescription) {
+        description = pDescription;
     }
 
-    @ApiModelProperty(notes = "ID this object for further reference.", required = false)
+    @SuppressWarnings("UnqualifiedFieldAccess")
+    @ApiModelProperty(notes = "ID this object for further reference.")
     public Long getId() {
         return id;
     }
@@ -56,14 +59,16 @@ public class AquariumTo implements Serializable {
         this.id = id;
     }
 
+    @SuppressWarnings("UnqualifiedFieldAccess")
     @ApiModelProperty(notes = "Tanks volume", required = true)
     public Integer getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(final Integer size) {
         this.size = size;
     }
+
 
     @ApiModelProperty(notes = "Unit of tanks volume size.", required = true)
     public SizeUnit getSizeUnit() {
@@ -74,11 +79,12 @@ public class AquariumTo implements Serializable {
         this.sizeUnit = sizeUnit;
     }
 
+    @SuppressWarnings("UnqualifiedFieldAccess")
     public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(final Long userId) {
         this.userId = userId;
     }
 

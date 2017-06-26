@@ -33,6 +33,9 @@ public class ApiDocumentationConfiguration {
                     // .paths(regex("/api/*"))
                     .build()
                 .pathMapping("/")
+                // Suppress generation of default return codes, but have in mind, that you need to take care
+                // of @APIResponses(...) on your controller then.
+                .useDefaultResponseMessages(false)
                 .apiInfo(metadata());
     }
 
