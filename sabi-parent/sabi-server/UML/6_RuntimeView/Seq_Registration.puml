@@ -1,0 +1,32 @@
+@startuml
+
+skinparam monochrome true
+skinparam componentStyle uml2
+
+actor Aquarist
+participant SabiClient
+participant CaptchaService
+participant SabiService
+database SabiDB
+
+group register
+    Aquarist -> SabiClient: Clicks on register
+    SabiClient -> CaptchaService : getNewChallenge()
+    SabiClient -> SabiClient : render registration form
+    Aquarist -> SabiClient : Fills register form\n and answers Captcha
+    SabiClient -> SabiService : register(UserTo)
+    SabiService -> CaptchaService : validate\n Captcha Token
+    SabiService -> SabiService : validate constraints\n username, password quality
+    SabiService -> SabiDB : create unvalidated User
+    SabiService -> Aquarist : Sends validation email
+    SabiClient -> Aquarist : Notifies to validate\n new account via email
+end
+
+group validate user
+    Aquarist -> SabiService : Clicks on Validation Link
+    SabiService -> SabiDB : Validate ValidationToken
+    SabiService -> Aquarist : Sends Welcome Mail\nuser may login now
+    SabiService -> Aquarist : Plain Text Web Answer:\n Sucess - Check Welcome mail
+end
+
+@enduml

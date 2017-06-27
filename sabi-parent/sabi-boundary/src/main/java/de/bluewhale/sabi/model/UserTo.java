@@ -29,8 +29,6 @@ public class UserTo implements Serializable {
 
     private String password;
 
-    private String xAuthToken;
-
     private String captchaCode;
 
     private boolean validated;
@@ -75,17 +73,7 @@ public class UserTo implements Serializable {
         this.password = password;
     }
 
-    @ApiModelProperty(notes = "If set, this token identifies the user and is to be sent as 'Authorization' within the request header on secured api calls.", required = false)
-    public String getxAuthToken() {
-        return xAuthToken;
-    }
-
-
-    public void setxAuthToken(String validateToken) {
-        this.xAuthToken = validateToken;
-    }
-
-    @ApiModelProperty(notes = "reserved - will be used for avoiding DOS-attacks in future", required = false)
+    @ApiModelProperty(notes = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
     public String getCaptchaCode() {
         return captchaCode;
     }
