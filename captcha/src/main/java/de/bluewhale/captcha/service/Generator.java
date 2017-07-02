@@ -4,7 +4,7 @@
 
 package de.bluewhale.captcha.service;
 
-import de.bluewhale.captcha.model.CaptchaChallengeTo;
+import de.bluewhale.captcha.model.ChallengeTo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -142,14 +142,14 @@ public class Generator {
      * @param pLanguage 2char language code
      * @return Challenge object, consisting of the question and a set of answers and their one-pass submission key.
      */
-    public CaptchaChallengeTo provideChallengeFor(final String pLanguage) {
+    public ChallengeTo provideChallengeFor(final String pLanguage) {
 
         int questionIndex = random.nextInt(dataSet.size());
 
         Object[] challenges = dataSet.toArray();
         ChallengeData challengeData = (ChallengeData) challenges[questionIndex];
 
-        CaptchaChallengeTo captchaChallengeTo = new CaptchaChallengeTo();
+        ChallengeTo challengeTo = new ChallengeTo();
 
         Map<Locale, String> questionMap = challengeData.questionMap;
         Locale locale;
@@ -160,8 +160,8 @@ public class Generator {
         } catch (MissingResourceException pE) {
             locale = Locale.ENGLISH;
         }
-        captchaChallengeTo.setLanguage(locale.getLanguage());
-        captchaChallengeTo.setQuestion(questionMap.get(locale));
+        challengeTo.setLanguage(locale.getLanguage());
+        challengeTo.setQuestion(questionMap.get(locale));
 
         // As for the answer map, we generate answer tokens and for the right one
         // we register it with the ValidationCache.
@@ -175,9 +175,9 @@ public class Generator {
             }
             answerMap.put(token, answer.getKey());
         }
-        captchaChallengeTo.setAnswers(answerMap);
+        challengeTo.setAnswers(answerMap);
 
-        return captchaChallengeTo;
+        return challengeTo;
     }
 
     // Provides a unique Token

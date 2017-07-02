@@ -4,12 +4,16 @@
 
 package de.bluewhale.captcha.rest;
 
-import de.bluewhale.captcha.model.CaptchaChallengeTo;
+import de.bluewhale.captcha.model.ChallengeTo;
 import de.bluewhale.captcha.service.Checker;
 import de.bluewhale.captcha.service.Generator;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Stefan Schubert
  */
 @RestController
-@RequestMapping(value = "api/captcha")
+@RequestMapping(value = "api/")
 public class CaptchaController {
 
     @Autowired
@@ -29,29 +33,24 @@ public class CaptchaController {
     Generator generator;
 
     @ApiOperation("/challenge")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "language", value ="2 Digit ISO code of the language you require. If the language" +
-                    " is not recognized or unsupported 'en' will serve as fallback.", required = true, dataType = "string")
-
-    })
     @ApiResponses({
             @ApiResponse(code = 200, message = "Robot Challenge Probe.",
-                    response = CaptchaChallengeTo.class)
+                    response = ChallengeTo.class)
     })
-    @RequestMapping(value = "/challenge", method = RequestMethod.GET)
+    @RequestMapping(value = "/challenge", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<CaptchaChallengeTo> getNewCaptchaChallenge(@RequestParam(value = "language",
+    public ResponseEntity<ChallengeTo> getNewCaptchaChallenge(@RequestParam(value = "language",
             required = true, defaultValue = "en") String language) {
 
-        CaptchaChallengeTo captchaChallengeTo = generator.provideChallengeFor(language);
-        return new ResponseEntity<CaptchaChallengeTo>(captchaChallengeTo, HttpStatus.OK);
+        ChallengeTo challengeTo = generator.provideChallengeFor(language);
+        return new ResponseEntity<ChallengeTo>(challengeTo, HttpStatus.OK);
     }
 
 
     /**
      * Checks if a given answer is valid, so that the requested business service may continue.
      *
-     * @param captchaChoice Refers to users answer according to {@link CaptchaChallengeTo}
+     * @param captchaChoice Refers to users answer according to {@link ChallengeTo}
      * @return <ul>
      *     <li>{@link HttpStatus#CONTINUE} if code was ok,
      *     <li>{@link HttpStatus#BAD_REQUEST} if no code was provided,
@@ -59,28 +58,25 @@ public class CaptchaController {
      *     </ul>
      */
     @ApiOperation("/check")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value ="Code of a correct answer to a challenge question.", required = true, dataType = "string")
-
-    })
     @ApiResponses({
             @ApiResponse(code = 400, message = "Missing code parameter."),
-            @ApiResponse(code = 200, message = "Answer accepted, continue with registration process."),
+            @ApiResponse(code = 202, message = "Answer accepted, continue with registration process."),
             @ApiResponse(code = 406, message = "Wrong Answer. Wrong or expired code. Retry with a new captcha request.")
     })
-    @RequestMapping(value = "/check", method = RequestMethod.GET)
-    @ResponseStatus
-    public HttpStatus checkAnswer(@RequestParam(value = "code") String captchaChoice) {
-        if (captchaChoice == null) {
-            return HttpStatus.BAD_REQUEST;
+    @RequestMapping(value = "/check", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> checkAnswer(@RequestParam(value = "code", required = true)
+                                      @ApiParam(name="code", value="Code of a correct answer to a challenge question." ) String captchaChoice) {
+        if (captchaChoice == null || captchaChoice.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase(), HttpStatus.BAD_REQUEST);
         }
         else {
             boolean validCode = checker.probeCode(captchaChoice);
             if (validCode == true) {
-                return HttpStatus.OK;
+                return new ResponseEntity<>(HttpStatus.ACCEPTED.getReasonPhrase(), HttpStatus.ACCEPTED);
             }
             else {
-                return HttpStatus.NOT_ACCEPTABLE;
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(), HttpStatus.NOT_ACCEPTABLE);
             }
         }
 

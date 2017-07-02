@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -48,7 +48,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
         final UserEntity userEntity = new UserEntity();
         userEntity.setEmail(pNewUser.getEmail());
         userEntity.setPassword(pPassword);
-        userEntity.setValidateToken(pNewUser.getxAuthToken());
+        userEntity.setValidateToken(pNewUser.getValidationToken());
         userEntity.setValidated(false);
 
         final UserEntity createdUser = create(userEntity);
@@ -90,7 +90,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
     private UserTo mapEntity2To(@NotNull final UserEntity pUserEntity) {
         // TODO: 14.11.2015 Introduce Dozer? If its transitive hibernate-core dependency makes no trouble with eclipslink. 
         final UserTo userTo = new UserTo(pUserEntity.getEmail(), pUserEntity.getPassword());
-        userTo.setxAuthToken(pUserEntity.getValidateToken());
+        userTo.setValidationToken(pUserEntity.getValidateToken());
         userTo.setValidated(pUserEntity.isValidated());
         userTo.setId(pUserEntity.getId());
         return userTo;

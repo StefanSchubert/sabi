@@ -1,6 +1,6 @@
 # Bluewhale's simple Capcha REST Service
 
-This war module is currently build up under sabi-parent, but will be isolated
+This single spring boot REST Service module is currently build up under sabi-parent, but will be isolated
 as own project for usage with other projects as soon as sabi is up and running.
 
 ## Usage Information

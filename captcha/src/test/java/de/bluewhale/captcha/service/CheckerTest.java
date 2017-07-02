@@ -52,8 +52,8 @@ public class CheckerTest {
         long ttl = ValidationCache.getTTL();
 
         // Then
-        Assert.assertTrue("server.properties from testclass not accessed?", configuredTTL > 0);
-        Assert.assertTrue("server.properties from ValidationCache not accessed?", ttl > 0);
+        Assert.assertTrue("application.properties from testclass not accessed?", configuredTTL > 0);
+        Assert.assertTrue("application.properties from ValidationCache not accessed?", ttl > 0);
         Assert.assertEquals("Different than configured TTL?",configuredTTL,ttl);
     }
 

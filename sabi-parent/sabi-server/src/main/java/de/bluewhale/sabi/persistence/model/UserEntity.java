@@ -80,7 +80,6 @@ public class UserEntity extends TracableEntity {
         this.password = password;
     }
 
-    @Deprecated // "Only require on TO but not on Entity! Will be removed on next refactoring."
     public String getValidateToken() {
         return validateToken;
     }

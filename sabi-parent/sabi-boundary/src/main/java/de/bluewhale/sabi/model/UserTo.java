@@ -16,6 +16,7 @@ import java.io.Serializable;
 public class UserTo implements Serializable {
 
     private Long id;
+    private String validationToken;
 
     public Long getId() {
         return this.id;
@@ -78,8 +79,17 @@ public class UserTo implements Serializable {
         return captchaCode;
     }
 
-
     public void setCaptchaCode(final String pCaptchaCode) {
         captchaCode = pCaptchaCode;
+    }
+
+
+    public void setValidationToken(String validationToken) {
+        this.validationToken = validationToken;
+    }
+
+    @ApiModelProperty(notes = "Will be used only during registration process, when the user validates his email address.", required = false)
+    public String getValidationToken() {
+        return validationToken;
     }
 }
