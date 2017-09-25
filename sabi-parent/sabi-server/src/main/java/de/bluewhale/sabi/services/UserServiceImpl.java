@@ -44,7 +44,6 @@ public class UserServiceImpl extends CommonService implements UserService {
             String encryptedPassword = encryptPasswordForHeavensSake(newUser.getPassword());
             createdUser = dao.create(newUser, encryptedPassword);
             message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
-            // TODO StS 29.08.15: Orchestrating Service should send the email delivering the token.
         } catch (BusinessException pE) {
             message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS, newUser.getEmail());
         }

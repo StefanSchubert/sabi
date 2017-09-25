@@ -3,6 +3,8 @@ CREATE TABLE `users` (
   `email`          VARCHAR(255)        NOT NULL,
   `password`       VARCHAR(255)        NOT NULL,
   `validate_token` VARCHAR(255)        NOT NULL,
+  `language`       VARCHAR(2)          NOT NULL,
+  `country`        VARCHAR(2)          NOT NULL,
   `validated`      BOOLEAN             NOT NULL         DEFAULT FALSE,
   `created_on`     TIMESTAMP                            DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`     TIMESTAMP           NOT NULL,

@@ -14,17 +14,10 @@ import java.io.Serializable;
  * Date: 29.08.15
  */
 public class UserTo implements Serializable {
+// ------------------------------ FIELDS ------------------------------
 
     private Long id;
     private String validationToken;
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long pId) {
-        this.id = pId;
-    }
 
     private String email;
 
@@ -32,8 +25,13 @@ public class UserTo implements Serializable {
 
     private String captchaCode;
 
+    private String language;
+
+    private String country;
+
     private boolean validated;
 
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public UserTo() {
     }
@@ -41,38 +39,19 @@ public class UserTo implements Serializable {
     public UserTo(String pEmail, String pPassword) {
         this.email = pEmail;
         this.password = pPassword;
+        // set defaults
+        this.language = "en";
+        this.country = "US";
     }
 
-
-
-    public boolean isValidated() {
-        return this.validated;
-    }
-
-
-    public void setValidated(final boolean pValidated) {
-        validated = pValidated;
-    }
-
-
-    @ApiModelProperty(notes = "Users Email as ID", required = true)
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+    public UserTo(String email, String password, String language, String country) {
         this.email = email;
-    }
-
-    @ApiModelProperty(notes = "Users secret", required = true)
-    public String getPassword() {
-        return password;
-    }
-
-
-    public void setPassword(String password) {
         this.password = password;
+        this.language = language;
+        this.country = country;
     }
+
+    // --------------------- GETTER / SETTER METHODS ---------------------
 
     @ApiModelProperty(notes = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
     public String getCaptchaCode() {
@@ -83,13 +62,64 @@ public class UserTo implements Serializable {
         captchaCode = pCaptchaCode;
     }
 
+    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = false)
+    public String getCountry() {
+        return this.country;
+    }
 
-    public void setValidationToken(String validationToken) {
-        this.validationToken = validationToken;
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    @ApiModelProperty(notes = "Users Email as ID", required = true)
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long pId) {
+        this.id = pId;
+    }
+
+    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = false)
+    public String getLanguage() {
+        return this.language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    @ApiModelProperty(notes = "Users secret", required = true)
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @ApiModelProperty(notes = "Will be used only during registration process, when the user validates his email address.", required = false)
     public String getValidationToken() {
         return validationToken;
+    }
+
+    public void setValidationToken(String validationToken) {
+        this.validationToken = validationToken;
+    }
+
+    public boolean isValidated() {
+        return this.validated;
+    }
+
+    public void setValidated(final boolean pValidated) {
+        validated = pValidated;
     }
 }

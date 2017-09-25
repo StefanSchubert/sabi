@@ -121,6 +121,11 @@
             <version>0.7.0</version>
         </dependency>
 
+        <!-- For talking with an SMTP agent -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
 
         <!-- used JPA Configuration / Implementation -->
         <dependency>

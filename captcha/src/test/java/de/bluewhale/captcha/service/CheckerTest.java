@@ -11,12 +11,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Functional and quality tests of the captcha validation
@@ -24,7 +28,7 @@ import javax.annotation.PostConstruct;
  * @author Stefan Schubert
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ContextConfiguration(classes = AppConfig.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class CheckerTest {
@@ -71,6 +75,29 @@ public class CheckerTest {
         // Then
         Assert.assertFalse("Token was not consumed", ValidationCache.knowsCode(validToken));
     }
+
+
+    @Test
+    public void validateAnswerViaRestCall() throws Exception {
+        // This test demonstrates the code a client needs to send a check request
+
+        // Given (Simulate a previous taken challenge request)
+        String checkURI = "http://localhost:8081/captcha/api/check/{code}";
+        String validToken = "GreenTea";
+        ValidationCache.registerToken(validToken);
+
+        // When (Client check)
+        RestTemplate restTemplate = new RestTemplate();
+        Map params = new HashMap<String, String>(1);
+        params.put("code", validToken);
+        final String checkresult = restTemplate.getForObject(checkURI, String.class, params);
+
+        // Then (be Happy)
+        Assert.assertEquals("Ouch - Token was not recognized","Accepted", checkresult);
+    }
+
+
+
 
 
     @Test

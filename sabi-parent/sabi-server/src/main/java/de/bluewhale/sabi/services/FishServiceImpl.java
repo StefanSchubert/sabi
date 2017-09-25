@@ -82,7 +82,7 @@ public class FishServiceImpl extends CommonService implements FishService {
 
     @Override
     public FishTo getUsersFish(Long pFishId, UserTo registeredUser) {
-        FishTo fishTo = null;
+        FishTo fishTo = new FishTo();
         FishEntity fishEntity = fishDao.findUsersFish(pFishId, registeredUser.getId());
 
         if (fishEntity != null) {

@@ -12,8 +12,8 @@ title Level 1 view
 interface "SABI REST API" as rest
 database db
 [HTML5-WebApp] ..> rest : use
-rest - [REST Facade]
-[REST Facade] -> [Services]
+[REST Facade] - rest
+[Services] <- [REST Facade]
 [Repository] --> db
 
 together {
@@ -22,11 +22,21 @@ together {
 [BI Scheduler] -> [Repository]
 }
 
+
 interface "CAPTCHA REST API" as rest2
 rest2 - [Captcha]
 
+
 [Services] ..> rest2 : use
 rest2 <.. [HTML5-WebApp] : use
+
+}
+
+package "Supporting Cloud Services" {
+
+interface smtp
+smtp - [Mailer]
+[Services] ..> smtp : use
 
 }
 
