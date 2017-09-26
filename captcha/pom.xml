@@ -16,10 +16,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.bluewhale</groupId>
-    <artifactId>captcha-service</artifactId>
+    <artifactId>captcha-light</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>REST service for CAPTCHA running as spring boot application</description>
+    <description>A RESTfull microservice service for CAPTCHA running as spring boot application</description>
 
     <inceptionYear>2015</inceptionYear>
 

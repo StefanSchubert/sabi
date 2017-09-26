@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2017 by Stefan Schubert
+  -->
+
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Captcha light REST API Service</title>
+</head>
+<body>
+
+<h1>Welcome to Captcha light</h1>
+
+<p>Captcha light aims to provide software developers with a simple captcha mechanism to start with while bootstrapping a new
+    product idea. To do so, this approach provides captcha as a RESTful microservice component based upon spring boot, which you can
+    include within your product environment and you may adopt to your needs if required.</p>
+
+<h2>Why you would use Captcha light, or captcha mechanisms in general?</h2>
+    <ol>
+    <li>If you are going to deploy some self developed service and want to protect it against the denial of service
+        attack vector of automated registrations.</li>
+    <li>If you want to protect your users from password-forgotten workflow emails, triggered by a bot. (You may loose users, if you don't care about it).</li>
+    <li>You won't rely on some offered captcha services out there, and think of offering this functionality as part of your product, so that the
+    service is within your control (by means that you are able to exchange the captcha question set even according to your problem oder service context).</li>
+    <li>It's free and simple to integrate.</li>
+    </ol>
+
+
+<h2>Why would you want exchange captcha light?</h2>
+    <ul>
+    <li>This captcha service is simple. A hacker will be able to write brute force algorithms to enable bots to scope with it.</li>
+    <li>Your service or product has grown out of child-hood and you require a serious solution, as you may become more attractive be hackers.</li>
+    <li>captcha service in general (even professional solutions) are getting weaker as protective measures as KI is getting more and more powerfull.
+    That's why all the big-player are switching to two factor authorizations and you are planning to do so, too. </li>
+</ul>
+
+
+<p>At the moment Captcha light will be developed as a component of my sabi project. But will be extracted to an own git project
+    as soon as sabi reaches it's first release.
+    For more information see Projects Homepage on <a href="https://github.com/StefanSchubert/sabi">github</a>.</p>
+
+
+<h2>API Specification</h2>
+
+The REST API has been documented using the open API approach (Swagger). Therefore if you are a
+a software engineer you find the API here: <a href="swagger-ui.html">Captcha light Swagger API doc</a>.
+
+</body>
+</html>
