@@ -90,6 +90,12 @@ public class AuthenticationController {
         if (validated) {
             responseEntity = new ResponseEntity<>("<html><body><h1>Welcome to sabi!</h1><p>Your email has been " +
                     "successfully validated. You can now login with your account. Have fun using sabi.</p></body></html>", HttpStatus.ACCEPTED);
+            try {
+                sendWelcomeMail(email);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+                // TODO STS (26.09.17): Proper logging
+            }
         } else {
             responseEntity = new ResponseEntity<>("<html><body><h1>Account validation failed!</h1><p>Your account is still locked." +
                     " Did copied the full validation link into your webbrowser? Please try again.</p></body></html>", HttpStatus.NOT_ACCEPTABLE);
@@ -172,6 +178,25 @@ public class AuthenticationController {
                 "<p>To activate your account and make use of sabi we require to verify your email-address." +
                 "To do so, please click on the following link or copy paste it into your browser:</p>" +
                 mailValidationURL + "/email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken() + "<br/ >" +
+                "</body></html>", true);
+
+        mailer.send(message);
+    }
+
+    private void sendWelcomeMail(String email) throws MessagingException {
+        MimeMessage message = mailer.createMimeMessage();
+
+        // use the true flag to indicate you need a multipart message
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(email);
+        helper.setSubject("Sabi account activated");
+        helper.setFrom("no-reply@sabi.bluewhale.de");
+
+        // todo i18n Textbausteine ggf. DISCLAIMER/ Nutzungsbedingungen
+        helper.setText("<html><body>" +
+                "<h1>Successfull registration</h1>" +
+                "<p>Your account has been activated." +
+                "you can now login into sabi with your credentials.</p>" +
                 "</body></html>", true);
 
         mailer.send(message);

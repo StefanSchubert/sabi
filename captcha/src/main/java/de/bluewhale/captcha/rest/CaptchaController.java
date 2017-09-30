@@ -5,6 +5,7 @@
 package de.bluewhale.captcha.rest;
 
 import de.bluewhale.captcha.model.ChallengeTo;
+import de.bluewhale.captcha.service.ChallengeRequestThrottle;
 import de.bluewhale.captcha.service.Checker;
 import de.bluewhale.captcha.service.Generator;
 import io.swagger.annotations.ApiOperation;
@@ -34,8 +35,9 @@ public class CaptchaController {
 
     @ApiOperation("/challenge/{language}")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Robot Challenge Probe.",
-                    response = ChallengeTo.class)
+            @ApiResponse(code = 200, message = "CAPTCHA Probe activated - you may continue with check call.",
+                    response = ChallengeTo.class),
+            @ApiResponse(code = 429, message = "Max. requests per minute reached, please retry in 60 secs..")
     })
     @RequestMapping(value = "/challenge/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -43,8 +45,16 @@ public class CaptchaController {
             @PathVariable(value = "language", required = true)
             @ApiParam(name = "language", value = "ISO-639-1 language code - used for i18n in communication.") String language) {
 
-        ChallengeTo challengeTo = generator.provideChallengeFor(language);
-        return new ResponseEntity<ChallengeTo>(challengeTo, HttpStatus.OK);
+        ResponseEntity<ChallengeTo> response;
+
+        if (ChallengeRequestThrottle.requestAllowed()) {
+            ChallengeTo challengeTo = generator.provideChallengeFor(language);
+            response = new ResponseEntity<>(challengeTo, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity<>(new ChallengeTo(), HttpStatus.TOO_MANY_REQUESTS);
+        }
+
+        return response;
     }
 
 

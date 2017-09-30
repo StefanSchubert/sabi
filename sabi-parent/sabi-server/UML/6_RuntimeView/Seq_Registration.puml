@@ -26,7 +26,7 @@ group validate user
     Aquarist -> SabiService : Clicks on Validation Link
     SabiService -> SabiDB : Validate ValidationToken
     SabiService -> Aquarist : Sends Welcome Mail\nuser may login now
-    SabiService -> Aquarist : Plain Text Web Answer:\n Sucess - Check Welcome mail
+    SabiService -> Aquarist : Plain Text Web Answer:\n Success - Check Welcome mail
 end
 
 @enduml
