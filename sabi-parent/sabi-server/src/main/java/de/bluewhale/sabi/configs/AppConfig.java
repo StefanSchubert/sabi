@@ -21,7 +21,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Date: 04.09.15
  */
 @Configuration
-// @EnableWebMvc  IF ENABLED SWAGGER-UI WON'T WORK
 @EnableSwagger2
 @ComponentScan(basePackages = "de.bluewhale.sabi")
 @PropertySource("classpath:application.properties")

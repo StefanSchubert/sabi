@@ -21,8 +21,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 // @EnableWebMvc WITH THIS SWAGGER WON'T WORK
 @EnableSwagger2
-@ComponentScan(basePackages = "de.bluewhale.captcha.*")
-@PropertySource("classpath:server.properties")
+@ComponentScan(basePackages = "de.bluewhale.captcha")
+@PropertySource("classpath:application.properties")
 public class AppConfig {
 
     /*

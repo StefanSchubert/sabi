@@ -1,4 +1,10 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.captcha.model;
+
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;
 
@@ -9,7 +15,7 @@ import java.util.Map;
  *
  * @author Stefan Schubert
  */
-public class CaptchaChallengeTo {
+public class ChallengeTo {
 // ------------------------------ FIELDS ------------------------------
 
     // Maps Key->Answer
@@ -23,6 +29,7 @@ public class CaptchaChallengeTo {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
+    @ApiModelProperty(notes = "List of keys and belonging answers. Only one key is valid and will be accepted.")
     public Map<String, String> getAnswers() {
         return this.answers;
     }
@@ -31,6 +38,7 @@ public class CaptchaChallengeTo {
         this.answers = pAnswers;
     }
 
+    @ApiModelProperty(notes = "Served language. If the requested on is not avialable, you will retrieve english as default.")
     public String getLanguage() {
         return this.language;
     }
@@ -39,6 +47,7 @@ public class CaptchaChallengeTo {
         this.language = pLanguage;
     }
 
+    @ApiModelProperty(notes = "Question which is supposed to sort out robotes.", required = true)
     public String getQuestion() {
         return this.question;
     }

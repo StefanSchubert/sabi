@@ -15,9 +15,28 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>de.bluewhale</groupId>
     <artifactId>sabi-server</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration</description>
+
+    <inceptionYear>2015</inceptionYear>
+
+    <developers>
+        <!-- PLEASE ADD YOURSELF HERE for maven site docu
+        If you like to have an image link, you need to have a gravatar registered with the used email address here. -->
+        <developer>
+            <id>StS</id>
+            <name>Stefan Schubert</name>
+            <email>stefan.schubert@bluewhale.de</email>
+            <roles>
+                <role>Project-Maintainer</role>
+                <role>Product-Owner</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
     <properties>
         <sabi.version>1.0-SNAPSHOT</sabi.version>
@@ -27,6 +46,7 @@
         <swagger.version>2.7.0</swagger.version>
         <eclipselink.version>2.6.4</eclipselink.version>
     </properties>
+
 
     <dependencyManagement>
         <dependencies>
@@ -101,6 +121,11 @@
             <version>0.7.0</version>
         </dependency>
 
+        <!-- For talking with an SMTP agent -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
 
         <!-- used JPA Configuration / Implementation -->
         <dependency>

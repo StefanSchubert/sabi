@@ -4,7 +4,7 @@
 
 package de.bluewhale.captcha.service;
 
-import de.bluewhale.captcha.model.CaptchaChallengeTo;
+import de.bluewhale.captcha.model.ChallengeTo;
 import org.junit.Test;
 
 import java.util.Locale;
@@ -23,13 +23,13 @@ public class GeneratorTest {
     @Test
     public void provideChallengeForDefaultFallbackLanguage() throws Exception {
         Generator generator = new Generator();
-        CaptchaChallengeTo captchaChallengeTo = generator.provideChallengeFor("unknown");
+        ChallengeTo challengeTo = generator.provideChallengeFor("unknown");
 
-        assertNotNull("Generator did not delivered a captcha", captchaChallengeTo);
-        assertNotNull("Generator did not delivered a captcha question", captchaChallengeTo.getQuestion());
-        assertNotNull("Generator did not delivered captcha answer options", captchaChallengeTo.getAnswers());
-        assertNotNull("Generator did not specified the used language", captchaChallengeTo.getLanguage());
-        assertEquals("Fallback language mechanism was not working", "en", captchaChallengeTo.getLanguage());
+        assertNotNull("Generator did not delivered a captcha", challengeTo);
+        assertNotNull("Generator did not delivered a captcha question", challengeTo.getQuestion());
+        assertNotNull("Generator did not delivered captcha answer options", challengeTo.getAnswers());
+        assertNotNull("Generator did not specified the used language", challengeTo.getLanguage());
+        assertEquals("Fallback language mechanism was not working", "en", challengeTo.getLanguage());
     }
 
 
@@ -39,14 +39,14 @@ public class GeneratorTest {
         Generator generator = new Generator();
 
         // When
-        CaptchaChallengeTo captchaChallengeTo = generator.provideChallengeFor(Locale.GERMAN.getLanguage());
+        ChallengeTo challengeTo = generator.provideChallengeFor(Locale.GERMAN.getLanguage());
 
         // Then
-        assertNotNull("Generator did not delivered a captcha", captchaChallengeTo);
-        assertNotNull("Generator did not delivered a captcha question", captchaChallengeTo.getQuestion());
-        assertNotNull("Generator did not delivered captcha answer options", captchaChallengeTo.getAnswers());
-        assertNotNull("Generator did not specified the used language", captchaChallengeTo.getLanguage());
-        assertEquals("Did not get my language", "de", captchaChallengeTo.getLanguage());
+        assertNotNull("Generator did not delivered a captcha", challengeTo);
+        assertNotNull("Generator did not delivered a captcha question", challengeTo.getQuestion());
+        assertNotNull("Generator did not delivered captcha answer options", challengeTo.getAnswers());
+        assertNotNull("Generator did not specified the used language", challengeTo.getLanguage());
+        assertEquals("Did not get my language", "de", challengeTo.getLanguage());
     }
 
 }

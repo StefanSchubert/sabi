@@ -34,10 +34,10 @@
     <modules>
         <!-- went into spring boot solo application <module>sabi-server</module> -->
         <module>sabi-boundary</module>
-        <module>../captcha</module>
-        <!--    Excluded on purpose
-                <module>sabi-database</module>
-        -->
+        <!-- went into spring boot solo application <module>../captcha</module> -->
+       <!--    Excluded on purpose
+               <module>sabi-database</module>
+       -->
     </modules>
 
     <properties>

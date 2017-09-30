@@ -44,8 +44,15 @@ public class UserEntity extends TracableEntity {
     @Column(name = "validated", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
     private boolean validated;
 
-// --------------------- GETTER / SETTER METHODS ---------------------
+    @Basic
+    @Column(name = "language", nullable = false, insertable = true, updatable = true, length = 2, precision = 0)
+    private String language;
 
+    @Basic
+    @Column(name = "country", nullable = false, insertable = true, updatable = true, length = 2, precision = 0)
+    private String country;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
 
     public List<AquariumEntity> getAquariums() {
         return this.aquariums;
@@ -55,6 +62,13 @@ public class UserEntity extends TracableEntity {
         this.aquariums = pAquariums;
     }
 
+    public String getCountry() {
+        return this.country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
     public String getEmail() {
         return email;
@@ -72,6 +86,14 @@ public class UserEntity extends TracableEntity {
         this.id = id;
     }
 
+    public String getLanguage() {
+        return this.language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -80,7 +102,6 @@ public class UserEntity extends TracableEntity {
         this.password = password;
     }
 
-    @Deprecated // "Only require on TO but not on Entity! Will be removed on next refactoring."
     public String getValidateToken() {
         return validateToken;
     }
@@ -113,6 +134,8 @@ public class UserEntity extends TracableEntity {
         if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (validateToken != null ? !validateToken.equals(that.validateToken) : that.validateToken != null)
+        if (language != null ? !language.equals(that.language) : that.language != null)
+        if (country != null ? !country.equals(that.country) : that.country != null)
             return false;
 
         return true;

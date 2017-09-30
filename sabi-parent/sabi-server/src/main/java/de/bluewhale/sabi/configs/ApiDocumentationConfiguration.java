@@ -30,7 +30,6 @@ public class ApiDocumentationConfiguration {
                 .select()
                     .apis(RequestHandlerSelectors.any())
                     .paths(PathSelectors.any())
-                    // .paths(regex("/api/*"))
                     .build()
                 .pathMapping("/")
                 // Suppress generation of default return codes, but have in mind, that you need to take care

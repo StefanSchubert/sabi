@@ -17,8 +17,8 @@ import javax.validation.constraints.NotNull;
 public interface UserService {
 
     /**
-     * Creates a new User. The returned object contains the created
-     * user with a message. The user has been created successfully
+     * Creates a new User. The returned object contains a result message along with the created
+     * user (in success case). The user has been created successfully
      * only if the message is of {@link CATEGORY#INFO}
      */
     @NotNull

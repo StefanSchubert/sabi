@@ -1,13 +1,74 @@
-# Bluewhale's simple Capcha REST Service
+# Bluewhale's Capcha light REST Service
 
-This war module is currently build up under sabi-parent, but will be isolated
-as own project for usage with other projects as soon as sabi is up and running.
+Captcha light aims to provide software developers with a simple captcha mechanism to start with while bootstrapping a new
+product idea. To do so, this approach provides captcha as a RESTful microservice component based upon spring boot, which you can
+include within your product environment and you may adopt to your needs if required.
 
-## Usage Information
+## Chosen approach
 
-TODO
+Most of the CAPTCHA services out there rely on pattern recognition to tear humans from machines apart.
+Some other rely on mathematics skills. However they all might be difficult for some machines, but to 
+be honest, the all look like the TV winnings games for the dumb audience. I liked the idea of challenging not
+only the machine, but us humans a little as well. So to answer the challenge questions you may need to know some
+context, a machine might not be able to combine the right context with the question. It's might be that you missing the context to answer 
+a challenge, but as of other captchas out there you may request a different captcha - I'm pretty sure there is one you are able to answer.   
 
-## Sabi Deployment hint
+So when talking about simple CAPTCHA service, I'm referring to setting it up and integrate the API ;-) and not the challenges itself. 
 
-As this war might be locally for development purposes deployed
-within the same tomcat on the same host: Ensure that you use a different context root.
+
+## Why you would use Captcha light, or captcha mechanisms in general?
+
+* If you are going to deploy some self developed service and want to protect it against 
+   the denial of service attack vector of automated registrations.
+* If you want to protect your users from password-forgotten workflow emails, 
+  triggered by a bot. (You may loose users, if you don't care about it).
+* You won't rely on some offered captcha services out there, and think of offering this 
+  functionality as part of your product, so that the service is within your control 
+  (by means that you are able to exchange the captcha question set even according to 
+  your problem oder service context).
+* It's free and simple to integrate.
+
+
+
+## Why would you want exchange captcha light?
+
+* This captcha service is simple. A hacker will be able to write brute force algorithms
+  to enable bots to scope with it.
+* Your service or product has grown out of child-hood and you require a serious solution, 
+  as you may become more attractive be hackers.
+* captcha service in general (even professional solutions) are getting weaker as protective
+   measures as KI is getting more and more powerfull. That's why all the big-player are switching
+   to two factor authorizations and you are planning to do so, too.
+
+
+## Technical documentation
+
+### Stack: Server Side
+
+* JDK 1.8
+* openAPI (Swagger)
+* Spring-Boot-Application
+* REST
+* jUnit
+
+### Stack: Client side
+
+...that is up to you. This component does not include a client but you may use swagger
+to test the service.
+
+
+### Build Configuration
+Adopt resources/application.properties to your need.
+
+### Build via maven
+mvn clean install captcha-service
+
+
+### API Specification
+
+The REST API has been documented using the open API approach (Swagger). Therefore if you are a
+a software engineer you find the API after start of captcha 
+by pointing the browser to captcha/swagger-ui.html
+
+Just start this component (it't a spring boot application)
+

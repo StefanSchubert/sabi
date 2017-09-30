@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.Basic;
@@ -12,7 +16,7 @@ public abstract class TracableEntity {
 
     Timestamp createdOn;
 
-    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
+    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = false, length = 19, precision = 0)
     @Basic
     public Timestamp getCreatedOn() {
         return createdOn;
@@ -25,7 +29,7 @@ public abstract class TracableEntity {
 
     Timestamp lastmodOn;
 
-    @javax.persistence.Column(name = "lastmod_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
+    @javax.persistence.Column(name = "lastmod_on", nullable = true, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
     public Timestamp getLastmodOn() {
         return lastmodOn;

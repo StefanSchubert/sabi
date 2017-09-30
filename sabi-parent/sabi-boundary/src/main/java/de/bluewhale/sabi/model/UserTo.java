@@ -14,27 +14,24 @@ import java.io.Serializable;
  * Date: 29.08.15
  */
 public class UserTo implements Serializable {
+// ------------------------------ FIELDS ------------------------------
 
     private Long id;
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long pId) {
-        this.id = pId;
-    }
+    private String validationToken;
 
     private String email;
 
     private String password;
 
-    private String xAuthToken;
-
     private String captchaCode;
+
+    private String language;
+
+    private String country;
 
     private boolean validated;
 
+// --------------------------- CONSTRUCTORS ---------------------------
 
     public UserTo() {
     }
@@ -42,19 +39,37 @@ public class UserTo implements Serializable {
     public UserTo(String pEmail, String pPassword) {
         this.email = pEmail;
         this.password = pPassword;
+        // set defaults
+        this.language = "en";
+        this.country = "US";
     }
 
-
-
-    public boolean isValidated() {
-        return this.validated;
+    public UserTo(String email, String password, String language, String country) {
+        this.email = email;
+        this.password = password;
+        this.language = language;
+        this.country = country;
     }
 
+    // --------------------- GETTER / SETTER METHODS ---------------------
 
-    public void setValidated(final boolean pValidated) {
-        validated = pValidated;
+    @ApiModelProperty(notes = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
+    public String getCaptchaCode() {
+        return captchaCode;
     }
 
+    public void setCaptchaCode(final String pCaptchaCode) {
+        captchaCode = pCaptchaCode;
+    }
+
+    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = false)
+    public String getCountry() {
+        return this.country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
     @ApiModelProperty(notes = "Users Email as ID", required = true)
     public String getEmail() {
@@ -65,33 +80,46 @@ public class UserTo implements Serializable {
         this.email = email;
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long pId) {
+        this.id = pId;
+    }
+
+    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = false)
+    public String getLanguage() {
+        return this.language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     @ApiModelProperty(notes = "Users secret", required = true)
     public String getPassword() {
         return password;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @ApiModelProperty(notes = "If set, this token identifies the user and is to be sent as 'Authorization' within the request header on secured api calls.", required = false)
-    public String getxAuthToken() {
-        return xAuthToken;
+    @ApiModelProperty(notes = "Will be used only during registration process, when the user validates his email address.", required = false)
+    public String getValidationToken() {
+        return validationToken;
     }
 
-
-    public void setxAuthToken(String validateToken) {
-        this.xAuthToken = validateToken;
+    public void setValidationToken(String validationToken) {
+        this.validationToken = validationToken;
     }
 
-    @ApiModelProperty(notes = "reserved - will be used for avoiding DOS-attacks in future", required = false)
-    public String getCaptchaCode() {
-        return captchaCode;
+    public boolean isValidated() {
+        return this.validated;
     }
 
-
-    public void setCaptchaCode(final String pCaptchaCode) {
-        captchaCode = pCaptchaCode;
+    public void setValidated(final boolean pValidated) {
+        validated = pValidated;
     }
 }

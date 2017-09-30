@@ -35,7 +35,7 @@ public class UserServiceImpl extends CommonService implements UserService {
     public ResultTo<UserTo> registerNewUser(@NotNull UserTo newUser) {
 
         String validateToken = generateValidationToken();
-        newUser.setxAuthToken(validateToken);
+        newUser.setValidationToken(validateToken);
         newUser.setValidated(false);
 
         UserTo createdUser = null;
@@ -44,7 +44,6 @@ public class UserServiceImpl extends CommonService implements UserService {
             String encryptedPassword = encryptPasswordForHeavensSake(newUser.getPassword());
             createdUser = dao.create(newUser, encryptedPassword);
             message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
-            // TODO StS 29.08.15: Orchestrating Service should send the email delivering the token.
         } catch (BusinessException pE) {
             message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS, newUser.getEmail());
         }
@@ -92,7 +91,7 @@ public class UserServiceImpl extends CommonService implements UserService {
         boolean result = false;
         if (pEmail != null && pToken != null) {
             final UserTo userTo = dao.loadUserByEmail(pEmail);
-            if (pToken.equals(userTo.getxAuthToken())) {
+            if (pToken.equals(userTo.getValidationToken())) {
                 try {
                     dao.toggleValidationFlag(pEmail, true);
                     result = true;
