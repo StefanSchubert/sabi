@@ -21,7 +21,7 @@ public class ValidationCache {
 // ------------------------------ FIELDS ------------------------------
 
     @Value("${cachesize.cleanup.threshold}")
-    public static long CLEANUP_THRESHOLD;
+    static long CLEANUP_THRESHOLD;
 
     static Map<String,Date> tokenCache = new HashMap<String, Date>(100);
 

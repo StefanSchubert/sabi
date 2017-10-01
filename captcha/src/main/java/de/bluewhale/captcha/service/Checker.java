@@ -24,7 +24,7 @@ public class Checker {
 
         if (pCaptchaChoice != null) {
             if (ValidationCache.knowsCode(pCaptchaChoice)) {
-                ValidationCache.invalidateCode(pCaptchaChoice);
+                ValidationCache. invalidateCode(pCaptchaChoice);
                 result = true;
             }
         }

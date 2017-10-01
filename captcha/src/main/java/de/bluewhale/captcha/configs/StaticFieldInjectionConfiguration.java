@@ -4,6 +4,7 @@
 
 package de.bluewhale.captcha.configs;
 
+import de.bluewhale.captcha.service.ChallengeRequestThrottle;
 import de.bluewhale.captcha.service.ValidationCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +34,12 @@ public class StaticFieldInjectionConfiguration {
         property = env.getProperty("token.TTL");
         long ttl = Long.parseLong(property);
 
+        property = env.getProperty("challenge.throttle.per.minute");
+        int maxApiThroughputThreshold = Integer.parseInt(property);
+
         ValidationCache.setCleanupThreshold(threshold);
         ValidationCache.setTTL(ttl);
+        ChallengeRequestThrottle.setThrottleThreshold(maxApiThroughputThreshold);
     }
 
 }

@@ -4,7 +4,7 @@
 
 package de.bluewhale.captcha.service;
 
-import de.bluewhale.captcha.model.CaptchaChallengeTo;
+import de.bluewhale.captcha.model.ChallengeTo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -41,8 +41,8 @@ public class Generator {
         // This pattern challenge1 could be dynamically generated on the fly
         // as this is nonsense as the source is open...but for the start it's fine
         ChallengeData challenge1 = new ChallengeData();
-        challenge1.questionMap.put(Locale.GERMAN, "Was passt nicht?");
-        challenge1.questionMap.put(Locale.ENGLISH, "Which option does not fit");
+        challenge1.questionMap.put(Locale.GERMAN, "Welches passt nicht zum Muster?");
+        challenge1.questionMap.put(Locale.ENGLISH, "Which one does not fit to the pattern?");
         challenge1.answerMap.put("A1-B2-C2D", FALSE);
         challenge1.answerMap.put("K8-V4-W7H", FALSE);
         challenge1.answerMap.put("J6-N8-9T9", TRUE);
@@ -50,7 +50,7 @@ public class Generator {
 
         ChallengeData challenge2 = new ChallengeData();
         challenge2.questionMap.put(Locale.GERMAN, "Was passt nicht?");
-        challenge2.questionMap.put(Locale.ENGLISH, "Which option does not fit");
+        challenge2.questionMap.put(Locale.ENGLISH, "Which option does not fit?");
         challenge2.answerMap.put("Saturn", FALSE);
         challenge2.answerMap.put("Jupiter", FALSE);
         challenge2.answerMap.put("Moon", TRUE);
@@ -65,8 +65,8 @@ public class Generator {
         challenge3.answerMap.put("NO3", FALSE);   
         
         ChallengeData challenge4 = new ChallengeData();
-        challenge4.questionMap.put(Locale.GERMAN, "Was ist das Ergebnis?");
-        challenge4.questionMap.put(Locale.ENGLISH, "Which is the outcome?");
+        challenge4.questionMap.put(Locale.GERMAN, "Was gibt es davon sprachlich?");
+        challenge4.questionMap.put(Locale.ENGLISH, "Which one exists likely as spoken words?");
         challenge4.answerMap.put("+-0", TRUE);
         challenge4.answerMap.put("#-#", FALSE);
         challenge4.answerMap.put("+##", FALSE);
@@ -105,8 +105,8 @@ public class Generator {
         challenge8.answerMap.put("L", FALSE);
 
         ChallengeData challenge9 = new ChallengeData();
-        challenge9.questionMap.put(Locale.GERMAN, "Welche Option beschreibt den Operator?");
-        challenge9.questionMap.put(Locale.ENGLISH, "Which option describes the operator?");
+        challenge9.questionMap.put(Locale.GERMAN, "Welche Option beschreibt den Operator '?'");
+        challenge9.questionMap.put(Locale.ENGLISH, "Which option describes the operator '?'");
         challenge9.answerMap.put("8? = 64", FALSE);
         challenge9.answerMap.put("? ~ X * X", TRUE);
         challenge9.answerMap.put("4? = 16 ", FALSE);
@@ -142,14 +142,14 @@ public class Generator {
      * @param pLanguage 2char language code
      * @return Challenge object, consisting of the question and a set of answers and their one-pass submission key.
      */
-    public CaptchaChallengeTo provideChallengeFor(final String pLanguage) {
+    public ChallengeTo provideChallengeFor(final String pLanguage) {
 
         int questionIndex = random.nextInt(dataSet.size());
 
         Object[] challenges = dataSet.toArray();
         ChallengeData challengeData = (ChallengeData) challenges[questionIndex];
 
-        CaptchaChallengeTo captchaChallengeTo = new CaptchaChallengeTo();
+        ChallengeTo challengeTo = new ChallengeTo();
 
         Map<Locale, String> questionMap = challengeData.questionMap;
         Locale locale;
@@ -160,8 +160,8 @@ public class Generator {
         } catch (MissingResourceException pE) {
             locale = Locale.ENGLISH;
         }
-        captchaChallengeTo.setLanguage(locale.getLanguage());
-        captchaChallengeTo.setQuestion(questionMap.get(locale));
+        challengeTo.setLanguage(locale.getLanguage());
+        challengeTo.setQuestion(questionMap.get(locale));
 
         // As for the answer map, we generate answer tokens and for the right one
         // we register it with the ValidationCache.
@@ -175,9 +175,9 @@ public class Generator {
             }
             answerMap.put(token, answer.getKey());
         }
-        captchaChallengeTo.setAnswers(answerMap);
+        challengeTo.setAnswers(answerMap);
 
-        return captchaChallengeTo;
+        return challengeTo;
     }
 
     // Provides a unique Token

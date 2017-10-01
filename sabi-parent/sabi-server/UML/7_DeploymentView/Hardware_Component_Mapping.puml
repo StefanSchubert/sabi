@@ -12,9 +12,14 @@ cloud "Internet" {
    [WebBrowser] ..> HTTP : use
  }
 
-   node "Router" {
+   node "DynDNS" {
    }
-   note bottom of Router : Uses DnyDNS Service of \n my provider, to make the WebApp \n available to the public
+   note bottom of DynDNS : Uses DnyDNS Service of my provider,\n to make the WebApp on PIs at\n homebased LAN available to the public
+
+node "Mailservice" {
+interface smtp
+[SMTP] - smtp
+}
 
 }
 
@@ -33,6 +38,7 @@ cloud "Home LAN" {
          rest - [REST Facade]
          [REST Facade] -> [Services]
          [Services] -> [Repository]
+         [Services] .u.>smtp : smtp
          [Services] ..>rest2 : https
          [Repository] --> db : jdbc
       }
