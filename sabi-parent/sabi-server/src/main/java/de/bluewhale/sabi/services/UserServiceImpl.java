@@ -6,6 +6,7 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.RequestNewPasswordTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.UserDao;
@@ -20,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 /**
- *
  * User: Stefan Schubert
  * Date: 29.08.15
  */
@@ -104,6 +104,7 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
 
+    @Override
     public ResultTo<String> signIn(@NotNull final String pEmail, @NotNull final String pClearTextPassword) {
         final String password = encryptPasswordForHeavensSake(pClearTextPassword);
         final UserTo userTo = dao.loadUserByEmail(pEmail);
@@ -120,6 +121,14 @@ public class UserServiceImpl extends CommonService implements UserService {
             final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmail);
             return new ResultTo<String>("Fraud?", errorMsg);
         }
+
+    }
+
+    @Override
+    public void requestPasswordReset(RequestNewPasswordTo requestData) throws BusinessException {
+        throw new UnsupportedOperationException("void requestPasswordReset([requestData])");
+
+        // FIXME STS (18.10.17):  check email, check token, throw exceptions accordingly, send email on success
 
     }
 

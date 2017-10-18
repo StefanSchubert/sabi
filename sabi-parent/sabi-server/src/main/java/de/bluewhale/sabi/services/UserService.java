@@ -4,7 +4,9 @@
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
+import de.bluewhale.sabi.model.RequestNewPasswordTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,5 +56,12 @@ public interface UserService {
     @NotNull
     ResultTo<String> signIn(@NotNull String pEmail, @NotNull String pClearTextPassword);
 
-
+    /**
+     * Will check if user email is registered and sends user an email with a onetime pass to reset his or hers password
+     *
+     * @param requestData Contains Emailaddress and Captcha Token
+     * @throws BusinessException with {@link AuthMessageCodes#EMAIL_NOT_REGISTERED} or
+     * {@link AuthMessageCodes#CORRUPTED_TOKEN_DETECTED} in case of an invalid request.
+     */
+    void requestPasswordReset(@NotNull RequestNewPasswordTo requestData) throws BusinessException;
 }

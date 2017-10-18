@@ -4,10 +4,13 @@
 
 package de.bluewhale.sabi.rest.controller;
 
+import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
+import de.bluewhale.sabi.model.RequestNewPasswordTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.services.AuthMessageCodes;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -69,6 +72,34 @@ public class AuthenticationController {
         userService.signIn(loginData.getUsername(), loginData.getPassword());
 
     }
+
+
+    @ApiOperation("/req_pwd_reset")
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "Accepted - email with reset token has been sent to user.", response = HttpStatus.class),
+            @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
+            @ApiResponse(code = 424, message = "Failed Dependency - Captcha failed. Please retry with another captcha.", response = HttpStatus.class)
+    })
+    @RequestMapping(value = {"/req_pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RequestNewPasswordTo> requestPasswordReset(@RequestBody RequestNewPasswordTo requestData) {
+
+        ResponseEntity<RequestNewPasswordTo> responseEntity = new ResponseEntity<>(requestData, HttpStatus.ACCEPTED);
+
+        Map<AuthMessageCodes, HttpStatus> responseState = new HashMap<>();
+        responseState.put(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED, HttpStatus.FAILED_DEPENDENCY);
+        responseState.put(AuthMessageCodes.EMAIL_NOT_REGISTERED, HttpStatus.NOT_ACCEPTABLE);
+
+        try {
+            userService.requestPasswordReset(requestData);
+        } catch (BusinessException e) {
+            HttpStatus httpStatus = responseState.get(e.getCode());
+            responseEntity = new ResponseEntity<>(requestData, (httpStatus == null ? HttpStatus.FAILED_DEPENDENCY : httpStatus));
+        }
+
+        return responseEntity;
+
+    }
+
 
     @ApiOperation("/email/{email}/validation/{token}")
     @ApiResponses({
