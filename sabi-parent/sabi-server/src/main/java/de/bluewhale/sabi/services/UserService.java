@@ -60,8 +60,9 @@ public interface UserService {
      * Will check if user email is registered and sends user an email with a onetime pass to reset his or hers password
      *
      * @param requestData Contains Emailaddress and Captcha Token
-     * @throws BusinessException with {@link AuthMessageCodes#EMAIL_NOT_REGISTERED} or
-     * {@link AuthMessageCodes#CORRUPTED_TOKEN_DETECTED} in case of an invalid request.
+     * @throws BusinessException with {@link AuthExceptionCodes#USER_LOCKED} in case if user is not accessible (locked or unknown email),
+     * {@link AuthExceptionCodes#AUTHENTICATION_FAILED} in case of an invalid request (Captcha failed) or
+     * {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem. User may retry later.
      */
     void requestPasswordReset(@NotNull RequestNewPasswordTo requestData) throws BusinessException;
 }

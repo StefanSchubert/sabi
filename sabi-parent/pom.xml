@@ -35,9 +35,9 @@
         <!-- went into spring boot solo application <module>sabi-server</module> -->
         <module>sabi-boundary</module>
         <!-- went into spring boot solo application <module>../captcha</module> -->
-       <!--    Excluded on purpose
-               <module>sabi-database</module>
-       -->
+        <!--    Excluded on purpose
+                <module>sabi-database</module>
+        -->
     </modules>
 
     <properties>
@@ -53,15 +53,15 @@
         <swagger.version>2.7.0</swagger.version>
     </properties>
 
-    <repositories />
+    <repositories/>
 
     <dependencyManagement>
         <dependencies>
-<!--            <dependency>
-                <groupId>javax</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>7.0</version>
-            </dependency>-->
+            <!--            <dependency>
+                            <groupId>javax</groupId>
+                            <artifactId>javaee-api</artifactId>
+                            <version>7.0</version>
+                        </dependency>-->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

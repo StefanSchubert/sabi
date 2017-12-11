@@ -4,6 +4,10 @@
 
 package de.bluewhale.sabi.services;
 
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import de.bluewhale.sabi.configs.HazelcastConfig;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.RequestNewPasswordTo;
@@ -14,6 +18,9 @@ import de.bluewhale.sabi.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -29,6 +36,13 @@ public class UserServiceImpl extends CommonService implements UserService {
 
     @Autowired
     private UserDao dao;
+
+    @Autowired
+    private CaptchaAdapter captchaAdapter;
+
+    @Autowired
+    private NotificationService notificationService;
+
     @Autowired
     private TokenAuthenticationService encryptionService;
 
@@ -126,10 +140,47 @@ public class UserServiceImpl extends CommonService implements UserService {
 
     @Override
     public void requestPasswordReset(RequestNewPasswordTo requestData) throws BusinessException {
-        throw new UnsupportedOperationException("void requestPasswordReset([requestData])");
 
-        // FIXME STS (18.10.17):  check email, check token, throw exceptions accordingly, send email on success
+        String captchaToken = requestData.getCaptchaToken();
+        Boolean captchaValid = captchaAdapter.isCaptchaValid(captchaToken);
 
+        HazelcastInstance hzInstance = Hazelcast.getHazelcastInstanceByName(HazelcastConfig.HZ_INSTANCE_NAME);
+
+        if (captchaValid == null) {
+            throw new BusinessException(AuthExceptionCodes.SERVICE_UNAVAILABLE, Message.error(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
+        }
+
+        if (captchaValid == false) {
+            throw new BusinessException(AuthExceptionCodes.AUTHENTICATION_FAILED, Message.error(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED));
+        } else {
+
+            String emailAddress = requestData.getEmailAddress();
+            try {
+                new InternetAddress(emailAddress);
+            } catch (AddressException e) {
+                throw new BusinessException(AuthExceptionCodes.AUTHENTICATION_FAILED, Message.error(AuthMessageCodes.INVALID_EMAIL_ADDRESS));
+            }
+
+            if (emailAddress != null && dao.loadUserByEmail(emailAddress) != null) {
+                final UserTo userTo = dao.loadUserByEmail(emailAddress);
+                if (userTo != null) {
+                    // We generate the token only for a user that really exists.
+                    String token = generateValidationToken();
+
+                    // store token in distributed cache
+                    IMap<String, String> cachedTokenMap = hzInstance.getMap("pwfToken");
+                    cachedTokenMap.put(emailAddress,token);
+
+                    try {
+                        notificationService.sendPasswordResetToken(emailAddress, token);
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                throw new BusinessException(AuthExceptionCodes.USER_LOCKED, Message.error(AuthMessageCodes.EMAIL_NOT_REGISTERED));
+            }
+        }
     }
 
 }

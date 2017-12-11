@@ -18,10 +18,11 @@ database db
 
 together {
 [Services] --> [Repository]
-[Reporting] -> [Repository]
-[BI Scheduler] -> [Repository]
+[Reporting] --> [Repository]
+[BI Scheduler] --> [Repository]
 }
 
+[Services] --> [Hazelcast\nCache]
 
 interface "CAPTCHA REST API" as rest2
 rest2 - [Captcha]
