@@ -18,4 +18,6 @@ public interface NotificationService {
     void sendWelcomeMail(String email) throws MessagingException;
 
     void sendPasswordResetToken(String email, String resetValidationToken) throws MessagingException;
+
+    void sendPasswordResetConfirmation(String emailAddress) throws MessagingException;
 }

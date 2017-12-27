@@ -6,11 +6,8 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.model.AccountCredentialsTo;
-import de.bluewhale.sabi.model.RequestNewPasswordTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.services.AuthMessageCodes;
+import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.services.AuthExceptionCodes;
 import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.services.NotificationService;
 import de.bluewhale.sabi.services.UserService;
@@ -67,20 +64,50 @@ public class AuthenticationController {
     }
 
 
+    @ApiOperation("/pwd_reset")
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "Accepted - password has been reset.", response = HttpStatus.class),
+            @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
+            @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class),
+            @ApiResponse(code = 424, message = "Failed Dependency - Invalid reset token. Please use token issued by email on reset request.", response = HttpStatus.class)
+    })
+    @RequestMapping(value = {"/pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> requestPasswordReset(@RequestBody ResetPasswordTo requestData) {
+
+        ResponseEntity<String> responseEntity = new ResponseEntity<>("OK", HttpStatus.ACCEPTED);
+
+        Map<AuthExceptionCodes, HttpStatus> responseState = new HashMap<>();
+        responseState.put(AuthExceptionCodes.AUTHENTICATION_FAILED, HttpStatus.FAILED_DEPENDENCY);
+        responseState.put(AuthExceptionCodes.SERVICE_UNAVAILABLE, HttpStatus.SERVICE_UNAVAILABLE);
+        responseState.put(AuthExceptionCodes.USER_LOCKED, HttpStatus.NOT_ACCEPTABLE);
+
+        try {
+            userService.resetPassword(requestData);
+        } catch (BusinessException e) {
+            HttpStatus httpStatus = responseState.get(e.getCode());
+            responseEntity = new ResponseEntity<>(requestData.toString(), (httpStatus == null ? HttpStatus.FAILED_DEPENDENCY : httpStatus));
+        }
+
+        return responseEntity;
+
+    }
+
     @ApiOperation("/req_pwd_reset")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - email with reset token has been sent to user.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
-            @ApiResponse(code = 424, message = "Failed Dependency - Captcha failed. Please retry with another captcha.", response = HttpStatus.class)
+            @ApiResponse(code = 424, message = "Failed Dependency - Captcha failed. Please retry with another captcha.", response = HttpStatus.class),
+            @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/req_pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RequestNewPasswordTo> requestPasswordReset(@RequestBody RequestNewPasswordTo requestData) {
 
         ResponseEntity<RequestNewPasswordTo> responseEntity = new ResponseEntity<>(requestData, HttpStatus.ACCEPTED);
 
-        Map<AuthMessageCodes, HttpStatus> responseState = new HashMap<>();
-        responseState.put(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED, HttpStatus.FAILED_DEPENDENCY);
-        responseState.put(AuthMessageCodes.EMAIL_NOT_REGISTERED, HttpStatus.NOT_ACCEPTABLE);
+        Map<AuthExceptionCodes, HttpStatus> responseState = new HashMap<>();
+        responseState.put(AuthExceptionCodes.AUTHENTICATION_FAILED, HttpStatus.FAILED_DEPENDENCY);
+        responseState.put(AuthExceptionCodes.SERVICE_UNAVAILABLE, HttpStatus.SERVICE_UNAVAILABLE);
+        responseState.put(AuthExceptionCodes.USER_LOCKED, HttpStatus.NOT_ACCEPTABLE);
 
         try {
             userService.requestPasswordReset(requestData);

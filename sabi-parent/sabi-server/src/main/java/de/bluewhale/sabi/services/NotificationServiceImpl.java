@@ -89,4 +89,26 @@ public class NotificationServiceImpl extends CommonService implements Notificati
                 "</body></html>", true);
         mailer.send(message);
     }
+
+    @Override
+    public void sendPasswordResetConfirmation(String emailAddress) throws MessagingException {
+
+        MimeMessage message = mailer.createMimeMessage();
+
+        // use the true flag to indicate you need a multipart message
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(emailAddress);
+        helper.setSubject("Your Sabi password reset request");
+        helper.setFrom("no-reply@sabi.bluewhale.de");
+
+        // todo i18n Textbausteine
+        helper.setText("<html><body>" +
+                "<h1>Password reset confirmed</h1>" +
+                "<p>As requested your password has been changed. Please re-login or reconfigure your app to use" +
+                "the new one from now on.</b>" +
+                "</p> " +
+                "<p></p>" +
+                "</body></html>", true);
+        mailer.send(message);
+    }
 }
