@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -52,4 +52,12 @@ public interface UserDao extends GenericDao<UserEntity> {
      * @throws BusinessException if User is unknown
      */
     void toggleValidationFlag(@NotNull String pEmail, boolean isValidated) throws BusinessException;
+
+
+    /**
+     * reset users password.
+     * @param pEmail
+     * @param newPassword
+     */
+    void resetPassword(@NotNull String pEmail, @NotNull String newPassword);
 }

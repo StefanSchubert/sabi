@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- *
  * Author: Stefan Schubert
  * Date: 06.09.15
  */
@@ -77,7 +76,18 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
         }
     }
 
-// -------------------------- OTHER METHODS --------------------------
+    @Override
+    public void resetPassword(String pEmail, String newPassword) {
+        if (pEmail != null) {
+            final UserEntity userEntity = getUserByEmail(pEmail);
+            if (userEntity != null) {
+                userEntity.setPassword(newPassword);
+                update(userEntity);
+            }
+        }
+    }
+
+    // -------------------------- OTHER METHODS --------------------------
 
     private UserEntity getUserByEmail(@NotNull String email) {
         Query query = em.createQuery("select u FROM UserEntity u where u.email = :email");

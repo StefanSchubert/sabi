@@ -121,6 +121,22 @@
             <version>0.7.0</version>
         </dependency>
 
+
+        <!-- Spring Framework Caching Support (using hazelcast as distributed IMDG -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-spring</artifactId>
+        </dependency>
+
+
         <!-- For talking with an SMTP agent -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

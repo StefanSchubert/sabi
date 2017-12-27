@@ -78,7 +78,7 @@ against sabi. However to start with this project involves a
 ### Database
 
 * Install a local MariaDB (latest version should do it)
-* Create a DB called sabi and and a user sbi app with permissions for localhost.
+* Create a DB called sabi and and a user sabiapp with permissions for localhost.
 * Use the password as specified by the database module pom.
 
 ## Used maven goals
@@ -88,7 +88,7 @@ mvn clean install -P db_setup sabi_database
 
 ## Preparing your productive and IDE environment
 
-Customize your own server.properties and do not checkin for security reasons.!
+Customize your own server.properties and do not checkin for security reasons!
 Because of eclipselink we are using weaving at runtime which required the following vm 
 option:
 

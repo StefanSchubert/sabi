@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.ExceptionCode;
@@ -12,8 +16,9 @@ public enum AuthExceptionCodes implements ExceptionCode {
     AUTHENTICATION_FAILED(1),
     USER_LOCKED(2),
     INSUFFICIENT_PERMISSIONS(3),
-    USER_REGISTRATION_FAILED(4);
-
+    USER_REGISTRATION_FAILED(4),
+    SERVICE_UNAVAILABLE(5),
+    PW_RESET_FAILED(6);
     private int errorCode;
 
     AuthExceptionCodes(int pErrorCode) {
