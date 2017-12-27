@@ -26,10 +26,10 @@ public class TokenAuthenticationService {
     static final String TOKEN_PREFIX = "Bearer";
     static final String HEADER_STRING = "Authorization";
 
-    // Will be lazy initalized with @Value("${accessToken.SECRET}") through constructor
+    // Will be lazy initialized with @Value("${accessToken.SECRET}") through constructor
     static private String SECRET;
 
-    // Will be lazy initalized with @Value("${accessToken.TTL}") through constructor
+    // Will be lazy initialized with @Value("${accessToken.TTL}") through constructor
     static  private long ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS;
 
 // -------------------------- STATIC METHODS --------------------------

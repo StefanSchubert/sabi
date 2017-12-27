@@ -4,28 +4,24 @@
 
 package de.bluewhale.sabi.rest.controller;
 
+import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.model.AccountCredentialsTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.services.AuthExceptionCodes;
+import de.bluewhale.sabi.services.CaptchaAdapter;
+import de.bluewhale.sabi.services.NotificationService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,13 +42,10 @@ public class AuthenticationController {
     UserService userService;
 
     @Autowired
-    JavaMailSender mailer;
+    NotificationService notificationService;
 
-    @Value("${captcha.check.url}")
-    String captchaService;
-
-    @Value("${sabi.mailvalidation.url}")
-    String mailValidationURL;
+    @Autowired
+    CaptchaAdapter captchaAdapter;
 
     @ApiOperation("/login")
     @ApiResponses({
@@ -69,6 +62,64 @@ public class AuthenticationController {
         userService.signIn(loginData.getUsername(), loginData.getPassword());
 
     }
+
+
+    @ApiOperation("/pwd_reset")
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "Accepted - password has been reset.", response = HttpStatus.class),
+            @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
+            @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class),
+            @ApiResponse(code = 424, message = "Failed Dependency - Invalid reset token. Please use token issued by email on reset request.", response = HttpStatus.class)
+    })
+    @RequestMapping(value = {"/pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> requestPasswordReset(@RequestBody ResetPasswordTo requestData) {
+
+        ResponseEntity<String> responseEntity = new ResponseEntity<>("OK", HttpStatus.ACCEPTED);
+
+        Map<AuthExceptionCodes, HttpStatus> responseState = new HashMap<>();
+        responseState.put(AuthExceptionCodes.AUTHENTICATION_FAILED, HttpStatus.FAILED_DEPENDENCY);
+        responseState.put(AuthExceptionCodes.SERVICE_UNAVAILABLE, HttpStatus.SERVICE_UNAVAILABLE);
+        responseState.put(AuthExceptionCodes.USER_LOCKED, HttpStatus.NOT_ACCEPTABLE);
+
+        try {
+            userService.resetPassword(requestData);
+        } catch (BusinessException e) {
+            HttpStatus httpStatus = responseState.get(e.getCode());
+            responseEntity = new ResponseEntity<>(requestData.toString(), (httpStatus == null ? HttpStatus.FAILED_DEPENDENCY : httpStatus));
+        }
+
+        return responseEntity;
+
+    }
+
+    @ApiOperation("/req_pwd_reset")
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "Accepted - email with reset token has been sent to user.", response = HttpStatus.class),
+            @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
+            @ApiResponse(code = 424, message = "Failed Dependency - Captcha failed. Please retry with another captcha.", response = HttpStatus.class),
+            @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class)
+    })
+    @RequestMapping(value = {"/req_pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RequestNewPasswordTo> requestPasswordReset(@RequestBody RequestNewPasswordTo requestData) {
+
+        ResponseEntity<RequestNewPasswordTo> responseEntity = new ResponseEntity<>(requestData, HttpStatus.ACCEPTED);
+
+        Map<AuthExceptionCodes, HttpStatus> responseState = new HashMap<>();
+        responseState.put(AuthExceptionCodes.AUTHENTICATION_FAILED, HttpStatus.FAILED_DEPENDENCY);
+        responseState.put(AuthExceptionCodes.SERVICE_UNAVAILABLE, HttpStatus.SERVICE_UNAVAILABLE);
+        responseState.put(AuthExceptionCodes.USER_LOCKED, HttpStatus.NOT_ACCEPTABLE);
+
+        try {
+            userService.requestPasswordReset(requestData);
+        } catch (BusinessException e) {
+            HttpStatus httpStatus = responseState.get(e.getCode());
+            responseEntity = new ResponseEntity<>(requestData, (httpStatus == null ? HttpStatus.FAILED_DEPENDENCY : httpStatus));
+        }
+
+        return responseEntity;
+
+    }
+
 
     @ApiOperation("/email/{email}/validation/{token}")
     @ApiResponses({
@@ -91,7 +142,7 @@ public class AuthenticationController {
             responseEntity = new ResponseEntity<>("<html><body><h1>Welcome to sabi!</h1><p>Your email has been " +
                     "successfully validated. You can now login with your account. Have fun using sabi.</p></body></html>", HttpStatus.ACCEPTED);
             try {
-                sendWelcomeMail(email);
+                notificationService.sendWelcomeMail(email);
             } catch (MessagingException e) {
                 e.printStackTrace();
                 // TODO STS (26.09.17): Proper logging
@@ -115,25 +166,14 @@ public class AuthenticationController {
     @ResponseBody
     public ResponseEntity<UserTo> createUser(@RequestBody UserTo pUserTo) {
 
-        boolean validCaptcha = false;
+        Boolean validCaptcha;
         ResponseEntity<UserTo> responseEntity = null;
 
         // Step One: Sort out the Robots, before doing a single database request,
         // by checking the captcha code.
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            Map params = new HashMap<String, String>(1);
-            params.put("code", pUserTo.getCaptchaCode());
-            String checkURI = captchaService + "/{code}";
-            final String checkresult = restTemplate.getForObject(checkURI, String.class, params);
-            if ("Accepted".equals(checkresult)) {
-                validCaptcha = true;
-            } else {
-                responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.PRECONDITION_FAILED);
-            }
-        } catch (RestClientException e) {
-            // TODO STS (26.09.17): proper logging
-            responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
+        validCaptcha = captchaAdapter.isCaptchaValid(pUserTo.getCaptchaCode());
+        if (validCaptcha == null) {
+            return new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         if (validCaptcha) {
@@ -146,59 +186,22 @@ public class AuthenticationController {
                 responseEntity = new ResponseEntity<UserTo>(createdUser, HttpStatus.CREATED);
 
                 try {
-                    sendValidationMail(createdUser);
+                    notificationService.sendValidationMail(createdUser);
                 } catch (MessagingException e) {
                     // TODO STS (26.09.17): proper logging
                     System.out.println(e);
                     responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
                 }
 
-
             } else {
                 // TODO STS (17.06.16): Replace with Logging
                 System.out.println("A User with eMail " + pUserTo.getEmail() + " already exist.");
                 responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
             }
+        } else {
+            responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.PRECONDITION_FAILED);
         }
         return responseEntity;
     }
 
-    private void sendValidationMail(UserTo createdUser) throws MessagingException {
-        MimeMessage message = mailer.createMimeMessage();
-
-        // use the true flag to indicate you need a multipart message
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setTo(createdUser.getEmail());
-        helper.setSubject("sabi Account Validation");
-        helper.setFrom("no-reply@sabi.bluewhale.de");
-
-        // todo i18n Textbausteine (userTO) extract sabi target URL from application properties
-        helper.setText("<html><body>" +
-                "<h1>Welcome to sabi</h1>" +
-                "<p>To activate your account and make use of sabi we require to verify your email-address." +
-                "To do so, please click on the following link or copy paste it into your browser:</p>" +
-                mailValidationURL + "/email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken() + "<br/ >" +
-                "</body></html>", true);
-
-        mailer.send(message);
-    }
-
-    private void sendWelcomeMail(String email) throws MessagingException {
-        MimeMessage message = mailer.createMimeMessage();
-
-        // use the true flag to indicate you need a multipart message
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setTo(email);
-        helper.setSubject("Sabi account activated");
-        helper.setFrom("no-reply@sabi.bluewhale.de");
-
-        // todo i18n Textbausteine ggf. DISCLAIMER/ Nutzungsbedingungen
-        helper.setText("<html><body>" +
-                "<h1>Successfull registration</h1>" +
-                "<p>Your account has been activated." +
-                "you can now login into sabi with your credentials.</p>" +
-                "</body></html>", true);
-
-        mailer.send(message);
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2017 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -15,12 +15,19 @@ import de.bluewhale.sabi.exception.MessageCode;
 public enum AuthMessageCodes implements MessageCode {
     WRONG_PASSWORD(AuthExceptionCodes.AUTHENTICATION_FAILED),
     UNKNOWN_USERNAME(AuthExceptionCodes.AUTHENTICATION_FAILED),
+    EMAIL_NOT_REGISTERED(AuthExceptionCodes.AUTHENTICATION_FAILED),
+    INVALID_EMAIL_ADDRESS(AuthExceptionCodes.AUTHENTICATION_FAILED),
+    WRONG_CAPTCHA_ANSWER(AuthExceptionCodes.AUTHENTICATION_FAILED),
     USER_CREATION_SUCCEEDED(),
     USER_ALREADY_EXISTS(AuthExceptionCodes.USER_REGISTRATION_FAILED),
     SIGNIN_SUCCEEDED(),
     TOKEN_VALID(),
     TOKEN_EXPIRED(AuthExceptionCodes.AUTHENTICATION_FAILED),
-    CORRUPTED_TOKEN_DETECTED(AuthExceptionCodes.AUTHENTICATION_FAILED);
+    CORRUPTED_TOKEN_DETECTED(AuthExceptionCodes.AUTHENTICATION_FAILED),
+    BACKEND_TEMPORARILY_UNAVAILABLE(AuthExceptionCodes.SERVICE_UNAVAILABLE),
+    INCONSISTENT_PW_RESET_DATA(AuthExceptionCodes.PW_RESET_FAILED),
+    PASSWORD_TO_WEAK,
+    UNKNOWN_OR_STALE_PW_RESET_TOKEN(AuthExceptionCodes.PW_RESET_FAILED);
 
 // ------------------------------ FIELDS ------------------------------
 

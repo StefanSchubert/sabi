@@ -51,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // Registration and Login are accessible without JWT based authentication
                 .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/auth/req_pwd_reset").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
                 // Open statistics
                 .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()

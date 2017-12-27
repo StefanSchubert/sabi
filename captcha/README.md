@@ -53,7 +53,7 @@ So when talking about simple CAPTCHA service, I'm referring to setting it up and
 
 ### Stack: Client side
 
-...that is up to you. This component does not include a client but you may use swagger
+...this is up to you. This component does not include a client but you may use swagger
 to test the service.
 
 
@@ -70,5 +70,5 @@ The REST API has been documented using the open API approach (Swagger). Therefor
 a software engineer you find the API after start of captcha 
 by pointing the browser to captcha/swagger-ui.html
 
-Just start this component (it't a spring boot application)
+Just start this component (it's a spring boot application)
 
