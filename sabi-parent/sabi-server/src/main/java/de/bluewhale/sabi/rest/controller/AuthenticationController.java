@@ -160,6 +160,7 @@ public class AuthenticationController {
             @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserTo.class),
             @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
             @ApiResponse(code = 503, message = "Backend-Service not available, please try again later.", response = HttpStatus.class),
+            @ApiResponse(code = 415, message = "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?", response = HttpStatus.class),
             @ApiResponse(code = 409, message = "Conflict - Username already exists.", response = UserTo.class)
     })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

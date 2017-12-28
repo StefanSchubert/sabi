@@ -79,5 +79,6 @@ public interface UserService {
      * {@link AuthExceptionCodes#PW_RESET_FAILED} in case of an invalid request (email, token or password) problem or
      * {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem - you may retry later.
      */
+    @Transactional
     void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException;
 }

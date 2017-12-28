@@ -24,10 +24,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import static de.bluewhale.sabi.util.Obfuscator.encryptPasswordForHeavensSake;
 
 /**
  * User: Stefan Schubert
@@ -68,22 +67,7 @@ public class UserServiceImpl extends CommonService implements UserService {
         return userToResultTo;
     }
 
-    private String encryptPasswordForHeavensSake(final String pPassword) {
-        // using MD5
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] messageDigest = md.digest(pPassword.getBytes());
-            BigInteger number = new BigInteger(1, messageDigest);
-            String hashtext = number.toString(16);
-            // Now we need to zero pad it if you actually want the full 32 chars.
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-            return hashtext;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     private String generateValidationToken() {
         // Thanks goes to: Mister Smith (http://stackoverflow.com/questions/14622622/generating-a-random-hex-string-of-length-50-in-java-me-j2me)

@@ -35,7 +35,7 @@ public interface FishService {
      * @param pRegisteredUser
      */
     @Transactional
-    void removeFish(Long pFishId, UserTo pRegisteredUser);
+    void removeFish(@NotNull Long pFishId, @NotNull UserTo pRegisteredUser);
 
     /**
      * Retrieves a users fish, as long as he or she is the owner
@@ -43,5 +43,5 @@ public interface FishService {
      * @param registeredUser
      * @return null if the fish does not exists or if the user is not the owner.
      */
-    FishTo getUsersFish(Long pFishId, UserTo registeredUser);
+    FishTo getUsersFish(@NotNull Long pFishId, @NotNull UserTo registeredUser);
 }

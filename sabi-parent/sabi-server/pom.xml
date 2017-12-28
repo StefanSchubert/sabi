@@ -19,7 +19,8 @@
     <artifactId>sabi-server</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration</description>
+    <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration
+    </description>
 
     <inceptionYear>2015</inceptionYear>
 
@@ -209,6 +210,26 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- This is the replacement database which will
+             we used by tests which have been annotated with @JpaDataTest
+             https://mvnrepository.com/artifact/com.h2database/h2
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.196</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+
+        <!-- Provides a simple smtp server, such that the content of generated emails
+             can be checked in junit tests as well.
+             https://mvnrepository.com/artifact/dumbster/dumbster -->
+        <dependency>
+            <groupId>dumbster</groupId>
+            <artifactId>dumbster</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
+
 
     </dependencies>
 
@@ -227,7 +248,9 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar</argLine>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -241,7 +264,9 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <agent>${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar</agent>
+                    <agent>
+                        ${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar
+                    </agent>
                 </configuration>
             </plugin>
         </plugins>

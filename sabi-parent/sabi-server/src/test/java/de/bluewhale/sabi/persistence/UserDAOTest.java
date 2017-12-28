@@ -16,6 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -54,6 +56,8 @@ public class UserDAOTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("Test@bluewhale.de");
         userEntity.setPassword("Test123");
+        userEntity.setCountry(Locale.GERMANY.getCountry());
+        userEntity.setLanguage(Locale.GERMAN.getLanguage());
         userEntity.setValidateToken("abc123");
         userEntity.setId(4711L);
 
