@@ -69,7 +69,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
      *  decided upon the {@link Authentication#isAuthenticated()} flag! This callback
      *  will be invoked, as long as an {@link org.springframework.security.authentication.AuthenticationProvider#authenticate(Authentication)}
      *  call (i.e. {@link SabiDoorKeeper#authenticate(Authentication)}) will return an {@link Authentication} Object.
-     *  Only when it returns <i>NULL</i> or throughs an exception the callback will omitted.
+     *  Only when it returns <i>NULL</i> or throws an exception the callback will omitted.
      * </b>
      *
      * @param pRequest

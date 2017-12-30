@@ -23,7 +23,7 @@ group register
 end
 
 group validate user
-    Aquarist -> SabiService : Clicks on Validation Link
+    Aquarist -> SabiService : Clicks on (email) Validation Link
     SabiService -> SabiDB : Validate ValidationToken
     SabiService -> Aquarist : Sends Welcome Mail\nuser may login now
     SabiService -> Aquarist : Plain Text Web Answer:\n Success - Check Welcome mail

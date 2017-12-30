@@ -68,7 +68,6 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
 
-
     private String generateValidationToken() {
         // Thanks goes to: Mister Smith (http://stackoverflow.com/questions/14622622/generating-a-random-hex-string-of-length-50-in-java-me-j2me)
         int numchars = 8;
@@ -110,7 +109,11 @@ public class UserServiceImpl extends CommonService implements UserService {
         final String password = encryptPasswordForHeavensSake(pClearTextPassword);
         final UserTo userTo = dao.loadUserByEmail(pEmail);
         if (userTo != null) {
-            if (userTo.getPassword().equals(password)) {
+
+            if (!userTo.isValidated()) {
+                final Message errorMsg = Message.info(AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS, pEmail);
+                return new ResultTo<String>("Email address validation missing.", errorMsg);
+            } else if (userTo.getPassword().equals(password)) {
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
                 return new ResultTo<String>("Happy", successMessage);
             } else {

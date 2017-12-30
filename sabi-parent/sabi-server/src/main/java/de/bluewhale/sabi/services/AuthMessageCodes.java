@@ -27,7 +27,8 @@ public enum AuthMessageCodes implements MessageCode {
     BACKEND_TEMPORARILY_UNAVAILABLE(AuthExceptionCodes.SERVICE_UNAVAILABLE),
     INCONSISTENT_PW_RESET_DATA(AuthExceptionCodes.PW_RESET_FAILED),
     PASSWORD_TO_WEAK,
-    UNKNOWN_OR_STALE_PW_RESET_TOKEN(AuthExceptionCodes.PW_RESET_FAILED);
+    UNKNOWN_OR_STALE_PW_RESET_TOKEN(AuthExceptionCodes.PW_RESET_FAILED),
+    INCOMPLETE_REGISTRATION_PROCESS(AuthExceptionCodes.AUTHENTICATION_FAILED);
 
 // ------------------------------ FIELDS ------------------------------
 

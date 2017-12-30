@@ -59,7 +59,7 @@ public class NotificationServiceImpl extends CommonService implements Notificati
 
         // todo i18n Textbausteine ggf. DISCLAIMER/ Nutzungsbedingungen
         helper.setText("<html><body>" +
-                "<h1>Successfull registration</h1>" +
+                "<h1>Successful registration</h1>" +
                 "<p>Your account has been activated." +
                 "you can now login into sabi with your credentials.</p>" +
                 "</body></html>", true);
