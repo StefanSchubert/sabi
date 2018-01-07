@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 /**
@@ -68,6 +68,34 @@ public class UserDAOTest {
         UserEntity foundUserEntity = userDao.find(userEntity.getId());
 
         assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
+
+    }
+
+    @Test
+    @Transactional
+    // @Rollback(false)
+    public void testModifierAttributesViaGenericDAO() throws Exception {
+
+        // given
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail("ModifierTest@bluewhale.de");
+        userEntity.setPassword("Test123");
+        userEntity.setCountry(Locale.GERMANY.getCountry());
+        userEntity.setLanguage(Locale.GERMAN.getLanguage());
+        userEntity.setValidateToken("abc123");
+        userEntity.setId(4712L);
+
+        // when
+        userDao.create(userEntity);
+        UserEntity foundUserEntity = userDao.find(userEntity.getId());
+        assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
+        assertNull(foundUserEntity.getLastmodOn());
+
+        // Now do a midification
+        userDao.toggleValidationFlag(foundUserEntity.getEmail(),true);
+
+        // then
+        assertNotNull(foundUserEntity.getLastmodOn());
 
     }
 

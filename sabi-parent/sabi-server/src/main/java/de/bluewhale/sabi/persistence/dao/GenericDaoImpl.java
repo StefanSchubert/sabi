@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -11,8 +11,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -47,7 +46,7 @@ public abstract class GenericDaoImpl<T extends TracableEntity> implements Generi
 
     @Override
     public T create(final T t) {
-        t.setCreatedOn(new Timestamp(new Date().getTime()));
+        t.setCreatedOn(LocalDateTime.now());
         this.em.persist(t);
         em.flush(); // because we want to return the auto generated id.
         return t;
@@ -65,7 +64,8 @@ public abstract class GenericDaoImpl<T extends TracableEntity> implements Generi
 
     @Override
     public T update(final T t) {
-        t.setLastmodOn(new Timestamp(new Date().getTime()));
-        return this.em.merge(t);
+        t.setLastmodOn(LocalDateTime.now());
+        this.em.merge(t);
+        return t;
     }
 }

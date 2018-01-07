@@ -6,8 +6,8 @@ CREATE TABLE `users` (
   `language`       VARCHAR(2)          NOT NULL,
   `country`        VARCHAR(2)          NOT NULL,
   `validated`      BOOLEAN             NOT NULL         DEFAULT FALSE,
-  `created_on`     TIMESTAMP                            DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`     TIMESTAMP           NOT NULL,
+  `created_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`     TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_EMAIL` (`email`)
 )
@@ -20,11 +20,11 @@ CREATE TABLE `aquarium` (
   `id`             BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `size`           INTEGER,
   `size_unit`      VARCHAR(10),
-  `description` VARCHAR(255)        NOT NULL,
-  `active`         BIT                          DEFAULT 0,
-  `user_id`        BIGINT(20) UNSIGNED,
-  `created_on`     TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`     TIMESTAMP           NOT NULL,
+  `description`    VARCHAR(255)        NOT NULL,
+  `active`         BIT                 DEFAULT 0,
+  `user_id`        BIGINT(20)          UNSIGNED,
+  `created_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`     TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE SET NULL
@@ -38,8 +38,8 @@ CREATE TABLE `unit` (
   `id`          INTEGER UNSIGNED NOT NULL,
   `name`        VARCHAR(15)      NOT NULL,
   `description` VARCHAR(255)     NOT NULL,
-  `created_on`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`  TIMESTAMP        NOT NULL,
+  `created_on`  TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -52,8 +52,8 @@ CREATE TABLE `parameter` (
   `used_threshold_unit_id` INTEGER UNSIGNED NOT NULL,
   `min_threshold`          FLOAT,
   `max_threshold`          FLOAT,
-  `created_on`             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`             TIMESTAMP        NOT NULL,
+  `created_on`             TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`             TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (used_threshold_unit_id) REFERENCES unit (id)
 )
@@ -79,8 +79,8 @@ CREATE TABLE `remedy` (
   `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `productname` VARCHAR(60),
   `vendor`      VARCHAR(60),
-  `created_on`  TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`  TIMESTAMP           NOT NULL,
+  `created_on`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -96,8 +96,8 @@ CREATE TABLE `treatment` (
   `unit_id`     INTEGER   UNSIGNED  NOT NULL,
   `remedy_id`   BIGINT(20) UNSIGNED NOT NULL,
   `description` VARCHAR(255),
-  `created_on`  TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`  TIMESTAMP           NOT NULL,
+  `created_on`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (unit_id) REFERENCES unit (id),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
@@ -113,8 +113,8 @@ CREATE TABLE `fish_catalogue` (
   `scientific_name`    VARCHAR(60),
   `description`        VARCHAR(400),
   `meerwasserwiki_url` VARCHAR(120),
-  `created_on`         TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`         TIMESTAMP           NOT NULL,
+  `created_on`         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`         TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -129,8 +129,8 @@ CREATE TABLE `fish` (
   `exodus_on`         DATETIME,
   `nickname`          VARCHAR(60),
   `observed_behavior` TEXT,
-  `created_on`        TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`        TIMESTAMP           NOT NULL,
+  `created_on`        TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`        TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (fish_catalogue_id) REFERENCES fish_catalogue (id)
@@ -145,8 +145,8 @@ CREATE TABLE `coral_catalogue` (
   `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `scientific_name` VARCHAR(60),
   `description`     VARCHAR(400),
-  `created_on`      TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`      TIMESTAMP           NOT NULL,
+  `created_on`      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`      TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -161,8 +161,8 @@ CREATE TABLE `coral` (
   `exodus_on`          DATETIME,
   `nickname`           VARCHAR(60),
   `observed_behavior`  TEXT,
-  `created_on`         TIMESTAMP                    DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`         TIMESTAMP           NOT NULL,
+  `created_on`         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`         TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (coral_catalouge_id) REFERENCES coral_catalogue (id)

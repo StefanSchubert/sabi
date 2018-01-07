@@ -1,10 +1,14 @@
+<!--
+  ~ Copyright (c) 2018 by Stefan Schubert
+  -->
+
 <RestClientRequest>
   <option name="biscuits">
     <list />
   </option>
   <option name="httpMethod" value="POST" />
   <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/sabi/user/register" />
+  <option name="urlPath" value="/sabi/api/auth/register" />
   <option name="headers">
     <list>
       <KeyValuePair>
@@ -28,6 +32,6 @@
   <option name="haveTextToSend" value="true" />
   <option name="haveFileToSend" value="false" />
   <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{   &quot;email&quot;: &quot;schubert@bluewhale.de&quot;,     &quot;password&quot;: &quot;test&quot; }" />
+  <option name="textToSend" value="{   &quot;email&quot;: &quot;schubert@bluewhale.de&quot;,          &quot;password&quot;: &quot;test&quot;,     &quot;captchaCode&quot;: &quot;He0iW&quot; }" />
   <option name="filesToSend" value="" />
 </RestClientRequest>

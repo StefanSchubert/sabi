@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.Basic;
-import java.sql.Timestamp;
+import javax.persistence.Column;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -14,28 +15,28 @@ import java.sql.Timestamp;
  */
 public abstract class TracableEntity {
 
-    Timestamp createdOn;
+    LocalDateTime createdOn;
 
-    @javax.persistence.Column(name = "created_on", nullable = false, insertable = true, updatable = false, length = 19, precision = 0)
+    @Column(name = "created_on", nullable = false, insertable = true, updatable = false)
     @Basic
-    public Timestamp getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(Timestamp createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 
 
-    Timestamp lastmodOn;
+    LocalDateTime lastmodOn;
 
-    @javax.persistence.Column(name = "lastmod_on", nullable = true, insertable = true, updatable = true, length = 19, precision = 0)
+    @Column(name = "lastmod_on", nullable = true, insertable = true, updatable = true)
     @Basic
-    public Timestamp getLastmodOn() {
+    public LocalDateTime getLastmodOn() {
         return lastmodOn;
     }
 
-    public void setLastmodOn(Timestamp lastmodOn) {
+    public void setLastmodOn(LocalDateTime lastmodOn) {
         this.lastmodOn = lastmodOn;
     }
 

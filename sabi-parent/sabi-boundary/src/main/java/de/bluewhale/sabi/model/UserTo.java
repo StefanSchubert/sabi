@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.model;
@@ -25,9 +25,9 @@ public class UserTo implements Serializable {
 
     private String captchaCode;
 
-    private String language;
+    private String language ="en"; // default
 
-    private String country;
+    private String country = "US"; // default
 
     private boolean validated;
 
@@ -39,9 +39,6 @@ public class UserTo implements Serializable {
     public UserTo(String pEmail, String pPassword) {
         this.email = pEmail;
         this.password = pPassword;
-        // set defaults
-        this.language = "en";
-        this.country = "US";
     }
 
     public UserTo(String email, String password, String language, String country) {
@@ -62,7 +59,7 @@ public class UserTo implements Serializable {
         captchaCode = pCaptchaCode;
     }
 
-    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = false)
+    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
     public String getCountry() {
         return this.country;
     }
@@ -88,7 +85,7 @@ public class UserTo implements Serializable {
         this.id = pId;
     }
 
-    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = false)
+    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
     public String getLanguage() {
         return this.language;
     }
