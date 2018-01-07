@@ -78,6 +78,7 @@ public class EclipselinkJPAConfig {
 
         // only for debugging more jpa logging
         properties.setProperty("eclipselink.logging.level", "FINE");
+        properties.setProperty("eclipselink.logging.exception", "true");
 
         // To Convert CamelCase on JavaProps to Camel_Case on DB-Level,
         // as the @Column(name=) annotation will only be used when generating
