@@ -73,7 +73,10 @@ public class UserDAOTest {
 
     @Test
     @Transactional
-    // @Rollback(false)
+    // This test is "lying" from integration test perspective.
+    // During #sabi-22 we could observe (by testing the use case via rest calls),
+    // that the datetime will be set be the Generic dao but ignored through jpa mapping.
+    // Meaning test is green because of cache, but database will ignore the modifier mapping.
     public void testModifierAttributesViaGenericDAO() throws Exception {
 
         // given
@@ -91,11 +94,12 @@ public class UserDAOTest {
         assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
         assertNull(foundUserEntity.getLastmodOn());
 
-        // Now do a midification
+        // Now do a validation
         userDao.toggleValidationFlag(foundUserEntity.getEmail(),true);
+        UserEntity updatedUserEntity = userDao.find(userEntity.getId());
 
         // then
-        assertNotNull(foundUserEntity.getLastmodOn());
+        assertNotNull(updatedUserEntity.getLastmodOn());
 
     }
 
