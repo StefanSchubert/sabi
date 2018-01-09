@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -162,7 +162,8 @@ public class UserServiceTest {
         // Given
         final String clearTextPassword = "NoPass123";
         UserTo userTo = new UserTo(TESTUSER_EMAIL, clearTextPassword);
-        userService.registerNewUser(userTo);
+        ResultTo<UserTo> resultTo = userService.registerNewUser(userTo);
+        userService.validateUser(TESTUSER_EMAIL, resultTo.getValue().getValidationToken());
 
         // When
         ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, clearTextPassword);
@@ -173,7 +174,7 @@ public class UserServiceTest {
         final Message message = signInResult.getMessage();
         assertNotNull(message);
         assertNotNull(message.getCode());
-        assertEquals(message.getCode(), AuthMessageCodes.SIGNIN_SUCCEEDED);
+        assertEquals(AuthMessageCodes.SIGNIN_SUCCEEDED,message.getCode());
     }
 
 
