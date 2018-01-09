@@ -4,6 +4,7 @@
 
 package de.bluewhale.sabi.persistence.dao;
 
+import de.bluewhale.sabi.persistence.model.EntityState;
 import de.bluewhale.sabi.persistence.model.TracableEntity;
 
 import javax.persistence.EntityManager;
@@ -46,7 +47,8 @@ public abstract class GenericDaoImpl<T extends TracableEntity> implements Generi
 
     @Override
     public T create(final T t) {
-        t.setCreatedOn(LocalDateTime.now());
+        t.setEntityState(new EntityState());
+        t.getEntityState().setCreatedOn(LocalDateTime.now());
         this.em.persist(t);
         em.flush(); // because we want to return the auto generated id.
         return t;
@@ -64,7 +66,7 @@ public abstract class GenericDaoImpl<T extends TracableEntity> implements Generi
 
     @Override
     public T update(final T t) {
-        t.setLastmodOn(LocalDateTime.now());
+        t.getEntityState().setLastmodOn(LocalDateTime.now());
         this.em.merge(t);
         return t;
     }

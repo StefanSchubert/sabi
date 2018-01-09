@@ -7,7 +7,7 @@ CREATE TABLE `users` (
   `country`        VARCHAR(2)          NOT NULL,
   `validated`      BOOLEAN             NOT NULL         DEFAULT FALSE,
   `created_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`     TIMESTAMP,
+  `lastmod_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_EMAIL` (`email`)
 )
@@ -17,14 +17,14 @@ CREATE TABLE `users` (
 
 
 CREATE TABLE `aquarium` (
-  `id`             BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `size`           INTEGER,
-  `size_unit`      VARCHAR(10),
-  `description`    VARCHAR(255)        NOT NULL,
-  `active`         BIT                 DEFAULT 0,
-  `user_id`        BIGINT(20)          UNSIGNED,
-  `created_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`     TIMESTAMP,
+  `id`          BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
+  `size`        INTEGER,
+  `size_unit`   VARCHAR(10),
+  `description` VARCHAR(255)        NOT NULL,
+  `active`      BIT                                  DEFAULT 0,
+  `user_id`     BIGINT(20)          UNSIGNED,
+  `created_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE SET NULL
@@ -38,8 +38,8 @@ CREATE TABLE `unit` (
   `id`          INTEGER UNSIGNED NOT NULL,
   `name`        VARCHAR(15)      NOT NULL,
   `description` VARCHAR(255)     NOT NULL,
-  `created_on`  TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`  TIMESTAMP,
+  `created_on`  TIMESTAMP        NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP        NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -52,8 +52,8 @@ CREATE TABLE `parameter` (
   `used_threshold_unit_id` INTEGER UNSIGNED NOT NULL,
   `min_threshold`          FLOAT,
   `max_threshold`          FLOAT,
-  `created_on`             TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`             TIMESTAMP,
+  `created_on`             TIMESTAMP        NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`             TIMESTAMP        NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (used_threshold_unit_id) REFERENCES unit (id)
 )
@@ -65,7 +65,7 @@ CREATE TABLE `measurement` (
   `id`             BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `measured_on`    DATETIME            NOT NULL,
   `measured_value` FLOAT               NOT NULL,
-  `unit_id`        INTEGER   UNSIGNED  NOT NULL,
+  `unit_id`        INTEGER UNSIGNED    NOT NULL,
   `aquarium_id`    BIGINT(20) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (unit_id) REFERENCES unit (id),
@@ -76,11 +76,11 @@ CREATE TABLE `measurement` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `remedy` (
-  `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id`          BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
   `productname` VARCHAR(60),
   `vendor`      VARCHAR(60),
-  `created_on`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`  TIMESTAMP,
+  `created_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -89,15 +89,15 @@ CREATE TABLE `remedy` (
 
 
 CREATE TABLE `treatment` (
-  `id`          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id`          BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
   `aquarium_id` BIGINT(20) UNSIGNED NOT NULL,
   `given_on`    DATETIME            NOT NULL,
   `amount`      FLOAT               NOT NULL,
-  `unit_id`     INTEGER   UNSIGNED  NOT NULL,
+  `unit_id`     INTEGER UNSIGNED    NOT NULL,
   `remedy_id`   BIGINT(20) UNSIGNED NOT NULL,
   `description` VARCHAR(255),
-  `created_on`  TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`  TIMESTAMP,
+  `created_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (unit_id) REFERENCES unit (id),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
@@ -109,12 +109,12 @@ CREATE TABLE `treatment` (
 
 
 CREATE TABLE `fish_catalogue` (
-  `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id`                 BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
   `scientific_name`    VARCHAR(60),
   `description`        VARCHAR(400),
   `meerwasserwiki_url` VARCHAR(120),
-  `created_on`         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`         TIMESTAMP,
+  `created_on`         TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`         TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -122,15 +122,15 @@ CREATE TABLE `fish_catalogue` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `fish` (
-  `id`                BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id`                BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
   `aquarium_id`       BIGINT(20) UNSIGNED NOT NULL,
   `fish_catalogue_id` BIGINT(20) UNSIGNED NOT NULL,
   `added_on`          DATETIME            NOT NULL,
   `exodus_on`         DATETIME,
   `nickname`          VARCHAR(60),
   `observed_behavior` TEXT,
-  `created_on`        TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`        TIMESTAMP,
+  `created_on`        TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`        TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (fish_catalogue_id) REFERENCES fish_catalogue (id)
@@ -139,14 +139,13 @@ CREATE TABLE `fish` (
   AUTO_INCREMENT = 100
   DEFAULT CHARSET = utf8;
 
-
 -- +todo: According classification, refactor to suite jpa inheritence model
 CREATE TABLE `coral_catalogue` (
-  `id`              BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id`              BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
   `scientific_name` VARCHAR(60),
   `description`     VARCHAR(400),
-  `created_on`      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`      TIMESTAMP,
+  `created_on`      TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`      TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -154,15 +153,15 @@ CREATE TABLE `coral_catalogue` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `coral` (
-  `id`                 BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id`                 BIGINT(20) UNSIGNED NOT NULL         AUTO_INCREMENT,
   `aquarium_id`        BIGINT(20) UNSIGNED NOT NULL,
   `coral_catalouge_id` BIGINT(20) UNSIGNED NOT NULL,
   `added_on`           DATETIME            NOT NULL,
   `exodus_on`          DATETIME,
   `nickname`           VARCHAR(60),
   `observed_behavior`  TEXT,
-  `created_on`         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastmod_on`         TIMESTAMP,
+  `created_on`         TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
+  `lastmod_on`         TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
   FOREIGN KEY (coral_catalouge_id) REFERENCES coral_catalogue (id)

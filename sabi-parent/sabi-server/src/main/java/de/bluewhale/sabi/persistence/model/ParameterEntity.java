@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -14,22 +14,24 @@ import javax.persistence.*;
 @Table(name = "parameter", schema = "sabi")
 @Entity
 public class ParameterEntity extends TracableEntity {
+// ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
-    @Basic
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     private String description;
+
+    private int usedThresholdUnitId;
+
+    private Float minThreshold;
+
+    private Float maxThreshold;
+
+    @Embedded
+    private EntityState entityState;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
 
     @javax.persistence.Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     @Basic
@@ -41,31 +43,25 @@ public class ParameterEntity extends TracableEntity {
         this.description = description;
     }
 
-    private int usedThresholdUnitId;
+    @Override
+    public EntityState getEntityState() {
+        return this.entityState;
+    }
 
-    @javax.persistence.Column(name = "used_threshold_unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
+    @Override
+    public void setEntityState(EntityState entityState) {
+        this.entityState = entityState;
+    }
+
+    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
-    public int getUsedThresholdUnitId() {
-        return usedThresholdUnitId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUsedThresholdUnitId(int usedThresholdUnitId) {
-        this.usedThresholdUnitId = usedThresholdUnitId;
+    public void setId(Integer id) {
+        this.id = id;
     }
-
-    private Float minThreshold;
-
-    @javax.persistence.Column(name = "min_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
-    @Basic
-    public Float getMinThreshold() {
-        return minThreshold;
-    }
-
-    public void setMinThreshold(Float minThreshold) {
-        this.minThreshold = minThreshold;
-    }
-
-    private Float maxThreshold;
 
     @javax.persistence.Column(name = "max_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
     @Basic
@@ -77,32 +73,51 @@ public class ParameterEntity extends TracableEntity {
         this.maxThreshold = maxThreshold;
     }
 
+    @javax.persistence.Column(name = "min_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
+    @Basic
+    public Float getMinThreshold() {
+        return minThreshold;
+    }
+
+    public void setMinThreshold(Float minThreshold) {
+        this.minThreshold = minThreshold;
+    }
+
+    @javax.persistence.Column(name = "used_threshold_unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
+    @Basic
+    public int getUsedThresholdUnitId() {
+        return usedThresholdUnitId;
+    }
+
+    public void setUsedThresholdUnitId(int usedThresholdUnitId) {
+        this.usedThresholdUnitId = usedThresholdUnitId;
+    }
+
+// ------------------------ CANONICAL METHODS ------------------------
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
 
         ParameterEntity that = (ParameterEntity) o;
 
-        if (id != that.id) return false;
-        if (usedThresholdUnitId != that.usedThresholdUnitId) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (maxThreshold != null ? !maxThreshold.equals(that.maxThreshold) : that.maxThreshold != null) return false;
-        if (minThreshold != null ? !minThreshold.equals(that.minThreshold) : that.minThreshold != null) return false;
-
-        return true;
+        if (this.usedThresholdUnitId != that.usedThresholdUnitId) return false;
+        if (!this.id.equals(that.id)) return false;
+        if (!this.description.equals(that.description)) return false;
+        if (this.minThreshold != null ? !this.minThreshold.equals(that.minThreshold) : that.minThreshold != null) return false;
+        if (this.maxThreshold != null ? !this.maxThreshold.equals(that.maxThreshold) : that.maxThreshold != null) return false;
+        return this.entityState.equals(that.entityState);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + usedThresholdUnitId;
-        result = 31 * result + (minThreshold != null ? minThreshold.hashCode() : 0);
-        result = 31 * result + (maxThreshold != null ? maxThreshold.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
+        int result = this.id.hashCode();
+        result = 31 * result + this.description.hashCode();
+        result = 31 * result + this.usedThresholdUnitId;
+        result = 31 * result + (this.minThreshold != null ? this.minThreshold.hashCode() : 0);
+        result = 31 * result + (this.maxThreshold != null ? this.maxThreshold.hashCode() : 0);
+        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

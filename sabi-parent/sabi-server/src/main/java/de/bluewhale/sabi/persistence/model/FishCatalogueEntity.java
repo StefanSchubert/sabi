@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -14,34 +14,22 @@ import javax.persistence.*;
 @Table(name = "fish_catalogue", schema = "sabi")
 @Entity
 public class FishCatalogueEntity extends TracableEntity {
+// ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     private String scientificName;
 
-    @javax.persistence.Column(name = "scientific_name", nullable = true, insertable = true, updatable = true, length = 60, precision = 0)
-    @Basic
-    public String getScientificName() {
-        return scientificName;
-    }
-
-    public void setScientificName(String scientificName) {
-        this.scientificName = scientificName;
-    }
-
     private String description;
+
+    private String meerwasserwikiUrl;
+
+    @Embedded
+    private EntityState entityState;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
 
     @javax.persistence.Column(name = "description", nullable = true, insertable = true, updatable = true, length = 400, precision = 0)
     @Basic
@@ -53,7 +41,25 @@ public class FishCatalogueEntity extends TracableEntity {
         this.description = description;
     }
 
-    private String meerwasserwikiUrl;
+    @Override
+    public EntityState getEntityState() {
+        return this.entityState;
+    }
+
+    @Override
+    public void setEntityState(EntityState entityState) {
+        this.entityState = entityState;
+    }
+
+    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
+    @Basic
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @javax.persistence.Column(name = "meerwasserwiki_url", nullable = true, insertable = true, updatable = true, length = 120, precision = 0)
     @Basic
@@ -65,33 +71,40 @@ public class FishCatalogueEntity extends TracableEntity {
         this.meerwasserwikiUrl = meerwasserwikiUrl;
     }
 
+    @javax.persistence.Column(name = "scientific_name", nullable = true, insertable = true, updatable = true, length = 60, precision = 0)
+    @Basic
+    public String getScientificName() {
+        return scientificName;
+    }
+
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
+    }
+
+// ------------------------ CANONICAL METHODS ------------------------
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
 
         FishCatalogueEntity that = (FishCatalogueEntity) o;
 
-        if (id != that.id) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
-        if (meerwasserwikiUrl != null ? !meerwasserwikiUrl.equals(that.meerwasserwikiUrl) : that.meerwasserwikiUrl != null)
+        if (!this.id.equals(that.id)) return false;
+        if (!this.scientificName.equals(that.scientificName)) return false;
+        if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
+        if (this.meerwasserwikiUrl != null ? !this.meerwasserwikiUrl.equals(that.meerwasserwikiUrl) : that.meerwasserwikiUrl != null)
             return false;
-        if (scientificName != null ? !scientificName.equals(that.scientificName) : that.scientificName != null)
-            return false;
-
-        return true;
+        return this.entityState.equals(that.entityState);
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (scientificName != null ? scientificName.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (meerwasserwikiUrl != null ? meerwasserwikiUrl.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
-        result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
+        int result = this.id.hashCode();
+        result = 31 * result + this.scientificName.hashCode();
+        result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
+        result = 31 * result + (this.meerwasserwikiUrl != null ? this.meerwasserwikiUrl.hashCode() : 0);
+        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }
