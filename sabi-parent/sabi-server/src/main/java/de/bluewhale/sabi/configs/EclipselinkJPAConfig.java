@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.configs;
@@ -75,6 +75,10 @@ public class EclipselinkJPAConfig {
         properties.setProperty("eclipselink.drop-ddl-jdbc-file-name", "dropDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.target-database", "MYSQL");
         properties.setProperty("eclipselink.weaving", "static");
+
+        // only for debugging more jpa logging
+        properties.setProperty("eclipselink.logging.level", "FINE");
+        properties.setProperty("eclipselink.logging.exception", "true");
 
         // To Convert CamelCase on JavaProps to Camel_Case on DB-Level,
         // as the @Column(name=) annotation will only be used when generating

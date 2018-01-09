@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Author: Stefan
  * Date: 12.03.15
  */
@@ -52,6 +51,9 @@ public class UserEntity extends TracableEntity {
     @Column(name = "country", nullable = false, insertable = true, updatable = true, length = 2, precision = 0)
     private String country;
 
+    @Embedded
+    private EntityState entityState;
+
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     public List<AquariumEntity> getAquariums() {
@@ -76,6 +78,14 @@ public class UserEntity extends TracableEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public EntityState getEntityState() {
+        return this.entityState;
+    }
+
+    public void setEntityState(EntityState entityState) {
+        this.entityState = entityState;
     }
 
     public Long getId() {
@@ -123,33 +133,33 @@ public class UserEntity extends TracableEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
 
         UserEntity that = (UserEntity) o;
 
-        if (id != that.id) return false;
-        if (validated != that.validated) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        if (lastmodOn != null ? !lastmodOn.equals(that.lastmodOn) : that.lastmodOn != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (validateToken != null ? !validateToken.equals(that.validateToken) : that.validateToken != null)
-        if (language != null ? !language.equals(that.language) : that.language != null)
-        if (country != null ? !country.equals(that.country) : that.country != null)
+        if (this.validated != that.validated) return false;
+        if (!this.id.equals(that.id)) return false;
+        if (this.aquariums != null ? !this.aquariums.equals(that.aquariums) : that.aquariums != null) return false;
+        if (!this.email.equals(that.email)) return false;
+        if (this.password != null ? !this.password.equals(that.password) : that.password != null) return false;
+        if (this.validateToken != null ? !this.validateToken.equals(that.validateToken) : that.validateToken != null)
             return false;
-
-        return true;
+        if (this.language != null ? !this.language.equals(that.language) : that.language != null) return false;
+        if (this.country != null ? !this.country.equals(that.country) : that.country != null) return false;
+        return this.entityState.equals(that.entityState);
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (validateToken != null ? validateToken.hashCode() : 0);
-        result = 31 * result + (validated ? 1 : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
-        result = 31 * result + (lastmodOn != null ? lastmodOn.hashCode() : 0);
+        int result = this.id.hashCode();
+        result = 31 * result + (this.aquariums != null ? this.aquariums.hashCode() : 0);
+        result = 31 * result + this.email.hashCode();
+        result = 31 * result + (this.password != null ? this.password.hashCode() : 0);
+        result = 31 * result + (this.validateToken != null ? this.validateToken.hashCode() : 0);
+        result = 31 * result + (this.validated ? 1 : 0);
+        result = 31 * result + (this.language != null ? this.language.hashCode() : 0);
+        result = 31 * result + (this.country != null ? this.country.hashCode() : 0);
+        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

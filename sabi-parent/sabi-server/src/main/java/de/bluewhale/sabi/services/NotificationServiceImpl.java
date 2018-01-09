@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -41,7 +41,7 @@ public class NotificationServiceImpl extends CommonService implements Notificati
                 "<h1>Welcome to sabi</h1>" +
                 "<p>To activate your account and make use of sabi we require to verify your email-address." +
                 "To do so, please click on the following link or copy paste it into your browser:</p>" +
-                mailValidationURL + "/email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken() + "<br/ >" +
+                mailValidationURL + "email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken() + "<br/ >" +
                 "</body></html>", true);
 
         mailer.send(message);

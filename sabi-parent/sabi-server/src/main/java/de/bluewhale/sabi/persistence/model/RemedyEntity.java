@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.model;
@@ -14,10 +14,30 @@ import javax.persistence.*;
 @Table(name = "remedy", schema = "sabi")
 @Entity
 public class RemedyEntity extends TracableEntity {
+// ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
+    private String productname;
+
+    private String vendor;
+
+    @Embedded
+    private EntityState entityState;
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    @Override
+    public EntityState getEntityState() {
+        return this.entityState;
+    }
+
+    @Override
+    public void setEntityState(EntityState entityState) {
+        this.entityState = entityState;
+    }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
@@ -29,8 +49,6 @@ public class RemedyEntity extends TracableEntity {
         this.id = id;
     }
 
-    private String productname;
-
     @javax.persistence.Column(name = "productname", nullable = true, insertable = true, updatable = true, length = 60, precision = 0)
     @Basic
     public String getProductname() {
@@ -40,8 +58,6 @@ public class RemedyEntity extends TracableEntity {
     public void setProductname(String productname) {
         this.productname = productname;
     }
-
-    private String vendor;
 
     @javax.persistence.Column(name = "vendor", nullable = true, insertable = true, updatable = true, length = 60, precision = 0)
     @Basic
@@ -53,27 +69,27 @@ public class RemedyEntity extends TracableEntity {
         this.vendor = vendor;
     }
 
+// ------------------------ CANONICAL METHODS ------------------------
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
 
         RemedyEntity that = (RemedyEntity) o;
 
-        if (id != that.id) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (productname != null ? !productname.equals(that.productname) : that.productname != null) return false;
-        if (vendor != null ? !vendor.equals(that.vendor) : that.vendor != null) return false;
-
-        return true;
+        if (!this.id.equals(that.id)) return false;
+        if (!this.productname.equals(that.productname)) return false;
+        if (this.vendor != null ? !this.vendor.equals(that.vendor) : that.vendor != null) return false;
+        return this.entityState.equals(that.entityState);
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (productname != null ? productname.hashCode() : 0);
-        result = 31 * result + (vendor != null ? vendor.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
+        int result = this.id.hashCode();
+        result = 31 * result + this.productname.hashCode();
+        result = 31 * result + (this.vendor != null ? this.vendor.hashCode() : 0);
+        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }
