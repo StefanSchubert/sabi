@@ -5,7 +5,6 @@
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.HttpURLConnection;
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -44,15 +44,14 @@ public class TankController {
     })
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token) {
+    public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token, Principal principal) {
 
 
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
-        // we use it here again to extract the user, for which we query the aquarium list.
-        String user = TokenAuthenticationService.extractUserFromToken(token);
+        // and we can be sure that spring has injected a valid Principal object.
+        String user = principal.getName();
 
-
-        // fixme Token-Security Check is being handled through spring-security
+        // TODO STS (11.01.18): remove fixed user
         final Long extractedUserId = 1L;
         List<AquariumTo> aquariumToList = tankService.listTanks(extractedUserId);
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
