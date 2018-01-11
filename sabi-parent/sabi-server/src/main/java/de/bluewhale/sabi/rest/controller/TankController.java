@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +34,7 @@ public class TankController {
     @Autowired
     TankService tankService;
 
-    @ApiOperation(value="/list", notes ="You need to set the token issued by login or registration in the request header field X-Authorization.")
+    @ApiOperation(value="/list", notes ="You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
                     message = "Success tanks returned.",
@@ -43,7 +44,12 @@ public class TankController {
     })
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "X-Authorization", required = true) String token) {
+    public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token) {
+
+
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // we use it here again to extract the user, for which we query the aquarium list.
+        String user = TokenAuthenticationService.extractUserFromToken(token);
 
 
         // fixme Token-Security Check is being handled through spring-security

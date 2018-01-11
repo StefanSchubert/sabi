@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.security;
@@ -58,17 +58,26 @@ public class TokenAuthenticationService {
         String token = pRequest.getHeader(HEADER_STRING);
         if (token != null) {
             // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
-
+            String user = extractUserFromToken(token);
             return user != null ?
                     new UsernamePasswordAuthenticationToken(user, null, emptyList()) :
                     null;
         }
         return null;
+    }
+
+    /**
+     * provides the user encoded with the token
+     * @param token
+     * @return users identified by his email or null in casse the token was not valid.
+     */
+    public static String extractUserFromToken(String token) {
+        String user = Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                .getBody()
+                .getSubject();
+        return user;
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------
