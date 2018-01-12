@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -98,7 +98,7 @@ public class TankServiceTest {
        ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser);
 
        // When
-        List<AquariumTo> usersAquariums =  tankService.listTanks(registeredUser.getId());
+        List<AquariumTo> usersAquariums =  tankService.listTanks(TESTUSER_EMAIL);
 
         // Then
         assertNotNull(usersAquariums);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -32,11 +32,11 @@ public interface TankService {
 
     /**
      * Lists tanks for a specific user.
-     * @param pUserId identifies the owner of the tanks that will be returned.
+     * @param pUserEmail identifies the owner of the tanks that will be returned.
      * @return List of tanks, maybe empty but never null.
      */
     @NotNull
-    List<AquariumTo> listTanks(@NotNull Long pUserId);
+    List<AquariumTo> listTanks(@NotNull String pUserEmail);
 
     /**
      * Updates some Tank-Properties

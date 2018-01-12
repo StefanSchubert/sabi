@@ -46,14 +46,12 @@ public class TankController {
     @ResponseBody
     public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token, Principal principal) {
 
-
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         String user = principal.getName();
 
         // TODO STS (11.01.18): remove fixed user
-        final Long extractedUserId = 1L;
-        List<AquariumTo> aquariumToList = tankService.listTanks(extractedUserId);
+        List<AquariumTo> aquariumToList = tankService.listTanks(user);
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
 
     }

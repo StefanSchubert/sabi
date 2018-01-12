@@ -40,12 +40,16 @@ public class TokenAuthenticationService {
      * @param pUserID For sabi it's users email address.
      */
     static void addAuthentication(HttpServletResponse pResponse, String pUserID) {
-        String JWT = Jwts.builder()
-                .setSubject(pUserID)
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS*1000))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
-                .compact();
+        String JWT = createAuthorizationTokenFor(pUserID);
         pResponse.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+    }
+
+    public static String createAuthorizationTokenFor(String pUserID) {
+        return Jwts.builder()
+                    .setSubject(pUserID)
+                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS*1000))
+                    .signWith(SignatureAlgorithm.HS512, SECRET)
+                    .compact();
     }
 
     /**

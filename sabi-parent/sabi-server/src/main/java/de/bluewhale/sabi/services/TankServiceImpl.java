@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -84,9 +84,10 @@ public class TankServiceImpl extends CommonService implements TankService {
 
 
     @Override
-    public List<AquariumTo> listTanks(final Long pUserId) {
+    public List<AquariumTo> listTanks(final String pUserEmail) {
 
-        List<AquariumTo> tankList = aquariumDao.findUsersTanks(pUserId);
+        UserTo userTo = userDao.loadUserByEmail(pUserEmail);
+        List<AquariumTo> tankList = aquariumDao.findUsersTanks(userTo.getId());
 
         /*
         Bidirectional side does not work. Wrong JPA Setup?
