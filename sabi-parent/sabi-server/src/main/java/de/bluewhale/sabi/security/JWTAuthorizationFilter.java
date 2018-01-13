@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import static de.bluewhale.sabi.security.TokenAuthenticationService.HEADER_STRING;
@@ -56,12 +55,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         } else {
             // don't continue the chain
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            res.setHeader("Authorization", token);
-
-            PrintWriter writer = res.getWriter();
-            writer.print("Access denied! You need to login and send the Token 'Authorization' issued through the response token after login in your request token." +
-                    "See also API documentation  available under: /sabi/swagger-ui.html");
-
             // don't set content length , don't close
         }
     }

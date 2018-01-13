@@ -10,6 +10,8 @@ import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.AquariumDao;
 import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,10 +26,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 
 /**
  * Demonstrate usage of the tank API.
@@ -46,8 +51,10 @@ public class TankControllerTest {
 
     @MockBean
     AquariumDao aquariumDao;
+
     @Autowired
     ObjectMapper objectMapper;  // json mapper
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -89,6 +96,48 @@ public class TankControllerTest {
         assertThat(Arrays.asList(myObjects), hasItem(aquariumTo));
 
     }
+
+    @Test
+    public void testCreateUsersTank() throws Exception {
+        // given some Testdata via mocking
+
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+
+        AquariumTo aquariumTo = getTestAquariumFor(userTo);
+        AquariumEntity createdAquariumEntity = new AquariumEntity();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userTo.getId());
+        createdAquariumEntity.setUser(userEntity);
+
+        mapAquariumTo2Entity(aquariumTo,createdAquariumEntity);
+
+        given(this.aquariumDao.create(any())).willReturn(createdAquariumEntity);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // when this authorized user requests to create a aquarium
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        String requestJson = objectMapper.writeValueAsString(aquariumTo);
+        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/api/tank/create", entity, String.class);
+
+        // then we should get a 201 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.CREATED));
+
+        // and our test aquarium
+        AquariumTo createdAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+        assertEquals(createdAquarium.getDescription(),aquariumTo.getDescription());
+    }
+
 
 
     @Test

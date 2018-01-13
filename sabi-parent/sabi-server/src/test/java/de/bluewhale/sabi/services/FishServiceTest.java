@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -61,7 +61,7 @@ public class FishServiceTest {
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
 
         // When
@@ -92,7 +92,7 @@ public class FishServiceTest {
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
         final UserTo fraudUser = testDataFactory.getPersistedTestUserTo("I_Intent@No.good");
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
 
         // When
@@ -137,7 +137,7 @@ public class FishServiceTest {
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
         final FishTo fish = new FishTo();
         fish.setAddedOn(LocalDate.now());

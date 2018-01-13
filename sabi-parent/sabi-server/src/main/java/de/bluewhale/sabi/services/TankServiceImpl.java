@@ -39,19 +39,19 @@ public class TankServiceImpl extends CommonService implements TankService {
 
 
     @Override
-    public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final UserTo pRegisteredUser) {
+    public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final String pRegisteredUser) {
 
         AquariumTo createdAquariumTo = null;
         Message message = null;
 
         Long pAquariumToId = pAquariumTo.getId();
-        if (pAquariumToId != null) {
+        if (pAquariumToId != null && (aquariumDao.find(pAquariumToId) != null)) {
             // ImpotenceCheck: Do not create the same tank twice (identified by id).
-            AquariumEntity aquariumEntity = aquariumDao.find(pAquariumToId);
             createdAquariumTo = pAquariumTo;
-            message = Message.error(TankMessageCodes.TANK_ALREADY_EXISTS, aquariumEntity.getDescription());
+            message = Message.error(TankMessageCodes.TANK_ALREADY_EXISTS, pAquariumTo.getDescription());
         } else {
-            UserEntity userEntity = userDao.find(pRegisteredUser.getId());
+            UserTo userTo = userDao.loadUserByEmail(pRegisteredUser);
+            UserEntity userEntity = userDao.find(userTo.getId());
             AquariumEntity aquariumEntity = new AquariumEntity();
             mapAquariumTo2Entity(pAquariumTo, aquariumEntity);
             aquariumEntity.setUser(userEntity);

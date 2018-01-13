@@ -62,7 +62,7 @@ public class TankServiceTest {
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
         // When
         aquariumTo = aquariumToResultTo.getValue();
@@ -94,8 +94,8 @@ public class TankServiceTest {
         aquariumTo2.setSize(120);
         aquariumTo2.setSizeUnit(SizeUnit.LITER);
 
-       ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo1, registeredUser);
-       ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser);
+       ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo1, registeredUser.getEmail());
+       ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser.getEmail());
 
        // When
         List<AquariumTo> usersAquariums =  tankService.listTanks(TESTUSER_EMAIL);
@@ -129,7 +129,7 @@ public class TankServiceTest {
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
         // When
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL);
 
         // Then
         assertNotNull("ResultObject must not be empty",aquariumToResultTo);
@@ -149,7 +149,7 @@ public class TankServiceTest {
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
         Long persistedTankId = aquariumToResultTo.getValue().getId();
         tankService.removeTank(persistedTankId, registeredUser);

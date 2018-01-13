@@ -21,13 +21,13 @@ public interface TankService {
     /**
      * Creates a new tank for provided user.
      * @param pAquariumTo Tank data.
-     * @param pRegisteredUser Owner of the tank.
+     * @param pRegisteredUser Owner of the tank (email address)
      * @return Composed result object containing the created tank with a message. The tank has been created successfully
      * only if the message is of {@link Message.CATEGORY#INFO}
      */
     @NotNull
     @Transactional
-    ResultTo<AquariumTo> registerNewTank(@NotNull AquariumTo pAquariumTo, @NotNull UserTo pRegisteredUser);
+    ResultTo<AquariumTo> registerNewTank(@NotNull AquariumTo pAquariumTo, @NotNull String pRegisteredUser);
 
 
     /**
