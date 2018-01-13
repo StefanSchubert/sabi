@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -44,17 +44,23 @@ public class AquariumDaoImpl extends GenericDaoImpl<AquariumEntity> implements A
     }
 
     @Override
-    public AquariumEntity getUsersAquarium(Long pPersistedTankId, Long pUserId) {
+    public AquariumTo getUsersAquarium(Long pPersistedTankId, Long pUserId) {
         Query query = em.createNamedQuery("Aquarium.getAquarium");
         query.setParameter("pUserID", pUserId);
         query.setParameter("pTankId", pPersistedTankId);
 
-        AquariumEntity aquarium = null;
+        AquariumEntity aquariumEntity = null;
         try {
-            aquarium = (AquariumEntity) query.getSingleResult();
+            aquariumEntity = (AquariumEntity) query.getSingleResult();
         } catch (Exception e) {
             // todo some logging here (Idempotence double remove or fraud detection)
         }
-        return aquarium;
+        if (aquariumEntity != null) {
+            AquariumTo aquariumTo = new AquariumTo();
+            Mapper.mapAquariumEntity2To(aquariumEntity, aquariumTo);
+            return aquariumTo;
+        } else {
+            return null;
+        }
     }
 }

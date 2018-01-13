@@ -107,50 +107,48 @@ public class TankServiceImpl extends CommonService implements TankService {
     }
 
     @Override
-    public ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, UserTo registeredUser) {
+    public ResultTo<AquariumTo> updateTank(AquariumTo updatedAquariumTo, String pUser) {
 
         Message message;
 
-        // Check if it's users tank
-        AquariumTo tank = getTank(aquariumTo.getId(), registeredUser);
+        // Ensure it's users tank
+        UserTo requestingUser = userDao.loadUserByEmail(pUser);
+        AquariumTo usersAquarium = aquariumDao.getUsersAquarium(updatedAquariumTo.getId(), requestingUser.getId());
 
-        if (tank != null) {
+        if (usersAquarium != null) {
 
-            AquariumEntity aquariumEntity = aquariumDao.find(tank.getId());
-            mapAquariumTo2Entity(aquariumTo,aquariumEntity);
-            aquariumDao.update(aquariumEntity);
+            AquariumEntity aquariumEntity = aquariumDao.find(usersAquarium.getId());
+            mapAquariumTo2Entity(updatedAquariumTo,aquariumEntity);
+            AquariumEntity updatedEntity = aquariumDao.update(aquariumEntity);
+            mapAquariumEntity2To(updatedEntity,updatedAquariumTo);
 
-            message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, aquariumTo.getDescription());
+            message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, updatedAquariumTo.getDescription());
         } else {
-            message = Message.error(TankMessageCodes.NOT_YOUR_TANK, aquariumTo.getDescription());
+            message = Message.error(TankMessageCodes.NOT_YOUR_TANK, updatedAquariumTo.getDescription());
         }
 
-        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(aquariumTo, message) ;
+        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(updatedAquariumTo, message) ;
         return aquariumToResultTo;
     }
 
     @Override
-    public AquariumTo getTank(Long aquariumId, UserTo registeredUser) {
+    public AquariumTo getTank(Long aquariumId, String registeredUser) {
 
-        AquariumEntity aquariumEntity = aquariumDao.find(aquariumId);
         AquariumTo aquariumTo = null;
 
-        if (aquariumEntity != null && aquariumEntity.getUser().getId() == registeredUser.getId()) {
-
-            aquariumTo = new AquariumTo();
-            mapAquariumEntity2To(aquariumEntity, aquariumTo);
-
-        } else {
-            // TODO STS (16.06.17): Some logging here
+        UserTo userTo = userDao.loadUserByEmail(registeredUser);
+        if (userTo != null) {
+            aquariumTo = aquariumDao.getUsersAquarium(aquariumId, userTo.getId());
         }
+
         return aquariumTo;
     }
 
     @Override
     public void removeTank(Long persistedTankId, UserTo registeredUser) {
-        AquariumEntity aquariumEntity = aquariumDao.getUsersAquarium(persistedTankId, registeredUser.getId());
-        if (aquariumEntity != null) {
-            aquariumDao.delete(aquariumEntity.getId());
+        AquariumTo aquariumTo = aquariumDao.getUsersAquarium(persistedTankId, registeredUser.getId());
+        if (aquariumTo != null) {
+            aquariumDao.delete(aquariumTo.getId());
         }
     }
 }

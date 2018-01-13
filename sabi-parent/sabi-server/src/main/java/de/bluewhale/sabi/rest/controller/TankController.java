@@ -29,12 +29,15 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "api/tank")
 public class TankController {
+// ------------------------------ FIELDS ------------------------------
 
     @Autowired
     UserService userService;
 
     @Autowired
     TankService tankService;
+
+// -------------------------- OTHER METHODS --------------------------
 
     @ApiOperation(value = "/list", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
@@ -47,7 +50,6 @@ public class TankController {
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token, Principal principal) {
-
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         String user = principal.getName();
@@ -63,8 +65,8 @@ public class TankController {
     })
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AquariumTo> registerNewTank(@RequestHeader(name = "Authorization", required = true) String token, @RequestBody AquariumTo aquariumTo, Principal principal) {
-
+    public ResponseEntity<AquariumTo> registerNewTank(@RequestHeader(name = "Authorization", required = true) String token,
+                                                      @RequestBody AquariumTo aquariumTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         String user = principal.getName();
@@ -83,4 +85,30 @@ public class TankController {
         return responseEntity;
     }
 
+    @ApiOperation("/update")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK - Aquarium has been updated"),
+            @ApiResponse(code = 409, message = "Something wrong - Tank ID does not exists or something like that."),
+            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
+    })
+    @RequestMapping(value = {"/update"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<AquariumTo> updateTank(@RequestHeader(name = "Authorization", required = true) String token,
+                                                 @RequestBody AquariumTo aquariumTo, Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        String user = principal.getName();
+        ResultTo<AquariumTo> aquariumToResultTo = tankService.updateTank(aquariumTo, principal.getName());
+
+        ResponseEntity<AquariumTo> responseEntity;
+        final Message resultMessage = aquariumToResultTo.getMessage();
+        if (Message.CATEGORY.INFO.equals(resultMessage.getType())) {
+            AquariumTo updatedAquarium = aquariumToResultTo.getValue();
+            responseEntity = new ResponseEntity<>(updatedAquarium, HttpStatus.OK);
+        } else {
+            // TODO STS (17.06.16): Replace with Logging
+            responseEntity = new ResponseEntity<AquariumTo>(aquariumTo, HttpStatus.CONFLICT);
+        }
+        return responseEntity;
+    }
 }

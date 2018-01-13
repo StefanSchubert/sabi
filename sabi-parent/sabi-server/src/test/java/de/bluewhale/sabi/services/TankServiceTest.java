@@ -69,9 +69,9 @@ public class TankServiceTest {
         aquariumTo.setDescription(JABA_DABA_DOOOOO);
 
         // Then
-        aquariumToResultTo = tankService.updateTank(aquariumTo, registeredUser);
+        aquariumToResultTo = tankService.updateTank(aquariumTo, TESTUSER_EMAIL);
 
-        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), registeredUser);
+        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL);
 
         // Then
         assertEquals("Tank was not updated", aquariumTo.getDescription(), JABA_DABA_DOOOOO);
@@ -155,7 +155,7 @@ public class TankServiceTest {
         tankService.removeTank(persistedTankId, registeredUser);
 
         // When
-        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, registeredUser);
+        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, TESTUSER_EMAIL);
 
         // Then
         assertNull("Users tank was supposed to be removed!", tankAfterDeletion);

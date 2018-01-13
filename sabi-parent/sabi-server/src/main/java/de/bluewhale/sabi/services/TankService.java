@@ -41,22 +41,22 @@ public interface TankService {
     /**
      * Updates some Tank-Properties
      * @param aquariumTo
-     * @param registeredUser
+     * @param pUser (email-address)
      * @return Composed result object containing the updated tank with a message. The tank has been updated successfully
      * only if the message is of {@link Message.CATEGORY#INFO}
      */
     @NotNull
     @Transactional
-    ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, UserTo registeredUser);
+    ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, String pUser);
 
     /**
      * Retrieves the requested Tank of provided user
      * @param aquariumId
-     * @param registeredUser
+     * @param registeredUser (Email-Address)
      * @return Null if tank is not within given users tank list.
      */
     @NotNull
-    AquariumTo getTank(Long aquariumId, UserTo registeredUser);
+    AquariumTo getTank(Long aquariumId, String registeredUser);
 
     /**
      * Removes a tank from Users List (removes it physically)

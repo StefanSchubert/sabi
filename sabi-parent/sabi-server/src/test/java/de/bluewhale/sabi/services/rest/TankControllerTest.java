@@ -138,6 +138,55 @@ public class TankControllerTest {
         assertEquals(createdAquarium.getDescription(),aquariumTo.getDescription());
     }
 
+    @Test
+    public void testUpdateUsersTank() throws Exception {
+        // given some Testdata via mocking
+
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+
+        AquariumTo updatableAquariumTo = getTestAquariumFor(userTo);
+        AquariumEntity updatableAquariumEntity = new AquariumEntity();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userTo.getId());
+        updatableAquariumEntity.setUser(userEntity);
+        mapAquariumTo2Entity(updatableAquariumTo,updatableAquariumEntity);
+
+        AquariumEntity updatedAquariumEntity = new AquariumEntity();
+        updatedAquariumEntity.setUser(userEntity);
+        mapAquariumTo2Entity(updatableAquariumTo,updatedAquariumEntity);
+        String updateTestString = "Updated";
+        updatedAquariumEntity.setDescription(updateTestString); // we test only on description in this test
+
+        given(aquariumDao.getUsersAquarium(updatableAquariumTo.getId(),userTo.getId())).willReturn(updatableAquariumTo);
+        given(aquariumDao.find(updatableAquariumTo.getId())).willReturn(updatableAquariumEntity);
+        given(aquariumDao.update(updatableAquariumEntity)).willReturn(updatedAquariumEntity);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // when this authorized user requests to update an aquarium
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        updatableAquariumTo.setDescription(updateTestString);
+        String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);
+        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/api/tank/update", entity, String.class);
+
+        // then we should get a 200 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+
+        // and our test aquarium
+        AquariumTo updatedAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+        assertEquals(updatedAquarium.getDescription(),updatableAquariumTo.getDescription());
+    }
+
 
 
     @Test
