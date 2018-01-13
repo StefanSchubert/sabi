@@ -102,14 +102,14 @@ public class TankControllerTest {
 
         // when this authorized user requests his aquarium list
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+       // headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Authorization", "Bearer " + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list" , HttpMethod.GET, requestEntity, String.class);
 
-        // then we should get a 403 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
+        // then we should get a 401 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
 
     }
 

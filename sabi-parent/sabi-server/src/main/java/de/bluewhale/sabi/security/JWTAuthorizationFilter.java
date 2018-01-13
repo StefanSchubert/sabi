@@ -4,7 +4,6 @@
 
 package de.bluewhale.sabi.security;
 
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,7 +58,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             res.setHeader("Authorization", token);
 
-            res.setContentType(MediaType.TEXT_PLAIN.getType());
             PrintWriter writer = res.getWriter();
             writer.print("Access denied! You need to login and send the Token 'Authorization' issued through the response token after login in your request token." +
                     "See also API documentation  available under: /sabi/swagger-ui.html");
