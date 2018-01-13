@@ -5,8 +5,8 @@
 package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.AquariumDao;
 import de.bluewhale.sabi.persistence.dao.UserDao;
@@ -54,7 +54,7 @@ public class TankControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
-
+    TestDataFactory testDataFactory = TestDataFactory.getInstance();
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -70,7 +70,7 @@ public class TankControllerTest {
         given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
 
         List<AquariumTo> testAquariums = new ArrayList<>(1);
-        AquariumTo aquariumTo = getTestAquariumFor(userTo);
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
         testAquariums.add(aquariumTo);
 
         given(this.aquariumDao.findUsersTanks(userTo.getId())).willReturn(testAquariums);
@@ -86,7 +86,7 @@ public class TankControllerTest {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list" , HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list", HttpMethod.GET, requestEntity, String.class);
 
         // then we should get a 202 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
@@ -98,6 +98,42 @@ public class TankControllerTest {
     }
 
     @Test
+    public void testGetUsersTank() throws Exception {
+        // given some Testdata via mocking
+
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+
+        given(this.aquariumDao.getUsersAquarium(aquariumTo.getId(), userTo.getId())).willReturn(aquariumTo);
+
+        // and we need a valid authentication token for oure mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // when this authorized user requests his aquarium list
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        // Notice the that the controller defines a list, the resttemplate will get it as array.
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/get/" + aquariumTo.getId(),
+                HttpMethod.GET, requestEntity, String.class);
+
+        // then we should get a 202 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+
+        // and our test aquarium
+        AquariumTo myObject = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+        assertEquals(myObject.getDescription(),aquariumTo.getDescription());
+    }
+
+
+    @Test
     public void testCreateUsersTank() throws Exception {
         // given some Testdata via mocking
 
@@ -107,13 +143,13 @@ public class TankControllerTest {
         given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
 
 
-        AquariumTo aquariumTo = getTestAquariumFor(userTo);
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
         AquariumEntity createdAquariumEntity = new AquariumEntity();
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userTo.getId());
         createdAquariumEntity.setUser(userEntity);
 
-        mapAquariumTo2Entity(aquariumTo,createdAquariumEntity);
+        mapAquariumTo2Entity(aquariumTo, createdAquariumEntity);
 
         given(this.aquariumDao.create(any())).willReturn(createdAquariumEntity);
 
@@ -135,7 +171,7 @@ public class TankControllerTest {
 
         // and our test aquarium
         AquariumTo createdAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        assertEquals(createdAquarium.getDescription(),aquariumTo.getDescription());
+        assertEquals(createdAquarium.getDescription(), aquariumTo.getDescription());
     }
 
     @Test
@@ -148,20 +184,20 @@ public class TankControllerTest {
         given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
 
 
-        AquariumTo updatableAquariumTo = getTestAquariumFor(userTo);
+        AquariumTo updatableAquariumTo = testDataFactory.getTestAquariumFor(userTo);
         AquariumEntity updatableAquariumEntity = new AquariumEntity();
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userTo.getId());
         updatableAquariumEntity.setUser(userEntity);
-        mapAquariumTo2Entity(updatableAquariumTo,updatableAquariumEntity);
+        mapAquariumTo2Entity(updatableAquariumTo, updatableAquariumEntity);
 
         AquariumEntity updatedAquariumEntity = new AquariumEntity();
         updatedAquariumEntity.setUser(userEntity);
-        mapAquariumTo2Entity(updatableAquariumTo,updatedAquariumEntity);
+        mapAquariumTo2Entity(updatableAquariumTo, updatedAquariumEntity);
         String updateTestString = "Updated";
         updatedAquariumEntity.setDescription(updateTestString); // we test only on description in this test
 
-        given(aquariumDao.getUsersAquarium(updatableAquariumTo.getId(),userTo.getId())).willReturn(updatableAquariumTo);
+        given(aquariumDao.getUsersAquarium(updatableAquariumTo.getId(), userTo.getId())).willReturn(updatableAquariumTo);
         given(aquariumDao.find(updatableAquariumTo.getId())).willReturn(updatableAquariumEntity);
         given(aquariumDao.update(updatableAquariumEntity)).willReturn(updatedAquariumEntity);
 
@@ -184,9 +220,8 @@ public class TankControllerTest {
 
         // and our test aquarium
         AquariumTo updatedAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        assertEquals(updatedAquarium.getDescription(),updatableAquariumTo.getDescription());
+        assertEquals(updatedAquarium.getDescription(), updatableAquariumTo.getDescription());
     }
-
 
 
     @Test
@@ -200,25 +235,15 @@ public class TankControllerTest {
 
         // when this authorized user requests his aquarium list
         HttpHeaders headers = new HttpHeaders();
-       // headers.setContentType(MediaType.APPLICATION_JSON);
+        // headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Authorization", "Bearer " + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list" , HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list", HttpMethod.GET, requestEntity, String.class);
 
         // then we should get a 401 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
 
     }
 
-    private AquariumTo getTestAquariumFor(UserTo userTo) {
-        AquariumTo aquariumTo = new AquariumTo();
-        aquariumTo.setActive(Boolean.TRUE);
-        aquariumTo.setDescription("Test Tank");
-        aquariumTo.setId(1L);
-        aquariumTo.setSize(80);
-        aquariumTo.setSizeUnit(SizeUnit.LITER);
-        aquariumTo.setUserId(userTo.getId());
-        return aquariumTo;
-    }
 }

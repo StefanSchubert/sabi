@@ -10,6 +10,7 @@ import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class TankController {
             @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
                     message = "Success tanks returned.",
                     response = AquariumTo.class, responseContainer = "List"),
-            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - invalid token.",
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
                     response = String.class)
     })
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,16 +53,35 @@ public class TankController {
     public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        String user = principal.getName();
-        List<AquariumTo> aquariumToList = tankService.listTanks(user);
+        List<AquariumTo> aquariumToList = tankService.listTanks(principal.getName());
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }
+
+    @ApiOperation(value = "/get/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(code = HttpURLConnection.HTTP_OK,
+                    message = "Success tank returned.", response = AquariumTo.class),
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
+                    response = String.class)
+    })
+    @RequestMapping(value = {"/get/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<AquariumTo> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token,
+                                                           @PathVariable(value = "id", required = true)
+                                                           @ApiParam(name = "id", value = "id of your aquarium..") String id,
+                                                           Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        AquariumTo aquariumTo = tankService.getTank(Long.valueOf(id), principal.getName());
+        return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
+    }
+
 
     @ApiOperation("/create")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - Remember Id of returned tank if you want to update it afterwards or retrieve it via list operation."),
             @ApiResponse(code = 409, message = "AlreadyCreated - A tank with this Id has already been created. Create double called?."),
-            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
+            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -69,7 +89,6 @@ public class TankController {
                                                       @RequestBody AquariumTo aquariumTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        String user = principal.getName();
         ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, principal.getName());
 
         ResponseEntity<AquariumTo> responseEntity;
@@ -89,7 +108,7 @@ public class TankController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK - Aquarium has been updated"),
             @ApiResponse(code = 409, message = "Something wrong - Tank ID does not exists or something like that."),
-            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
+            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/update"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -97,7 +116,6 @@ public class TankController {
                                                  @RequestBody AquariumTo aquariumTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        String user = principal.getName();
         ResultTo<AquariumTo> aquariumToResultTo = tankService.updateTank(aquariumTo, principal.getName());
 
         ResponseEntity<AquariumTo> responseEntity;
@@ -107,7 +125,7 @@ public class TankController {
             responseEntity = new ResponseEntity<>(updatedAquarium, HttpStatus.OK);
         } else {
             // TODO STS (17.06.16): Replace with Logging
-            responseEntity = new ResponseEntity<AquariumTo>(aquariumTo, HttpStatus.CONFLICT);
+            responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
     }
