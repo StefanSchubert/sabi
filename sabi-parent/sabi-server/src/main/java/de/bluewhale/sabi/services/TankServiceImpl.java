@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -39,19 +39,19 @@ public class TankServiceImpl extends CommonService implements TankService {
 
 
     @Override
-    public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final UserTo pRegisteredUser) {
+    public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final String pRegisteredUser) {
 
         AquariumTo createdAquariumTo = null;
         Message message = null;
 
         Long pAquariumToId = pAquariumTo.getId();
-        if (pAquariumToId != null) {
+        if (pAquariumToId != null && (aquariumDao.find(pAquariumToId) != null)) {
             // ImpotenceCheck: Do not create the same tank twice (identified by id).
-            AquariumEntity aquariumEntity = aquariumDao.find(pAquariumToId);
             createdAquariumTo = pAquariumTo;
-            message = Message.error(TankMessageCodes.TANK_ALREADY_EXISTS, aquariumEntity.getDescription());
+            message = Message.error(TankMessageCodes.TANK_ALREADY_EXISTS, pAquariumTo.getDescription());
         } else {
-            UserEntity userEntity = userDao.find(pRegisteredUser.getId());
+            UserTo userTo = userDao.loadUserByEmail(pRegisteredUser);
+            UserEntity userEntity = userDao.find(userTo.getId());
             AquariumEntity aquariumEntity = new AquariumEntity();
             mapAquariumTo2Entity(pAquariumTo, aquariumEntity);
             aquariumEntity.setUser(userEntity);
@@ -84,9 +84,10 @@ public class TankServiceImpl extends CommonService implements TankService {
 
 
     @Override
-    public List<AquariumTo> listTanks(final Long pUserId) {
+    public List<AquariumTo> listTanks(final String pUserEmail) {
 
-        List<AquariumTo> tankList = aquariumDao.findUsersTanks(pUserId);
+        UserTo userTo = userDao.loadUserByEmail(pUserEmail);
+        List<AquariumTo> tankList = aquariumDao.findUsersTanks(userTo.getId());
 
         /*
         Bidirectional side does not work. Wrong JPA Setup?
@@ -106,50 +107,58 @@ public class TankServiceImpl extends CommonService implements TankService {
     }
 
     @Override
-    public ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, UserTo registeredUser) {
+    public ResultTo<AquariumTo> updateTank(AquariumTo updatedAquariumTo, String pUser) {
 
         Message message;
 
-        // Check if it's users tank
-        AquariumTo tank = getTank(aquariumTo.getId(), registeredUser);
+        // Ensure it's users tank
+        UserTo requestingUser = userDao.loadUserByEmail(pUser);
+        AquariumTo usersAquarium = aquariumDao.getUsersAquarium(updatedAquariumTo.getId(), requestingUser.getId());
 
-        if (tank != null) {
+        if (usersAquarium != null) {
 
-            AquariumEntity aquariumEntity = aquariumDao.find(tank.getId());
-            mapAquariumTo2Entity(aquariumTo,aquariumEntity);
-            aquariumDao.update(aquariumEntity);
+            AquariumEntity aquariumEntity = aquariumDao.find(usersAquarium.getId());
+            mapAquariumTo2Entity(updatedAquariumTo,aquariumEntity);
+            AquariumEntity updatedEntity = aquariumDao.update(aquariumEntity);
+            mapAquariumEntity2To(updatedEntity,updatedAquariumTo);
 
-            message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, aquariumTo.getDescription());
+            message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, updatedAquariumTo.getDescription());
         } else {
-            message = Message.error(TankMessageCodes.NOT_YOUR_TANK, aquariumTo.getDescription());
+            message = Message.error(TankMessageCodes.NOT_YOUR_TANK, updatedAquariumTo.getDescription());
         }
 
-        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(aquariumTo, message) ;
+        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(updatedAquariumTo, message) ;
         return aquariumToResultTo;
     }
 
     @Override
-    public AquariumTo getTank(Long aquariumId, UserTo registeredUser) {
+    public AquariumTo getTank(Long aquariumId, String registeredUser) {
 
-        AquariumEntity aquariumEntity = aquariumDao.find(aquariumId);
         AquariumTo aquariumTo = null;
 
-        if (aquariumEntity != null && aquariumEntity.getUser().getId() == registeredUser.getId()) {
-
-            aquariumTo = new AquariumTo();
-            mapAquariumEntity2To(aquariumEntity, aquariumTo);
-
-        } else {
-            // TODO STS (16.06.17): Some logging here
+        UserTo userTo = userDao.loadUserByEmail(registeredUser);
+        if (userTo != null) {
+            aquariumTo = aquariumDao.getUsersAquarium(aquariumId, userTo.getId());
         }
+
         return aquariumTo;
     }
 
     @Override
-    public void removeTank(Long persistedTankId, UserTo registeredUser) {
-        AquariumEntity aquariumEntity = aquariumDao.getUsersAquarium(persistedTankId, registeredUser.getId());
-        if (aquariumEntity != null) {
-            aquariumDao.delete(aquariumEntity.getId());
+    public ResultTo<AquariumTo> removeTank(Long persistedTankId, String registeredUser) {
+        ResultTo<AquariumTo> resultTo;
+        UserTo userTo = userDao.loadUserByEmail(registeredUser);
+        if (userTo !=null) {
+            AquariumTo aquariumTo = aquariumDao.getUsersAquarium(persistedTankId, userTo.getId());
+            if (aquariumTo != null) {
+                aquariumDao.delete(aquariumTo.getId());
+                resultTo = new ResultTo<>(aquariumTo, Message.info(TankMessageCodes.REMOVAL_SUCCEEDED));
+            } else {
+                resultTo = new ResultTo<>(aquariumTo, Message.error(TankMessageCodes.NOT_YOUR_TANK));
+            }
+        } else {
+                resultTo = new ResultTo<>(new AquariumTo(), Message.error(TankMessageCodes.UNKNOWN_USER));
         }
+        return resultTo;
     }
 }

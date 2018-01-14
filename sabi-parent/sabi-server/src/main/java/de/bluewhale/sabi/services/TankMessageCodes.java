@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -18,7 +18,9 @@ public enum TankMessageCodes implements MessageCode {
     CREATE_SUCCEEDED,
     FISH_ALREADY_EXISTS(TankExceptionCodes.ADDING_FISH_FAILED),
     NOT_YOUR_TANK(TankExceptionCodes.FRAUD_DETECTION),
-    UNKNOWN_USER(TankExceptionCodes.FRAUD_DETECTION), UPDATE_SUCCEEDED;
+    UNKNOWN_USER(TankExceptionCodes.FRAUD_DETECTION),
+    UPDATE_SUCCEEDED,
+    REMOVAL_SUCCEEDED;
 
 // ------------------------------ FIELDS ------------------------------
 

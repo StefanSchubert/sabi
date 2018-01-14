@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.security;
@@ -40,12 +40,16 @@ public class TokenAuthenticationService {
      * @param pUserID For sabi it's users email address.
      */
     static void addAuthentication(HttpServletResponse pResponse, String pUserID) {
-        String JWT = Jwts.builder()
-                .setSubject(pUserID)
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS*1000))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
-                .compact();
+        String JWT = createAuthorizationTokenFor(pUserID);
         pResponse.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+    }
+
+    public static String createAuthorizationTokenFor(String pUserID) {
+        return Jwts.builder()
+                    .setSubject(pUserID)
+                    .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS*1000))
+                    .signWith(SignatureAlgorithm.HS512, SECRET)
+                    .compact();
     }
 
     /**
@@ -58,17 +62,26 @@ public class TokenAuthenticationService {
         String token = pRequest.getHeader(HEADER_STRING);
         if (token != null) {
             // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
-
+            String user = extractUserFromToken(token);
             return user != null ?
                     new UsernamePasswordAuthenticationToken(user, null, emptyList()) :
                     null;
         }
         return null;
+    }
+
+    /**
+     * provides the user encoded with the token
+     * @param token
+     * @return users identified by his email or null in casse the token was not valid.
+     */
+    public static String extractUserFromToken(String token) {
+        String user = Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                .getBody()
+                .getSubject();
+        return user;
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------

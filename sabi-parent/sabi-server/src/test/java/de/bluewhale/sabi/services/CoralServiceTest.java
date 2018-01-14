@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -8,7 +8,6 @@ import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,10 +54,8 @@ public class CoralServiceTest {
     public void testAddCoral() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL);
 
         // When
         fail("Implement me");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi;
@@ -47,8 +47,16 @@ public class TestDataFactory {
     public AquariumTo getTestAquariumTo() {
         final AquariumTo aquariumTo = new AquariumTo();
         aquariumTo.setDescription("Test Tank");
+        aquariumTo.setActive(Boolean.TRUE);
         aquariumTo.setSize(40);
         aquariumTo.setSizeUnit(SizeUnit.LITER);
+        return aquariumTo;
+    }
+
+    public AquariumTo getTestAquariumFor(UserTo userTo) {
+        AquariumTo aquariumTo = getTestAquariumTo();
+        aquariumTo.setId(1L);
+        aquariumTo.setUserId(userTo.getId());
         return aquariumTo;
     }
 

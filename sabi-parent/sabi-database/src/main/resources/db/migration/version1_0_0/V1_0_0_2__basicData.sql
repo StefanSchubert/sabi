@@ -14,7 +14,7 @@ VALUES (1, 'Acreichthys tomentosus', 'Seegras Feilenfisch', 'http://meerwasserwi
 
 -- Test users password is: 'UNHASHED_NONSENCE'
 insert into users (id,email,password,validate_token, validated, language, country, created_on, lastmod_on)
-values (1, 'sabi@bluewhale.de', '0380e26cca8b16cc581278450d91b1a9','NO_IDEA',1 ,'de','DE' ,CURRENT_DATE ,CURRENT_DATE );
+values (1, 'sabi@bluewhale.de', '229634923501095cce1e24b651971415','NO_IDEA',1 ,'de','DE' ,CURRENT_DATE ,CURRENT_DATE );
 
 insert into aquarium (id,size,size_unit, description, active, user_id, created_on, lastmod_on)
 values (1,80,'LITER','Nano-Reef',1,1,CURRENT_DATE , CURRENT_DATE );

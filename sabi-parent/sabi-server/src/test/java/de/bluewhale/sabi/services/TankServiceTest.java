@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -62,16 +62,16 @@ public class TankServiceTest {
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
         // When
         aquariumTo = aquariumToResultTo.getValue();
         aquariumTo.setDescription(JABA_DABA_DOOOOO);
 
         // Then
-        aquariumToResultTo = tankService.updateTank(aquariumTo, registeredUser);
+        aquariumToResultTo = tankService.updateTank(aquariumTo, TESTUSER_EMAIL);
 
-        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), registeredUser);
+        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL);
 
         // Then
         assertEquals("Tank was not updated", aquariumTo.getDescription(), JABA_DABA_DOOOOO);
@@ -94,11 +94,11 @@ public class TankServiceTest {
         aquariumTo2.setSize(120);
         aquariumTo2.setSizeUnit(SizeUnit.LITER);
 
-       ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo1, registeredUser);
-       ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser);
+       ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo1, registeredUser.getEmail());
+       ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser.getEmail());
 
        // When
-        List<AquariumTo> usersAquariums =  tankService.listTanks(registeredUser.getId());
+        List<AquariumTo> usersAquariums =  tankService.listTanks(TESTUSER_EMAIL);
 
         // Then
         assertNotNull(usersAquariums);
@@ -129,7 +129,7 @@ public class TankServiceTest {
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
         // When
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL);
 
         // Then
         assertNotNull("ResultObject must not be empty",aquariumToResultTo);
@@ -149,13 +149,13 @@ public class TankServiceTest {
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
         Long persistedTankId = aquariumToResultTo.getValue().getId();
-        tankService.removeTank(persistedTankId, registeredUser);
+        tankService.removeTank(persistedTankId, TESTUSER_EMAIL);
 
         // When
-        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, registeredUser);
+        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, TESTUSER_EMAIL);
 
         // Then
         assertNull("Users tank was supposed to be removed!", tankAfterDeletion);

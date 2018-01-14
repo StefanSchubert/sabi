@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.configs;
@@ -56,7 +56,7 @@ public class HazelcastConfig {
         JoinConfig join = network.getJoin();
         join.getMulticastConfig().setEnabled(false);
         join.getTcpIpConfig()
-                .addMember("sabiBE1") // add your backend machines here (can be an IP adress too).
+                // .addMember("sabiBE1") // add your backend machines here (can be an IP address too).
                 .addMember("localhost").setEnabled(true);
 
         return config;

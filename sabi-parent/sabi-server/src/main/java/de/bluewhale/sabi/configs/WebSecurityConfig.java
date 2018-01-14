@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.configs;
 
+import de.bluewhale.sabi.security.JWTAuthorizationFilter;
 import de.bluewhale.sabi.security.JWTLoginFilter;
 import de.bluewhale.sabi.security.SabiDoorKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +62,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // JWT based authentication by POST of {"username":"<name>","password":"<password>"} which sets the
             // token header upon authentication
             .addFilterBefore(new JWTLoginFilter("/api/auth/login", authenticationManager()),
-                        UsernamePasswordAuthenticationFilter.class);
-            // And filter other requests to check the presence of JWT in header
-           //  .addFilterBefore(new JWTAuthenticationFilter(),
-              //          UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+            // And filter other requests to check the presence of a valid JWT in header
+           .addFilter(new JWTAuthorizationFilter(authenticationManager()));
 
     }
 
