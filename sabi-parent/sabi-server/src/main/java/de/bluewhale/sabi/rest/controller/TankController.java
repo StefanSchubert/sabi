@@ -57,14 +57,14 @@ public class TankController {
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }
 
-    @ApiOperation(value = "/get/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_OK,
                     message = "Success tank returned.", response = AquariumTo.class),
             @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
                     response = String.class)
     })
-    @RequestMapping(value = {"/get/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<AquariumTo> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token,
                                                            @PathVariable(value = "id", required = true)
@@ -76,6 +76,35 @@ public class TankController {
         return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(code = HttpURLConnection.HTTP_OK,
+                    message = "Tank deleted", response = HttpStatus.class),
+            @ApiResponse(code = HttpURLConnection.HTTP_CONFLICT,
+                    message = "Tank does not exists or does not belong to requesting user.", response = HttpStatus.class),
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
+                    response = String.class)
+    })
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<String> removeTank(@RequestHeader(name = "Authorization", required = true) String token,
+                                                     @PathVariable(value = "id", required = true)
+                                                     @ApiParam(name = "id", value = "id of your aquarium..") String id,
+                                                     Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        ResultTo<AquariumTo> resultTo = tankService.removeTank(Long.valueOf(id), principal.getName());
+
+        ResponseEntity<String> responseEntity;
+
+        if (resultTo.getMessage().getType().equals(Message.CATEGORY.INFO)) {
+            responseEntity = new ResponseEntity<>("", HttpStatus.OK);
+        } else {
+            responseEntity = new ResponseEntity<>("", HttpStatus.CONFLICT);
+        }
+
+        return responseEntity;
+    }
 
     @ApiOperation("/create")
     @ApiResponses({
@@ -99,19 +128,19 @@ public class TankController {
         } else {
             // TODO STS (17.06.16): Replace with Logging
             System.out.println("A Tank with Id " + aquariumTo.getId() + " already exist.");
-            responseEntity = new ResponseEntity<AquariumTo>(aquariumTo, HttpStatus.CONFLICT);
+            responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
     }
 
-    @ApiOperation("/update")
+    @ApiOperation("")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK - Aquarium has been updated"),
             @ApiResponse(code = 409, message = "Something wrong - Tank ID does not exists or something like that."),
             @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
     })
-    @RequestMapping(value = {"/update"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = {""}, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AquariumTo> updateTank(@RequestHeader(name = "Authorization", required = true) String token,
                                                  @RequestBody AquariumTo aquariumTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,

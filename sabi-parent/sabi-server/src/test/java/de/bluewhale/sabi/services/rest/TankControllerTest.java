@@ -121,7 +121,7 @@ public class TankControllerTest {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/get/" + aquariumTo.getId(),
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/" + aquariumTo.getId(),
                 HttpMethod.GET, requestEntity, String.class);
 
         // then we should get a 202 as result.
@@ -175,6 +175,43 @@ public class TankControllerTest {
     }
 
     @Test
+    public void testRemoveUsersTank() throws Exception {
+        // given some Testdata via mocking
+
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+        AquariumEntity existingAquariumEntity = new AquariumEntity();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userTo.getId());
+        existingAquariumEntity.setUser(userEntity);
+
+        mapAquariumTo2Entity(aquariumTo, existingAquariumEntity);
+
+        given(this.aquariumDao.getUsersAquarium(aquariumTo.getId(), userTo.getId())).willReturn(aquariumTo);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // when this authorized user requests to create a aquarium
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        String requestJson = objectMapper.writeValueAsString(aquariumTo);
+        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/" + aquariumTo.getId(), HttpMethod.DELETE, entity, String.class);
+
+        // then we should get a 201 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+    }
+
+
+    @Test
     public void testUpdateUsersTank() throws Exception {
         // given some Testdata via mocking
 
@@ -213,7 +250,7 @@ public class TankControllerTest {
         String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/api/tank/update", entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank",HttpMethod.PUT, entity, String.class);
 
         // then we should get a 200 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));

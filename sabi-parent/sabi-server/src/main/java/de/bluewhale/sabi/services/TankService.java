@@ -7,7 +7,6 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -61,8 +60,15 @@ public interface TankService {
     /**
      * Removes a tank from Users List (removes it physically)
      * @param persistedTankId
-     * @param registeredUser
+     * @param registeredUser (email)
+     * @return Composed result object containing the deleted tank with a message. The tank has been updated successfully
+     * only if the message is of {@link Message.CATEGORY#INFO} other possible messages are  {@link Message.CATEGORY#ERROR}
+     * Possible reasons:
+     * <ul>
+     *     <li>{@link TankMessageCodes#NOT_YOUR_TANK}</li>
+     *     <li>{@link TankMessageCodes#UNKNOWN_USER}</li>
+     * </ul>
      */
     @Transactional
-    void removeTank(Long persistedTankId, UserTo registeredUser);
+    ResultTo<AquariumTo> removeTank(Long persistedTankId, String registeredUser);
 }

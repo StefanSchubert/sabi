@@ -145,10 +145,20 @@ public class TankServiceImpl extends CommonService implements TankService {
     }
 
     @Override
-    public void removeTank(Long persistedTankId, UserTo registeredUser) {
-        AquariumTo aquariumTo = aquariumDao.getUsersAquarium(persistedTankId, registeredUser.getId());
-        if (aquariumTo != null) {
-            aquariumDao.delete(aquariumTo.getId());
+    public ResultTo<AquariumTo> removeTank(Long persistedTankId, String registeredUser) {
+        ResultTo<AquariumTo> resultTo;
+        UserTo userTo = userDao.loadUserByEmail(registeredUser);
+        if (userTo !=null) {
+            AquariumTo aquariumTo = aquariumDao.getUsersAquarium(persistedTankId, userTo.getId());
+            if (aquariumTo != null) {
+                aquariumDao.delete(aquariumTo.getId());
+                resultTo = new ResultTo<>(aquariumTo, Message.info(TankMessageCodes.REMOVAL_SUCCEEDED));
+            } else {
+                resultTo = new ResultTo<>(aquariumTo, Message.error(TankMessageCodes.NOT_YOUR_TANK));
+            }
+        } else {
+                resultTo = new ResultTo<>(new AquariumTo(), Message.error(TankMessageCodes.UNKNOWN_USER));
         }
+        return resultTo;
     }
 }

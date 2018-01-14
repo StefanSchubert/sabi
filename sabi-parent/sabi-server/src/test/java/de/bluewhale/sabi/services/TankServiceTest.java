@@ -152,7 +152,7 @@ public class TankServiceTest {
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
         Long persistedTankId = aquariumToResultTo.getValue().getId();
-        tankService.removeTank(persistedTankId, registeredUser);
+        tankService.removeTank(persistedTankId, TESTUSER_EMAIL);
 
         // When
         AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, TESTUSER_EMAIL);
