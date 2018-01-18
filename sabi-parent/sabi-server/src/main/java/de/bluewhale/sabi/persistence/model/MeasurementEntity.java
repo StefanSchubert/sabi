@@ -12,9 +12,19 @@ import java.sql.Timestamp;
  * User: Stefan
  * Date: 12.03.15
  */
+
+@NamedQueries({@NamedQuery(name = "Measurement.getMeasurement",
+        query = "select a from MeasurementEntity a, AquariumEntity t where a.id = :pMeasurementId " +
+                "and a.aquariumId = :pTankID " +
+                "and a.aquariumId = t.id " +
+                "and t.user.id = :pUserID"),
+        @NamedQuery(name = "Measurement.getUsersMeasurements",
+                query = "select a FROM MeasurementEntity a, AquariumEntity t " +
+                        "where a.aquariumId = t.id " +
+                        "and t.user.id = :pUserID")})
 @Table(name = "measurement", schema = "sabi")
 @Entity
-public class MeasurementEntity {
+public class MeasurementEntity extends TracableEntity {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +38,10 @@ public class MeasurementEntity {
     private Integer unitId;
 
     private Long aquariumId;
+
+
+    @Embedded
+    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -105,5 +119,17 @@ public class MeasurementEntity {
         result = 31 * result + (this.unitId != null ? this.unitId.hashCode() : 0);
         result = 31 * result + this.aquariumId.hashCode();
         return result;
+    }
+
+// -------------------------- OTHER METHODS --------------------------
+
+    @Override
+    public EntityState getEntityState() {
+        return null;
+    }
+
+    @Override
+    public void setEntityState(EntityState entityState) {
+
     }
 }

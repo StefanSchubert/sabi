@@ -25,7 +25,7 @@ public class AquariumDaoImpl extends GenericDaoImpl<AquariumEntity> implements A
 
     @Override
     public List<AquariumTo> findUsersTanks(@NotNull final Long pUserId) {
-        ArrayList<AquariumTo> aquariumTos = new ArrayList<AquariumTo>();
+        List<AquariumTo> aquariumTos = new ArrayList<AquariumTo>();
 
         if (pUserId != null) {
             Query query = em.createNamedQuery("Aquarium.getUsersAquariums");
