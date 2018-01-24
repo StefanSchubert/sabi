@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi;
 
+import de.bluewhale.sabi.persistence.MeasurementDAOTest;
 import de.bluewhale.sabi.persistence.UserDAOTest;
 import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @RunWith(Suite.class)
 @Suite.SuiteClasses({UserDAOTest.class,
+        MeasurementDAOTest.class,
         UserServiceTest.class,
         TankServiceTest.class,
         FishServiceTest.class,

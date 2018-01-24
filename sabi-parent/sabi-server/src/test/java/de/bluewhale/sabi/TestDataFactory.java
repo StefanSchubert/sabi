@@ -4,12 +4,11 @@
 
 package de.bluewhale.sabi;
 
-import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.SizeUnit;
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
+
+import java.time.LocalDateTime;
 
 /**
  * Small Util class which provide common test data.
@@ -28,17 +27,17 @@ public class TestDataFactory {
 
 // -------------------------- STATIC METHODS --------------------------
 
+    protected TestDataFactory() {
+        // defeat instantiation from outside
+    }
+
+// --------------------------- CONSTRUCTORS ---------------------------
+
     public static TestDataFactory getInstance() {
         if (instance == null) {
             instance = new TestDataFactory();
         }
         return instance;
-    }
-
-// --------------------------- CONSTRUCTORS ---------------------------
-
-    protected TestDataFactory() {
-        // defeat instantiation from outside
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -65,6 +64,20 @@ public class TestDataFactory {
         final UserTo userTo = new UserTo(eMail, clearTextPassword);
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         return userToResultTo.getValue();
+    }
+
+    /**
+     * Links preexisting testdata for aquariun (user) and unit.
+     *
+     * @return
+     */
+    public MeasurementTo getTestMeasurementTo() {
+        final MeasurementTo measurementTo = new MeasurementTo();
+        measurementTo.setAquariumId(1L);
+        measurementTo.setUnitId(1);
+        measurementTo.setMeasuredValue(15.5f);
+        measurementTo.setMeasuredOn(LocalDateTime.now());
+        return measurementTo;
     }
 
     public TestDataFactory withTankService(TankService service) {

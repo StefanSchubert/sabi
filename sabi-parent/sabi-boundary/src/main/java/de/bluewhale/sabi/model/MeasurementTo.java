@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -16,41 +16,41 @@ import java.sql.Timestamp;
 public class MeasurementTo {
 // ------------------------------ FIELDS ------------------------------
 
-    private long id;
+    private Long id;
 
-    private Timestamp measuredOn;
+    private LocalDateTime measuredOn;
 
     private float measuredValue;
 
     private int unitId;
 
-    private long aquariumId;
+    private Long aquariumId;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     @ApiModelProperty(notes = "References the Aquarium this measurement belongs to.", required = true)
-    public long getAquariumId() {
+    public Long getAquariumId() {
         return aquariumId;
     }
 
-    public void setAquariumId(long aquariumId) {
+    public void setAquariumId(Long aquariumId) {
         this.aquariumId = aquariumId;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     @ApiModelProperty(notes = "Point in time when the description has been taken.", required = true)
-    public Timestamp getMeasuredOn() {
+    public LocalDateTime getMeasuredOn() {
         return measuredOn;
     }
 
-    public void setMeasuredOn(Timestamp measuredOn) {
+    public void setMeasuredOn(LocalDateTime measuredOn) {
         this.measuredOn = measuredOn;
     }
 

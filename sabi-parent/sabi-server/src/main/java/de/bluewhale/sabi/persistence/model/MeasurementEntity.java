@@ -5,7 +5,7 @@
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -31,7 +31,7 @@ public class MeasurementEntity extends TracableEntity {
     @Id
     private Long id;
 
-    private Timestamp measuredOn;
+    private LocalDateTime measuredOn;
 
     private float measuredValue;
 
@@ -67,11 +67,11 @@ public class MeasurementEntity extends TracableEntity {
 
     @javax.persistence.Column(name = "measured_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
-    public Timestamp getMeasuredOn() {
+    public LocalDateTime getMeasuredOn() {
         return measuredOn;
     }
 
-    public void setMeasuredOn(Timestamp measuredOn) {
+    public void setMeasuredOn(LocalDateTime measuredOn) {
         this.measuredOn = measuredOn;
     }
 
