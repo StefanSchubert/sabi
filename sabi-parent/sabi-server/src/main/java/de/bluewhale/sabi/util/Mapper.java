@@ -95,7 +95,7 @@ public class Mapper {
      */
     public static void mapMeasurementEntity2To(@NotNull final MeasurementEntity pMeasurementEntity, @NotNull final MeasurementTo pMeasurementTo) {
         pMeasurementTo.setId(pMeasurementEntity.getId());
-        pMeasurementTo.setAquariumId(pMeasurementEntity.getAquariumId());
+        pMeasurementTo.setAquariumId(pMeasurementEntity.getAquarium().getId());
         pMeasurementTo.setMeasuredOn(pMeasurementEntity.getMeasuredOn());
         pMeasurementTo.setMeasuredValue(pMeasurementEntity.getMeasuredValue());
         pMeasurementTo.setUnitId(pMeasurementEntity.getUnitId());
@@ -107,8 +107,7 @@ public class Mapper {
      * @param pMeasurementEntity
      * @param pMeasurementTo
      */
-    public static void mapMeasurementTo2Entity(@NotNull final MeasurementTo pMeasurementTo, @NotNull final MeasurementEntity pMeasurementEntity) {
-        pMeasurementEntity.setAquariumId(pMeasurementTo.getAquariumId());
+    public static void mapMeasurementTo2EntityWithoutAquarium(@NotNull final MeasurementTo pMeasurementTo, @NotNull final MeasurementEntity pMeasurementEntity) {
         pMeasurementEntity.setMeasuredOn(pMeasurementTo.getMeasuredOn());
         pMeasurementEntity.setMeasuredValue(pMeasurementTo.getMeasuredValue());
         pMeasurementEntity.setUnitId(pMeasurementTo.getUnitId());

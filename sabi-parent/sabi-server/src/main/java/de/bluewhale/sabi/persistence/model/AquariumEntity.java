@@ -7,6 +7,8 @@ package de.bluewhale.sabi.persistence.model;
 import de.bluewhale.sabi.model.SizeUnit;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NamedQueries({@NamedQuery(name = "Aquarium.getAquarium",
         query = "select a from AquariumEntity a where a.id = :pTankId and a.user.id = :pUserID"),
@@ -43,6 +45,9 @@ public class AquariumEntity extends TracableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium")
+    private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
 
     @Embedded
     private EntityState entityState;
@@ -81,6 +86,14 @@ public class AquariumEntity extends TracableEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<MeasurementEntity> getMeasurements() {
+        return this.measurements;
+    }
+
+    public void setMeasurements(List<MeasurementEntity> measurements) {
+        this.measurements = measurements;
     }
 
     public Integer getSize() {

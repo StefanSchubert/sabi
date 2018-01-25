@@ -63,7 +63,7 @@ CREATE TABLE `parameter` (
 
 CREATE TABLE `measurement` (
   `id`             BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `measured_on`    DATETIME            NOT NULL,
+  `measured_on`    TIMESTAMP           NOT NULL,
   `measured_value` FLOAT               NOT NULL,
   `unit_id`        INTEGER UNSIGNED    NOT NULL,
   `aquarium_id`    BIGINT(20) UNSIGNED NOT NULL,

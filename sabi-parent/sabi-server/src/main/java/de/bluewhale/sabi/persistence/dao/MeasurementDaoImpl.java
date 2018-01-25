@@ -42,22 +42,18 @@ public class MeasurementDaoImpl extends GenericDaoImpl<MeasurementEntity> implem
 
     @Override
     public MeasurementTo getUsersMeasurement(Long pPersistedMeasurementId, Long pUserId) {
-        Query query = em.createNamedQuery("Measurement.getMeasurement");
-        query.setParameter("pUserID", pUserId);
-        query.setParameter("pTankID", pPersistedMeasurementId);
 
-        MeasurementEntity MeasurementEntity = null;
-        try {
-            MeasurementEntity = (MeasurementEntity) query.getSingleResult();
-        } catch (Exception e) {
-            // todo some logging here (Idempotence double remove or fraud detection)
-        }
-        if (MeasurementEntity != null) {
-            MeasurementTo MeasurementTo = new MeasurementTo();
-            Mapper.mapMeasurementEntity2To(MeasurementEntity, MeasurementTo);
-            return MeasurementTo;
+        MeasurementEntity measurementEntity = find(pPersistedMeasurementId);
+        if ((measurementEntity != null) && isUserOwnerOfMeasurement(pUserId, measurementEntity)) {
+            MeasurementTo measurementTo = new MeasurementTo();
+            Mapper.mapMeasurementEntity2To(measurementEntity, measurementTo);
+            return measurementTo;
         } else {
             return null;
         }
+    }
+
+    private boolean isUserOwnerOfMeasurement(Long pUserId, MeasurementEntity measurementEntity) {
+        return measurementEntity.getAquarium().getUser().getId().equals(pUserId);
     }
 }

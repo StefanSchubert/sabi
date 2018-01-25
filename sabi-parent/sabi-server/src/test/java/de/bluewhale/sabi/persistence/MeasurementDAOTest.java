@@ -7,7 +7,9 @@ package de.bluewhale.sabi.persistence;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.persistence.dao.AquariumDao;
 import de.bluewhale.sabi.persistence.dao.MeasurementDao;
+import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
 import de.bluewhale.sabi.util.Mapper;
 import org.junit.Assert;
@@ -36,8 +38,12 @@ import java.util.List;
 public class MeasurementDAOTest {
 
     static TestDataFactory testDataFactory;
+
     @Autowired
     MeasurementDao measurementDao;
+
+    @Autowired
+    AquariumDao aquariumDao;
 
     @BeforeClass
     public static void init() {
@@ -57,8 +63,10 @@ public class MeasurementDAOTest {
 
         // given a test measurement (linked aquarium already exists in database.
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo();
+        AquariumEntity aquariumEntity = aquariumDao.find(measurementTo.getAquariumId());
         MeasurementEntity measurementEntity = new MeasurementEntity();
-        Mapper.mapMeasurementTo2Entity(measurementTo, measurementEntity);
+        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
+        measurementEntity.setAquarium(aquariumEntity);
 
         // when
         MeasurementEntity createdMeasurementEntity = measurementDao.create(measurementEntity);
@@ -66,8 +74,8 @@ public class MeasurementDAOTest {
         // then
         MeasurementEntity foundMeasurementEntity = measurementDao.find(createdMeasurementEntity.getId());
 
-        Assert.assertEquals(createdMeasurementEntity.getAquariumId(), foundMeasurementEntity.getAquariumId());
-        Assert.assertEquals(createdMeasurementEntity.getAquariumId(), measurementTo.getAquariumId());
+        Assert.assertEquals(createdMeasurementEntity.getAquarium(), foundMeasurementEntity.getAquarium());
+        Assert.assertEquals(createdMeasurementEntity.getAquarium().getId(), measurementTo.getAquariumId());
 
     }
 
