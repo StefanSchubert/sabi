@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,26 @@ public class MeasurementDaoImpl extends GenericDaoImpl<MeasurementEntity> implem
             return measurementTo;
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public List<MeasurementTo> listTanksMeasurements(Long pTankID) {
+        List<MeasurementTo> tanksMeasurements;
+        if (pTankID != null) {
+            Query query = em.createNamedQuery("Measurement.getAllMeasurementsForTank");
+            query.setParameter("pTankID", pTankID);
+            List<MeasurementEntity> measurementEntities = query.getResultList();
+
+            tanksMeasurements = new ArrayList<MeasurementTo>(measurementEntities.size());
+            for (MeasurementEntity measurementEntity : measurementEntities) {
+                MeasurementTo measurementTo = new MeasurementTo();
+                Mapper.mapMeasurementEntity2To(measurementEntity,measurementTo);
+                tanksMeasurements.add(measurementTo);
+            }
+            return tanksMeasurements;
+        } else {
+            return Collections.emptyList();
         }
     }
 

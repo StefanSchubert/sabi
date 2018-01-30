@@ -45,9 +45,11 @@ public interface MeasurementService {
      * only if the message is of {@link Message.CATEGORY#INFO} other possible messages are  {@link Message.CATEGORY#ERROR}
      * Possible reasons:
      * <ul>
-     *     <li>{@link TankMessageCodes#NOT_YOUR_MEASUREMENT}</li>
      *     <li>{@link TankMessageCodes#UNKNOWN_USER}</li>
+     *     <li>{@link TankMessageCodes#MEASURMENT_ALREADY_DELETED}</li>
      * </ul>
+     * In case a user requests the deletion of a measurement, that he or she does not own, the service response with an error result
+     * message "MEASURMENT_ALREADY_DELETED" disregarding of the root cause (idempotent, fraud...)
      */
     @NotNull
     @Transactional

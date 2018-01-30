@@ -35,4 +35,11 @@ public interface MeasurementDao extends GenericDao<MeasurementEntity> {
      */
     MeasurementTo getUsersMeasurement(@NotNull Long pPersistedMeasurementId, @NotNull Long pUserId);
 
+    /**
+     * Retrieves all measurements for a specific tank.
+     * @param pTankID identifies your aquarium.
+     * @return empty list, if no measurement have been found.
+     */
+    @NotNull
+    List<MeasurementTo> listTanksMeasurements(Long pTankID);
 }

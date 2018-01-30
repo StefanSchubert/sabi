@@ -70,10 +70,11 @@ public class TestDataFactory {
      * Links preexisting testdata for aquariun (user) and unit.
      *
      * @return
+     * @param pTankID
      */
-    public MeasurementTo getTestMeasurementTo() {
+    public MeasurementTo getTestMeasurementTo(Long pTankID) {
         final MeasurementTo measurementTo = new MeasurementTo();
-        measurementTo.setAquariumId(1L);
+        measurementTo.setAquariumId(pTankID);
         measurementTo.setUnitId(1);
         measurementTo.setMeasuredValue(15.5f);
         measurementTo.setMeasuredOn(LocalDateTime.now());

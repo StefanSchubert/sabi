@@ -62,7 +62,7 @@ public class MeasurementDAOTest {
     public void testCreateMeasurement() throws Exception {
 
         // given a test measurement (linked aquarium already exists in database.
-        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo();
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(1L);
         AquariumEntity aquariumEntity = aquariumDao.find(measurementTo.getAquariumId());
         MeasurementEntity measurementEntity = new MeasurementEntity();
         Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);

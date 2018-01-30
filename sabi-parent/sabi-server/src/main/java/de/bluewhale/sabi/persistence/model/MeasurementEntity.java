@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
                 "and a.aquarium.id = :pTankID " +
                 "and a.aquarium.id = t.id " +
                 "and t.user.id = :pUserID"),
+        @NamedQuery(name = "Measurement.getAllMeasurementsForTank",
+                query = "select a from MeasurementEntity a where a.aquarium.id = :pTankID"),
         @NamedQuery(name = "Measurement.getUsersMeasurements",
                 query = "select a FROM MeasurementEntity a, AquariumEntity t " +
                         "where a.aquarium.id = t.id " +
