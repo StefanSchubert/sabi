@@ -95,10 +95,83 @@ public class MeasurementControllerTest {
         // then we should get a 202 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
 
-        // and our test aquarium
+        // and our test measurement
         MeasurementTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), MeasurementTo[].class);
         assertThat(Arrays.asList(myObjects), hasItem(measurementTo));
+    }
+
+    @Test
+    public void testListUsersTankMeasurements() throws Exception {
+        // Given
+        Long usersTankID = 1l;
+
+        // and some mocked data
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+        given(this.aquariumDao.getUsersAquarium(aquariumTo.getId(), userTo.getId())).willReturn(aquariumTo);
+
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
+        MeasurementTo measurementTo2 = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
+
+        List<MeasurementTo> testMeasurements = new ArrayList<>(2);
+        testMeasurements.add(measurementTo);
+        testMeasurements.add(measurementTo2);
+        given(measurementDao.listTanksMeasurements(usersTankID)).willReturn(testMeasurements);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // When this authorized user, requests all measurements for a specific tank
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        // Notice the that the controller defines a list, the rest-template will get it as array.
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/measurement/tank/" + usersTankID, HttpMethod.GET, requestEntity, String.class);
+
+        // Then
+        // then we should get a 202 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
+        // and our two prestored test measurements
+        MeasurementTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), MeasurementTo[].class);
+        assertThat("Prestored data changed?", myObjects.length == 2);
 
     }
+
+
+    @Test
+    public void testTryToDeleteOtherUsersMeasurement() throws Exception {
+        // Given some measurement we are trying to access
+        Long measurementID = 856L;
+
+        // and a currently authenticated user
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // When this authorized user, tries to delete a measurement he does not own.
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        // Notice the that the controller defines a list, the rest-template will get it as array.
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/measurement/" + measurementID, HttpMethod.DELETE, requestEntity, String.class);
+
+        // Then
+        assertThat("Unallowed access should produce a conflict", responseEntity.getStatusCode().equals(HttpStatus.CONFLICT));
+    }
+
 
 }

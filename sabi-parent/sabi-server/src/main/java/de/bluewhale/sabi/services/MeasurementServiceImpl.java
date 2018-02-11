@@ -60,6 +60,7 @@ public class MeasurementServiceImpl extends CommonService implements Measurement
         UserTo userTo = userDao.loadUserByEmail(pUserEmail);
         if (userTo == null) {
             resultMsg = Message.error(TankMessageCodes.UNKNOWN_USER, pUserEmail);
+            return new ResultTo<>(usersMeasurement,resultMsg);
         }
 
          usersMeasurement = measurementDao.getUsersMeasurement(pMeasurementID, userTo.getId());
