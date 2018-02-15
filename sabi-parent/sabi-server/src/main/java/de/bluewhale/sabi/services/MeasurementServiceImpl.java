@@ -99,8 +99,6 @@ public class MeasurementServiceImpl extends CommonService implements Measurement
             resultMsg = Message.error(TankMessageCodes.NOT_YOUR_TANK, aquariumId);
         }
 
-
-
         return new ResultTo<>(pMeasurementTo,resultMsg);
     }
 
@@ -126,7 +124,6 @@ public class MeasurementServiceImpl extends CommonService implements Measurement
         }
 
         return new ResultTo<>(pMeasurementTo, resultMsg);
-
     }
 
 }

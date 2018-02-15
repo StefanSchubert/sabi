@@ -12,7 +12,10 @@ import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.dao.AquariumDao;
 import de.bluewhale.sabi.persistence.dao.MeasurementDao;
 import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.MeasurementEntity;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
+import de.bluewhale.sabi.util.Mapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +29,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
+import static de.bluewhale.sabi.util.Mapper.mapMeasurementTo2EntityWithoutAquarium;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 
 /**
- * Demonstrate usage of the measurement API.
+ * Demonstrate usage of the measurement REST API.
+ * NOTICE: This test mocks the DAO persistent layer, as it was not meant to run as an integration test.
+ *
+ * However notice the following drawbacks:
+ *
+ * (1) It still requires the database, as without it we get a java.lang.IllegalStateException:
+ *     Failed to load ApplicationContext, though this might be fixed by proper test configuration
+ * (2) Lines of code! The mocked variant outweights the implementation by far. Which slows down development progress.
+ *     I leave it to demonstrate the effect. For those cases it would be much better to leave this as real integration
+ *     tests (however against an H2 in meory database, or by manually control your test data).
  *
  * @author Stefan Schubert
  */
@@ -171,6 +187,105 @@ public class MeasurementControllerTest {
 
         // Then
         assertThat("Unallowed access should produce a conflict", responseEntity.getStatusCode().equals(HttpStatus.CONFLICT));
+    }
+
+
+    @Test
+    public void testAddMeasurement() throws Exception {
+
+        // Given
+        // a currently authenticated user
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+        AquariumEntity aquariumEntity = new AquariumEntity();
+        mapAquariumTo2Entity(aquariumTo, aquariumEntity);
+        given(this.aquariumDao.getUsersAquarium(aquariumTo.getId(), userTo.getId())).willReturn(aquariumTo);
+        given(this.aquariumDao.find(aquariumTo.getId())).willReturn(aquariumEntity);
+
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
+        MeasurementEntity measurementEntity = new MeasurementEntity();
+        measurementEntity.setId(88L);
+        measurementEntity.setAquarium(aquariumEntity);
+        mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
+        given(this.measurementDao.create(any())).willReturn(measurementEntity);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        // When this authorized user, tries to add a measurement
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        String requestJson = objectMapper.writeValueAsString(measurementTo);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(requestJson, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/measurement", HttpMethod.POST, requestEntity, String.class);
+
+        // then we should get a 201 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.CREATED));
+
+        // and our test measurement
+        MeasurementTo createdMeasurement = objectMapper.readValue(responseEntity.getBody(), MeasurementTo.class);
+        assertEquals(createdMeasurement.getId(), measurementEntity.getId());
+
+    }
+
+    @Test
+    public void testUpdateManagement() throws Exception {
+        // Given
+        // a currently authenticated user
+        UserTo userTo = new UserTo();
+        userTo.setEmail(MOCKED_USER);
+        userTo.setId(1L);
+        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+
+        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+        AquariumEntity aquariumEntity = new AquariumEntity();
+        Mapper.mapAquariumTo2Entity(aquariumTo,aquariumEntity);
+        MeasurementTo updatableMeasurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
+        updatableMeasurementTo.setId(88L);
+
+        MeasurementEntity updatableMeasurementEntity = new MeasurementEntity();
+        Mapper.mapMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo,updatableMeasurementEntity);
+        updatableMeasurementEntity.setId(updatableMeasurementTo.getId());
+        updatableMeasurementEntity.setAquarium(aquariumEntity);
+
+        MeasurementTo updatedMeasurementTo = new MeasurementTo();
+        Mapper.mapMeasurementEntity2To(updatableMeasurementEntity,updatedMeasurementTo);
+        updatedMeasurementTo.setMeasuredValue(updatableMeasurementTo.getMeasuredValue()+2f);
+
+        MeasurementEntity updatedMeasurementEntity = new MeasurementEntity();
+        updatedMeasurementEntity.setAquarium(aquariumEntity);
+        Mapper.mapMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo,updatedMeasurementEntity);
+
+        given(this.measurementDao.getUsersMeasurement(updatableMeasurementTo.getId(), userTo.getId())).willReturn(updatableMeasurementTo);
+        given(this.measurementDao.find(updatableMeasurementTo.getId())).willReturn(updatableMeasurementEntity);
+        given(this.measurementDao.update(updatableMeasurementEntity)).willReturn(updatedMeasurementEntity);
+
+        // When this authorized user, tries to update a measurement
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + authToken);
+
+        String requestJson = objectMapper.writeValueAsString(updatedMeasurementTo);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(requestJson, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/measurement", HttpMethod.PUT, requestEntity, String.class);
+
+        // then we should get a 200 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+
+        // and our test measurement
+        MeasurementTo returnedMeasurement = objectMapper.readValue(responseEntity.getBody(), MeasurementTo.class);
+        assertThat("Value not updated?",returnedMeasurement.getMeasuredValue()== updatedMeasurementEntity.getMeasuredValue());
     }
 
 

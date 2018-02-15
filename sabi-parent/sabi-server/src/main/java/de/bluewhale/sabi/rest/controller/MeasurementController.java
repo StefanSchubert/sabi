@@ -131,7 +131,7 @@ public class MeasurementController {
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - Remember Id of returned measurement if you want to update it afterwards or retrieve it via list operation.",
                     response = MeasurementTo.class),
-            @ApiResponse(code = 409, message = "AlreadyCreated - A measurment with this Id has already been created. Create called doubled?"),
+            @ApiResponse(code = 409, message = "AlreadyCreated - A measurement with this Id has already been created. Create called doubled?"),
             @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
     })
     @RequestMapping(value = {""}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

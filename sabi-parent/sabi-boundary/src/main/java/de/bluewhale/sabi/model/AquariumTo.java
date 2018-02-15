@@ -91,21 +91,30 @@ public class AquariumTo implements Serializable {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
 
         AquariumTo that = (AquariumTo) o;
 
-        if (id != that.id) return false;
-        if (active != null ? !active.equals(that.active) : that.active != null) return false;
-        if (size != null ? !size.equals(that.size) : that.size != null) return false;
-        if (sizeUnit != null ? !sizeUnit.equals(that.sizeUnit) : that.sizeUnit != null) return false;
-        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null)
-            return false;
+        if (this.id != null ? !this.id.equals(that.id) : that.id != null) return false;
+        if (this.size != null ? !this.size.equals(that.size) : that.size != null) return false;
+        if (this.sizeUnit != that.sizeUnit) return false;
+        if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
+        if (this.active != null ? !this.active.equals(that.active) : that.active != null) return false;
+        return this.userId.equals(that.userId);
+    }
 
-        return true;
+    @Override
+    public int hashCode() {
+        int result = this.id != null ? this.id.hashCode() : 0;
+        result = 31 * result + (this.size != null ? this.size.hashCode() : 0);
+        result = 31 * result + (this.sizeUnit != null ? this.sizeUnit.hashCode() : 0);
+        result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
+        result = 31 * result + (this.active != null ? this.active.hashCode() : 0);
+        result = 31 * result + this.userId.hashCode();
+        return result;
     }
 }
