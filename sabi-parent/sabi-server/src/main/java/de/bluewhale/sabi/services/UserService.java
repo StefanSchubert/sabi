@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -81,4 +81,6 @@ public interface UserService {
      */
     @Transactional
     void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException;
+
+
 }

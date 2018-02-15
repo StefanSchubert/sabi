@@ -23,7 +23,7 @@ public class UserEntity extends TracableEntity {
     @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     private Long id;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<AquariumEntity> aquariums = new ArrayList<AquariumEntity>();
 
     @Basic

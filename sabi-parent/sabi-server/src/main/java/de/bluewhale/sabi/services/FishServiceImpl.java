@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -52,7 +52,7 @@ public class FishServiceImpl extends CommonService implements FishService {
 
             if (userEntity == null) {
                 message = Message.error(TankMessageCodes.UNKNOWN_USER, aquariumEntity.getId());
-            } else if ((aquariumEntity != null) && (aquariumEntity.getUser().getId() != userEntity.getId())) {
+            } else if ((aquariumEntity != null) && (!aquariumEntity.getUser().getId().equals(userEntity.getId()))) {
                 message = Message.error(TankMessageCodes.NOT_YOUR_TANK, aquariumEntity.getId());
             }
 

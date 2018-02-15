@@ -61,7 +61,7 @@ public interface TankService {
      * Removes a tank from Users List (removes it physically)
      * @param persistedTankId
      * @param registeredUser (email)
-     * @return Composed result object containing the deleted tank with a message. The tank has been updated successfully
+     * @return Composed result object containing the deleted tank with a message. The tank has been removed successfully
      * only if the message is of {@link Message.CATEGORY#INFO} other possible messages are  {@link Message.CATEGORY#ERROR}
      * Possible reasons:
      * <ul>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.rest.controller;
@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -172,8 +173,10 @@ public class AuthenticationController {
 
         // Step One: Sort out the Robots, before doing a single database request,
         // by checking the captcha code.
-        validCaptcha = captchaAdapter.isCaptchaValid(pUserTo.getCaptchaCode());
-        if (validCaptcha == null) {
+        try {
+            validCaptcha = captchaAdapter.isCaptchaValid(pUserTo.getCaptchaCode());
+        } catch (IOException e) {
+            e.printStackTrace();
             return new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
         }
 

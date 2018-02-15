@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
     String captchaService;
 
     @Override
-    public Boolean isCaptchaValid(String captchaAnswer) {
+    public Boolean isCaptchaValid(String captchaAnswer) throws IOException {
 
         boolean isValid;
         RestTemplate restTemplate = new RestTemplate();
@@ -44,8 +45,9 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
             }
         } catch (RestClientException e) {
             // TODO STS (22.10.17): replace with proper Logging
-            System.out.println("Could not connect to the captcha service "+checkURI);
-            return null;
+            String reason = "Could not connect to the captcha service " + checkURI;
+            System.out.println(reason);
+            throw new IOException(reason);
         }
 
         return isValid;

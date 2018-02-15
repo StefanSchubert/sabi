@@ -5,43 +5,71 @@
 package de.bluewhale.sabi.persistence.model;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  *
  * User: Stefan
  * Date: 12.03.15
  */
+
+@NamedQueries({@NamedQuery(name = "Measurement.getMeasurement",
+        query = "select a from MeasurementEntity a, AquariumEntity t where a.id = :pMeasurementId " +
+                "and a.aquarium.id = :pTankID " +
+                "and a.aquarium.id = t.id " +
+                "and t.user.id = :pUserID"),
+        @NamedQuery(name = "Measurement.getAllMeasurementsForTank",
+                query = "select a from MeasurementEntity a where a.aquarium.id = :pTankID"),
+        @NamedQuery(name = "Measurement.getUsersMeasurements",
+                query = "select a FROM MeasurementEntity a, AquariumEntity t " +
+                        "where a.aquarium.id = t.id " +
+                        "and t.user.id = :pUserID")})
 @Table(name = "measurement", schema = "sabi")
 @Entity
-public class MeasurementEntity {
+public class MeasurementEntity extends TracableEntity {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    private Timestamp measuredOn;
+    private LocalDateTime measuredOn;
 
     private float measuredValue;
 
     private Integer unitId;
 
-    private Long aquariumId;
+    /**
+     * Owner-side of the relationship.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aquarium_id", nullable = false)
+    private AquariumEntity aquarium;
+
+    @Embedded
+    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @javax.persistence.Column(name = "aquarium_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
-    @Basic
-    public Long getAquariumId() {
-        return aquariumId;
+    public AquariumEntity getAquarium() {
+        return this.aquarium;
     }
 
-    public void setAquariumId(Long aquariumId) {
-        this.aquariumId = aquariumId;
+    public void setAquarium(AquariumEntity aquariumEntity) {
+        this.aquarium = aquariumEntity;
     }
 
-    @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
+    @Override
+    public EntityState getEntityState() {
+        return this.entityState;
+    }
+
+    @Override
+    public void setEntityState(EntityState entityState) {
+        this.entityState = entityState;
+    }
+
+    @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
     public Long getId() {
         return id;
@@ -51,17 +79,17 @@ public class MeasurementEntity {
         this.id = id;
     }
 
-    @javax.persistence.Column(name = "measured_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
+    @Column(name = "measured_on", nullable = false, insertable = true, updatable = true)
     @Basic
-    public Timestamp getMeasuredOn() {
+    public LocalDateTime getMeasuredOn() {
         return measuredOn;
     }
 
-    public void setMeasuredOn(Timestamp measuredOn) {
+    public void setMeasuredOn(LocalDateTime measuredOn) {
         this.measuredOn = measuredOn;
     }
 
-    @javax.persistence.Column(name = "measured_value", nullable = false, insertable = true, updatable = true, length = 12, precision = 0)
+    @Column(name = "measured_value", nullable = false, insertable = true, updatable = true, length = 12, precision = 0)
     @Basic
     public float getMeasuredValue() {
         return measuredValue;
@@ -71,7 +99,7 @@ public class MeasurementEntity {
         this.measuredValue = measuredValue;
     }
 
-    @javax.persistence.Column(name = "unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
+    @Column(name = "unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
     public Integer getUnitId() {
         return unitId;
@@ -83,6 +111,7 @@ public class MeasurementEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,18 +121,20 @@ public class MeasurementEntity {
 
         if (Float.compare(that.measuredValue, this.measuredValue) != 0) return false;
         if (!this.id.equals(that.id)) return false;
-        if (this.measuredOn != null ? !this.measuredOn.equals(that.measuredOn) : that.measuredOn != null) return false;
-        if (this.unitId != null ? !this.unitId.equals(that.unitId) : that.unitId != null) return false;
-        return this.aquariumId.equals(that.aquariumId);
+        if (!this.measuredOn.equals(that.measuredOn)) return false;
+        if (!this.unitId.equals(that.unitId)) return false;
+        if (!this.aquarium.equals(that.aquarium)) return false;
+        return this.entityState != null ? this.entityState.equals(that.entityState) : that.entityState == null;
     }
 
     @Override
     public int hashCode() {
         int result = this.id.hashCode();
-        result = 31 * result + (this.measuredOn != null ? this.measuredOn.hashCode() : 0);
+        result = 31 * result + this.measuredOn.hashCode();
         result = 31 * result + (this.measuredValue != +0.0f ? Float.floatToIntBits(this.measuredValue) : 0);
-        result = 31 * result + (this.unitId != null ? this.unitId.hashCode() : 0);
-        result = 31 * result + this.aquariumId.hashCode();
+        result = 31 * result + this.unitId.hashCode();
+        result = 31 * result + this.aquarium.hashCode();
+        result = 31 * result + (this.entityState != null ? this.entityState.hashCode() : 0);
         return result;
     }
 }

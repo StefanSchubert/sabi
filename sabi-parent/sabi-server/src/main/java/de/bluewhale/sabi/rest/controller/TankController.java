@@ -108,7 +108,8 @@ public class TankController {
 
     @ApiOperation("/create")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Created - Remember Id of returned tank if you want to update it afterwards or retrieve it via list operation."),
+            @ApiResponse(code = 201, message = "Created - Remember Id of returned tank if you want to update it afterwards or retrieve it via list operation.",
+                    response = AquariumTo.class),
             @ApiResponse(code = 409, message = "AlreadyCreated - A tank with this Id has already been created. Create double called?."),
             @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
     })
@@ -135,7 +136,7 @@ public class TankController {
 
     @ApiOperation("")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK - Aquarium has been updated"),
+            @ApiResponse(code = 200, message = "OK - Aquarium has been updated",response = AquariumTo.class),
             @ApiResponse(code = 409, message = "Something wrong - Tank ID does not exists or something like that."),
             @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
     })

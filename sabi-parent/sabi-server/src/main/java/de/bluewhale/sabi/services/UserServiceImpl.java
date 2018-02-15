@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -24,6 +24,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.Random;
 
 import static de.bluewhale.sabi.util.Obfuscator.encryptPasswordForHeavensSake;
@@ -168,13 +169,15 @@ public class UserServiceImpl extends CommonService implements UserService {
     public void requestPasswordReset(RequestNewPasswordTo requestData) throws BusinessException {
 
         String captchaToken = requestData.getCaptchaToken();
-        Boolean captchaValid = captchaAdapter.isCaptchaValid(captchaToken);
-
-        HazelcastInstance hzInstance = Hazelcast.getHazelcastInstanceByName(HazelcastConfig.HZ_INSTANCE_NAME);
-
-        if (captchaValid == null) {
+        Boolean captchaValid = null;
+        try {
+            captchaValid = captchaAdapter.isCaptchaValid(captchaToken);
+        } catch (IOException e) {
+            e.printStackTrace();
             throw new BusinessException(AuthExceptionCodes.SERVICE_UNAVAILABLE, Message.error(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
         }
+
+        HazelcastInstance hzInstance = Hazelcast.getHazelcastInstanceByName(HazelcastConfig.HZ_INSTANCE_NAME);
 
         if (captchaValid == false) {
             throw new BusinessException(AuthExceptionCodes.AUTHENTICATION_FAILED, Message.error(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED));

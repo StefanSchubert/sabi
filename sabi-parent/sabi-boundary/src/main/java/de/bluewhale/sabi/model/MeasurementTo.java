@@ -1,56 +1,57 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import java.sql.Timestamp;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  *
  * User: Stefan
  * Date: 05.01.16
  */
-public class MeasurementTo {
+public class MeasurementTo implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    private long id;
+    private Long id;
 
-    private Timestamp measuredOn;
+    private LocalDateTime measuredOn;
 
     private float measuredValue;
 
     private int unitId;
 
-    private long aquariumId;
+    private Long aquariumId;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     @ApiModelProperty(notes = "References the Aquarium this measurement belongs to.", required = true)
-    public long getAquariumId() {
+    public Long getAquariumId() {
         return aquariumId;
     }
 
-    public void setAquariumId(long aquariumId) {
+    public void setAquariumId(Long aquariumId) {
         this.aquariumId = aquariumId;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     @ApiModelProperty(notes = "Point in time when the description has been taken.", required = true)
-    public Timestamp getMeasuredOn() {
+    public LocalDateTime getMeasuredOn() {
         return measuredOn;
     }
 
-    public void setMeasuredOn(Timestamp measuredOn) {
+    public void setMeasuredOn(LocalDateTime measuredOn) {
         this.measuredOn = measuredOn;
     }
 
@@ -63,7 +64,6 @@ public class MeasurementTo {
         this.measuredValue = measuredValue;
     }
 
-
     @ApiModelProperty(notes = "References the used unit this measurement belongs to.", required = true)
     public int getUnitId() {
         return unitId;
@@ -71,5 +71,31 @@ public class MeasurementTo {
 
     public void setUnitId(int unitId) {
         this.unitId = unitId;
+    }
+
+// ------------------------ CANONICAL METHODS ------------------------
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+
+        MeasurementTo that = (MeasurementTo) o;
+
+        if (Float.compare(that.measuredValue, this.measuredValue) != 0) return false;
+        if (this.unitId != that.unitId) return false;
+        if (!this.id.equals(that.id)) return false;
+        if (!this.measuredOn.equals(that.measuredOn)) return false;
+        return this.aquariumId.equals(that.aquariumId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.id.hashCode();
+        result = 31 * result + this.measuredOn.hashCode();
+        result = 31 * result + (this.measuredValue != +0.0f ? Float.floatToIntBits(this.measuredValue) : 0);
+        result = 31 * result + this.unitId;
+        result = 31 * result + this.aquariumId.hashCode();
+        return result;
     }
 }
