@@ -122,7 +122,9 @@ Customize your own server.properties and do not checkin for security reasons!
 Because of eclipselink we are using weaving at runtime which required the following vm 
 option:
 
+```
 -javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/4.3.13.RELEASE/spring-instrument-4.3.13.RELEASE.jar
+```
 
 You will need the agent for the springboot application run config in your IDE
 as well as VM parameter for you test runner config.
