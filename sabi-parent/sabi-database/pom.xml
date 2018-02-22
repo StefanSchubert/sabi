@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018 by Stefan Schubert
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -17,17 +21,20 @@
 
     <properties>
         <mysql-connector-java.version>5.1.17</mysql-connector-java.version>
+        <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
+        checkin those secrets for stage and production
         <mariadb.schema>sabi</mariadb.schema>
         <mariadb.server.name>localhost</mariadb.server.name>
         <mariadb.server.port>3306</mariadb.server.port>
         <mariadb.server.app.username>sabiapp</mariadb.server.app.username>
         <mariadb.server.app.password>sabi123</mariadb.server.app.password>
+        -->
     </properties>
 
     <profiles>
         <profile>
-            <!-- Used to setup the local DB -->
-            <id>db_setup</id>
+            <!-- Used to maintain the database DB -->
+            <id>configure_flyway</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -36,7 +43,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>3.1</version>
+                        <version>4.2.0</version>
                         <configuration>
                             <url>jdbc:mysql://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
                             <user>${mariadb.server.app.username}</user>
@@ -48,7 +55,7 @@
                                 <phase>clean</phase>
                                 <goals>
                                     <goal>clean</goal>
-                                    <goal>init</goal>
+                                    <goal>baseline</goal>
                                 </goals>
                             </execution>
                             <execution>
@@ -56,6 +63,13 @@
                                 <phase>install</phase>
                                 <goals>
                                     <goal>migrate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>update metatable</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>info</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -67,7 +81,6 @@
                             </dependency>
                         </dependencies>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>

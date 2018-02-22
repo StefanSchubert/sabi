@@ -79,12 +79,42 @@ against sabi. However to start with this project involves a
 
 * Install a local MariaDB (latest version should do it)
 * Create a DB called sabi and and a user sabiapp with permissions for localhost.
+```
+    CREATE DATABASE sabi;
+    GRANT ALL ON sabi.* TO sabiapp@localhost IDENTIFIED by 'sabi123';
+    FLUSH PRIVILEGES;
+```
 * Use the password as specified by the database module pom.
 
-## Used maven goals
+## Add a the following profile to your maven settings.xml
+```
+   <profiles>
+    <profile>
+        <!-- Used for local environment development to setup the sabi database -->
+        <id>db_local_secrets_sabi</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+                <mariadb.schema>sabi</mariadb.schema>
+                <mariadb.server.name>localhost</mariadb.server.name>
+                <mariadb.server.port>3306</mariadb.server.port>
+                <mariadb.server.app.username>sabiapp</mariadb.server.app.username>
+                <mariadb.server.app.password>sabi123</mariadb.server.app.password>
+        </properties>
+    </profile>
+   </profiles>
+```
 
-### Reinstall the database schema
-mvn clean install -P db_setup sabi_database
+## Used maven goals on module sabi_database
+
+| Maven command | Purpose  |
+| ------------- |-------------| 
+| mvn clean install -P configure_flyway db_local_secrets_sabi | Setup/Reinstall the database schema | 
+| mvn flyway:migrate -P configure_flyway db_local_secrets_sabi | Apply Schema changes      | 
+| mvn flyway:validate -P configure_flyway db_local_secrets_sabi | Validate schema      | 
+| mvn flyway:repair -P configure_flyway db_local_secrets_sabi | Repair flyway metadata       | 
+
 
 ## Preparing your productive and IDE environment
 
