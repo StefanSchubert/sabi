@@ -4,6 +4,7 @@
 
 package de.bluewhale.sabi.configs;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -28,6 +29,15 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class EclipselinkJPAConfig {
 
+    @Value( "${jdbc.url}" )
+    private String jdbcUrl;
+
+    @Value( "${db.username}" )
+    private String dbUsername;
+
+    @Value( "${db.password}" )
+    private String dbPassword;
+
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -45,12 +55,11 @@ public class EclipselinkJPAConfig {
 
     @Bean
     public DataSource dataSource() {
-        // FIXME: 13.11.2015 The credentials needs to be weaved in later by a property replacer during the maven build. Where the crendentials com from an maven profile of th elocal settings.xml
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/sabi");
-        dataSource.setUsername("sabiapp");
-        dataSource.setPassword("sabi123");
+        dataSource.setUrl(jdbcUrl);
+        dataSource.setUsername(dbUsername);
+        dataSource.setPassword(dbPassword);
         return dataSource;
     }
 

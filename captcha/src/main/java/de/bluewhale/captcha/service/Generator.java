@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.captcha.service;
@@ -58,7 +58,7 @@ public class Generator {
 
         ChallengeData challenge3 = new ChallengeData();
         challenge3.questionMap.put(Locale.GERMAN, "Welcher Wert muss gering gehalten werden?");
-        challenge3.questionMap.put(Locale.ENGLISH, "Which Value is to be minimized?");
+        challenge3.questionMap.put(Locale.ENGLISH, "Which value is to be minimized?");
         challenge3.answerMap.put("PO4", TRUE);
         challenge3.answerMap.put("Ca", FALSE);
         challenge3.answerMap.put("Mg", FALSE);
@@ -73,8 +73,8 @@ public class Generator {
         challenge4.answerMap.put("##0", FALSE);
 
         ChallengeData challenge5 = new ChallengeData();
-        challenge5.questionMap.put(Locale.GERMAN, "Was passt nicht?");
-        challenge5.questionMap.put(Locale.ENGLISH, "Which option does not fit");
+        challenge5.questionMap.put(Locale.GERMAN, "Wen würdest du aufmuntern?");
+        challenge5.questionMap.put(Locale.ENGLISH, "Who needs a little support?");
         challenge5.answerMap.put(":-)", FALSE);
         challenge5.answerMap.put(";-)", FALSE);
         challenge5.answerMap.put(":-(", TRUE);
@@ -105,12 +105,12 @@ public class Generator {
         challenge8.answerMap.put("L", FALSE);
 
         ChallengeData challenge9 = new ChallengeData();
-        challenge9.questionMap.put(Locale.GERMAN, "Welche Option beschreibt den Operator '?'");
-        challenge9.questionMap.put(Locale.ENGLISH, "Which option describes the operator '?'");
-        challenge9.answerMap.put("8? = 64", FALSE);
-        challenge9.answerMap.put("? ~ X * X", TRUE);
-        challenge9.answerMap.put("4? = 16 ", FALSE);
-        challenge9.answerMap.put("? ~ X + X", FALSE);
+        challenge9.questionMap.put(Locale.GERMAN, "Wenn jeder Strich ein Bleistift wäre und diese nun in eine Linie setzt, was gibt die längere Strecke?");
+        challenge9.questionMap.put(Locale.ENGLISH, "If each line is a pencil and you set them in a line, which one would result in the max line?");
+        challenge9.answerMap.put("=====", FALSE);
+        challenge9.answerMap.put("#####", TRUE);
+        challenge9.answerMap.put("NNNNN", FALSE);
+        challenge9.answerMap.put("XXXXX", FALSE);
 
         ChallengeData challenge10 = new ChallengeData();
         challenge10.questionMap.put(Locale.GERMAN, "Was wird immer besser ereichbar?");
@@ -119,6 +119,22 @@ public class Generator {
         challenge10.answerMap.put("Mars", TRUE);
         challenge10.answerMap.put("Venus", FALSE);
         challenge10.answerMap.put("Saturn", FALSE);
+
+        ChallengeData challenge11 = new ChallengeData();
+        challenge10.questionMap.put(Locale.GERMAN, "Welche Box passt 27 mal in eine 15x15x15 Box?");
+        challenge10.questionMap.put(Locale.ENGLISH, "Which box fits 27 times in a 15x15x15 box?");
+        challenge10.answerMap.put("10x10x10 Box", FALSE);
+        challenge10.answerMap.put("5x5x5 Box", TRUE);
+        challenge10.answerMap.put("4x8x12 Box", FALSE);
+        challenge10.answerMap.put("20x20x20 Box", FALSE);
+
+        ChallengeData challenge12 = new ChallengeData();
+        challenge10.questionMap.put(Locale.GERMAN, "Welcher Ball rollt am ehsten durch ein Mäuseloch?");
+        challenge10.questionMap.put(Locale.ENGLISH, "Which ball is likely to be rolling through a mouse hole?");
+        challenge10.answerMap.put("5cm Ball", TRUE);
+        challenge10.answerMap.put("10cm Ball", FALSE);
+        challenge10.answerMap.put("15cm Ball", FALSE);
+        challenge10.answerMap.put("20cm Ball", FALSE);
 
 
         dataSet.add(challenge1);
@@ -131,6 +147,8 @@ public class Generator {
         dataSet.add(challenge8);
         dataSet.add(challenge9);
         dataSet.add(challenge10);
+        dataSet.add(challenge11);
+        dataSet.add(challenge12);
     }
 
 // -------------------------- OTHER METHODS --------------------------

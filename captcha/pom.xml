@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2017 by Stefan Schubert
+  ~ Copyright (c) 2018 by Stefan Schubert
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -178,7 +178,12 @@
                     </execution>
                 </executions>
                 <dependencies />
-                <configuration />
+                <configuration>
+                    <!-- Build a fully executable jar to use it via /etc/init.d
+                      see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
+                    -->
+                    <executable>true</executable>
+                </configuration>
             </plugin>
         </plugins>
 

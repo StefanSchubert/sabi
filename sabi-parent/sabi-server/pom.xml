@@ -277,7 +277,7 @@
     </dependencies>
 
     <build>
-        <finalName>sabi-backend</finalName>
+        <finalName>sabi-service-${sabi.version}</finalName>
         <plugins>
 
             <plugin>
@@ -310,8 +310,13 @@
                     <agent>
                         ${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar
                     </agent>
+                    <!-- Build a fully executable jar to use it via /etc/init.d
+                         see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
+                    -->
+                    <executable>true</executable>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
