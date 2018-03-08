@@ -105,7 +105,7 @@ public class Generator {
         challenge8.answerMap.put("L", FALSE);
 
         ChallengeData challenge9 = new ChallengeData();
-        challenge9.questionMap.put(Locale.GERMAN, "Wenn jeder Strich ein Bleistift wäre und diese nun in eine Linie setzt, was gibt die längere Strecke?");
+        challenge9.questionMap.put(Locale.GERMAN, "Wenn jeder Strich ein Bleistift wäre und du diese nun in eine Linie setzt, was gibt die längere Strecke?");
         challenge9.questionMap.put(Locale.ENGLISH, "If each line is a pencil and you set them in a line, which one would result in the max line?");
         challenge9.answerMap.put("=====", FALSE);
         challenge9.answerMap.put("#####", TRUE);
@@ -121,20 +121,20 @@ public class Generator {
         challenge10.answerMap.put("Saturn", FALSE);
 
         ChallengeData challenge11 = new ChallengeData();
-        challenge10.questionMap.put(Locale.GERMAN, "Welche Box passt 27 mal in eine 15x15x15 Box?");
-        challenge10.questionMap.put(Locale.ENGLISH, "Which box fits 27 times in a 15x15x15 box?");
-        challenge10.answerMap.put("10x10x10 Box", FALSE);
-        challenge10.answerMap.put("5x5x5 Box", TRUE);
-        challenge10.answerMap.put("4x8x12 Box", FALSE);
-        challenge10.answerMap.put("20x20x20 Box", FALSE);
+        challenge11.questionMap.put(Locale.GERMAN, "Welche Box passt 27 mal in eine 15x15x15 Box?");
+        challenge11.questionMap.put(Locale.ENGLISH, "Which box fits 27 times in a 15x15x15 box?");
+        challenge11.answerMap.put("10x10x10 Box", FALSE);
+        challenge11.answerMap.put("5x5x5 Box", TRUE);
+        challenge11.answerMap.put("4x8x12 Box", FALSE);
+        challenge11.answerMap.put("20x20x20 Box", FALSE);
 
         ChallengeData challenge12 = new ChallengeData();
-        challenge10.questionMap.put(Locale.GERMAN, "Welcher Ball rollt am ehsten durch ein Mäuseloch?");
-        challenge10.questionMap.put(Locale.ENGLISH, "Which ball is likely to be rolling through a mouse hole?");
-        challenge10.answerMap.put("5cm Ball", TRUE);
-        challenge10.answerMap.put("10cm Ball", FALSE);
-        challenge10.answerMap.put("15cm Ball", FALSE);
-        challenge10.answerMap.put("20cm Ball", FALSE);
+        challenge12.questionMap.put(Locale.GERMAN, "Welcher Ball rollt am ehsten durch ein Mäuseloch?");
+        challenge12.questionMap.put(Locale.ENGLISH, "Which ball is likely to be rolling through a mouse hole?");
+        challenge12.answerMap.put("5cm Ball", TRUE);
+        challenge12.answerMap.put("10cm Ball", FALSE);
+        challenge12.answerMap.put("15cm Ball", FALSE);
+        challenge12.answerMap.put("20cm Ball", FALSE);
 
 
         dataSet.add(challenge1);
