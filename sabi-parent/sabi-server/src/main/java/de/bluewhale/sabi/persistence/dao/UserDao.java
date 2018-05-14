@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -26,6 +26,14 @@ public interface UserDao extends GenericDao<UserEntity> {
      * @return
      */
     UserTo loadUserByEmail(@NotNull String email);
+
+    /**
+     * Returns an User object that matches the username given
+     *
+     * @param username
+     * @return
+     */
+    UserTo loadUserByUsername(@NotNull String username);
 
 
     /**

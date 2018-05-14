@@ -65,6 +65,7 @@ public class UserDAOTest {
         // given
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("Test@bluewhale.de");
+        userEntity.setUsername("Tester");
         userEntity.setPassword("Test123");
         userEntity.setCountry(Locale.GERMANY.getCountry());
         userEntity.setLanguage(Locale.GERMAN.getLanguage());
@@ -92,6 +93,7 @@ public class UserDAOTest {
         // given
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("ModifierTest@bluewhale.de");
+        userEntity.setUsername("Sharky");
         userEntity.setPassword("Test123");
         userEntity.setCountry(Locale.GERMANY.getCountry());
         userEntity.setLanguage(Locale.GERMAN.getLanguage());

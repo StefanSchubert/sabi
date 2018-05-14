@@ -31,6 +31,10 @@ public class UserEntity extends TracableEntity {
     private String email;
 
     @Basic
+    @Column(name = "username", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
+    private String username;
+
+    @Basic
     @Column(name = "password", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String password;
 
@@ -112,6 +116,14 @@ public class UserEntity extends TracableEntity {
         this.password = password;
     }
 
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getValidateToken() {
         return validateToken;
     }
@@ -141,6 +153,7 @@ public class UserEntity extends TracableEntity {
         if (!this.id.equals(that.id)) return false;
         if (this.aquariums != null ? !this.aquariums.equals(that.aquariums) : that.aquariums != null) return false;
         if (!this.email.equals(that.email)) return false;
+        if (!this.username.equals(that.username)) return false;
         if (this.password != null ? !this.password.equals(that.password) : that.password != null) return false;
         if (this.validateToken != null ? !this.validateToken.equals(that.validateToken) : that.validateToken != null)
             return false;
@@ -154,6 +167,7 @@ public class UserEntity extends TracableEntity {
         int result = this.id.hashCode();
         result = 31 * result + (this.aquariums != null ? this.aquariums.hashCode() : 0);
         result = 31 * result + this.email.hashCode();
+        result = 31 * result + this.username.hashCode();
         result = 31 * result + (this.password != null ? this.password.hashCode() : 0);
         result = 31 * result + (this.validateToken != null ? this.validateToken.hashCode() : 0);
         result = 31 * result + (this.validated ? 1 : 0);

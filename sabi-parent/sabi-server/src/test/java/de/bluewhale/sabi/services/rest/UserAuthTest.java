@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services.rest;
@@ -85,7 +85,7 @@ public class UserAuthTest {
     public void testNewUserRegistrationWithInvalidCaptcha() throws Exception {
 
         // given a test user
-        UserTo newUser = new UserTo("test@bluewhale.de", "test123");
+        UserTo newUser = new UserTo("test@bluewhale.de", "Tester","test123");
         newUser.setCaptchaCode("captcha mock not programmed so check will be false.");
 
         // when a new user sends a sign-in request
@@ -114,7 +114,7 @@ public class UserAuthTest {
     public void testSuccessfulNewUserRegistration() throws Exception {
 
         // given a test user
-        UserTo newUser = new UserTo("test@bluewhale.de", "test123");
+        UserTo newUser = new UserTo("test@bluewhale.de", "Tester","test123");
         newUser.setCaptchaCode("test");
 
         // given a mocked captcha service - accepting our captcha
@@ -141,7 +141,7 @@ public class UserAuthTest {
     @Test
     public void testUserGetsWelcomeMailOnValidation() throws Exception {
         // Given a user
-        UserTo newUser = new UserTo("test@bluewhale.de", "test");
+        UserTo newUser = new UserTo("test@bluewhale.de", "tester", "test");
         newUser.setValidationToken("validPass");
 
         // Give some Mocks
@@ -180,7 +180,7 @@ public class UserAuthTest {
         // Given
         String plain_password = "test";
         String encrypted_Password = Obfuscator.encryptPasswordForHeavensSake(plain_password);
-        UserTo userFromDatabase = new UserTo("test@bluewhale.de", encrypted_Password);
+        UserTo userFromDatabase = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
         userFromDatabase.setValidated(false);
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();
@@ -208,7 +208,7 @@ public class UserAuthTest {
         // Given
         String plain_password = "test";
         String encrypted_Password = Obfuscator.encryptPasswordForHeavensSake(plain_password);
-        UserTo userFromDatabase = new UserTo("test@bluewhale.de", encrypted_Password);
+        UserTo userFromDatabase = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
         userFromDatabase.setValidated(true);
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();

@@ -61,7 +61,7 @@ public class TestDataFactory {
 
     public UserTo getPersistedTestUserTo(String eMail) {
         String clearTextPassword = "NoPass123";
-        final UserTo userTo = new UserTo(eMail, clearTextPassword);
+        final UserTo userTo = new UserTo(eMail, eMail, clearTextPassword);
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         return userToResultTo.getValue();
     }

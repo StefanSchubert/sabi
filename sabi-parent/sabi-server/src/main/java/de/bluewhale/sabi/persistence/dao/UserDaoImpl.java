@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.persistence.dao;
@@ -35,6 +35,16 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
         return null;
     }
 
+    public UserTo loadUserByUsername(@NotNull String username) {
+        Query query = em.createQuery("select u FROM UserEntity u where u.username = :username");
+        query.setParameter("username", username);
+        List<UserEntity> users = query.getResultList();
+        if (users != null && users.size() == 1) {
+            return mapEntity2To(users.get(0));
+        }
+        return null;
+    }
+
     @Override
     public UserTo create(@NotNull final UserTo pNewUser, final String pPassword) throws BusinessException {
         final UserTo existingUser = loadUserByEmail(pNewUser.getEmail());
@@ -46,6 +56,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
         // TODO: 13.11.2015 Test if we can use dozer for mapping, i'm not quite sure if eclipselink gets trouble if the contained hibernate-core will be joined through this.
         final UserEntity userEntity = new UserEntity();
         userEntity.setEmail(pNewUser.getEmail());
+        userEntity.setUsername(pNewUser.getUsername());
         userEntity.setPassword(pPassword);
         userEntity.setValidateToken(pNewUser.getValidationToken());
         userEntity.setValidated(false);
@@ -101,7 +112,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
 
     private UserTo mapEntity2To(@NotNull final UserEntity pUserEntity) {
         // TODO: 14.11.2015 Introduce Dozer? If its transitive hibernate-core dependency makes no trouble with eclipslink. 
-        final UserTo userTo = new UserTo(pUserEntity.getEmail(), pUserEntity.getPassword());
+        final UserTo userTo = new UserTo(pUserEntity.getEmail(), pUserEntity.getUsername(), pUserEntity.getPassword());
         userTo.setValidationToken(pUserEntity.getValidateToken());
         userTo.setValidated(pUserEntity.isValidated());
         userTo.setId(pUserEntity.getId());

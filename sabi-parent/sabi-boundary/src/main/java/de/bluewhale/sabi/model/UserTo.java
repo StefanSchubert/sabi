@@ -21,6 +21,8 @@ public class UserTo implements Serializable {
 
     private String email;
 
+    private String username;
+
     private String password;
 
     private String captchaCode;
@@ -36,19 +38,21 @@ public class UserTo implements Serializable {
     public UserTo() {
     }
 
-    public UserTo(String pEmail, String pPassword) {
+    public UserTo(String pEmail, String pUsername, String pPassword) {
         this.email = pEmail;
         this.password = pPassword;
+        this.username = pUsername;
     }
 
-    public UserTo(String email, String password, String language, String country) {
-        this.email = email;
-        this.password = password;
-        this.language = language;
-        this.country = country;
+    public UserTo(String pEmail, String pUsername, String pPassword, String pLanguage, String pCountry) {
+        this.email = pEmail;
+        this.username = pUsername;
+        this.password = pPassword;
+        this.language = pLanguage;
+        this.country = pCountry;
     }
 
-    // --------------------- GETTER / SETTER METHODS ---------------------
+// --------------------- GETTER / SETTER METHODS ---------------------
 
     @ApiModelProperty(notes = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
     public String getCaptchaCode() {
@@ -68,7 +72,7 @@ public class UserTo implements Serializable {
         this.country = country;
     }
 
-    @ApiModelProperty(notes = "Users Email as ID", required = true)
+    @ApiModelProperty(notes = "Users Emailaddress", required = true)
     public String getEmail() {
         return email;
     }
@@ -101,6 +105,15 @@ public class UserTo implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @ApiModelProperty(notes = "Userlogin", required = true)
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @ApiModelProperty(notes = "Will be used only during registration process, when the user validates his email address.", required = false)
