@@ -8,7 +8,7 @@ import de.bluewhale.sabi.persistence.UserDAOTest;
 import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
-import de.bluewhale.sabi.services.rest.UserAuthTest;
+import de.bluewhale.sabi.services.rest.UserAuthController_REST_API_Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({UserDAOTest.class,
         UserServiceTest.class,
-        UserAuthTest.class,
+        UserAuthController_REST_API_Test.class,
         TankTestSuite.class,
         MeasurementTestSuite.class,
         FishServiceTest.class,

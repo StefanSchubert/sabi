@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.security;
@@ -47,6 +47,7 @@ public class SabiDoorKeeper implements AuthenticationProvider {
 
             return confirmedAuthentication;
         } else {
+            // return unconfirmedAuthentication;
             throw new BadCredentialsException(resultTo.getMessage().toString());
         }
     }

@@ -14,7 +14,6 @@ import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.util.Obfuscator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ import static org.mockito.Mockito.reset;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserAuthTest {
+public class UserAuthController_REST_API_Test {
 
 
     SimpleSmtpServer smtpServer;
@@ -81,7 +80,7 @@ public class UserAuthTest {
      *
      * @throws Exception
      */
-    @Test
+    @Test // REST-API
     public void testNewUserRegistrationWithInvalidCaptcha() throws Exception {
 
         // given a test user
@@ -107,7 +106,7 @@ public class UserAuthTest {
      *
      * @throws Exception
      */
-    @Test
+    @Test // REST-API
     // @Transactional // Usually takes care of rollback but does not work here
     // transaction is not being spanned over the restTemplate call.
     // so we mock the database as well here.
@@ -138,7 +137,7 @@ public class UserAuthTest {
         assertThat(smtpMessage.getHeaderValue("Subject"), containsString("sabi Account Validation"));
     }
 
-    @Test
+    @Test // REST-API
     public void testUserGetsWelcomeMailOnValidation() throws Exception {
         // Given a user
         UserTo newUser = new UserTo("test@bluewhale.de", "tester", "test");
@@ -174,8 +173,7 @@ public class UserAuthTest {
     // FIXME STS (30.12.17): Needs to be investigated. currently results in an HttpRetryException, instead of retrning a
     // proper status-code. Needs to be adopted in such way, that the user get's a message about the incomplete
     // registration process instead.
-    @Test
-    @Ignore
+    @Test // REST-API
     public void testInvalidatedUserCanNotSignIn() throws Exception {
         // Given
         String plain_password = "test";
@@ -203,7 +201,7 @@ public class UserAuthTest {
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
 
-    @Test
+    @Test // REST-API
     public void testSuccessfulSignIn() throws Exception {
         // Given
         String plain_password = "test";

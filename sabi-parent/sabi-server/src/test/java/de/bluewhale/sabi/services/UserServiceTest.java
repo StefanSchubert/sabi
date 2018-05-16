@@ -78,7 +78,7 @@ public class UserServiceTest {
         final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
-        UserTo userTo2 = new UserTo(TESTUSER_EMAIL, "User2","NoPass123");
+        UserTo userTo2 = new UserTo(TESTUSER_EMAIL, "User2", "NoPass123");
         final ResultTo<UserTo> userResultTo = userService.registerNewUser(userTo2);
 
         // Then
@@ -88,7 +88,7 @@ public class UserServiceTest {
         assertNotNull(message);
         assertNotNull(message.getCode());
         assertEquals(message.getCode().getExceptionCode(),
-                     AuthExceptionCodes.USER_REGISTRATION_FAILED);
+                AuthExceptionCodes.USER_REGISTRATION_FAILED);
         assertEquals(message.getCode(), AuthMessageCodes.USER_ALREADY_EXISTS);
     }
 
@@ -97,7 +97,7 @@ public class UserServiceTest {
     @Transactional
     public void testRegisterUser() throws Exception {
         // Given
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester","NoPass123");
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", "NoPass123");
 
         // When
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
@@ -105,7 +105,7 @@ public class UserServiceTest {
         // Then
         assertNotNull(userToResultTo);
         assertNotNull(userToResultTo.getValue());
-        assertNotNull("User did not got an Id!",userToResultTo.getValue().getId());
+        assertNotNull("User did not got an Id!", userToResultTo.getValue().getId());
         assertNotNull("New user was not issued with a token.", userToResultTo.getValue().getValidationToken());
     }
 
@@ -119,7 +119,7 @@ public class UserServiceTest {
     @Transactional
     public void testUserValidation() throws Exception {
         // Given
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester",  "NoPass123");
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", "NoPass123");
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         final String token = userToResultTo.getValue().getValidationToken();
 
@@ -174,7 +174,7 @@ public class UserServiceTest {
         final Message message = signInResult.getMessage();
         assertNotNull(message);
         assertNotNull(message.getCode());
-        assertEquals(AuthMessageCodes.SIGNIN_SUCCEEDED,message.getCode());
+        assertEquals(AuthMessageCodes.SIGNIN_SUCCEEDED, message.getCode());
     }
 
 
@@ -193,17 +193,46 @@ public class UserServiceTest {
         assertNotNull(message);
         assertNotNull(message.getCode());
         assertEquals(message.getCode().getExceptionCode(),
-                     AuthExceptionCodes.AUTHENTICATION_FAILED);
+                AuthExceptionCodes.AUTHENTICATION_FAILED);
         assertEquals(message.getCode(), AuthMessageCodes.UNKNOWN_USERNAME);
     }
 
 
     @Test
     @Transactional
-    public void testSignInWithUnknownPassword() throws Exception {
+    public void testSignInWithUnknownOrWrongPassword() throws Exception {
+        // Given a user which registered and validated his email address.
+        final String clearTextPassword = "NoPass123";
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", clearTextPassword);
+        ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
+        UserTo createdUserTo = userToResultTo.getValue();
+        userService.validateUser(TESTUSER_EMAIL, createdUserTo.getValidationToken());
+
+
+        // When
+        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, "abc");
+
+        // Then
+        assertNotNull(signInResult);
+        final Message message = signInResult.getMessage();
+        assertNotNull(message);
+        assertNotNull(message.getCode());
+        assertEquals(message.getCode().getExceptionCode(),
+                AuthExceptionCodes.AUTHENTICATION_FAILED);
+        assertEquals(message.getCode(), AuthMessageCodes.WRONG_PASSWORD);
+    }
+
+
+    @Test
+    @Transactional
+    public void testSignInWithUnvalidatedEmailFails() throws Exception {
+
+        // For being able to login we need a clearly validated user account,
+        // for which we use the verified email address
+
         // Given
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester",clearTextPassword);
+        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", clearTextPassword);
         userService.registerNewUser(userTo);
 
         // When
@@ -215,8 +244,9 @@ public class UserServiceTest {
         assertNotNull(message);
         assertNotNull(message.getCode());
         assertEquals(message.getCode().getExceptionCode(),
-                     AuthExceptionCodes.AUTHENTICATION_FAILED);
-        assertEquals(message.getCode(), AuthMessageCodes.WRONG_PASSWORD);
+                AuthExceptionCodes.AUTHENTICATION_FAILED);
+        assertEquals(message.getCode(), AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS);
     }
+
 
 }

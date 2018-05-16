@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.security;
@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -31,6 +32,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     public JWTLoginFilter(String url, AuthenticationManager authManager) {
         super(new AntPathRequestMatcher(url));
         setAuthenticationManager(authManager);
+        // setAuthenticationFailureHandler();
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -88,7 +90,18 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             TokenAuthenticationService.addAuthentication(pResponse, auth.getName());
             pResponse.setStatus(HttpStatus.ACCEPTED.value());
         } else {
-            throw new javax.security.sasl.AuthenticationException("Authentication Object was not authenticated!");
+            // Should never happen. If so you have a logic flaw in your authController!
+            throw new javax.security.sasl.AuthenticationException("Authentication Object was not authenticated! - Broken logic in you AuthenticationHandler?");
         }
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        SecurityContextHolder.clearContext();
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Authentication request failed: " + failed.toString(), failed);
+        }
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        // Quick solution. Proper usage would be to use  FailerHandler at Constructor time (write your own) and remove the override code here
     }
 }
