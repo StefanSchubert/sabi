@@ -118,7 +118,7 @@ against sabi. However to start with this project involves a
 
 ## Preparing your productive and IDE environment
 
-Customize your own server.properties and do not checkin for security reasons!
+Customize your own server properties and do not checkin for security reasons!
 Because of eclipselink we are using weaving at runtime which required the following vm 
 option:
 
@@ -126,7 +126,7 @@ option:
 -javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/4.3.13.RELEASE/spring-instrument-4.3.13.RELEASE.jar
 ```
 
-You will need the agent for the springboot application run config in your IDE
+You will need the agent for the springboot application run-config in your IDE
 as well as VM parameter for you test runner config.
 
 ## Architectural Notes
@@ -138,11 +138,12 @@ are based upon arc42 templates.
 
 ### REST-API Doc
 As we are using swagger, you will find the API doc after starting the application here:
-http://localhost:8080/sabi/swagger-ui.html
+* http://localhost:8080/sabi/swagger-ui.html
 
-### Test of a successfully deployed backend.
+
+### Testing of a successfully deployed backend:
  
-I use postman to test the login REST API.
+I use postman to test the login REST API (or the REST client from IntelliJ)
 
 
  
