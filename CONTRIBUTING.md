@@ -1,4 +1,4 @@
-# There are two ways to contribute:
+# There are different ways to contribute:
 
 ## As a User
 
