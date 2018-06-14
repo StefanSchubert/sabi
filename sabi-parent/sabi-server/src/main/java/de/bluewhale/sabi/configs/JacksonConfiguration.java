@@ -11,7 +11,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * My current spring-boot provides jackson2.x which has no native support for convertion
+ * My current spring-boot provides jackson2.x which has no native support for conversion of
  * java 8 datetime type, that we we needed to add additional modules und register them by this config.
  * See https://github.com/FasterXML/jackson-modules-java8 for details.
  * @author Stefan Schubert

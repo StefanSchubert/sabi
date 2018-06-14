@@ -23,6 +23,7 @@ CREATE TABLE `aquarium` (
   `description` VARCHAR(255)        NOT NULL,
   `active`      BIT                                  DEFAULT 0,
   `user_id`     BIGINT(20)          UNSIGNED,
+  `setup_date`  TIMESTAMP           NULL,
   `created_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.configs;
 
 /**
- * Summary of all Items we lay on the hazelcast cache, to avoid missellings and to keep an
- * overview of usecases, which utilize the hazelcast cache.
+ * Summary of all Items we lay on the hazelcast cache, to avoid misspellings and to keep an
+ * overview of use-cases, which utilize the hazelcast cache.
  *
  * @author Stefan Schubert
  */

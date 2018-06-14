@@ -1,5 +1,5 @@
 This folder contains the source of UML diagrams which are being used within the
-sabi architecture documentation (see projecs wiki on github)
+sabi architecture documentation (see projects wiki on github)
  
 To modify or generate the diagrams you require to install the PlantUML Plugin.
 Examples or language reference can be found here: http://de.plantuml.com/sequence.html
