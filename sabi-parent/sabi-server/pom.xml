@@ -10,7 +10,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <version>2.0.3.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -45,7 +45,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <swagger.version>2.7.0</swagger.version>
-        <eclipselink.version>2.7.1</eclipselink.version>
+        <eclipselink.version>2.7.2</eclipselink.version>
     </properties>
 
 
@@ -71,16 +71,6 @@
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
                 <version>1.3.3</version>
-            </dependency>
-
-            <!-- Enabling Jason Mapping of LocalDateTimeAPI
-            Requires also the JacksonConfiguration to enable this module. -->
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>2.9.0</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
 
         </dependencies>
@@ -121,28 +111,6 @@
         </dependency>
 
 
-        <!-- additional jackson modules, required to work with java1.8 datatypes that are not available
-             in jackson2.x and jackson3 is not provided by current spring boot release 1.5.9-RELEASE
-             meaning when upgradig to a higher spring boot, you can try to ommit this one
-             and drop the JacksonConfiguration.java , as well.
-
-             See https://github.com/FasterXML/jackson-modules-java8 for details.
-
-        -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-parameter-names</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-
         <!-- For spring-security in combination with JWT -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -150,9 +118,20 @@
         </dependency>
 
         <dependency>
+            <!-- Required for Jackson ObjectMapper, used in JWTLoginFilter -->
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.5</version>
+            <!--
+               2.9.6. no longer has the Objekt Mapper.
+               API has Changes here JWTLoginFilter might be rewritten to live without this dependency.
+            -->
+        </dependency>
+
+        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.7.0</version>
+            <version>0.9.0</version>
         </dependency>
 
 
@@ -187,7 +166,7 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>1.2.0</version>
+            <version>2.2.5</version>
         </dependency>
 
 
