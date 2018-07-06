@@ -16,7 +16,7 @@ import java.sql.Timestamp;
         query="select f from FishEntity f where :pUserId in (select a.user.id from AquariumEntity a where a.id = f.aquariumId) and f.id = :pFishId")})
 @Table(name = "fish", schema = "sabi")
 @Entity
-public class FishEntity extends TracableEntity {
+public class FishEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,8 +35,12 @@ public class FishEntity extends TracableEntity {
 
     private String observedBehavior;
 
-    @Embedded
-    private EntityState entityState;
+    /**
+     * Owner-side of the relationship.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -60,15 +64,6 @@ public class FishEntity extends TracableEntity {
         this.aquariumId = aquariumId;
     }
 
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
-    }
 
     @javax.persistence.Column(name = "exodus_on", nullable = true, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
@@ -120,7 +115,16 @@ public class FishEntity extends TracableEntity {
         this.observedBehavior = observedBehavior;
     }
 
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
 // ------------------------ CANONICAL METHODS ------------------------
+
 
     @Override
     public boolean equals(Object o) {
@@ -138,7 +142,7 @@ public class FishEntity extends TracableEntity {
         if (this.nickname != null ? !this.nickname.equals(that.nickname) : that.nickname != null) return false;
         if (this.observedBehavior != null ? !this.observedBehavior.equals(that.observedBehavior) : that.observedBehavior != null)
             return false;
-        return this.entityState.equals(that.entityState);
+        return this.user.equals(that.user);
     }
 
     @Override
@@ -150,7 +154,7 @@ public class FishEntity extends TracableEntity {
         result = 31 * result + (this.exodusOn != null ? this.exodusOn.hashCode() : 0);
         result = 31 * result + (this.nickname != null ? this.nickname.hashCode() : 0);
         result = 31 * result + (this.observedBehavior != null ? this.observedBehavior.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
+        result = 31 * result + this.user.hashCode();
         return result;
     }
 }

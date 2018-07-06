@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Table(name = "fish_catalogue", schema = "sabi")
 @Entity
-public class FishCatalogueEntity extends TracableEntity {
+public class FishCatalogueEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +26,6 @@ public class FishCatalogueEntity extends TracableEntity {
 
     private String meerwasserwikiUrl;
 
-    @Embedded
-    private EntityState entityState;
-
 // --------------------- GETTER / SETTER METHODS ---------------------
 
     @javax.persistence.Column(name = "description", nullable = true, insertable = true, updatable = true, length = 400, precision = 0)
@@ -39,16 +36,6 @@ public class FishCatalogueEntity extends TracableEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
@@ -83,6 +70,7 @@ public class FishCatalogueEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,9 +81,7 @@ public class FishCatalogueEntity extends TracableEntity {
         if (!this.id.equals(that.id)) return false;
         if (!this.scientificName.equals(that.scientificName)) return false;
         if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
-        if (this.meerwasserwikiUrl != null ? !this.meerwasserwikiUrl.equals(that.meerwasserwikiUrl) : that.meerwasserwikiUrl != null)
-            return false;
-        return this.entityState.equals(that.entityState);
+        return this.meerwasserwikiUrl != null ? this.meerwasserwikiUrl.equals(that.meerwasserwikiUrl) : that.meerwasserwikiUrl == null;
     }
 
     @Override
@@ -104,7 +90,6 @@ public class FishCatalogueEntity extends TracableEntity {
         result = 31 * result + this.scientificName.hashCode();
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
         result = 31 * result + (this.meerwasserwikiUrl != null ? this.meerwasserwikiUrl.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

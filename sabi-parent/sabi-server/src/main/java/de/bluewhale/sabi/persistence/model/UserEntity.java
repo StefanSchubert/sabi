@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Table(name = "users", schema = "sabi")
 @Entity
-public class UserEntity extends TracableEntity {
+public class UserEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     // TODO StS 22.09.15: use UUID
@@ -25,6 +25,19 @@ public class UserEntity extends TracableEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<AquariumEntity> aquariums = new ArrayList<AquariumEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<CoralEntity> corals = new ArrayList<CoralEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<FishEntity> fishes = new ArrayList<FishEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<TreatmentEntity> treatments = new ArrayList<TreatmentEntity>();
+
 
     @Basic
     @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
@@ -55,10 +68,41 @@ public class UserEntity extends TracableEntity {
     @Column(name = "country", nullable = false, insertable = true, updatable = true, length = 2, precision = 0)
     private String country;
 
-    @Embedded
-    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
+
+
+    public List<CoralEntity> getCorals() {
+        return this.corals;
+    }
+
+    public void setCorals(List<CoralEntity> corals) {
+        this.corals = corals;
+    }
+
+    public List<FishEntity> getFishes() {
+        return this.fishes;
+    }
+
+    public void setFishes(List<FishEntity> fishes) {
+        this.fishes = fishes;
+    }
+
+    public List<MeasurementEntity> getMeasurements() {
+        return this.measurements;
+    }
+
+    public void setMeasurements(List<MeasurementEntity> measurements) {
+        this.measurements = measurements;
+    }
+
+    public List<TreatmentEntity> getTreatments() {
+        return this.treatments;
+    }
+
+    public void setTreatments(List<TreatmentEntity> treatments) {
+        this.treatments = treatments;
+    }
 
     public List<AquariumEntity> getAquariums() {
         return this.aquariums;
@@ -82,14 +126,6 @@ public class UserEntity extends TracableEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     public Long getId() {
@@ -142,6 +178,7 @@ public class UserEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -152,28 +189,34 @@ public class UserEntity extends TracableEntity {
         if (this.validated != that.validated) return false;
         if (!this.id.equals(that.id)) return false;
         if (this.aquariums != null ? !this.aquariums.equals(that.aquariums) : that.aquariums != null) return false;
+        if (this.corals != null ? !this.corals.equals(that.corals) : that.corals != null) return false;
+        if (this.fishes != null ? !this.fishes.equals(that.fishes) : that.fishes != null) return false;
+        if (this.measurements != null ? !this.measurements.equals(that.measurements) : that.measurements != null) return false;
+        if (this.treatments != null ? !this.treatments.equals(that.treatments) : that.treatments != null) return false;
         if (!this.email.equals(that.email)) return false;
         if (!this.username.equals(that.username)) return false;
-        if (this.password != null ? !this.password.equals(that.password) : that.password != null) return false;
+        if (!this.password.equals(that.password)) return false;
         if (this.validateToken != null ? !this.validateToken.equals(that.validateToken) : that.validateToken != null)
             return false;
         if (this.language != null ? !this.language.equals(that.language) : that.language != null) return false;
-        if (this.country != null ? !this.country.equals(that.country) : that.country != null) return false;
-        return this.entityState.equals(that.entityState);
+        return this.country != null ? this.country.equals(that.country) : that.country == null;
     }
 
     @Override
     public int hashCode() {
         int result = this.id.hashCode();
         result = 31 * result + (this.aquariums != null ? this.aquariums.hashCode() : 0);
+        result = 31 * result + (this.corals != null ? this.corals.hashCode() : 0);
+        result = 31 * result + (this.fishes != null ? this.fishes.hashCode() : 0);
+        result = 31 * result + (this.measurements != null ? this.measurements.hashCode() : 0);
+        result = 31 * result + (this.treatments != null ? this.treatments.hashCode() : 0);
         result = 31 * result + this.email.hashCode();
         result = 31 * result + this.username.hashCode();
-        result = 31 * result + (this.password != null ? this.password.hashCode() : 0);
+        result = 31 * result + this.password.hashCode();
         result = 31 * result + (this.validateToken != null ? this.validateToken.hashCode() : 0);
         result = 31 * result + (this.validated ? 1 : 0);
         result = 31 * result + (this.language != null ? this.language.hashCode() : 0);
         result = 31 * result + (this.country != null ? this.country.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

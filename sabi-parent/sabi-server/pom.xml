@@ -123,8 +123,8 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.9.5</version>
             <!--
-               2.9.6. no longer has the Objekt Mapper.
-               API has Changes here JWTLoginFilter might be rewritten to live without this dependency.
+               2.9.6. in maven central is currently broken
+               remove this dependency when maven central has fixed the problem
             -->
         </dependency>
 
@@ -222,15 +222,16 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
         <!-- This is the replacement database which will
              we used by tests which have been annotated with @JpaDataTest
              https://mvnrepository.com/artifact/com.h2database/h2
+             -->
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.196</version>
             <scope>test</scope>
         </dependency>
-        -->
 
         <!-- Provides a simple smtp server, such that the content of generated emails
              can be checked in junit tests as well.

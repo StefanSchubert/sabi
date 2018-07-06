@@ -5,9 +5,8 @@
 package de.bluewhale.sabi.persistence;
 
 import de.bluewhale.sabi.configs.AppConfig;
-import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.dao.UserDao;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import static org.junit.Assert.*;
@@ -31,10 +31,10 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = AppConfig.class)
-public class UserDAOTest {
+public class UserRepositoryTest {
 
     @Autowired
-    UserDao userDao;
+    UserRepository userRepository;
 
 /*
     @BeforeClass
@@ -49,12 +49,10 @@ public class UserDAOTest {
 
     @Test
     public void testProbeTracebleAttributeMappingsOnTestData() throws Exception {
-        UserTo userTo = userDao.loadUserByEmail("sabi@bluewhale.de");
-        UserEntity userEntity = userDao.find(userTo.getId());
+        UserEntity userEntity = userRepository.getByEmail("sabi@bluewhale.de");
         assertNotNull("Missing Default Testdata", userEntity);
-        assertNotNull("EntityState should have been set.", userEntity.getEntityState());
-        assertNotNull("Temporal Column not mapped.", userEntity.getEntityState().getCreatedOn());
-        assertNotNull("Temporal Column not mapped.", userEntity.getEntityState().getLastmodOn());
+        assertNotNull("Temporal Column CreatedOn not mapped.", userEntity.getCreatedOn());
+        assertNotNull("Temporal Column LastmodOn not mapped.", userEntity.getLastmodOn());
     }
 
 
@@ -73,10 +71,10 @@ public class UserDAOTest {
         userEntity.setId(4711L);
 
         // when
-        userDao.create(userEntity);
+        userRepository.save(userEntity);
 
         // then
-        UserEntity foundUserEntity = userDao.find(userEntity.getId());
+        UserEntity foundUserEntity = userRepository.getOne(userEntity.getId());
 
         assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
 
@@ -84,10 +82,6 @@ public class UserDAOTest {
 
     @Test
     @Transactional
-    // This test is "lying" from integration test perspective.
-    // During #sabi-22 we could observe (by testing the use case via rest calls),
-    // that the datetime will be set be the Generic dao but ignored through jpa mapping.
-    // Meaning test is green because of cache, but database had ignore the modifier mapping (before sabi-22 has been fixed)
     public void testModifierAttributesViaGenericDAO() throws Exception {
 
         // given
@@ -100,18 +94,16 @@ public class UserDAOTest {
         userEntity.setValidateToken("abc123");
         userEntity.setId(4712L);
 
-        // when
-        userDao.create(userEntity);
-        UserEntity foundUserEntity = userDao.find(userEntity.getId());
-        assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
-        assertNull(foundUserEntity.getEntityState().getLastmodOn());
+        UserEntity foundUserEntity = userRepository.saveAndFlush(userEntity);
+        final LocalDateTime initalModDate = foundUserEntity.getLastmodOn();
 
-        // Now do a validation
-        userDao.toggleValidationFlag(foundUserEntity.getEmail(), true);
-        UserEntity updatedUserEntity = userDao.find(userEntity.getId());
+        // when we do an update
+        Thread.sleep(1100); // make sure we have a second difference
+        foundUserEntity.setValidated(true);
+        UserEntity updatedUserEntity = userRepository.saveAndFlush(foundUserEntity);
 
         // then
-        assertNotNull(updatedUserEntity.getEntityState().getLastmodOn());
+        assertNotEquals("LastModDates should differ.",initalModDate,updatedUserEntity.getLastmodOn());
 
     }
 

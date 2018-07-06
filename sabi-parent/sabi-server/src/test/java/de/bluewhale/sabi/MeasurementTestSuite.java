@@ -4,7 +4,7 @@
 
 package de.bluewhale.sabi;
 
-import de.bluewhale.sabi.persistence.MeasurementDAOTest;
+import de.bluewhale.sabi.persistence.MeasurementRepositoryTest;
 import de.bluewhale.sabi.services.MeasurementServiceTest;
 import de.bluewhale.sabi.services.rest.MeasurementControllerTest;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        MeasurementDAOTest.class,
+        MeasurementRepositoryTest.class,
         MeasurementServiceTest.class,
         MeasurementControllerTest.class
 })

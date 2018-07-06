@@ -9,8 +9,10 @@ import com.dumbster.smtp.SmtpMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.CaptchaAdapter;
+import de.bluewhale.sabi.util.Mapper;
 import de.bluewhale.sabi.util.Obfuscator;
 import org.junit.After;
 import org.junit.Before;
@@ -30,8 +32,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.reset;
 
 
@@ -53,7 +53,7 @@ public class UserAuthController_REST_API_Test {
     CaptchaAdapter captchaAdapter;
 
     @MockBean
-    UserDao userDao;
+    UserRepository userRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -71,7 +71,7 @@ public class UserAuthController_REST_API_Test {
 
     @After
     public void cleanUpMocks() {
-        reset(captchaAdapter, userDao);
+        reset(captchaAdapter, userRepository);
     }
 
 
@@ -113,18 +113,20 @@ public class UserAuthController_REST_API_Test {
     public void testSuccessfulNewUserRegistration() throws Exception {
 
         // given a test user
-        UserTo newUser = new UserTo("test@bluewhale.de", "Tester","test123");
-        newUser.setCaptchaCode("test");
+        UserTo userTo = new UserTo("test@bluewhale.de", "Tester","test123");
+        userTo.setCaptchaCode("test");
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
 
         // given a mocked captcha service - accepting our captcha
-        given(this.captchaAdapter.isCaptchaValid(newUser.getCaptchaCode())).willReturn(Boolean.TRUE);
+        given(this.captchaAdapter.isCaptchaValid(userTo.getCaptchaCode())).willReturn(Boolean.TRUE);
         // given mocked database backend
-        given(this.userDao.create(any(UserTo.class), eq(Obfuscator.encryptPasswordForHeavensSake("test123")))).willReturn(newUser);
+        given(this.userRepository.saveAndFlush(any(UserEntity.class))).willReturn(userEntity);
 
         // when a new user sends a sign-in request
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String requestJson = objectMapper.writeValueAsString(newUser);
+        String requestJson = objectMapper.writeValueAsString(userTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
         ResponseEntity<UserTo> responseEntity = restTemplate.postForEntity("/api/auth/register", entity, UserTo.class);
@@ -140,13 +142,13 @@ public class UserAuthController_REST_API_Test {
     @Test // REST-API
     public void testUserGetsWelcomeMailOnValidation() throws Exception {
         // Given a user
-        UserTo newUser = new UserTo("test@bluewhale.de", "tester", "test");
-        newUser.setValidationToken("validPass");
+        UserTo userTo = new UserTo("test@bluewhale.de", "tester", "test");
+        userTo.setValidationToken("validPass");
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
 
         // Give some Mocks
-        given(this.userDao.loadUserByEmail(newUser.getEmail())).willReturn(newUser);
-        doNothing().when(userDao).toggleValidationFlag(newUser.getEmail(), Boolean.TRUE); // void result
-
+        given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userEntity);
 
         // When user clicks in the validation link
         HttpHeaders headers = new HttpHeaders();
@@ -157,8 +159,8 @@ public class UserAuthController_REST_API_Test {
                 HttpMethod.GET,
                 httpEntity,
                 String.class,
-                newUser.getEmail(),
-                newUser.getValidationToken()
+                userTo.getEmail(),
+                userTo.getValidationToken()
         );
 
         // Then we expect a 202 as confirmation
@@ -178,15 +180,18 @@ public class UserAuthController_REST_API_Test {
         // Given
         String plain_password = "test";
         String encrypted_Password = Obfuscator.encryptPasswordForHeavensSake(plain_password);
-        UserTo userFromDatabase = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
-        userFromDatabase.setValidated(false);
+        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
+        userTo.setValidated(false);
+        UserEntity userFromDatabase = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userFromDatabase);
+
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();
         accountCredentialsTo.setUsername(userFromDatabase.getEmail());
         accountCredentialsTo.setPassword(plain_password);
 
         // required mocks
-        given(this.userDao.loadUserByEmail(userFromDatabase.getEmail())).willReturn(userFromDatabase);
+        given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userFromDatabase);
 
         // When user tries to sign-In
         HttpHeaders headers = new HttpHeaders();
@@ -206,15 +211,18 @@ public class UserAuthController_REST_API_Test {
         // Given
         String plain_password = "test";
         String encrypted_Password = Obfuscator.encryptPasswordForHeavensSake(plain_password);
-        UserTo userFromDatabase = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
-        userFromDatabase.setValidated(true);
+        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
+        userTo.setValidated(true);
+        UserEntity userFromDatabase = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userFromDatabase);
+        userFromDatabase.setPassword(encrypted_Password); // mapper excludes the passwort
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();
         accountCredentialsTo.setUsername(userFromDatabase.getEmail());
         accountCredentialsTo.setPassword(plain_password);
 
         // required mocks
-        given(this.userDao.loadUserByEmail(userFromDatabase.getEmail())).willReturn(userFromDatabase);
+        given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userFromDatabase);
 
         // When user tries to sign-In
         HttpHeaders headers = new HttpHeaders();

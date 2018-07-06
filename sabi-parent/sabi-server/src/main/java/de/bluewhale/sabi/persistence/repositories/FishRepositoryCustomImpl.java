@@ -1,21 +1,24 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
-package de.bluewhale.sabi.persistence.dao;
+package de.bluewhale.sabi.persistence.repositories;
 
 import de.bluewhale.sabi.persistence.model.FishEntity;
-import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
- * Specialized DAO Methods of Aquarium, which are not provided through the standard CRUD impl.
+ * Repository extension, required for functions that could not be proxied by spring-data directly.
  *
  * @author Stefan Schubert
  */
-@Repository("fishDao")
-public class FishDaoImpl extends GenericDaoImpl<FishEntity> implements FishDao {
+public class FishRepositoryCustomImpl implements FishRepositoryCustom {
+
+    @PersistenceContext(unitName = "sabi")
+    protected EntityManager em;
 
     @Override
     public FishEntity findUsersFish(Long pFishId, Long pRegisteredUserId) {
@@ -30,4 +33,5 @@ public class FishDaoImpl extends GenericDaoImpl<FishEntity> implements FishDao {
         }
         return fish;
     }
+    
 }

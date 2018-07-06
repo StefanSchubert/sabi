@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Table(name = "remedy", schema = "sabi")
 @Entity
-public class RemedyEntity extends TracableEntity {
+public class RemedyEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,20 +24,7 @@ public class RemedyEntity extends TracableEntity {
 
     private String vendor;
 
-    @Embedded
-    private EntityState entityState;
-
 // --------------------- GETTER / SETTER METHODS ---------------------
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
-    }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
@@ -71,6 +58,7 @@ public class RemedyEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,8 +68,7 @@ public class RemedyEntity extends TracableEntity {
 
         if (!this.id.equals(that.id)) return false;
         if (!this.productname.equals(that.productname)) return false;
-        if (this.vendor != null ? !this.vendor.equals(that.vendor) : that.vendor != null) return false;
-        return this.entityState.equals(that.entityState);
+        return this.vendor != null ? this.vendor.equals(that.vendor) : that.vendor == null;
     }
 
     @Override
@@ -89,7 +76,6 @@ public class RemedyEntity extends TracableEntity {
         int result = this.id.hashCode();
         result = 31 * result + this.productname.hashCode();
         result = 31 * result + (this.vendor != null ? this.vendor.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

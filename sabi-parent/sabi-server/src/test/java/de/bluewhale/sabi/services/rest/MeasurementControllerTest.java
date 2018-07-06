@@ -9,11 +9,12 @@ import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.dao.AquariumDao;
-import de.bluewhale.sabi.persistence.dao.MeasurementDao;
-import de.bluewhale.sabi.persistence.dao.UserDao;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
+import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.Mapper;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 import static de.bluewhale.sabi.util.Mapper.mapMeasurementTo2EntityWithoutAquarium;
@@ -60,13 +62,13 @@ public class MeasurementControllerTest {
     final static String MOCKED_USER = "testsabi@bluewhale.de";
 
     @MockBean
-    UserDao userDao;
+    UserRepository userRepository;
 
     @MockBean
-    AquariumDao aquariumDao;
+    AquariumRepository aquariumRepository;
 
     @MockBean
-    MeasurementDao measurementDao;
+    MeasurementRepository measurementRepository;
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
@@ -85,15 +87,27 @@ public class MeasurementControllerTest {
         UserTo userTo = new UserTo();
         userTo.setEmail(MOCKED_USER);
         userTo.setId(1L);
-        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
+
+        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+        AquariumEntity aquariumEntity = new AquariumEntity();
+        Mapper.mapAquariumTo2Entity(aquariumTo,aquariumEntity);
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
 
-        List<MeasurementTo> testMeasurements = new ArrayList<>(1);
-        testMeasurements.add(measurementTo);
-        given(this.measurementDao.findUsersMeasurements(userTo.getId())).willReturn(testMeasurements);
+        MeasurementEntity measurementEntity = new MeasurementEntity();
+        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo,measurementEntity);
+        measurementEntity.setAquarium(aquariumEntity);
+
+        List<MeasurementEntity> testMeasurements = new ArrayList<>(1);
+        testMeasurements.add(measurementEntity);
+
+        given(this.measurementRepository.findMeasurementEntitiesByUser(userEntity)).willReturn(testMeasurements);
+        // given(this.measurementDao.findUsersMeasurements(userTo.getId())).willReturn(testMeasurements);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -125,18 +139,32 @@ public class MeasurementControllerTest {
         UserTo userTo = new UserTo();
         userTo.setEmail(MOCKED_USER);
         userTo.setId(1L);
-        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
+
+        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        given(this.aquariumDao.getUsersAquarium(aquariumTo.getId(), userTo.getId())).willReturn(aquariumTo);
+        AquariumEntity aquariumEntity = new AquariumEntity();
+        Mapper.mapAquariumTo2Entity(aquariumTo,aquariumEntity);
+        aquariumEntity.setUser(userEntity);
+        given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
+        given(this.aquariumRepository.getOne(aquariumTo.getId())).willReturn(aquariumEntity);
 
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
         MeasurementTo measurementTo2 = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
+        MeasurementEntity measurementEntity = new MeasurementEntity();
+        MeasurementEntity measurementEntity2 = new MeasurementEntity();
+        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo,measurementEntity);
+        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo2,measurementEntity2);
+        measurementEntity.setAquarium(aquariumEntity);
+        measurementEntity2.setAquarium(aquariumEntity);
 
-        List<MeasurementTo> testMeasurements = new ArrayList<>(2);
-        testMeasurements.add(measurementTo);
-        testMeasurements.add(measurementTo2);
-        given(measurementDao.listTanksMeasurements(usersTankID)).willReturn(testMeasurements);
+        List<MeasurementEntity> testMeasurements = new ArrayList<>(2);
+        testMeasurements.add(measurementEntity);
+        testMeasurements.add(measurementEntity2);
+        given(measurementRepository.findMeasurementEntitiesByAquarium(aquariumEntity)).willReturn(testMeasurements);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -170,7 +198,11 @@ public class MeasurementControllerTest {
         UserTo userTo = new UserTo();
         userTo.setEmail(MOCKED_USER);
         userTo.setId(1L);
-        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
+
+        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -198,20 +230,25 @@ public class MeasurementControllerTest {
         UserTo userTo = new UserTo();
         userTo.setEmail(MOCKED_USER);
         userTo.setId(1L);
-        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
+
+        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
         AquariumEntity aquariumEntity = new AquariumEntity();
+
         mapAquariumTo2Entity(aquariumTo, aquariumEntity);
-        given(this.aquariumDao.getUsersAquarium(aquariumTo.getId(), userTo.getId())).willReturn(aquariumTo);
-        given(this.aquariumDao.find(aquariumTo.getId())).willReturn(aquariumEntity);
+        given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
+        given(this.aquariumRepository.findById(aquariumTo.getId())).willReturn(Optional.of(aquariumEntity));
 
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
         MeasurementEntity measurementEntity = new MeasurementEntity();
         measurementEntity.setId(88L);
         measurementEntity.setAquarium(aquariumEntity);
         mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
-        given(this.measurementDao.create(any())).willReturn(measurementEntity);
+        given(this.measurementRepository.saveAndFlush(any())).willReturn(measurementEntity);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -236,13 +273,17 @@ public class MeasurementControllerTest {
     }
 
     @Test
-    public void testUpdateManagement() throws Exception {
+    public void testUpdateMeasurement() throws Exception {
         // Given
         // a currently authenticated user
         UserTo userTo = new UserTo();
         userTo.setEmail(MOCKED_USER);
         userTo.setId(1L);
-        given(this.userDao.loadUserByEmail(MOCKED_USER)).willReturn(userTo);
+
+        UserEntity userEntity = new UserEntity();
+        Mapper.mapUserTo2Entity(userTo,userEntity);
+
+        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -266,16 +307,18 @@ public class MeasurementControllerTest {
         updatedMeasurementEntity.setAquarium(aquariumEntity);
         Mapper.mapMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo,updatedMeasurementEntity);
 
-        given(this.measurementDao.getUsersMeasurement(updatableMeasurementTo.getId(), userTo.getId())).willReturn(updatableMeasurementTo);
-        given(this.measurementDao.find(updatableMeasurementTo.getId())).willReturn(updatableMeasurementEntity);
-        given(this.measurementDao.update(updatableMeasurementEntity)).willReturn(updatedMeasurementEntity);
+        Optional<MeasurementEntity> optionalMeasurementEntity = Optional.of(updatableMeasurementEntity);
+
+        given(this.measurementRepository.getMeasurementEntityByIdAndUser(updatableMeasurementTo.getId(), userEntity)).willReturn(updatableMeasurementEntity);
+        given(this.measurementRepository.findById(updatableMeasurementTo.getId())).willReturn(optionalMeasurementEntity);
+        given(this.measurementRepository.save(updatableMeasurementEntity)).willReturn(updatedMeasurementEntity);
 
         // When this authorized user, tries to update a measurement
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Authorization", "Bearer " + authToken);
 
-        String requestJson = objectMapper.writeValueAsString(updatedMeasurementTo);
+        String requestJson = objectMapper.writeValueAsString(updatableMeasurementTo);
         HttpEntity<String> requestEntity = new HttpEntity<String>(requestJson, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange("/api/measurement", HttpMethod.PUT, requestEntity, String.class);

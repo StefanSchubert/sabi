@@ -4,7 +4,7 @@
 
 package de.bluewhale.sabi;
 
-import de.bluewhale.sabi.persistence.UserDAOTest;
+import de.bluewhale.sabi.persistence.UserRepositoryTest;
 import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 @RunWith(Suite.class)
-@Suite.SuiteClasses({UserDAOTest.class,
+@Suite.SuiteClasses({UserRepositoryTest.class,
         UserServiceTest.class,
         UserAuthController_REST_API_Test.class,
         TankTestSuite.class,

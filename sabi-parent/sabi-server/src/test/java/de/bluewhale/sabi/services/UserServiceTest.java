@@ -8,7 +8,7 @@ import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class UserServiceTest {
     UserService userService;
 
     @Autowired
-    UserDao userDao;
+    UserRepository userRepository;
 
 // -------------------------- OTHER METHODS --------------------------
 

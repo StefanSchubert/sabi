@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2018 by Stefan Schubert
+ */
+
+package de.bluewhale.sabi.persistence.model;
+
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EntityListeners;
+import javax.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
+
+
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class Auditable {
+
+    @CreatedDate
+    @Basic
+    @Column(name = "created_on", nullable = false, insertable = true, updatable = false)
+    protected  LocalDateTime createdOn;
+
+
+    @LastModifiedDate
+    @Basic
+    @Column(name = "lastmod_on", nullable = true, insertable = true, updatable = true)
+    protected LocalDateTime lastmodOn;
+
+    public LocalDateTime getCreatedOn() {
+        return this.createdOn;
+    }
+
+    public LocalDateTime getLastmodOn() {
+        return this.lastmodOn;
+    }
+}

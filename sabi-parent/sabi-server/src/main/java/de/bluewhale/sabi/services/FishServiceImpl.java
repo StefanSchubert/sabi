@@ -8,12 +8,12 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.FishTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.dao.AquariumDao;
-import de.bluewhale.sabi.persistence.dao.FishDao;
-import de.bluewhale.sabi.persistence.dao.UserDao;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.FishEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
+import de.bluewhale.sabi.persistence.repositories.FishRepository;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +27,13 @@ import static de.bluewhale.sabi.util.Mapper.mapFishTo2Entity;
 public class FishServiceImpl extends CommonService implements FishService {
 
     @Autowired
-    private AquariumDao aquariumDao;
+    private AquariumRepository aquariumRepository;
 
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @Autowired
-    private FishDao fishDao;
+    private FishRepository fishRepository;
 
     @Override
     public ResultTo<FishTo> registerNewFish(FishTo pFishTo, UserTo pRegisteredUser) {
@@ -43,12 +43,12 @@ public class FishServiceImpl extends CommonService implements FishService {
         Long pFishToId = pFishTo.getId();
         if (pFishToId != null) {
             // ImpotenceCheck: Do not create the same fish twice (identified by id).
-            FishEntity fishEntity = fishDao.find(pFishToId);
+            boolean isAlreadyThere = fishRepository.existsById(pFishToId);
             createdFishTo = pFishTo;
-            message = Message.error(TankMessageCodes.FISH_ALREADY_EXISTS, fishEntity.getNickname());
+            message = Message.error(TankMessageCodes.FISH_ALREADY_EXISTS, createdFishTo.getNickname());
         } else {
-            UserEntity userEntity = userDao.find(pRegisteredUser.getId());
-            AquariumEntity aquariumEntity = aquariumDao.find(pFishTo.getAquariumId());
+            UserEntity userEntity = userRepository.getOne(pRegisteredUser.getId());
+            AquariumEntity aquariumEntity = aquariumRepository.getOne(pFishTo.getAquariumId());
 
             if (userEntity == null) {
                 message = Message.error(TankMessageCodes.UNKNOWN_USER, aquariumEntity.getId());
@@ -60,7 +60,7 @@ public class FishServiceImpl extends CommonService implements FishService {
                 // Continue only if we got no error so far
                 FishEntity fishEntity = new FishEntity();
                 mapFishTo2Entity(pFishTo, fishEntity);
-                FishEntity createdFishEntity = fishDao.create(fishEntity);
+                FishEntity createdFishEntity = fishRepository.save(fishEntity);
                 createdFishTo = new FishTo();
                 mapFishEntity2To(createdFishEntity, createdFishTo);
                 message = Message.info(TankMessageCodes.CREATE_SUCCEEDED, fishEntity.getId());
@@ -74,16 +74,16 @@ public class FishServiceImpl extends CommonService implements FishService {
     @Override
     public void removeFish(Long pFishId, UserTo pRegisteredUser) {
         // This is to ensure that the user really ones the one he requests for removal.
-        FishEntity fishEntity = fishDao.findUsersFish(pFishId, pRegisteredUser.getId());
+        FishEntity fishEntity = fishRepository.findUsersFish(pFishId, pRegisteredUser.getId());
         if (fishEntity != null) {
-            fishDao.delete(fishEntity.getId());
+            fishRepository.delete(fishEntity);
         }
     }
 
     @Override
     public FishTo getUsersFish(Long pFishId, UserTo registeredUser) {
         FishTo fishTo = null;
-        FishEntity fishEntity = fishDao.findUsersFish(pFishId, registeredUser.getId());
+        FishEntity fishEntity = fishRepository.findUsersFish(pFishId, registeredUser.getId());
 
         if (fishEntity != null) {
             fishTo =  new FishTo();

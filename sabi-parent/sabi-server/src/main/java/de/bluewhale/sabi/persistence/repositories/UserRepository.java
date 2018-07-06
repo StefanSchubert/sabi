@@ -1,29 +1,42 @@
+/*
+ * Copyright (c) 2018 by Stefan Schubert
+ */
+
 package de.bluewhale.sabi.persistence.repositories;
 
 import de.bluewhale.sabi.persistence.model.UserEntity;
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import javax.validation.constraints.NotNull;
 
 /**
+ * SpringDataRepository
  *
- * Author: Stefan Schubert
- * Date: 26.09.15
- *
- * THIS WOULD BE THE WAY TO SPARE QUITE A LOT OF BOILERPLATE CODE THROUGH
- * USAGE OF SPRING-DATA-JPA. SADLY IN CURRENT SETUP THIS APPROACH IS NOT
- * WORKING AS THE @AUTOWIRED OF THE REPOSITORY IS NOT WORKING.
- * (USING SPRING-DATA-JPA VERSION 1.9.0.RELEASE)
- * I LEAVE THIS CODE HERE TO TEST IT FROM TIME TO TIME, HAVING IN MIND
- * THAT I WOULD LIKE TO REFACTOR THIS AS SOON AS IT IS WORKING.
- *
+ * @author Stefan Schubert
  */
-@Deprecated
-public interface UserRepository { // extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+    /**
+     * Returns an User object that matches the email given
+     *
+     * @param email
+     * @return
+     */
+    UserEntity getByEmail(@NotNull String email);
+
+    /**
+     * Returns an User object that matches the username given
+     *
+     * @param username
+     * @return
+     */
+    UserEntity getByUsername(@NotNull String username);
 
 
     /**
-     * Find persons by last name.
+     * Checks if we have an user with this email
+     * @param pEmail
+     * @return
      */
-    public UserEntity findByEmail(String email);
-
+    boolean existsUserEntityByEmailEquals(@NotNull String pEmail);
 }

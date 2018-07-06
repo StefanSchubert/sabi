@@ -2,21 +2,20 @@
  * Copyright (c) 2018 by Stefan Schubert
  */
 
-package de.bluewhale.sabi.persistence.dao;
+package de.bluewhale.sabi.persistence.repositories;
 
-import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
+ * SpringDataRepository
  *
- * Author: Stefan Schubert
+ * @author Stefan Schubert
  */
-@Transactional
-public interface AquariumDao extends GenericDao<AquariumEntity> {
+public interface AquariumRepository extends JpaRepository<AquariumEntity, Long> {
 
     /**
      * Used to get an overview of users tanks.
@@ -24,7 +23,7 @@ public interface AquariumDao extends GenericDao<AquariumEntity> {
      * @return List of Aquariums, that belong to the User.
      */
     @NotNull
-    List<AquariumTo> findUsersTanks(@NotNull Long pUserId);
+    List<AquariumEntity> findAllByUser_IdIs(@NotNull Long pUserId);
 
     /**
      * Picks the aquarium of provided user.
@@ -33,6 +32,5 @@ public interface AquariumDao extends GenericDao<AquariumEntity> {
      * @param pUserId
      * @return null if the aquarium does not belong to the user, or does not exists.
      */
-    AquariumTo getUsersAquarium(Long pPersistedTankId, Long pUserId);
-
+     AquariumEntity getAquariumEntityByIdAndUser_IdIs(Long pPersistedTankId, Long pUserId);
 }

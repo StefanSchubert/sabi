@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi;
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableCaching
 @SpringBootApplication
 @EntityScan("de.bluewhale.sabi.persistence.model")
-// @EnableJpaRepositories("de.bluewhale.sabi.persistence.dao")
 @ComponentScan("de.bluewhale.sabi")
 public class SabiServiceApplication {
 

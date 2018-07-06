@@ -34,6 +34,8 @@
     <modules>
         <!-- went into spring boot solo application <module>sabi-server</module> -->
         <module>sabi-boundary</module>
+        <!-- went into spring boot solo application <module>sabi-server</module> -->
+        <module>sabi-webclient</module>
         <!-- went into spring boot solo application <module>../captcha</module> -->
         <!--    Excluded on purpose
                 <module>sabi-database</module>

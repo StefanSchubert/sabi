@@ -1,20 +1,17 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
-package de.bluewhale.sabi.persistence.dao;
+package de.bluewhale.sabi.persistence.repositories;
 
 import de.bluewhale.sabi.persistence.model.FishEntity;
-import org.springframework.transaction.annotation.Transactional;
-
 
 /**
+ * NOTICE: Though unecessary I leave this as a sample on how to extend spring repositories if required.
  *
- * Author: Stefan Schubert
+ * @author Stefan Schubert
  */
-@Transactional
-public interface FishDao extends GenericDao<FishEntity> {
-
+public interface FishRepositoryCustom {
 
     /**
      * Returns the fish, only if it exists and the user is the Owner.
@@ -23,4 +20,5 @@ public interface FishDao extends GenericDao<FishEntity> {
      * @return
      */
     FishEntity findUsersFish(Long pFishId, Long pRegisteredUserId);
+
 }

@@ -16,7 +16,7 @@ import java.util.List;
                 query = "select a FROM AquariumEntity a where a.user.id = :pUserID")})
 @Table(name = "aquarium", schema = "sabi")
 @Entity
-public class AquariumEntity extends TracableEntity {
+public class AquariumEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @Id
@@ -49,8 +49,6 @@ public class AquariumEntity extends TracableEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium")
     private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
 
-    @Embedded
-    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -70,15 +68,6 @@ public class AquariumEntity extends TracableEntity {
         this.description = validateToken;
     }
 
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
-    }
 
     public Long getId() {
         return id;
@@ -122,6 +111,7 @@ public class AquariumEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -135,7 +125,7 @@ public class AquariumEntity extends TracableEntity {
         if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
         if (this.active != null ? !this.active.equals(that.active) : that.active != null) return false;
         if (!this.user.equals(that.user)) return false;
-        return this.entityState.equals(that.entityState);
+        return this.measurements != null ? this.measurements.equals(that.measurements) : that.measurements == null;
     }
 
     @Override
@@ -146,7 +136,7 @@ public class AquariumEntity extends TracableEntity {
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
         result = 31 * result + (this.active != null ? this.active.hashCode() : 0);
         result = 31 * result + this.user.hashCode();
-        result = 31 * result + this.entityState.hashCode();
+        result = 31 * result + (this.measurements != null ? this.measurements.hashCode() : 0);
         return result;
     }
 }

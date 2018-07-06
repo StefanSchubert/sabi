@@ -22,7 +22,6 @@ public class EntityState implements Serializable {
     LocalDateTime lastmodOn;
 
     @Column(name = "created_on", nullable = false, insertable = true, updatable = false)
-    @Basic
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }

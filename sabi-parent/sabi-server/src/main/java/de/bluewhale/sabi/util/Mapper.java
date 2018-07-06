@@ -7,9 +7,11 @@ package de.bluewhale.sabi.util;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.FishTo;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.FishEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
@@ -17,7 +19,7 @@ import java.sql.Timestamp;
 /**
  * Mapping Util Functions.
  * Since we have very few attributes per class, I decided to spare the libs for bean mappings like dozer.
- * Also To2Entity-Direction will ommit the primary key (for security reasons) 
+ * Also To2Entity-Direction will ommit the primary key (for security reasons)
  *
  * @author Stefan Schubert
  */
@@ -46,12 +48,12 @@ public class Mapper {
      * @param pAquariumEntity
      */
     public static void mapAquariumTo2Entity(@NotNull final AquariumTo pAquariumTo, @NotNull final AquariumEntity pAquariumEntity) {
+        pAquariumEntity.setId(pAquariumTo.getId());
         pAquariumEntity.setSizeUnit(pAquariumTo.getSizeUnit());
         pAquariumEntity.setSize(pAquariumTo.getSize());
         pAquariumEntity.setDescription(pAquariumTo.getDescription());
         pAquariumEntity.setActive(pAquariumTo.getActive());
     }
-
 
     /**
      * Mapping without flyweight relationsships to Aquarium and Catalogue
@@ -90,12 +92,18 @@ public class Mapper {
 
     /**
      * Maps given Entity attributes into provided TO.
+     *
      * @param pMeasurementEntity
      * @param pMeasurementTo
      */
     public static void mapMeasurementEntity2To(@NotNull final MeasurementEntity pMeasurementEntity, @NotNull final MeasurementTo pMeasurementTo) {
         pMeasurementTo.setId(pMeasurementEntity.getId());
-        pMeasurementTo.setAquariumId(pMeasurementEntity.getAquarium().getId());
+        if (pMeasurementEntity.getAquarium() != null) {
+            pMeasurementTo.setAquariumId(pMeasurementEntity.getAquarium().getId());
+
+        } else {
+            pMeasurementTo.setAquariumId(null);
+        }
         pMeasurementTo.setMeasuredOn(pMeasurementEntity.getMeasuredOn());
         pMeasurementTo.setMeasuredValue(pMeasurementEntity.getMeasuredValue());
         pMeasurementTo.setUnitId(pMeasurementEntity.getUnitId());
@@ -104,6 +112,7 @@ public class Mapper {
 
     /**
      * Maps given To attributes into provided Entity.
+     *
      * @param pMeasurementEntity
      * @param pMeasurementTo
      */
@@ -111,6 +120,42 @@ public class Mapper {
         pMeasurementEntity.setMeasuredOn(pMeasurementTo.getMeasuredOn());
         pMeasurementEntity.setMeasuredValue(pMeasurementTo.getMeasuredValue());
         pMeasurementEntity.setUnitId(pMeasurementTo.getUnitId());
+        pMeasurementEntity.setId(pMeasurementTo.getId());
     }
-    
+
+    /**
+     * Maps given To attributes into provided Entity
+     *
+     * @param pUserTo
+     * @param pUserEntity
+     */
+    public static void mapUserTo2Entity(@NotNull final UserTo pUserTo, @NotNull final UserEntity pUserEntity) {
+        pUserEntity.setId(pUserTo.getId());
+        pUserEntity.setEmail(pUserTo.getEmail());
+        pUserEntity.setUsername(pUserTo.getUsername());
+        // pUserEntity.setPassword(pUserTo.getPassword()); No won't do because of encryption layer
+        pUserEntity.setValidated(pUserTo.isValidated());
+        pUserEntity.setValidateToken(pUserTo.getValidationToken());
+        pUserEntity.setLanguage(pUserTo.getLanguage());
+        pUserEntity.setCountry(pUserTo.getCountry());
+    }
+
+    /**
+     * Maps givven Entity attributes into provided To
+     *
+     * @param pUserEntity
+     * @param pUserTo
+     */
+    public static void mapUserEntity2To(@NotNull final UserEntity pUserEntity, @NotNull final UserTo pUserTo) {
+        pUserTo.setId(pUserEntity.getId());
+        pUserTo.setEmail(pUserEntity.getEmail());
+        pUserTo.setUsername(pUserEntity.getUsername());
+        // pUserTo.setPassword(pUserEntity.getPassword()); No won't do because of encryption layer
+        pUserTo.setValidated(pUserEntity.isValidated());
+        pUserTo.setValidationToken(pUserEntity.getValidateToken());
+        pUserTo.setLanguage(pUserEntity.getLanguage());
+        pUserTo.setCountry(pUserEntity.getCountry());
+    }
+
+
 }

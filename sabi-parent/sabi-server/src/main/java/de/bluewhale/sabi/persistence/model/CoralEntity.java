@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "coral", schema = "sabi")
 @Entity
-public class CoralEntity extends TracableEntity {
+public class CoralEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +33,12 @@ public class CoralEntity extends TracableEntity {
 
     private String observedBehavior;
 
-    @Embedded
-    private EntityState entityState;
+    /**
+     * Owner-side of the relationship.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -68,15 +72,6 @@ public class CoralEntity extends TracableEntity {
         this.coralCatalougeId = coralCatalougeId;
     }
 
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
-    }
 
     @javax.persistence.Column(name = "exodus_on", nullable = true, insertable = true, updatable = true, length = 19, precision = 0)
     @Basic
@@ -118,7 +113,16 @@ public class CoralEntity extends TracableEntity {
         this.observedBehavior = observedBehavior;
     }
 
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
 // ------------------------ CANONICAL METHODS ------------------------
+
 
     @Override
     public boolean equals(Object o) {
@@ -135,7 +139,7 @@ public class CoralEntity extends TracableEntity {
         if (this.nickname != null ? !this.nickname.equals(that.nickname) : that.nickname != null) return false;
         if (this.observedBehavior != null ? !this.observedBehavior.equals(that.observedBehavior) : that.observedBehavior != null)
             return false;
-        return this.entityState.equals(that.entityState);
+        return this.user.equals(that.user);
     }
 
     @Override
@@ -147,7 +151,7 @@ public class CoralEntity extends TracableEntity {
         result = 31 * result + (this.exodusOn != null ? this.exodusOn.hashCode() : 0);
         result = 31 * result + (this.nickname != null ? this.nickname.hashCode() : 0);
         result = 31 * result + (this.observedBehavior != null ? this.observedBehavior.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
+        result = 31 * result + this.user.hashCode();
         return result;
     }
 }

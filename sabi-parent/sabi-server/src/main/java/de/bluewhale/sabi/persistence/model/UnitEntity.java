@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Table(name = "unit", schema = "sabi")
 @Entity
-public class UnitEntity extends TracableEntity {
+public class UnitEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +24,6 @@ public class UnitEntity extends TracableEntity {
 
     private String description;
 
-    @Embedded
-    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -37,16 +35,6 @@ public class UnitEntity extends TracableEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
@@ -71,6 +59,7 @@ public class UnitEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,8 +69,7 @@ public class UnitEntity extends TracableEntity {
 
         if (!this.id.equals(that.id)) return false;
         if (!this.name.equals(that.name)) return false;
-        if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
-        return this.entityState.equals(that.entityState);
+        return this.description != null ? this.description.equals(that.description) : that.description == null;
     }
 
     @Override
@@ -89,7 +77,6 @@ public class UnitEntity extends TracableEntity {
         int result = this.id.hashCode();
         result = 31 * result + this.name.hashCode();
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

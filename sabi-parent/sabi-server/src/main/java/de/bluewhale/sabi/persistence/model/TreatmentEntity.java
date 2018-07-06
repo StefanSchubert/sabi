@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  */
 @Table(name = "treatment", schema = "sabi")
 @Entity
-public class TreatmentEntity extends TracableEntity {
+public class TreatmentEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +33,13 @@ public class TreatmentEntity extends TracableEntity {
 
     private String description;
 
-    @Embedded
-    private EntityState entityState;
+    /**
+     * Owner-side of the relationship.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -66,16 +71,6 @@ public class TreatmentEntity extends TracableEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     @javax.persistence.Column(name = "given_on", nullable = false, insertable = true, updatable = true, length = 19, precision = 0)
@@ -118,7 +113,16 @@ public class TreatmentEntity extends TracableEntity {
         this.unitId = unitId;
     }
 
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
 // ------------------------ CANONICAL METHODS ------------------------
+
 
     @Override
     public boolean equals(Object o) {
@@ -130,23 +134,23 @@ public class TreatmentEntity extends TracableEntity {
         if (Float.compare(that.amount, this.amount) != 0) return false;
         if (!this.id.equals(that.id)) return false;
         if (!this.aquariumId.equals(that.aquariumId)) return false;
-        if (this.givenOn != null ? !this.givenOn.equals(that.givenOn) : that.givenOn != null) return false;
-        if (this.unitId != null ? !this.unitId.equals(that.unitId) : that.unitId != null) return false;
-        if (this.remedyId != null ? !this.remedyId.equals(that.remedyId) : that.remedyId != null) return false;
+        if (!this.givenOn.equals(that.givenOn)) return false;
+        if (!this.unitId.equals(that.unitId)) return false;
+        if (!this.remedyId.equals(that.remedyId)) return false;
         if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
-        return this.entityState.equals(that.entityState);
+        return this.user.equals(that.user);
     }
 
     @Override
     public int hashCode() {
         int result = this.id.hashCode();
         result = 31 * result + this.aquariumId.hashCode();
-        result = 31 * result + (this.givenOn != null ? this.givenOn.hashCode() : 0);
+        result = 31 * result + this.givenOn.hashCode();
         result = 31 * result + (this.amount != +0.0f ? Float.floatToIntBits(this.amount) : 0);
-        result = 31 * result + (this.unitId != null ? this.unitId.hashCode() : 0);
-        result = 31 * result + (this.remedyId != null ? this.remedyId.hashCode() : 0);
+        result = 31 * result + this.unitId.hashCode();
+        result = 31 * result + this.remedyId.hashCode();
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
+        result = 31 * result + this.user.hashCode();
         return result;
     }
 }

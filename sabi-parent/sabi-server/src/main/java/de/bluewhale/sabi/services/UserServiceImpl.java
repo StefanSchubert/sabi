@@ -15,8 +15,10 @@ import de.bluewhale.sabi.model.RequestNewPasswordTo;
 import de.bluewhale.sabi.model.ResetPasswordTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.dao.UserDao;
+import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
+import de.bluewhale.sabi.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,7 @@ import static de.bluewhale.sabi.util.Obfuscator.encryptPasswordForHeavensSake;
 public class UserServiceImpl extends CommonService implements UserService {
 
     @Autowired
-    private UserDao dao;
+    private UserRepository userRepository;
 
     @Autowired
     private CaptchaAdapter captchaAdapter;
@@ -56,11 +58,23 @@ public class UserServiceImpl extends CommonService implements UserService {
 
         UserTo createdUser = null;
         Message message;
-        try {
+
+        UserEntity alreadyExistingUser = userRepository.getByEmail(newUser.getEmail());
+        if (alreadyExistingUser == null) {
+
+            UserEntity newUserEntity = new UserEntity();
             String encryptedPassword = encryptPasswordForHeavensSake(newUser.getPassword());
-            createdUser = dao.create(newUser, encryptedPassword);
+            newUser.setId(null); // to make sure we have no collision
+            Mapper.mapUserTo2Entity(newUser, newUserEntity);
+            newUserEntity.setPassword(encryptedPassword);
+            newUserEntity.setValidated(false);
+
+            UserEntity userEntity = userRepository.saveAndFlush(newUserEntity);
+            createdUser = new UserTo();
+            Mapper.mapUserEntity2To(userEntity, createdUser);
+
             message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
-        } catch (BusinessException pE) {
+        } else {
             message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS, newUser.getEmail());
         }
 
@@ -83,21 +97,20 @@ public class UserServiceImpl extends CommonService implements UserService {
     @Override
     public void unregisterUserAndClearPersonalData(@NotNull String pEmail) {
         // Hook in here to delete other personal data
-        dao.deleteByEmail(pEmail);
+        UserEntity userEntity = userRepository.getByEmail(pEmail);
+        if (userEntity != null) {
+            userRepository.delete(userEntity);
+        }
     }
 
     @Override
     public boolean validateUser(@NotNull final String pEmail, @NotNull final String pToken) {
         boolean result = false;
         if (pEmail != null && pToken != null) {
-            final UserTo userTo = dao.loadUserByEmail(pEmail);
-            if (pToken.equals(userTo.getValidationToken())) {
-                try {
-                    dao.toggleValidationFlag(pEmail, true);
-                    result = true;
-                } catch (BusinessException pE) {
-                    result = false;
-                }
+            UserEntity userEntity = userRepository.getByEmail(pEmail);
+            if ((userEntity != null) && pToken.equals(userEntity.getValidateToken())) {
+                userEntity.setValidated(true); // save will be transformed by transaction close
+                result = true;
             }
         }
         return result;
@@ -108,13 +121,14 @@ public class UserServiceImpl extends CommonService implements UserService {
     public ResultTo<String> signIn(@NotNull final String pEmail, @NotNull final String pClearTextPassword) {
         // todo integrate some password policy here and throw an too weak exception
         final String password = encryptPasswordForHeavensSake(pClearTextPassword);
-        final UserTo userTo = dao.loadUserByEmail(pEmail);
-        if (userTo != null) {
+        UserEntity userEntity = userRepository.getByEmail(pEmail);
 
-            if (!userTo.isValidated()) {
+        if (userEntity != null) {
+
+            if (!userEntity.isValidated()) {
                 final Message errorMsg = Message.info(AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS, pEmail);
                 return new ResultTo<String>("Email address validation missing.", errorMsg);
-            } else if (userTo.getPassword().equals(password)) {
+            } else if (userEntity.getPassword().equals(password)) {
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
                 return new ResultTo<String>("Happy", successMessage);
             } else {
@@ -151,18 +165,21 @@ public class UserServiceImpl extends CommonService implements UserService {
         String cachedToken = cachedTokenMap.get(emailAddress);
         if (cachedToken != null && resetToken.equals(cachedToken)) {
             String encryptedPassword = encryptPasswordForHeavensSake(newPassword);
-            dao.resetPassword(emailAddress, encryptedPassword);
 
-            try {
-                notificationService.sendPasswordResetConfirmation(emailAddress);
-            } catch (MessagingException e) {
-                e.printStackTrace();
+            UserEntity userEntity = userRepository.getByEmail(emailAddress);
+            if (userEntity != null) {
+                userEntity.setPassword(encryptedPassword);
+                try {
+                    notificationService.sendPasswordResetConfirmation(emailAddress);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                    // todo refactor to reflect an internal error
+                }
             }
 
         } else {
             throw BusinessException.with(AuthMessageCodes.UNKNOWN_OR_STALE_PW_RESET_TOKEN);
         }
-
     }
 
     @Override
@@ -190,21 +207,20 @@ public class UserServiceImpl extends CommonService implements UserService {
                 throw new BusinessException(AuthExceptionCodes.AUTHENTICATION_FAILED, Message.error(AuthMessageCodes.INVALID_EMAIL_ADDRESS));
             }
 
-            if (emailAddress != null && dao.loadUserByEmail(emailAddress) != null) {
-                final UserTo userTo = dao.loadUserByEmail(emailAddress);
-                if (userTo != null) {
-                    // We generate the token only for a user that really exists.
-                    String token = generateValidationToken();
+            if (emailAddress != null && userRepository.existsUserEntityByEmailEquals(emailAddress)) {
+                UserEntity userEntity = userRepository.getByEmail(emailAddress);
 
-                    // store token in distributed cache
-                    IMap<String, String> cachedTokenMap = hzInstance.getMap(HazelcastMapItem.PASSWORD_FORGOTTEN_TOKEN);
-                    cachedTokenMap.put(emailAddress, token);
+                // We generate the token only for a user that really exists.
+                String token = generateValidationToken();
 
-                    try {
-                        notificationService.sendPasswordResetToken(emailAddress, token);
-                    } catch (MessagingException e) {
-                        e.printStackTrace();
-                    }
+                // store token in distributed cache
+                IMap<String, String> cachedTokenMap = hzInstance.getMap(HazelcastMapItem.PASSWORD_FORGOTTEN_TOKEN);
+                cachedTokenMap.put(emailAddress, token);
+
+                try {
+                    notificationService.sendPasswordResetToken(emailAddress, token);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
                 }
             } else {
                 throw new BusinessException(AuthExceptionCodes.USER_LOCKED, Message.error(AuthMessageCodes.EMAIL_NOT_REGISTERED));

@@ -7,10 +7,12 @@ package de.bluewhale.sabi.persistence;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.MeasurementTo;
-import de.bluewhale.sabi.persistence.dao.AquariumDao;
-import de.bluewhale.sabi.persistence.dao.MeasurementDao;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
+import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.Mapper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,15 +37,19 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = AppConfig.class)
-public class MeasurementDAOTest {
+// @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - mayby not compatible with eclipse way?
+public class MeasurementRepositoryTest {
 
     static TestDataFactory testDataFactory;
 
     @Autowired
-    MeasurementDao measurementDao;
+    MeasurementRepository measurementRepository;
 
     @Autowired
-    AquariumDao aquariumDao;
+    AquariumRepository aquariumRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @BeforeClass
     public static void init() {
@@ -63,16 +69,18 @@ public class MeasurementDAOTest {
 
         // given a test measurement (linked aquarium already exists in database.
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(1L);
-        AquariumEntity aquariumEntity = aquariumDao.find(measurementTo.getAquariumId());
+        AquariumEntity aquariumEntity = aquariumRepository.getOne(measurementTo.getAquariumId());
+
         MeasurementEntity measurementEntity = new MeasurementEntity();
         Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
         measurementEntity.setAquarium(aquariumEntity);
 
         // when
-        MeasurementEntity createdMeasurementEntity = measurementDao.create(measurementEntity);
+        MeasurementEntity createdMeasurementEntity = measurementRepository.saveAndFlush(measurementEntity);
 
         // then
-        MeasurementEntity foundMeasurementEntity = measurementDao.find(createdMeasurementEntity.getId());
+        Assert.assertNotNull("Measurement was not persisted!", createdMeasurementEntity.getId());
+        MeasurementEntity foundMeasurementEntity = measurementRepository.findById(createdMeasurementEntity.getId()).get();
 
         Assert.assertEquals(createdMeasurementEntity.getAquarium(), foundMeasurementEntity.getAquarium());
         Assert.assertEquals(createdMeasurementEntity.getAquarium().getId(), measurementTo.getAquariumId());
@@ -84,9 +92,10 @@ public class MeasurementDAOTest {
     public void testFetchStoredTestUsersMeasurements() throws Exception {
 
         // given some stored testdata for userID 1
+        UserEntity userEntity = userRepository.getOne(1L);
 
         // when
-        List<MeasurementTo> usersMeasurements = measurementDao.findUsersMeasurements(1L);
+        List<MeasurementEntity> usersMeasurements = measurementRepository.findMeasurementEntitiesByUser(userEntity);
 
         // then
         Assert.assertTrue("We have two rows of stored testdata!?", usersMeasurements.size() == 2);
@@ -96,12 +105,15 @@ public class MeasurementDAOTest {
     @Test
     public void testGetConcreteMeasurement() throws Exception {
         // Given some prestored testdata for userID 1
+        Long testAquariumId = 1L;
+        Long testUserId = 1L;
+        UserEntity userEntity = userRepository.getOne(testUserId);
 
         // When
-        MeasurementTo measurementTo = measurementDao.getUsersMeasurement(100L, 1L);
+        MeasurementEntity measurement = measurementRepository.getMeasurementEntityByIdAndUser(100L, userEntity);
 
         // Then
-        Assert.assertEquals("Missing testdata for user 1L", 1L, measurementTo.getAquariumId(),1L);
+        Assert.assertEquals("Missing testdata for user 1L",  measurement.getAquarium().getId(),testAquariumId);
     }
 
 

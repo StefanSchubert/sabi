@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
                         "and t.user.id = :pUserID")})
 @Table(name = "measurement", schema = "sabi")
 @Entity
-public class MeasurementEntity extends TracableEntity {
+public class MeasurementEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,8 +46,13 @@ public class MeasurementEntity extends TracableEntity {
     @JoinColumn(name = "aquarium_id", nullable = false)
     private AquariumEntity aquarium;
 
-    @Embedded
-    private EntityState entityState;
+    /**
+     * Owner-side of the relationship.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -57,16 +62,6 @@ public class MeasurementEntity extends TracableEntity {
 
     public void setAquarium(AquariumEntity aquariumEntity) {
         this.aquarium = aquariumEntity;
-    }
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
@@ -109,6 +104,14 @@ public class MeasurementEntity extends TracableEntity {
         this.unitId = unitId;
     }
 
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
 // ------------------------ CANONICAL METHODS ------------------------
 
 
@@ -124,7 +127,7 @@ public class MeasurementEntity extends TracableEntity {
         if (!this.measuredOn.equals(that.measuredOn)) return false;
         if (!this.unitId.equals(that.unitId)) return false;
         if (!this.aquarium.equals(that.aquarium)) return false;
-        return this.entityState != null ? this.entityState.equals(that.entityState) : that.entityState == null;
+        return this.user.equals(that.user);
     }
 
     @Override
@@ -134,7 +137,7 @@ public class MeasurementEntity extends TracableEntity {
         result = 31 * result + (this.measuredValue != +0.0f ? Float.floatToIntBits(this.measuredValue) : 0);
         result = 31 * result + this.unitId.hashCode();
         result = 31 * result + this.aquarium.hashCode();
-        result = 31 * result + (this.entityState != null ? this.entityState.hashCode() : 0);
+        result = 31 * result + this.user.hashCode();
         return result;
     }
 }

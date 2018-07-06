@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Table(name = "coral_catalogue", schema = "sabi")
 @Entity
-public class CoralCatalogueEntity extends TracableEntity {
+public class CoralCatalogueEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +24,6 @@ public class CoralCatalogueEntity extends TracableEntity {
 
     private String description;
 
-    @Embedded
-    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -37,16 +35,6 @@ public class CoralCatalogueEntity extends TracableEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
@@ -71,6 +59,7 @@ public class CoralCatalogueEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,8 +69,7 @@ public class CoralCatalogueEntity extends TracableEntity {
 
         if (!this.id.equals(that.id)) return false;
         if (!this.scientificName.equals(that.scientificName)) return false;
-        if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
-        return this.entityState.equals(that.entityState);
+        return this.description != null ? this.description.equals(that.description) : that.description == null;
     }
 
     @Override
@@ -89,7 +77,6 @@ public class CoralCatalogueEntity extends TracableEntity {
         int result = this.id.hashCode();
         result = 31 * result + this.scientificName.hashCode();
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

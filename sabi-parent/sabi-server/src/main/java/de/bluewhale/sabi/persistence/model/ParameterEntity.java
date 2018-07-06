@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Table(name = "parameter", schema = "sabi")
 @Entity
-public class ParameterEntity extends TracableEntity {
+public class ParameterEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,6 @@ public class ParameterEntity extends TracableEntity {
 
     private Float maxThreshold;
 
-    @Embedded
-    private EntityState entityState;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -41,16 +39,6 @@ public class ParameterEntity extends TracableEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public EntityState getEntityState() {
-        return this.entityState;
-    }
-
-    @Override
-    public void setEntityState(EntityState entityState) {
-        this.entityState = entityState;
     }
 
     @javax.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
@@ -95,6 +83,7 @@ public class ParameterEntity extends TracableEntity {
 
 // ------------------------ CANONICAL METHODS ------------------------
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,8 +95,7 @@ public class ParameterEntity extends TracableEntity {
         if (!this.id.equals(that.id)) return false;
         if (!this.description.equals(that.description)) return false;
         if (this.minThreshold != null ? !this.minThreshold.equals(that.minThreshold) : that.minThreshold != null) return false;
-        if (this.maxThreshold != null ? !this.maxThreshold.equals(that.maxThreshold) : that.maxThreshold != null) return false;
-        return this.entityState.equals(that.entityState);
+        return this.maxThreshold != null ? this.maxThreshold.equals(that.maxThreshold) : that.maxThreshold == null;
     }
 
     @Override
@@ -117,7 +105,6 @@ public class ParameterEntity extends TracableEntity {
         result = 31 * result + this.usedThresholdUnitId;
         result = 31 * result + (this.minThreshold != null ? this.minThreshold.hashCode() : 0);
         result = 31 * result + (this.maxThreshold != null ? this.maxThreshold.hashCode() : 0);
-        result = 31 * result + this.entityState.hashCode();
         return result;
     }
 }

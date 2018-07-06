@@ -20,13 +20,13 @@ public interface TankService {
     /**
      * Creates a new tank for provided user.
      * @param pAquariumTo Tank data.
-     * @param pRegisteredUser Owner of the tank (email address)
+     * @param pRegisteredUsersEmail Owner of the tank
      * @return Composed result object containing the created tank with a message. The tank has been created successfully
      * only if the message is of {@link Message.CATEGORY#INFO}
      */
     @NotNull
     @Transactional
-    ResultTo<AquariumTo> registerNewTank(@NotNull AquariumTo pAquariumTo, @NotNull String pRegisteredUser);
+    ResultTo<AquariumTo> registerNewTank(@NotNull AquariumTo pAquariumTo, @NotNull String pRegisteredUsersEmail);
 
 
     /**
@@ -40,27 +40,27 @@ public interface TankService {
     /**
      * Updates some Tank-Properties
      * @param aquariumTo
-     * @param pUser (email-address)
+     * @param pUsersEmail
      * @return Composed result object containing the updated tank with a message. The tank has been updated successfully
      * only if the message is of {@link Message.CATEGORY#INFO}
      */
     @NotNull
     @Transactional
-    ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, String pUser);
+    ResultTo<AquariumTo> updateTank(AquariumTo aquariumTo, String pUsersEmail);
 
     /**
      * Retrieves the requested Tank of provided user
      * @param aquariumId
-     * @param registeredUser (Email-Address)
+     * @param pUsersEmail
      * @return Null if tank is not within given users tank list.
      */
     @NotNull
-    AquariumTo getTank(Long aquariumId, String registeredUser);
+    AquariumTo getTank(Long aquariumId, String pUsersEmail);
 
     /**
      * Removes a tank from Users List (removes it physically)
      * @param persistedTankId
-     * @param registeredUser (email)
+     * @param pUsersEmail
      * @return Composed result object containing the deleted tank with a message. The tank has been removed successfully
      * only if the message is of {@link Message.CATEGORY#INFO} other possible messages are  {@link Message.CATEGORY#ERROR}
      * Possible reasons:
@@ -70,5 +70,5 @@ public interface TankService {
      * </ul>
      */
     @Transactional
-    ResultTo<AquariumTo> removeTank(Long persistedTankId, String registeredUser);
+    ResultTo<AquariumTo> removeTank(Long persistedTankId, String pUsersEmail);
 }
