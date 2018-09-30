@@ -37,6 +37,8 @@ public class Generator {
 
 // -------------------------- STATIC METHODS --------------------------
 
+    // FIXME: 30.09.18 These data shuld be json config, which is loaded as runtime.
+    
     static {
         // This pattern challenge1 could be dynamically generated on the fly
         // as this is nonsense as the source is open...but for the start it's fine
@@ -136,7 +138,30 @@ public class Generator {
         challenge12.answerMap.put("15cm Ball", FALSE);
         challenge12.answerMap.put("20cm Ball", FALSE);
 
+        ChallengeData challenge13 = new ChallengeData();
+        challenge13.questionMap.put(Locale.GERMAN, "Hinter dir kollidieren zwei schnelle Objekte, wo wirst du es am geringsten bemerken?");
+        challenge13.questionMap.put(Locale.ENGLISH, "Two fast objects are colliding behind you, where will you hardly recognize it?");
+        challenge13.answerMap.put("500km NN", TRUE);
+        challenge13.answerMap.put("10km NN", FALSE);
+        challenge13.answerMap.put("-50m NN (sea)", FALSE);
+        challenge13.answerMap.put("5m NN", FALSE);
 
+        ChallengeData challenge14 = new ChallengeData();
+        challenge14.questionMap.put(Locale.GERMAN, "Welches davon kippen manche in ihr Riff-Aquarium?");
+        challenge14.questionMap.put(Locale.ENGLISH, "Which one of these will be added by some of us to the reef-tank?");
+        challenge14.answerMap.put("Blue Curaçao", FALSE);
+        challenge14.answerMap.put("Wodka", TRUE);
+        challenge14.answerMap.put("Campari", FALSE);
+        challenge14.answerMap.put("Ginger Ale", FALSE);
+
+        ChallengeData challenge15 = new ChallengeData();
+        challenge15.questionMap.put(Locale.GERMAN, "Wer fällt aus der Reihe?");
+        challenge15.questionMap.put(Locale.ENGLISH, "Who does not fit here?");
+        challenge15.answerMap.put("Wall-E", FALSE);
+        challenge15.answerMap.put("E.T.", TRUE);
+        challenge15.answerMap.put("R2D2", FALSE);
+        challenge15.answerMap.put("No.5", FALSE);
+        
         dataSet.add(challenge1);
         dataSet.add(challenge2);
         dataSet.add(challenge3);
@@ -149,6 +174,9 @@ public class Generator {
         dataSet.add(challenge10);
         dataSet.add(challenge11);
         dataSet.add(challenge12);
+        dataSet.add(challenge13);
+        dataSet.add(challenge14);
+        dataSet.add(challenge15);
     }
 
 // -------------------------- OTHER METHODS --------------------------
