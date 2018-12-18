@@ -5,6 +5,7 @@
 package de.bluewhale.sabi.services;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,8 @@ import java.util.Map;
 @Service
 public class CaptchaAdapterImpl implements CaptchaAdapter {
 
+    static int CONNECT_TIMEOUT_IN_MILLIS = 20000;
+
     @Value("${captcha.check.url}")
     String captchaService;
 
@@ -29,6 +32,7 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
 
         boolean isValid;
         RestTemplate restTemplate = new RestTemplate();
+        setTimeout(restTemplate,CONNECT_TIMEOUT_IN_MILLIS);
 
         Map params = new HashMap<String, String>(1);
         params.put("code", captchaAnswer);
@@ -51,5 +55,16 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
         }
 
         return isValid;
+    }
+
+    private void setTimeout(RestTemplate restTemplate, int timeoutInMilliSeconds) {
+        //Explicitly setting ClientHttpRequestFactory instance to
+        //SimpleClientHttpRequestFactory instance to leverage
+        //set*Timeout methods
+        restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
+        SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate
+                .getRequestFactory();
+        rf.setReadTimeout(timeoutInMilliSeconds);
+        rf.setConnectTimeout(timeoutInMilliSeconds);
     }
 }
