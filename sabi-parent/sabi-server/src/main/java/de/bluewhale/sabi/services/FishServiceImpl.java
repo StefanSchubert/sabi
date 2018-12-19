@@ -24,7 +24,7 @@ import static de.bluewhale.sabi.util.Mapper.mapFishTo2Entity;
  * It's all about Fish here ;-)
  */
 @Service
-public class FishServiceImpl extends CommonService implements FishService {
+public class FishServiceImpl implements FishService {
 
     @Autowired
     private AquariumRepository aquariumRepository;

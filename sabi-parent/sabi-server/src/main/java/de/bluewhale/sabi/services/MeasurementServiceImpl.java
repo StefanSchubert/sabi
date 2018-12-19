@@ -27,7 +27,7 @@ import java.util.List;
  * @author Stefan Schubert
  */
 @Service
-public class MeasurementServiceImpl extends CommonService implements MeasurementService {
+public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
     MeasurementRepository measurementRepository;

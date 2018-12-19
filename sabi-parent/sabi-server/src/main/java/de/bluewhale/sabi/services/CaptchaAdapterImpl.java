@@ -4,6 +4,8 @@
 
 package de.bluewhale.sabi.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.Map;
 @Service
 public class CaptchaAdapterImpl implements CaptchaAdapter {
 
+    static Logger logger = LoggerFactory.getLogger(CaptchaAdapterImpl.class);
     static int CONNECT_TIMEOUT_IN_MILLIS = 20000;
 
     @Value("${captcha.check.url}")
@@ -48,9 +51,8 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
                 isValid = false;
             }
         } catch (RestClientException e) {
-            // TODO STS (22.10.17): replace with proper Logging
             String reason = "Could not connect to the captcha service " + checkURI;
-            System.out.println(reason);
+            logger.error(reason,e);
             throw new IOException(reason);
         }
 

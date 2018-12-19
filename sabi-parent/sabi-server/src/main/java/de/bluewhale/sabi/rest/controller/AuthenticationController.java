@@ -15,6 +15,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,6 +41,8 @@ import java.util.Map;
 @RequestMapping(value = "api/auth")
 public class AuthenticationController {
 
+    static Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+
     @Autowired
     UserService userService;
 
@@ -50,7 +54,7 @@ public class AuthenticationController {
 
     @ApiOperation("/login")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - extract user Token from header for further requests.", response = HttpStatus.class),
+            @ApiResponse(code = 202, message = "Accepted - extract user authorization token from header for further requests.", response = HttpStatus.class),
             @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -145,8 +149,7 @@ public class AuthenticationController {
             try {
                 notificationService.sendWelcomeMail(email);
             } catch (MessagingException e) {
-                e.printStackTrace();
-                // TODO STS (26.09.17): Proper logging
+                logger.error("Validation users email confirmation via token could not be send to the user", e);
             }
         } else {
             responseEntity = new ResponseEntity<>("<html><body><h1>Account validation failed!</h1><p>Your account is still locked." +
@@ -192,14 +195,13 @@ public class AuthenticationController {
                 try {
                     notificationService.sendValidationMail(createdUser);
                 } catch (MessagingException e) {
-                    // TODO STS (26.09.17): proper logging
-                    System.out.println(e);
+                    logger.error("Users registration incomplete and aborted, since notification mail coud not be sent.", e);
                     responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
                 }
 
             } else {
-                // TODO STS (17.06.16): Replace with Logging
-                System.out.println("A User with eMail " + pUserTo.getEmail() + " already exist.");
+                String msg = "User registration faild. A User with eMail " + pUserTo.getEmail() + " already exist.";
+                logger.warn(msg);
                 responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
             }
         } else {

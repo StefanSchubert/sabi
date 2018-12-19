@@ -28,7 +28,7 @@ import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
  * Date: 30.04.16
  */
 @Service
-public class TankServiceImpl extends CommonService implements TankService {
+public class TankServiceImpl implements TankService {
 
     @Autowired
     private AquariumRepository aquariumRepository;

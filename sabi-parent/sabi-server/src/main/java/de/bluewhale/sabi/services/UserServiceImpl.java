@@ -36,7 +36,7 @@ import static de.bluewhale.sabi.util.Obfuscator.encryptPasswordForHeavensSake;
  * Date: 29.08.15
  */
 @Service
-public class UserServiceImpl extends CommonService implements UserService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;

@@ -13,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +32,9 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "api/tank")
 public class TankController {
+
+    static Logger logger = LoggerFactory.getLogger(TankController.class);
+
 // ------------------------------ FIELDS ------------------------------
 
     @Autowired
@@ -127,8 +132,8 @@ public class TankController {
             AquariumTo createdAquarium = aquariumToResultTo.getValue();
             responseEntity = new ResponseEntity<>(createdAquarium, HttpStatus.CREATED);
         } else {
-            // TODO STS (17.06.16): Replace with Logging
-            System.out.println("A Tank with Id " + aquariumTo.getId() + " already exist.");
+            String msg="A Tank with Id " + aquariumTo.getId() + " already exist.";
+            logger.warn("Cannot create twice: "+msg);
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
@@ -154,7 +159,7 @@ public class TankController {
             AquariumTo updatedAquarium = aquariumToResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedAquarium, HttpStatus.OK);
         } else {
-            // TODO STS (17.06.16): Replace with Logging
+            logger.warn("Could not update tank: "+resultMessage.toString());
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

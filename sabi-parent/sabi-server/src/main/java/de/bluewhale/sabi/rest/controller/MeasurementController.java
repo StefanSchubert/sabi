@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,6 +34,9 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "api/measurement")
 public class MeasurementController {
+
+    static Logger logger = LoggerFactory.getLogger(MeasurementController.class);
+
 // ------------------------------ FIELDS ------------------------------
 
     @Autowired
@@ -81,8 +86,7 @@ public class MeasurementController {
         try {
             pTankID = Long.valueOf(id);
         } catch (NumberFormatException e) {
-            // todo add some logging
-            e.printStackTrace();
+            logger.warn("API Request sent with wrong TankID",e);
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
         }
 
@@ -148,8 +152,8 @@ public class MeasurementController {
             MeasurementTo createdMeasurement = measurementResultTo.getValue();
             responseEntity = new ResponseEntity<>(createdMeasurement, HttpStatus.CREATED);
         } else {
-            // TODO STS (17.06.16): Replace with Logging
-            System.out.println("A Measurement with Id " + measurementTo.getId() + " already exist.");
+            String msg="Measurement cannot be added twice. A Measurement with Id " + measurementTo.getId() + " already exist.";
+            logger.warn(msg);
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
@@ -176,7 +180,7 @@ public class MeasurementController {
             MeasurementTo updatedMeasurement = measurementResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedMeasurement, HttpStatus.OK);
         } else {
-            // TODO STS (17.06.16): Replace with Logging
+            logger.warn("Measurementupdate failed. "+ resultMessage.toString());
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

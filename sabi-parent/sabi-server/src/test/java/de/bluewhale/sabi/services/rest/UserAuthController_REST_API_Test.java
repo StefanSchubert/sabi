@@ -215,7 +215,7 @@ public class UserAuthController_REST_API_Test {
         userTo.setValidated(true);
         UserEntity userFromDatabase = new UserEntity();
         Mapper.mapUserTo2Entity(userTo,userFromDatabase);
-        userFromDatabase.setPassword(encrypted_Password); // mapper excludes the passwort
+        userFromDatabase.setPassword(encrypted_Password); // mapper excludes the password
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();
         accountCredentialsTo.setUsername(userFromDatabase.getEmail());

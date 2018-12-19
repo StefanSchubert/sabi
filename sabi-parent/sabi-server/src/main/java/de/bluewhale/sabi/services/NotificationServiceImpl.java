@@ -18,7 +18,7 @@ import javax.mail.internet.MimeMessage;
  * @author Stefan Schubert
  */
 @Service
-public class NotificationServiceImpl extends CommonService implements NotificationService {
+public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     JavaMailSender mailer;
