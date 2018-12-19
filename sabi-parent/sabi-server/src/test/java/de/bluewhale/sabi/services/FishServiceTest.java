@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
 import static org.junit.Assert.*;
 
 
@@ -58,7 +58,7 @@ public class FishServiceTest {
     public void testAddFish() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
@@ -89,7 +89,7 @@ public class FishServiceTest {
         public void testAddFishForWrongTank() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
         final UserTo fraudUser = testDataFactory.getPersistedTestUserTo("I_Intent@No.good");
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
@@ -134,7 +134,7 @@ public class FishServiceTest {
     public void testRemoveFish() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());

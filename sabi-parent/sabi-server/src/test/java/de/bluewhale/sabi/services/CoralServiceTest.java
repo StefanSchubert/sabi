@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
 import static org.junit.Assert.fail;
 
 
@@ -55,7 +55,7 @@ public class CoralServiceTest {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
 
         // When
         fail("Implement me");

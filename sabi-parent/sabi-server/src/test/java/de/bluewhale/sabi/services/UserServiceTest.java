@@ -17,7 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL2;
 import static org.junit.Assert.*;
 
 
@@ -72,13 +73,13 @@ public class UserServiceTest {
 
     @Test
     @Transactional
-    public void testRegisterExistingUser() throws Exception {
+    public void testRegisterExistingUserWithSameEmailAdress() throws Exception {
         // Given
-        UserTo userTo1 = new UserTo(TESTUSER_EMAIL, "User1", "NoPass123");
+        UserTo userTo1 = new UserTo(TESTUSER_EMAIL1, "User1", "NoPass123");
         final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
-        UserTo userTo2 = new UserTo(TESTUSER_EMAIL, "User2", "NoPass123");
+        UserTo userTo2 = new UserTo(TESTUSER_EMAIL1, "User2", "NoPass123");
         final ResultTo<UserTo> userResultTo = userService.registerNewUser(userTo2);
 
         // Then
@@ -89,15 +90,37 @@ public class UserServiceTest {
         assertNotNull(message.getCode());
         assertEquals(message.getCode().getExceptionCode(),
                 AuthExceptionCodes.USER_REGISTRATION_FAILED);
-        assertEquals(message.getCode(), AuthMessageCodes.USER_ALREADY_EXISTS);
+        assertEquals(message.getCode(), AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL);
     }
 
 
     @Test
     @Transactional
+    public void testRegisterExistingUserWithSameUsername() throws Exception {
+        // Given
+        UserTo userTo1 = new UserTo(TESTUSER_EMAIL1, "User1", "NoPass123");
+        final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
+
+        // When
+        UserTo userTo2 = new UserTo(TESTUSER_EMAIL2, "User1", "NoPass123");
+        final ResultTo<UserTo> userResultTo = userService.registerNewUser(userTo2);
+
+        // Then
+        assertNotNull(userResultTo);
+        assertNull(userResultTo.getValue());
+        final Message message = userResultTo.getMessage();
+        assertNotNull(message);
+        assertNotNull(message.getCode());
+        assertEquals(message.getCode().getExceptionCode(),
+                AuthExceptionCodes.USER_REGISTRATION_FAILED);
+        assertEquals(message.getCode(), AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME);
+    }
+
+    @Test
+    @Transactional
     public void testRegisterUser() throws Exception {
         // Given
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", "NoPass123");
+        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", "NoPass123");
 
         // When
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
@@ -119,7 +142,7 @@ public class UserServiceTest {
     @Transactional
     public void testUserValidation() throws Exception {
         // Given
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", "NoPass123");
+        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", "NoPass123");
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         final String token = userToResultTo.getValue().getValidationToken();
 
@@ -144,7 +167,7 @@ public class UserServiceTest {
         // Given
 
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", clearTextPassword);
+        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
 
         // When
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
@@ -161,12 +184,12 @@ public class UserServiceTest {
     public void testSignIn() throws Exception {
         // Given
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", clearTextPassword);
+        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
         ResultTo<UserTo> resultTo = userService.registerNewUser(userTo);
-        userService.validateUser(TESTUSER_EMAIL, resultTo.getValue().getValidationToken());
+        userService.validateUser(TESTUSER_EMAIL1, resultTo.getValue().getValidationToken());
 
         // When
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, clearTextPassword);
+        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, clearTextPassword);
 
         // Then
         assertNotNull("Contract Broken? Expected Session Token", signInResult.getValue());
@@ -203,14 +226,14 @@ public class UserServiceTest {
     public void testSignInWithUnknownOrWrongPassword() throws Exception {
         // Given a user which registered and validated his email address.
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", clearTextPassword);
+        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
         ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         UserTo createdUserTo = userToResultTo.getValue();
-        userService.validateUser(TESTUSER_EMAIL, createdUserTo.getValidationToken());
+        userService.validateUser(TESTUSER_EMAIL1, createdUserTo.getValidationToken());
 
 
         // When
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, "abc");
+        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, "abc");
 
         // Then
         assertNotNull(signInResult);
@@ -232,11 +255,11 @@ public class UserServiceTest {
 
         // Given
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL, "Tester", clearTextPassword);
+        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
         userService.registerNewUser(userTo);
 
         // When
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL, "abc");
+        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, "abc");
 
         // Then
         assertNotNull(signInResult);

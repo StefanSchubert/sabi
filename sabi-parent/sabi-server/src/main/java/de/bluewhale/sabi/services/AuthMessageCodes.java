@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2018 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
@@ -19,7 +19,8 @@ public enum AuthMessageCodes implements MessageCode {
     INVALID_EMAIL_ADDRESS(AuthExceptionCodes.AUTHENTICATION_FAILED),
     WRONG_CAPTCHA_ANSWER(AuthExceptionCodes.AUTHENTICATION_FAILED),
     USER_CREATION_SUCCEEDED(),
-    USER_ALREADY_EXISTS(AuthExceptionCodes.USER_REGISTRATION_FAILED),
+    USER_ALREADY_EXISTS_WITH_THIS_EMAIL(AuthExceptionCodes.USER_REGISTRATION_FAILED),
+    USER_ALREADY_EXISTS_WITH_THIS_USERNAME(AuthExceptionCodes.USER_REGISTRATION_FAILED),
     SIGNIN_SUCCEEDED(),
     TOKEN_VALID(),
     TOKEN_EXPIRED(AuthExceptionCodes.AUTHENTICATION_FAILED),

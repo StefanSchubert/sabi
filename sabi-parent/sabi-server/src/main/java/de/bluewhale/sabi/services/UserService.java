@@ -23,6 +23,7 @@ public interface UserService {
      * Creates a new User. The returned object contains a result message along with the created
      * user (in success case). The user has been created successfully
      * only if the message is of {@link CATEGORY#INFO}
+     * <b>Precondition:</b> The users email and username must both be unique.
      */
     @NotNull
     @Transactional

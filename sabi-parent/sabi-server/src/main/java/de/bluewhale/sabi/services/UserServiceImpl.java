@@ -59,8 +59,9 @@ public class UserServiceImpl implements UserService {
         UserTo createdUser = null;
         Message message;
 
-        UserEntity alreadyExistingUser = userRepository.getByEmail(newUser.getEmail());
-        if (alreadyExistingUser == null) {
+        UserEntity alreadyExistingUserWithSameEmail = userRepository.getByEmail(newUser.getEmail());
+        UserEntity alreadyExistingUserWithSameUsername = userRepository.getByUsername(newUser.getUsername());
+        if ((alreadyExistingUserWithSameEmail == null) && (alreadyExistingUserWithSameUsername == null)) {
 
             UserEntity newUserEntity = new UserEntity();
             String encryptedPassword = encryptPasswordForHeavensSake(newUser.getPassword());
@@ -75,7 +76,11 @@ public class UserServiceImpl implements UserService {
 
             message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
         } else {
-            message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS, newUser.getEmail());
+            if (alreadyExistingUserWithSameEmail != null) {
+                message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL, newUser.getEmail());
+            } else {
+                message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME, newUser.getUsername());
+            }
         }
 
         final ResultTo<UserTo> userToResultTo = new ResultTo<>(createdUser, message);

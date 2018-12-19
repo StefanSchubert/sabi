@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 public class TestDataFactory {
 // ------------------------------ FIELDS ------------------------------
 
-    public static final String TESTUSER_EMAIL = "testservice@bluewhale.de";
+    public static final String TESTUSER_EMAIL1 = "testservice1@bluewhale.de";
+    public static final String TESTUSER_EMAIL2 = "testservice2@bluewhale.de";
 
     private static TestDataFactory instance;
 

@@ -7,10 +7,7 @@ package de.bluewhale.sabi.rest.controller;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
-import de.bluewhale.sabi.services.AuthExceptionCodes;
-import de.bluewhale.sabi.services.CaptchaAdapter;
-import de.bluewhale.sabi.services.NotificationService;
-import de.bluewhale.sabi.services.UserService;
+import de.bluewhale.sabi.services.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -165,7 +162,7 @@ public class AuthenticationController {
             @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
             @ApiResponse(code = 503, message = "Backend-Service not available, please try again later.", response = HttpStatus.class),
             @ApiResponse(code = 415, message = "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?", response = HttpStatus.class),
-            @ApiResponse(code = 409, message = "Conflict - Username already exists.", response = UserTo.class)
+            @ApiResponse(code = 409, message = "Conflict - username and/or emailaddress already exists.", response = UserTo.class)
     })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -200,11 +197,22 @@ public class AuthenticationController {
                 }
 
             } else {
-                String msg = "User registration faild. A User with eMail " + pUserTo.getEmail() + " already exist.";
-                logger.warn(msg);
-                responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
+
+                if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL.equals(resultMessage.getCode())) {
+                    String msg = "User registration failed. A User with eMail " + pUserTo.getEmail() + " already exist.";
+                    logger.warn(msg);
+                    responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
+                }
+
+                if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME.equals(resultMessage.getCode())) {
+                    String msg = "User registration failed. A User with username " + pUserTo.getUsername() + " already exist.";
+                    logger.warn(msg);
+                    responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
+                }
+
             }
         } else {
+            // Captcha invalid
             responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.PRECONDITION_FAILED);
         }
         return responseEntity;
