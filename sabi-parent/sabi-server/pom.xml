@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2018 by Stefan Schubert
+  ~ Copyright (c) 2019 by Stefan Schubert
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -121,11 +121,7 @@
             <!-- Required for Jackson ObjectMapper, used in JWTLoginFilter -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.5</version>
-            <!--
-               2.9.6. in maven central is currently broken
-               remove this dependency when maven central has fixed the problem
-            -->
+            <version>2.9.8</version>
         </dependency>
 
         <dependency>
