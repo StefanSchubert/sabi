@@ -17,6 +17,9 @@ Please work along the issue log and create feature-branches and use pull request
 Don't start huge refactorings especially on architectural design (those are only accepted if we agree upon them, 
 i.e. you need to communicate as in real life ;-) )
 
+It might be that I need to add you to the collaborator role on this project the first time you want to push your feature branch.
+If that's the case let me know.
+
 ### Supporting
 Look especially for features marked with "HELP WANTED"
 
