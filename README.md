@@ -138,7 +138,7 @@ are based upon arc42 templates.
 
 ### REST-API Doc
 As we are using swagger, you will find the API doc after starting the application here:
-* http://localhost:8080/sabi/swagger-ui.html
+* http://localhost:8080/swagger-ui.html
 
 Or you take a look into the current productive environment (in case you are just developing the GUI and have no need of an own running backend:
 * http://sabi.bluewhale.de:8080/swagger-ui.html

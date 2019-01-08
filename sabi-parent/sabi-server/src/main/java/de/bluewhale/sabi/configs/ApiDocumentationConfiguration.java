@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.configs;
@@ -51,7 +51,7 @@ public class ApiDocumentationConfiguration {
                         "APIKey - even it I haven't implemented the protection yet, the protection might be" +
                         "in place soon if required.\n\n" +
                         "For more detailed information (e.g. if you like to help) see https://github.com/StefanSchubert/sabi")
-                .version("1.0")
+                .version("1.1")
                 .license("MIT Licence (MIT)")
                 .licenseUrl("https://github.com/StefanSchubert/sabi/blob/master/LICENSE")
                 .contact(MY_CONTACT_DATA)

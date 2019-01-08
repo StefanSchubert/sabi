@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi;
@@ -62,7 +62,7 @@ public class TestDataFactory {
 
     public UserTo getPersistedTestUserTo(String eMail) {
         String clearTextPassword = "NoPass123";
-        final UserTo userTo = new UserTo(eMail, eMail, clearTextPassword);
+        final NewRegistrationTO userTo = new NewRegistrationTO(eMail, eMail, clearTextPassword);
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         return userToResultTo.getValue();
     }

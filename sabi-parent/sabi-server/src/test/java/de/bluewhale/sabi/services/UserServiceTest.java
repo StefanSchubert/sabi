@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
@@ -75,11 +76,11 @@ public class UserServiceTest {
     @Transactional
     public void testRegisterExistingUserWithSameEmailAdress() throws Exception {
         // Given
-        UserTo userTo1 = new UserTo(TESTUSER_EMAIL1, "User1", "NoPass123");
+        NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", "NoPass123");
         final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
-        UserTo userTo2 = new UserTo(TESTUSER_EMAIL1, "User2", "NoPass123");
+        NewRegistrationTO userTo2 = new NewRegistrationTO(TESTUSER_EMAIL1, "User2", "NoPass123");
         final ResultTo<UserTo> userResultTo = userService.registerNewUser(userTo2);
 
         // Then
@@ -98,11 +99,11 @@ public class UserServiceTest {
     @Transactional
     public void testRegisterExistingUserWithSameUsername() throws Exception {
         // Given
-        UserTo userTo1 = new UserTo(TESTUSER_EMAIL1, "User1", "NoPass123");
+        NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", "NoPass123");
         final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
-        UserTo userTo2 = new UserTo(TESTUSER_EMAIL2, "User1", "NoPass123");
+        NewRegistrationTO userTo2 = new NewRegistrationTO(TESTUSER_EMAIL2, "User1", "NoPass123");
         final ResultTo<UserTo> userResultTo = userService.registerNewUser(userTo2);
 
         // Then
@@ -120,7 +121,7 @@ public class UserServiceTest {
     @Transactional
     public void testRegisterUser() throws Exception {
         // Given
-        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", "NoPass123");
+        NewRegistrationTO userTo = new NewRegistrationTO(TESTUSER_EMAIL1, "Tester", "NoPass123");
 
         // When
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
@@ -142,7 +143,7 @@ public class UserServiceTest {
     @Transactional
     public void testUserValidation() throws Exception {
         // Given
-        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", "NoPass123");
+        NewRegistrationTO userTo = new NewRegistrationTO(TESTUSER_EMAIL1, "Tester", "NoPass123");
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         final String token = userToResultTo.getValue().getValidationToken();
 
@@ -167,7 +168,7 @@ public class UserServiceTest {
         // Given
 
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
+        NewRegistrationTO userTo = new NewRegistrationTO(TESTUSER_EMAIL1, "Tester", clearTextPassword);
 
         // When
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
@@ -184,7 +185,7 @@ public class UserServiceTest {
     public void testSignIn() throws Exception {
         // Given
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
+        NewRegistrationTO userTo = new NewRegistrationTO(TESTUSER_EMAIL1, "Tester", clearTextPassword);
         ResultTo<UserTo> resultTo = userService.registerNewUser(userTo);
         userService.validateUser(TESTUSER_EMAIL1, resultTo.getValue().getValidationToken());
 
@@ -226,7 +227,7 @@ public class UserServiceTest {
     public void testSignInWithUnknownOrWrongPassword() throws Exception {
         // Given a user which registered and validated his email address.
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
+        NewRegistrationTO userTo = new NewRegistrationTO(TESTUSER_EMAIL1, "Tester", clearTextPassword);
         ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         UserTo createdUserTo = userToResultTo.getValue();
         userService.validateUser(TESTUSER_EMAIL1, createdUserTo.getValidationToken());
@@ -255,7 +256,7 @@ public class UserServiceTest {
 
         // Given
         final String clearTextPassword = "NoPass123";
-        UserTo userTo = new UserTo(TESTUSER_EMAIL1, "Tester", clearTextPassword);
+        NewRegistrationTO userTo = new NewRegistrationTO(TESTUSER_EMAIL1, "Tester", clearTextPassword);
         userService.registerNewUser(userTo);
 
         // When

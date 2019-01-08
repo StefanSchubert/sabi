@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.rest.controller;
@@ -158,62 +158,74 @@ public class AuthenticationController {
 
     @ApiOperation("/register")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserTo.class),
+            @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserRegConfirmationTo.class),
             @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
             @ApiResponse(code = 503, message = "Backend-Service not available, please try again later.", response = HttpStatus.class),
             @ApiResponse(code = 415, message = "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?", response = HttpStatus.class),
-            @ApiResponse(code = 409, message = "Conflict - username and/or emailaddress already exists.", response = UserTo.class)
+            @ApiResponse(code = 409, message = "Conflict - username and/or emailaddress already exists.", response = NewRegistrationTO.class),
+            @ApiResponse(code = 400, message = "JSON Syntax invalid. Please check your paylod.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<UserTo> createUser(@RequestBody UserTo pUserTo) {
+    public ResponseEntity<UserRegConfirmationTo> createUser(@RequestBody NewRegistrationTO pRegistrationUserTo) {
 
         Boolean validCaptcha;
-        ResponseEntity<UserTo> responseEntity = null;
+        ResponseEntity<UserRegConfirmationTo> responseEntity = null;
+
+        // Mapping of some values for the response object.
+        UserRegConfirmationTo regConfirmationTo = new UserRegConfirmationTo(pRegistrationUserTo.getEmail(), pRegistrationUserTo.getUsername(),
+                pRegistrationUserTo.getLanguage(), pRegistrationUserTo.getCountry());
 
         // Step One: Sort out the Robots, before doing a single database request,
         // by checking the captcha code.
         try {
-            validCaptcha = captchaAdapter.isCaptchaValid(pUserTo.getCaptchaCode());
+            validCaptcha = captchaAdapter.isCaptchaValid(pRegistrationUserTo.getCaptchaCode());
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         if (validCaptcha) {
 
             // Step two: try to register after sorting out the robots
-            final ResultTo<UserTo> userToResultTo = userService.registerNewUser(pUserTo);
+
+            final ResultTo<UserTo> userToResultTo = userService.registerNewUser(pRegistrationUserTo);
             final UserTo createdUser = userToResultTo.getValue();
             final Message resultMessage = userToResultTo.getMessage();
+
+
             if (Message.CATEGORY.INFO.equals(resultMessage.getType())) {
-                responseEntity = new ResponseEntity<UserTo>(createdUser, HttpStatus.CREATED);
+
+                UserRegConfirmationTo userRegConfirmationTo = new UserRegConfirmationTo(createdUser.getEmail(),
+                        createdUser.getUsername(), createdUser.getLanguage(), createdUser.getCountry());
+
+                responseEntity = new ResponseEntity<UserRegConfirmationTo>(userRegConfirmationTo, HttpStatus.CREATED);
 
                 try {
                     notificationService.sendValidationMail(createdUser);
                 } catch (MessagingException e) {
                     logger.error("Users registration incomplete and aborted, since notification mail coud not be sent.", e);
-                    responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.SERVICE_UNAVAILABLE);
+                    responseEntity = new ResponseEntity<UserRegConfirmationTo>(userRegConfirmationTo, HttpStatus.SERVICE_UNAVAILABLE);
                 }
 
             } else {
 
                 if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL.equals(resultMessage.getCode())) {
-                    String msg = "User registration failed. A User with eMail " + pUserTo.getEmail() + " already exist.";
+                    String msg = "User registration failed. A User with eMail " + pRegistrationUserTo.getEmail() + " already exist.";
                     logger.warn(msg);
-                    responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
+                    responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.CONFLICT);
                 }
 
                 if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME.equals(resultMessage.getCode())) {
-                    String msg = "User registration failed. A User with username " + pUserTo.getUsername() + " already exist.";
+                    String msg = "User registration failed. A User with username " + pRegistrationUserTo.getUsername() + " already exist.";
                     logger.warn(msg);
-                    responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.CONFLICT);
+                    responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.CONFLICT);
                 }
 
             }
         } else {
             // Captcha invalid
-            responseEntity = new ResponseEntity<UserTo>(pUserTo, HttpStatus.PRECONDITION_FAILED);
+            responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.PRECONDITION_FAILED);
         }
         return responseEntity;
     }

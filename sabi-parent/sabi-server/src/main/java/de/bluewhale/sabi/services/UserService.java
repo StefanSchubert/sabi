@@ -1,15 +1,12 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
-import de.bluewhale.sabi.model.RequestNewPasswordTo;
-import de.bluewhale.sabi.model.ResetPasswordTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -27,7 +24,7 @@ public interface UserService {
      */
     @NotNull
     @Transactional
-    ResultTo<UserTo> registerNewUser(@NotNull UserTo newUser);
+    ResultTo<UserTo> registerNewUser(@NotNull NewRegistrationTO newUser);
 
     /**
      * Drops the user and all of his not commonly shared data.
