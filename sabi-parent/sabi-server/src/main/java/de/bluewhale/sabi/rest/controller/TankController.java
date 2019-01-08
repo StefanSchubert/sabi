@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.rest.controller;
@@ -55,6 +55,7 @@ public class TankController {
     })
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
@@ -71,6 +72,7 @@ public class TankController {
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AquariumTo> listUsersTanks(@RequestHeader(name = "Authorization", required = true) String token,
                                                            @PathVariable(value = "id", required = true)
                                                            @ApiParam(name = "id", value = "id of your aquarium..") String id,
@@ -92,6 +94,7 @@ public class TankController {
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> removeTank(@RequestHeader(name = "Authorization", required = true) String token,
                                                      @PathVariable(value = "id", required = true)
                                                      @ApiParam(name = "id", value = "id of your aquarium..") String id,
@@ -120,6 +123,7 @@ public class TankController {
     })
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
     public ResponseEntity<AquariumTo> registerNewTank(@RequestHeader(name = "Authorization", required = true) String token,
                                                       @RequestBody AquariumTo aquariumTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
@@ -147,6 +151,7 @@ public class TankController {
     })
     @RequestMapping(value = {""}, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     public ResponseEntity<AquariumTo> updateTank(@RequestHeader(name = "Authorization", required = true) String token,
                                                  @RequestBody AquariumTo aquariumTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.captcha.rest;
@@ -41,6 +41,7 @@ public class CaptchaController {
     })
     @RequestMapping(value = "/challenge/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ChallengeTo> getNewCaptchaChallenge(
             @PathVariable(value = "language", required = true)
             @ApiParam(name = "language", value = "ISO-639-1 language code - used for i18n in communication.") String language) {
@@ -75,6 +76,7 @@ public class CaptchaController {
     })
     @RequestMapping(value = "/check/{code}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> checkAnswer(@PathVariable(value = "code", required = true)
                                               @ApiParam(name = "code", value = "Code of a correct answer to a challenge question.") String captchaChoice) {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.rest.controller;
@@ -57,6 +57,7 @@ public class MeasurementController {
     })
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<List<MeasurementTo>> listUsersMeasurements(@RequestHeader(name = "Authorization", required = true) String token, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
@@ -74,6 +75,7 @@ public class MeasurementController {
     })
     @RequestMapping(value = {"/tank/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<MeasurementTo>> listUsersTankMeasurements(@RequestHeader(name = "Authorization", required = true) String token,
                                                                          @PathVariable(value = "id", required = true)
                                                                          @ApiParam(name = "id", value = "id of your aquarium..") String id,
@@ -112,6 +114,7 @@ public class MeasurementController {
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> removeMeasurement(@RequestHeader(name = "Authorization", required = true) String token,
                                                     @PathVariable(value = "id", required = true)
                                                     @ApiParam(name = "id", value = "id of your measurement.") String id,
@@ -140,6 +143,7 @@ public class MeasurementController {
     })
     @RequestMapping(value = {""}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
     public ResponseEntity<MeasurementTo> addMeasurement(@RequestHeader(name = "Authorization", required = true) String token,
                                                         @RequestBody MeasurementTo measurementTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
@@ -168,6 +172,7 @@ public class MeasurementController {
     })
     @RequestMapping(value = {""}, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
     public ResponseEntity<MeasurementTo> updateMeasurement(@RequestHeader(name = "Authorization", required = true) String token,
                                                            @RequestBody MeasurementTo measurementTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,

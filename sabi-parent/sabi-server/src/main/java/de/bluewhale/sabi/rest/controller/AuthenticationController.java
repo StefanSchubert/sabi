@@ -74,6 +74,8 @@ public class AuthenticationController {
             @ApiResponse(code = 424, message = "Failed Dependency - Invalid reset token. Please use token issued by email on reset request.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
     public ResponseEntity<String> requestPasswordReset(@RequestBody ResetPasswordTo requestData) {
 
         ResponseEntity<String> responseEntity = new ResponseEntity<>("OK", HttpStatus.ACCEPTED);
@@ -102,6 +104,8 @@ public class AuthenticationController {
             @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/req_pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
     public ResponseEntity<RequestNewPasswordTo> requestPasswordReset(@RequestBody RequestNewPasswordTo requestData) {
 
         ResponseEntity<RequestNewPasswordTo> responseEntity = new ResponseEntity<>(requestData, HttpStatus.ACCEPTED);
@@ -130,6 +134,7 @@ public class AuthenticationController {
     })
     @RequestMapping(value = {"/email/{email}/validation/{token}"}, method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> validateUser(@PathVariable(value = "token", required = true)
                                                @ApiParam(name = "token", value = "part of the link in validation email.") String validationToken,
                                                @PathVariable(value = "email", required = true)
@@ -167,6 +172,7 @@ public class AuthenticationController {
     })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserRegConfirmationTo> createUser(@RequestBody NewRegistrationTO pRegistrationUserTo) {
 
         Boolean validCaptcha;
