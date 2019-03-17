@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2017 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.captcha.service;
 
 import de.bluewhale.captcha.configs.AppConfig;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,11 +36,13 @@ import java.util.Map;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CheckerTest {
 
+    final String BASE_API_URL = "http://localhost:8081/api";
+
     @Autowired
     public Environment env;
 
     @Value("${challenge.throttle.per.minute}")
-    private long MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE;
+    private int MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE;
 
     private long configuredTTL;
 
@@ -47,6 +50,12 @@ public class CheckerTest {
     public void lazyInit() {
         String ttl = env.getProperty("token.TTL");
         configuredTTL = Long.parseLong(ttl);
+    }
+
+    @Before
+    public void resetThresholdMeter(){
+        ChallengeRequestThrottle.resetAPICounter();
+        ChallengeRequestThrottle.setThrottleThreshold(MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE);
     }
 
     /**
@@ -88,7 +97,7 @@ public class CheckerTest {
         // This test demonstrates the code a client needs to send a check request
 
         // Given (Simulate a previous taken challenge request)
-        String checkURI = "http://localhost:8081/captcha/api/check/{code}";
+        String checkURI = BASE_API_URL + "/check/{code}";
         String validToken = "GreenTea";
         ValidationCache.registerToken(validToken);
 
@@ -109,72 +118,80 @@ public class CheckerTest {
 
 
         // Given
-        boolean exceptionOccured = false;
-        String checkURI = "http://localhost:8081/captcha/api/challenge/de";
+        String checkURI = BASE_API_URL + "/challenge/de";
         RestTemplate restTemplate = new RestTemplate();
 
         // When (Client check)
         while (too_many_requests <= MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE) {
             too_many_requests++;
             try {
-                restTemplate.getForObject(checkURI, String.class);
+                String forObject = restTemplate.getForObject(checkURI, String.class);
             } catch (RestClientException e) {
-                exceptionOccured = true;
+                // 429 - TOO MANY Request Exception
+                Assert.assertTrue(e.getMessage().startsWith("429"));
             }
         }
 
         // Then (be Happy)
-        Assert.assertTrue("Throtteling does not work", exceptionOccured);
-        Assert.assertEquals("Too early throttle ignition", MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE + 1, too_many_requests);
+        Assert.assertEquals("Throttle ignition too early.", MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE + 1, too_many_requests);
     }
 
 
     @Test
     public void testResetAPIThrottle() throws Exception {
         // This test demonstrates releasing the throttle after a minute
-        long too_many_requests = 0;
-
 
         // Given
-        boolean exceptionOccured = false;
-        String checkURI = "http://localhost:8081/captcha/api/challenge/de";
+        int requestCount = MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE + 1;
+        String checkURI = BASE_API_URL + "/challenge/de";
         RestTemplate restTemplate = new RestTemplate();
         ChallengeRequestThrottle.resetAPICounter();
 
-        // When (Client check)
-        while (too_many_requests <= MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE) {
-            too_many_requests++;
+        // When (exceeding the limit)
+        for (int i = 0; i <= MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE * 2; i++) {
             try {
                 restTemplate.getForObject(checkURI, String.class);
             } catch (RestClientException e) {
-                exceptionOccured = true;
-                Thread.sleep(1000 * 61);
+                // 429 - TOO MANY Request Exception
+                Assert.assertTrue(e.getMessage().startsWith("429"));
+                break;
             }
         }
-        Assert.assertTrue("precondition not satisfied", exceptionOccured);
 
+        // Wait a good minute to relax the threshold counter
+        Thread.sleep(1000 * 61);
 
         // Then (should work without throwing excepting)
-        String object = restTemplate.getForObject(checkURI, String.class);
-        Assert.assertTrue("Did not retrievd a valid captcha", object.length() > 10);
-
+        try {
+            String object = restTemplate.getForObject(checkURI, String.class);
+            Assert.assertTrue("Did not received a valid captcha.", object.length() > 10);
+        } catch (Exception e) {
+            Assert.fail("Last call should have been accepted.");
+        }
     }
 
 
     @Test
     public void testThrottleMechanism() throws Exception {
 
-        // Given (Simulate a previous taken challenge request)
-        boolean result = false;
-        ChallengeRequestThrottle.resetAPICounter();
+        // Given
+        String checkURI = BASE_API_URL + "/challenge/de";
+        RestTemplate restTemplate = new RestTemplate();
 
-        // When (Client check)
-        for (int i = 1; i < MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE; i++) {
-            result = ChallengeRequestThrottle.requestAllowed();
+        // When (exceeding the limit)
+        for (int i = 0; i <= MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE * 2; i++) {
+            try {
+                restTemplate.getForObject(checkURI, String.class);
+            } catch (RestClientException e) {
+                // 429 - TOO MANY Request Exception
+                Assert.assertTrue(e.getMessage().startsWith("429"));
+                break;
+            }
         }
 
-        // Then (be Happy)
-        Assert.assertTrue("False positive Throtteling?", result);
+        // Then
+        Assert.assertFalse("Throttel not activated.", ChallengeRequestThrottle.requestAllowed());
+
     }
 
 
