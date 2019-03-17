@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2018 by Stefan Schubert
+  ~ Copyright (c) 2019 by Stefan Schubert
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -48,12 +48,11 @@
     <properties>
         <java.version>1.8</java.version>
         <sabi.version>1.0-SNAPSHOT</sabi.version>
-        <spring.version>4.3.13.RELEASE</spring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <swagger.version>2.7.0</swagger.version>
+        <swagger.version>2.9.2</swagger.version>
     </properties>
 
     <repositories/>

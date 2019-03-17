@@ -36,7 +36,7 @@ import java.util.Map;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CheckerTest {
 
-    final String BASE_API_URL = "http://localhost:8081/api";
+    final String BASE_API_URL = "http://localhost:8081/captcha/api";
 
     @Autowired
     public Environment env;
