@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert
  */
 
 package de.bluewhale.sabi.configs;
@@ -45,6 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 // Allow Welcome Page
                 .antMatchers(HttpMethod.GET,"/", "/index.html").permitAll()
+                // Allow Monitoring Endpoint
+                .antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
                 // Allow Swagger api-doc access
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources",
                         "/configuration/security", "/swagger-ui.html", "/webjars/**",

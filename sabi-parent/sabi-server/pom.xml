@@ -46,6 +46,7 @@
         <java.version>1.8</java.version>
         <swagger.version>2.9.2</swagger.version>
         <eclipselink.version>2.7.2</eclipselink.version>
+        <micrometer.prometheus.version>1.1.4</micrometer.prometheus.version>
     </properties>
 
 
@@ -167,6 +168,29 @@
 
 
         <!-- Common Stuff -->
+
+        <!-- Monitoring
+             The next ones are required for providing
+             http://host:port/actuator/prometheus
+        -->
+
+        <!-- Spring boot actuator to expose metrics endpoint -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- Micrometer core dependecy  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micrometer.prometheus.version}</version>
+        </dependency>
+        <!-- Micrometer Prometheus registry  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.prometheus.version}</version>
+        </dependency>
 
         <!-- REST API-Doc using SWAGGER -->
         <dependency>
