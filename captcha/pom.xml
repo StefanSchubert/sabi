@@ -44,6 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <swagger.version>2.9.2</swagger.version>
+        <micrometer.prometheus.version>1.1.4</micrometer.prometheus.version>
     </properties>
 
 
@@ -90,6 +91,27 @@
         </dependency>
 
         <!-- Common Stuff -->
+
+        <!-- Monitoring
+             The next ones are required for providing
+             http://host:port/captcha/actuator/prometheus
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- Micrometer core dependency  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micrometer.prometheus.version}</version>
+        </dependency>
+        <!-- Micrometer Prometheus registry  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.prometheus.version}</version>
+        </dependency>
 
         <!-- REST API-Doc using SWAGGER -->
         <dependency>
@@ -164,7 +186,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <dependencies />
+                <dependencies/>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -176,12 +198,16 @@
                         </goals>
                     </execution>
                 </executions>
-                <dependencies />
+                <dependencies/>
                 <configuration>
                     <!-- Build a fully executable jar to use it via /etc/init.d
                       see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
                     -->
                     <executable>true</executable>
+                    <!-- Tuning the required heap size / shrinked after analysing usage via grafana /
+                          revisit and readjust if necessary from time to time.
+                    -->
+                    <jvmArguments>-Xmx128m</jvmArguments>
                 </configuration>
             </plugin>
         </plugins>

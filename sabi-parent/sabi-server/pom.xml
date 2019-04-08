@@ -179,7 +179,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- Micrometer core dependecy  -->
+        <!-- Micrometer core dependency  -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
@@ -314,6 +314,10 @@
                          see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
                     -->
                     <executable>true</executable>
+                    <!-- Tuning the required heap size / shrinked after analysing usage via grafana /
+                         revisit and readjust if necessary from time to time.
+                    -->
+                    <jvmArguments>-Xmx128m</jvmArguments>
                 </configuration>
             </plugin>
 
