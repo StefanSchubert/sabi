@@ -10,7 +10,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.3.RELEASE</version>
+        <version>2.1.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -206,6 +206,11 @@
                     <executable>true</executable>
                     <!-- Tuning the required heap size / shrinked after analysing usage via grafana /
                           revisit and readjust if necessary from time to time.
+
+                          Notice: This flag is being ignored by the plugin (Bug! 4/2019)
+                          As workaround/solution drop a YOURAPP.conf aside the YOURAPP.jar
+                          with the following content:
+                          export JAVA_OPTS="-Xmx128m -Xms64m"
                     -->
                     <jvmArguments>-Xmx128m</jvmArguments>
                 </configuration>
