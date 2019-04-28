@@ -141,6 +141,9 @@ As we are using swagger, you will find the API doc after starting the applicatio
 * http://localhost:8080/swagger-ui.html
 
 Or you take a look into the current productive environment (in case you are just developing the GUI and have no need of an own running backend:
+
+TEMPORARILY DISABLED due to IPV6 Switch of my backend systems. 
+
 * http://sabi.bluewhale.de:8080/swagger-ui.html
 * http://sabi.bluewhale.de:8081/captcha/swagger-ui.html
 
