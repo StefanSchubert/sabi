@@ -142,7 +142,7 @@ As we are using swagger, you will find the API doc after starting the applicatio
 
 Or you take a look into the current productive environment (in case you are just developing the GUI and have no need of an own running backend:
 
-TEMPORARILY DISABLED due to IPV6 Switch of my backend systems. 
+ONLY AVAILABLE on IPv6-networks. (Check with http://www.test-ipv6.com) if your machine has ipv6 connectivity). 
 
 * http://sabi.bluewhale.de:8080/swagger-ui.html
 * http://sabi.bluewhale.de:8081/captcha/swagger-ui.html
