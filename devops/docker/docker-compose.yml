@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  captcha:
+    # available by http://localhost:8081/captcha/swagger-ui.html
+    container_name: captcha-as
+    build: ./captcha
+    ports:
+      - "8081:8081"
+#    depends_on:
+#      - noone
