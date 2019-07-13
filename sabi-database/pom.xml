@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2019 by Stefan Schubert
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <description>Dient dem Setup des benötigten DB-Schemas und der Schemaevolution</description>
+    <inceptionYear>2015</inceptionYear>
+
+    <groupId>de.bluewhale</groupId>
+    <artifactId>sabi-database</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>sabi-database</name>
+
+    <properties>
+        <mysql-connector-java.version>5.1.17</mysql-connector-java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
+        checkin those secrets for stage and production
+        <mariadb.schema>sabi</mariadb.schema>
+        <mariadb.server.name>localhost</mariadb.server.name>
+        <mariadb.server.port>3306</mariadb.server.port>
+        <mariadb.server.app.username>sabiapp</mariadb.server.app.username>
+        <mariadb.server.app.password>sabi123</mariadb.server.app.password>
+        -->
+    </properties>
+
+    <developers>
+        <!-- PLEASE ADD YOURSELF HERE for maven site docu
+        If you like to have an image link, you need to have a gravatar registered with the used email address here. -->
+        <developer>
+            <id>StS</id>
+            <name>Stefan Schubert</name>
+            <email>stefan.schubert@bluewhale.de</email>
+            <roles>
+                <role>Project-Maintainer</role>
+                <role>Product-Owner</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <profiles>
+        <profile>
+            <!-- Used to maintain the database DB -->
+            <id>configure_flyway</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>4.2.0</version>
+                        <configuration>
+                            <url>jdbc:mysql://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
+                            <user>${mariadb.server.app.username}</user>
+                            <password>${mariadb.server.app.password}</password>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>clean database</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>baseline</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>update database</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>migrate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>update metatable</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>info</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>${mysql-connector-java.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+</project>
