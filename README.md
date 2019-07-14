@@ -59,10 +59,17 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 * openAPI (Swagger)
  
 ### Client site
-As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product
-against sabi. However to start with this project involves a
+As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
-* JSF based WebClient
+* JSF2.3 based WebClient
+** Primefaces 6.x
+* Spring-Boot-Application
+
+Why JSF and not some current modern framework like angular? In fact it took me quite a while to came to a decision here.
+The two main reasons are:
+
+* I don't believe that the traffic will be that big, that the server (though a rasperryPi at the beginnig) can't handle it, so that I need to shift the resources (session, logic) rather to the client side.
+* Though since 2014-2017 it became rather quite around JSF (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I deceided to improve my skills in JSF again.
 
 ### Server side
 * Spring-Boot-Application
