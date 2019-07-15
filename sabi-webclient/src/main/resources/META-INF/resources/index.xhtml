@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2019 by Stefan Schubert
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+    <!--    <h:outputStylesheet library="css" name="sabistyle.css"  />-->
+
+    <h:form id="login-form">
+
+        <p:panel header="Welcome to SABI">
+            <h:panelGrid columns="2" cellpadding="4">
+
+                <p:graphicImage height="50%" width="50%"
+                                library="images" name="RiffStefan2.png"/>
+
+                <p:column>
+
+                    <h:panelGrid columns="2" cellpadding="4">
+                        <h:outputText value="First Name: "/>
+                        <p:inputText id="first-name" value="#{loginModel.firstName}"/>
+
+                        <h:outputText value="Surame: "/>
+                        <p:inputText id="surname" value="#{loginModel.lastName}"/>
+
+                        <p:commandButton id="submit"
+                                         value="Submit"
+                                         update="greeting-panel"
+                                         oncomplete="PF('greetingDialog').show()"/>
+                        <h:outputText value="#{applicationInfo.version}"/>
+
+                        <h:outputText value="New here: "/>
+                        <p:link href="#" value="Registration Form"/>
+
+                        <h:outputText value="Password forgotten: "/>
+                        <p:link href="#" value="Reset PW Form"/>
+                    </h:panelGrid>
+
+                </p:column>
+
+            </h:panelGrid>
+        </p:panel>
+
+    </h:form>
+
+    <p:dialog header="Greeting" widgetVar="greetingDialog"
+              modal="true" resizable="false">
+        <h:panelGrid id="greeting-panel" columns="1" cellpadding="4">
+            <h:outputText value="#{loginModel.showGreeting()}"/>
+        </h:panelGrid>
+    </p:dialog>
+
+</h:body>
+</html>
