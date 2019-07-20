@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2019 by Stefan Schubert
+  ~ Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+  ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -49,6 +50,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
     <joinfaces.version>4.0.6</joinfaces.version>
+    <sabi.backend.version>1.0-SNAPSHOT</sabi.backend.version>
   </properties>
 
   <dependencyManagement>
@@ -78,12 +80,47 @@
       <artifactId>cdi-api</artifactId>
     </dependency>
 
+    <!-- For spring-security in combination with JWT -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <!-- Required for Jackson ObjectMapper, used in JWTLoginFilter -->
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.9.9</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt</artifactId>
+      <version>0.9.0</version>
+    </dependency>
+
+    <!-- Required to use the validation-API -->
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0</version>
+    </dependency>
+
+
+    <!-- Sharing of TOs with the Backend -->
+    <dependency>
+      <groupId>de.bluewhale</groupId>
+      <artifactId>sabi-boundary</artifactId>
+      <version>${sabi.backend.version}</version>
+    </dependency>
+
     <!-- Test Context -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
 
   </dependencies>
 

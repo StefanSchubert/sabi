@@ -1,10 +1,9 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.services;
-
-import de.bluewhale.sabi.exception.ExceptionCode;
+package de.bluewhale.sabi.exception;
 
 /**
  * ExceptionCodes that may arise during use cases dealing with auth contexts.

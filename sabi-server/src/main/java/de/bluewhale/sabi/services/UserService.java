@@ -1,9 +1,12 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.exception.AuthExceptionCodes;
+import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
@@ -12,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 
 /**
- * Provides all required services for user management use cases.
+ * Provides all required controller for user management use cases.
  */
 public interface UserService {
 
@@ -68,7 +71,7 @@ public interface UserService {
     void requestPasswordReset(@NotNull RequestNewPasswordTo requestData) throws BusinessException;
 
     /**
-     * Checks if the user has submitted the correct token {@link ResetPasswordTo#resetToken} and reset his password.
+     * Checks if the user has submitted the correct token {@link ResetPasswordTo} and reset his password.
      * The token must match the one as provided through {@link UserService#requestPasswordReset(RequestNewPasswordTo)} before.
      * In case of troubles, remember that the token has a short time-to-live to protect against brute force attacks.
      *
