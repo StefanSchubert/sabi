@@ -5,168 +5,160 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.bluewhale</groupId>
-  <artifactId>sabi-webclient</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <name>sabi-webclient</name>
-  <description>A JSF bSsed webclient for sabi.</description>
-  <url>https://github.com/StefanSchubert/sabi</url>
+    <groupId>de.bluewhale</groupId>
+    <artifactId>sabi-webclient</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>sabi-webclient</name>
+    <description>A JSF based webclient for sabi.</description>
+    <url>https://github.com/StefanSchubert/sabi</url>
 
-  <inceptionYear>2019</inceptionYear>
-  <!--
-       Thanks to https://codenotfound.com/jsf-primefaces-example.html
-       which showed me the way on how to combine jsf with spring boot in a proper way.
-  -->
+    <inceptionYear>2019</inceptionYear>
+    <!--
+         Thanks to https://codenotfound.com/jsf-primefaces-example.html
+         which showed me the way on how to combine jsf with spring boot in a proper way.
+    -->
 
-  <developers>
-    <!-- PLEASE ADD YOURSELF HERE for maven site docu
-    If you like to have an image link, you need to have a gravatar registered with the used email address here. -->
-    <developer>
-      <id>StS</id>
-      <name>Stefan Schubert</name>
-      <email>stefan.schubert@bluewhale.de</email>
-      <roles>
-        <role>Project-Maintainer</role>
-        <role>Product-Owner</role>
-        <role>Developer</role>
-      </roles>
-    </developer>
-  </developers>
-
-
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.0.RELEASE</version>
-    <relativePath /> <!-- lookup parent from repository -->
-  </parent>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
-    <joinfaces.version>4.0.6</joinfaces.version>
-    <sabi.backend.version>1.0-SNAPSHOT</sabi.backend.version>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.joinfaces</groupId>
-        <artifactId>joinfaces-dependencies</artifactId>
-        <version>${joinfaces.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <dependencies>
-
-    <dependency>
-      <groupId>org.joinfaces</groupId>
-      <artifactId>primefaces-spring-boot-starter</artifactId>
-    </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-actuator</artifactId>-->
-<!--    </dependency>-->
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-    </dependency>
-
-    <!-- For spring-security in combination with JWT -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-
-    <dependency>
-      <!-- Required for Jackson ObjectMapper, used in JWTLoginFilter -->
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.9.9.1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.jsonwebtoken</groupId>
-      <artifactId>jjwt</artifactId>
-      <version>0.9.0</version>
-    </dependency>
-
-    <!-- Required to use the validation-API -->
-    <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
-    </dependency>
+    <developers>
+        <!-- PLEASE ADD YOURSELF HERE for maven site docu
+        If you like to have an image link, you need to have a gravatar registered with the used email address here. -->
+        <developer>
+            <id>StS</id>
+            <name>Stefan Schubert</name>
+            <email>stefan.schubert@bluewhale.de</email>
+            <roles>
+                <role>Project-Maintainer</role>
+                <role>Product-Owner</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
 
-    <!-- Sharing of TOs with the Backend -->
-    <dependency>
-      <groupId>de.bluewhale</groupId>
-      <artifactId>sabi-boundary</artifactId>
-      <version>${sabi.backend.version}</version>
-    </dependency>
-
-    <!-- Test Context -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-
-  </dependencies>
-
-  <build>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.joinfaces</groupId>
-          <artifactId>joinfaces-maven-plugin</artifactId>
-          <version>${joinfaces.version}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>classpath-scan</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <plugins>
-
-      <plugin>
-        <!--
-        Description from: https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html
-        The Spring Boot Maven Plugin provides Spring Boot support in Maven,
-        letting you package executable jar or war archives and run an application
-        “in-place”. To use it, you must use Maven 3.2 (or later).
-        -->
+    <parent>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.6.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-      <plugin>
-        <!--
-        Description from: https://docs.joinfaces.org/current/reference/
-        JoinFaces provides org.joinfaces:joinfaces-maven-plugin Maven plugin
-        to configure a classpath scan at build-time in order to reduce the
-        startup time of applications which use an embedded servlet container.
-        -->
-        <groupId>org.joinfaces</groupId>
-        <artifactId>joinfaces-maven-plugin</artifactId>
-      </plugin>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <joinfaces.version>4.0.6</joinfaces.version>
+        <sabi.backend.version>1.0-SNAPSHOT</sabi.backend.version>
+    </properties>
 
-    </plugins>
-  </build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.joinfaces</groupId>
+                <artifactId>joinfaces-dependencies</artifactId>
+                <version>${joinfaces.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>primefaces-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+        </dependency>
+
+        <!-- Required to be enable of page redirects, as we no longer have the web.xml
+             see https://codenotfound.com/jsf-primefaces-welcome-page-redirect-example.html
+             but and because of Spring5 we need the WebMvcConfigurer so we add the following dep:
+         -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+
+        <!-- For spring-security in combination with JWT -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+
+        <!-- Sharing of TOs with the Backend -->
+        <dependency>
+            <groupId>de.bluewhale</groupId>
+            <artifactId>sabi-boundary</artifactId>
+            <version>${sabi.backend.version}</version>
+        </dependency>
+
+        <!-- Test Context -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.joinfaces</groupId>
+                    <artifactId>joinfaces-maven-plugin</artifactId>
+                    <version>${joinfaces.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>classpath-scan</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <plugin>
+                <!--
+                Description from: https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html
+                The Spring Boot Maven Plugin provides Spring Boot support in Maven,
+                letting you package executable jar or war archives and run an application
+                “in-place”. To use it, you must use Maven 3.2 (or later).
+                -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <!--
+                Description from: https://docs.joinfaces.org/current/reference/
+                JoinFaces provides org.joinfaces:joinfaces-maven-plugin Maven plugin
+                to configure a classpath scan at build-time in order to reduce the
+                startup time of applications which use an embedded servlet container.
+                -->
+                <groupId>org.joinfaces</groupId>
+                <artifactId>joinfaces-maven-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

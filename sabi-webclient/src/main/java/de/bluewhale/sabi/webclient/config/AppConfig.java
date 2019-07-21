@@ -6,7 +6,6 @@
 package de.bluewhale.sabi.webclient.config;
 
 import de.bluewhale.sabi.webclient.security.SabiDoorKeeper;
-import de.bluewhale.sabi.webclient.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,12 +30,6 @@ public class AppConfig {
      */
     @Autowired
     Environment env;
-
-    @Bean
-    public TokenAuthenticationService encryptionService() {
-        // @Value for constructor params is to late, so these needed to be handled here.
-        return new TokenAuthenticationService(env.getProperty("accessToken.SECRET"), env.getProperty("accessToken.TTL"));
-    }
 
     // Required, so that Spring @Value know how to interpret ${}
     @Bean

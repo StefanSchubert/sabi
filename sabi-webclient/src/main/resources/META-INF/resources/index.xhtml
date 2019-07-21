@@ -15,51 +15,25 @@
 </h:head>
 
 <h:body>
+
     <!--    <h:outputStylesheet library="css" name="sabistyle.css"  />-->
 
-    <h:form id="login-form">
+    <p:panel header="Welcome to SABI">
 
-        <p:panel header="Welcome to SABI">
-            <h:panelGrid columns="2" cellpadding="4">
+        <p:graphicImage height="40%" width="40%"
+                        library="images" name="RiffStefan2.png"/>
 
-                <p:graphicImage height="50%" width="50%"
-                                library="images" name="RiffStefan2.png"/>
+        <p:outputPanel style="color: mediumaquamarine">
+            Ein paar Erklärungen über das Projekt...
 
-                <p:column>
+            Dann zwei Buttons, um weiter zu kommen.
 
-                    <h:panelGrid columns="2" cellpadding="4">
-                        <h:outputText value="First Name: "/>
-                        <p:inputText id="first-name" value="#{loginModel.firstName}"/>
+            LOGIN
 
-                        <h:outputText value="Surame: "/>
-                        <p:inputText id="surname" value="#{loginModel.lastName}"/>
+            REGISTER
+        </p:outputPanel>
 
-                        <p:commandButton id="submit"
-                                         value="Submit"
-                                         update="greeting-panel"
-                                         oncomplete="PF('greetingDialog').show()"/>
-                        <h:outputText value="#{applicationInfo.version}"/>
-
-                        <h:outputText value="New here: "/>
-                        <p:link href="#" value="Registration Form"/>
-
-                        <h:outputText value="Password forgotten: "/>
-                        <p:link href="#" value="Reset PW Form"/>
-                    </h:panelGrid>
-
-                </p:column>
-
-            </h:panelGrid>
-        </p:panel>
-
-    </h:form>
-
-    <p:dialog header="Greeting" widgetVar="greetingDialog"
-              modal="true" resizable="false">
-        <h:panelGrid id="greeting-panel" columns="1" cellpadding="4">
-            <h:outputText value="#{loginModel.showGreeting()}"/>
-        </h:panelGrid>
-    </p:dialog>
+    </p:panel>
 
 </h:body>
 </html>

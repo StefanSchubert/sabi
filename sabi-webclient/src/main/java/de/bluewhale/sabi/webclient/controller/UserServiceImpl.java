@@ -9,32 +9,31 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.*;
 
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 
 /**
- * TODO STS: Add Description here...
+ * Responsible to handle auth and profile operations that are directly related to the user.
  *
  * @author Stefan Schubert
  */
 @Named
 public class UserServiceImpl implements UserService {
     @Override
-    public @NotNull ResultTo<UserTo> registerNewUser(@NotNull NewRegistrationTO newUser) {
-        return null;
+    public ResultTo<UserTo> registerNewUser(NewRegistrationTO newUser) {
+        throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.UserTo> registerNewUser([newUser])");
     }
 
     @Override
-    public @NotNull ResultTo<String> signIn(@NotNull String pEmail, @NotNull String pClearTextPassword) {
-        return null;
+    public ResultTo<String> signIn(String pEmail, String pClearTextPassword) {
+        throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<java.lang.String> signIn([pEmail, pClearTextPassword])");
     }
 
     @Override
-    public void requestPasswordReset(@NotNull RequestNewPasswordTo requestData) throws BusinessException {
-
+    public void requestPasswordReset(RequestNewPasswordTo requestData) throws BusinessException {
+        throw new UnsupportedOperationException("void requestPasswordReset([requestData])");
     }
 
     @Override
-    public void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException {
-
+    public void resetPassword(ResetPasswordTo requestData) throws BusinessException {
+        throw new UnsupportedOperationException("void resetPassword([requestData])");
     }
 }

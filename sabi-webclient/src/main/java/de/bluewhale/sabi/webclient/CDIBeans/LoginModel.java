@@ -5,6 +5,8 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
+import de.bluewhale.sabi.model.UserTo;
+
 import javax.inject.Named;
 
 /**
@@ -14,28 +16,8 @@ import javax.inject.Named;
  * @author Stefan Schubert
  */
 @Named
-public class LoginModel {
+public class LoginModel extends UserTo {
 
-    private String firstName = "John";
-    private String lastName = "Doe";
+    // Additions required?
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String showGreeting() {
-        return "Hello " + firstName + " " + lastName + "!";
-    }
 }
