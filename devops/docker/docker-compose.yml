@@ -1,4 +1,6 @@
 version: '3.7'
+# Before running docker compose make sure that you have build the captcha and sabi project, otherwise
+# the container won't have access to the current jars.
 services:
   captcha:
     # available by http://localhost:8081/captcha/swagger-ui.html
@@ -6,5 +8,40 @@ services:
     build: ./captcha
     ports:
       - "8081:8081"
-#    depends_on:
-#      - noone
+  sabi-backend:
+    # available by http://localhost:8080/sabi/swagger-ui.html
+    container_name: sabi-as
+    build: ./sabi-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  flyway:
+    image: boxfuse/flyway:6
+    command: -url=jdbc:mariadb://db:3306/sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
+    volumes:
+      - ../../sabi-database/src/main/resources:/flyway/sql
+    depends_on:
+      - db
+  db:
+    image: mariadb:10.2
+    environment:
+      - MYSQL_ROOT_PASSWORD=SuperDooper
+      - MYSQL_DATABASE=sabi
+      - MYSQL_USER=sabiapp
+      - MYSQL_PASSWORD=sabi123
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+  fakeSMTP:
+    image: gessnerfl/fake-smtp-server:1.2.0
+    environment:
+      - fakesmtp.authentication.username=sabi@bluewhale.de
+      - fakesmtp.authentication.password=YouWillNeverKnow
+    ports:
+      - "2525:5025"
+      - "5080:5080"
+
+# TODO: application.propertie files contains "localhost" this does not matche the hosts,
+# db, fakeSMTP etc.. so the application.properties need to be externalized as in production
+# through the assets.

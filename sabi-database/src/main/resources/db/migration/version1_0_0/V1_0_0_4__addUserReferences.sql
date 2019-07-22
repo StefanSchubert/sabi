@@ -31,9 +31,8 @@ update treatment set user_id = (select user_id from aquarium where treatment.aqu
 
 
 -- enforce integration
---
 -- tbd. set null or introducing a dummy user?
---
+
 alter table fish
   add FOREIGN KEY (user_id) REFERENCES users (id)
   ON DELETE SET NULL;
