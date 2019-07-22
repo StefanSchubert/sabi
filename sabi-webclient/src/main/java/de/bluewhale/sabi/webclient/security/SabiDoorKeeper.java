@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -62,8 +63,8 @@ public class SabiDoorKeeper implements AuthenticationProvider {
 
             return confirmedAuthentication;
         } else {
-            return unconfirmedAuthentication;
-            // throw new BadCredentialsException(resultTo.getMessage().toString());
+            //return unconfirmedAuthentication;
+            throw new BadCredentialsException(resultTo.getMessage().toString());
         }
     }
 

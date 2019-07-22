@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         // login - using this the browser redirect to this page if login is required and you are not logged in.
         http.formLogin().loginPage("/login.xhtml").permitAll()
-                .failureUrl("/login.xhtml?error=true");
+                .failureUrl("/login.xhtml?error=true").successForwardUrl("/sec/userportal.xhtml");
         // logout - back to login, you may specify a logout confirmation page with delayed redirect.
         http.logout().logoutSuccessUrl("/login.xhtml");
         // not needed as JSF 2.2 is implicitly protected against CSRF
