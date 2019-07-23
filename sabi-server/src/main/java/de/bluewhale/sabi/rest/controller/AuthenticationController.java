@@ -1,13 +1,18 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.rest.controller;
 
+import de.bluewhale.sabi.exception.AuthExceptionCodes;
+import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
-import de.bluewhale.sabi.services.*;
+import de.bluewhale.sabi.services.CaptchaAdapter;
+import de.bluewhale.sabi.services.NotificationService;
+import de.bluewhale.sabi.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;

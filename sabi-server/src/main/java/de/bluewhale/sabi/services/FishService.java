@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 
 /**
- * Provides all required services for use cases around the {@link de.bluewhale.sabi.persistence.model.FishEntity}
+ * Provides all required controller for use cases around the {@link de.bluewhale.sabi.persistence.model.FishEntity}
  */
 public interface FishService {
 

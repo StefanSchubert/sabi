@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services.rest;
@@ -7,6 +8,7 @@ package de.bluewhale.sabi.services.rest;
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.UserEntity;
@@ -172,7 +174,7 @@ public class UserAuthController_REST_API_Test {
 
     }
 
-    // FIXME STS (30.12.17): Needs to be investigated. currently results in an HttpRetryException, instead of retrning a
+    // FIXME STS (30.12.17): Needs to be investigated. currently results in an HttpRetryException, instead of returning a
     // proper status-code. Needs to be adopted in such way, that the user get's a message about the incomplete
     // registration process instead.
     @Test // REST-API
@@ -200,7 +202,7 @@ public class UserAuthController_REST_API_Test {
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/api/auth/login", entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(Endpoint.LOGIN.getPath(), entity, String.class);
 
         // Then we expect a 401
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
@@ -231,7 +233,7 @@ public class UserAuthController_REST_API_Test {
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/api/auth/login", entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(Endpoint.LOGIN.getPath(), entity, String.class);
 
         // Then we expect a 401
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));

@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
+import de.bluewhale.sabi.exception.AuthExceptionCodes;
+import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.model.ResultTo;

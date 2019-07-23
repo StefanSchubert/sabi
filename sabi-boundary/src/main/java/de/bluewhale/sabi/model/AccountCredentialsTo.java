@@ -1,17 +1,20 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert
+ * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * Represents the User credentials as provided by the login.
  *
  * @author Stefan Schubert
  */
-public class AccountCredentialsTo {
+public class AccountCredentialsTo implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
     private String username;
