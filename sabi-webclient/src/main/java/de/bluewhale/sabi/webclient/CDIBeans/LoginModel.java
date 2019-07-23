@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.AccountCredentialsTo;
 
 import javax.inject.Named;
 
@@ -16,8 +16,9 @@ import javax.inject.Named;
  * @author Stefan Schubert
  */
 @Named
-public class LoginModel extends UserTo {
+@Deprecated
+public class LoginModel extends AccountCredentialsTo {
 
-    // Additions required?
+    // Additions required? DO WE NEED THIS CLASS?
 
 }

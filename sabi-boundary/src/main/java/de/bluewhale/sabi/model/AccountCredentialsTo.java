@@ -7,12 +7,14 @@ package de.bluewhale.sabi.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * Represents the User credentials as provided by the login.
  *
  * @author Stefan Schubert
  */
-public class AccountCredentialsTo {
+public class AccountCredentialsTo implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
     private String username;

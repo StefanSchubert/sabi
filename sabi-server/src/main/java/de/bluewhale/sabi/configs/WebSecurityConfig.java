@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.configs;
 
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.security.JWTAuthorizationFilter;
 import de.bluewhale.sabi.security.JWTLoginFilter;
 import de.bluewhale.sabi.security.SabiDoorKeeper;
@@ -53,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/security", "/swagger-ui.html", "/webjars/**",
                         "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security").permitAll()
                 // Registration and Login are accessible without JWT based authentication
-                .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                .antMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/req_pwd_reset").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
@@ -64,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             // JWT based authentication by POST of {"username":"<name>","password":"<password>"} which sets the
             // token header upon authentication
-            .addFilterBefore(new JWTLoginFilter("/api/auth/login", authenticationManager()),
+            .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), authenticationManager()),
                         UsernamePasswordAuthenticationFilter.class)
             // And filter other requests to check the presence of a valid JWT in header
            .addFilter(new JWTAuthorizationFilter(authenticationManager()));

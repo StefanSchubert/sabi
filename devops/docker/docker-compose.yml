@@ -14,6 +14,7 @@ services:
     build: ./sabi-backend
     ports:
       - "8080:8080"
+      - "8880:8880"
     depends_on:
       - db
   flyway:
@@ -36,10 +37,12 @@ services:
   fakeSMTP:
     image: gessnerfl/fake-smtp-server:1.2.0
     environment:
+      - server.port=5080
+      - fakesmtp.port=2525
       - fakesmtp.authentication.username=sabi@bluewhale.de
       - fakesmtp.authentication.password=YouWillNeverKnow
     ports:
-      - "2525:5025"
+      - "5025:2525"
       - "5080:5080"
 
 # TODO: application.propertie files contains "localhost" this does not matche the hosts,

@@ -9,9 +9,12 @@ COPY assets/ /
 RUN chmod 600 /opt/config/application.properties
 
 # http port
-EXPOSE 8181
+EXPOSE 8080
+# JVM debug port
+EXPOSE 8880
 
 WORKDIR /opt
 
-# Sabi starten
-ENTRYPOINT ["/bin/java", "-jar", "/opt/sabi-service-1.0-SNAPSHOT.jar"]
+# Start with debugging support
+ENTRYPOINT ["/bin/java", "-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,address=8880,suspend=n", "-jar", "/opt/sabi-service-1.0-SNAPSHOT.jar"]
+
