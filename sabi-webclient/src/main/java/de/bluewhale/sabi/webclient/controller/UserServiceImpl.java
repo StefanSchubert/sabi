@@ -8,10 +8,12 @@ package de.bluewhale.sabi.webclient.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.api.HttpHeader;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ObjectMapper objectMapper;  // json mapper
 
+    // FIXME: 2019-07-24 JSF2.3 way would be to work with a SessionMap, refactor this
+    @Autowired
+    private UserSession userSession;
+
     private RestTemplate restTemplate = new RestTemplate();
+
 
     @Override
     public ResultTo<UserTo> registerNewUser(NewRegistrationTO newUser) {
@@ -52,8 +59,8 @@ public class UserServiceImpl implements UserService {
         loginData.setPassword(pClearTextPassword);
         loginData.setUsername(pEmail);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
         String requestJson = null;
         try {
@@ -63,11 +70,16 @@ public class UserServiceImpl implements UserService {
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
         }
 
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+        HttpEntity<?> entity = new HttpEntity<>( requestJson, requestHeaders ); // for request
 
         ResponseEntity<String> responseEntity = null;
+        HttpHeaders responseHeaders = null;
         try {
-            responseEntity = restTemplate.postForEntity(sabiBackendUrl + Endpoint.LOGIN, entity, String.class);
+
+            responseEntity = restTemplate.exchange(sabiBackendUrl + Endpoint.LOGIN, HttpMethod.POST, entity, String.class);
+            String result= responseEntity.getBody();
+            responseHeaders = responseEntity.getHeaders();
+
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
                 return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.UNKNOWN_USERNAME));
@@ -77,6 +89,9 @@ public class UserServiceImpl implements UserService {
         }
 
         if (responseEntity.getStatusCode().equals(HttpStatus.ACCEPTED)) {
+            // We need to extract and remember the header for subsequent REST request
+            String jwtSabiBackendToken = responseHeaders.getFirst(HttpHeader.AUTH_TOKEN);
+            userSession.setSabiBackendToken(jwtSabiBackendToken);
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED));
         } else {
             // catchall - won't happen, as the 401 will we thrown as exception catched above.

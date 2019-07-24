@@ -27,6 +27,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
+import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -88,7 +90,7 @@ public class TankControllerTest {
         // when this authorized user requests his aquarium list
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -147,7 +149,7 @@ public class TankControllerTest {
         // when this authorized user requests his aquarium list
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -193,7 +195,7 @@ public class TankControllerTest {
         // when this authorized user requests to create a aquarium
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         String requestJson = objectMapper.writeValueAsString(aquariumTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -235,7 +237,7 @@ public class TankControllerTest {
         // when this authorized user requests to create a aquarium
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         String requestJson = objectMapper.writeValueAsString(aquariumTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -281,7 +283,7 @@ public class TankControllerTest {
         // when this authorized user requests to update an aquarium
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         updatableAquariumTo.setDescription(updateTestString);
         String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);
@@ -310,7 +312,7 @@ public class TankControllerTest {
         // when this authorized user requests his aquarium list
         HttpHeaders headers = new HttpHeaders();
         // headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list", HttpMethod.GET, requestEntity, String.class);

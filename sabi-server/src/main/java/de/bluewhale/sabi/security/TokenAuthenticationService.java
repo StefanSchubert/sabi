@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.security;
 
+import de.bluewhale.sabi.api.HttpHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,8 +25,6 @@ import static java.util.Collections.emptyList;
 public class TokenAuthenticationService {
 // ------------------------------ FIELDS ------------------------------
 
-    static final String TOKEN_PREFIX = "Bearer";
-    static final String HEADER_STRING = "Authorization";
 
     // Will be lazy initialized with @Value("${accessToken.SECRET}") through constructor
     static private String SECRET;
@@ -42,7 +41,7 @@ public class TokenAuthenticationService {
      */
     static void addAuthentication(HttpServletResponse pResponse, String pUserID) {
         String JWT = createAuthorizationTokenFor(pUserID);
-        pResponse.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+        pResponse.addHeader(HttpHeader.AUTH_TOKEN, HttpHeader.TOKEN_PREFIX + JWT);
     }
 
     public static String createAuthorizationTokenFor(String pUserID) {
@@ -60,7 +59,7 @@ public class TokenAuthenticationService {
      * @return null if the request did not contained a valid JWT token.
      */
     static Authentication getAuthentication(HttpServletRequest pRequest) {
-        String token = pRequest.getHeader(HEADER_STRING);
+        String token = pRequest.getHeader(HttpHeader.AUTH_TOKEN);
         if (token != null) {
             // parse the token.
             String user = extractUserFromToken(token);
@@ -79,7 +78,7 @@ public class TokenAuthenticationService {
     public static String extractUserFromToken(String token) {
         String user = Jwts.parser()
                 .setSigningKey(SECRET)
-                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                .parseClaimsJws(token.replace(HttpHeader.TOKEN_PREFIX, ""))
                 .getBody()
                 .getSubject();
         return user;
