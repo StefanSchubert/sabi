@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
+import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 import static de.bluewhale.sabi.util.Mapper.mapMeasurementTo2EntityWithoutAquarium;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -116,7 +118,7 @@ public class MeasurementControllerTest {
         // when this authorized user requests his aquarium list
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -173,7 +175,7 @@ public class MeasurementControllerTest {
         // When this authorized user, requests all measurements for a specific tank
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -211,7 +213,7 @@ public class MeasurementControllerTest {
         // When this authorized user, tries to delete a measurement he does not own.
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
@@ -257,7 +259,7 @@ public class MeasurementControllerTest {
         // When this authorized user, tries to add a measurement
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         String requestJson = objectMapper.writeValueAsString(measurementTo);
         HttpEntity<String> requestEntity = new HttpEntity<String>(requestJson, headers);
@@ -317,7 +319,7 @@ public class MeasurementControllerTest {
         // When this authorized user, tries to update a measurement
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + authToken);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
         String requestJson = objectMapper.writeValueAsString(updatableMeasurementTo);
         HttpEntity<String> requestEntity = new HttpEntity<String>(requestJson, headers);
