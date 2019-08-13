@@ -8,7 +8,9 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+
+<f:loadBundle basename="i18n.messages" var="msg"/>
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -23,7 +25,7 @@
 
     <h:form id="login-form" prependId="false">
 
-        <p:panel header="Welcome to SABI (#{applicationInfo.version})">
+        <p:panel header="#{msg['login.h.header']} (#{applicationInfo.version})">
             <p:panelGrid columns="1" styleClass="ui-fluid center ui-noborder">
 
                 <h2>Please login</h2>
