@@ -8,32 +8,32 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
-
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:loadBundle basename="i18n.messages" var="msg"/>
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
 </h:head>
 
 <h:body>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
+    <p:outputPanel styleClass="splashscreen">
 
-    <!--    <h:outputStylesheet library="css" name="sabistyle.css"  />-->
+        <h1>#{msg['login.h.header']}</h1>
+        <div style="height:380px"/>
+        <p>
+            <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
+        </p>
 
-    <p:panel header="Welcome to SABI">
+        <div>
+            <div align="left">
+                <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
+            </div>
+            <div align="right">
+                <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
+            </div>
+        </div>
 
-        <p:graphicImage height="40%" width="40%"
-                        library="images" name="RiffStefan2.png"/>
-
-        <p:outputPanel style="color: mediumaquamarine">
-            Ein paar Erklärungen über das Projekt...
-
-            Dann zwei Buttons, um weiter zu kommen.
-
-            LOGIN
-
-            REGISTER
-        </p:outputPanel>
-
-    </p:panel>
+    </p:outputPanel>
 
 </h:body>
 </html>
