@@ -21,12 +21,9 @@
         <h1>#{msg['login.h.header']}</h1>
         <div style="height:380px"/>
         <p>
-            <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
+            <h:outputText value="#{msg['logout.t.message']}" style="width: 50px;"/>
+            <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         </p>
-        <h:panelGrid columns="2" cellpadding="20">
-                <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
-                <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
-        </h:panelGrid>
 
 </h:body>
 </html>

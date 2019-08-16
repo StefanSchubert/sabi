@@ -7,8 +7,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 <f:loadBundle basename="i18n.messages" var="msg"/>
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -16,17 +17,11 @@
 </h:head>
 
 <h:outputStylesheet library="css" name="sabistyle.css"/>
-<h:body styleClass="splashscreen">
+<h:body>
 
-        <h1>#{msg['login.h.header']}</h1>
-        <div style="height:380px"/>
-        <p>
-            <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
-        </p>
-        <h:panelGrid columns="2" cellpadding="20">
-                <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
-                <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
-        </h:panelGrid>
+    <div id="header"><ui:include src="/template/header.xhtml"/></div>
+    <div id="content"><ui:insert name="content">Sorry content is missing. Report to site owner.</ui:insert></div>
+    <div id="footer"><ui:include src="/template/footer.xhtml"/></div>
 
 </h:body>
 </html>

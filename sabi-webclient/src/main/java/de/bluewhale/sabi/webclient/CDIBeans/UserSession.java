@@ -21,6 +21,8 @@ public class UserSession implements Serializable {
 
     private String sabiBackendToken;
 
+    private String userName = "";
+
     /**
      * After being successful authenticated against the sabi backend,
      * this token will be submitted via HTTP-Header whenever calling
@@ -39,5 +41,21 @@ public class UserSession implements Serializable {
      */
     public void setSabiBackendToken(String sabiBackendToken) {
         this.sabiBackendToken = sabiBackendToken;
+    }
+
+    /**
+     * To show in the app, which users session we are currently working on.
+     * @return Users Login name
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Set Users Name
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

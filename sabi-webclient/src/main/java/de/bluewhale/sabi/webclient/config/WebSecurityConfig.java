@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/javax.faces.resource/**").permitAll()
                 // Allow Welcome Page
-                .antMatchers(HttpMethod.GET,"/", "/index.xhtml").permitAll()
+                .antMatchers(HttpMethod.GET,"/", "/index.xhtml", "/register.xhtml", "/logout.xhtml").permitAll()
                 // Allow Monitoring Endpoint
                 .antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
 
@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().loginPage("/login.xhtml").permitAll()
                 .failureUrl("/login.xhtml?error=true").successForwardUrl("/sec/userportal.xhtml");
         // logout - back to login, you may specify a logout confirmation page with delayed redirect.
-        http.logout().logoutSuccessUrl("/login.xhtml");
+        http.logout().logoutSuccessUrl("/logout.xhtml");
         // not needed as JSF 2.2 is implicitly protected against CSRF
         http.csrf().disable();
 
