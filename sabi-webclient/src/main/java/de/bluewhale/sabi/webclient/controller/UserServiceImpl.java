@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.annotation.SessionScope;
 
 import javax.inject.Named;
 
@@ -30,6 +31,7 @@ import javax.inject.Named;
  * @author Stefan Schubert
  */
 @Named
+@SessionScope
 public class UserServiceImpl implements UserService {
 
     static Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -51,6 +53,8 @@ public class UserServiceImpl implements UserService {
     public ResultTo<UserTo> registerNewUser(NewRegistrationTO newUser) {
         throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.UserTo> registerNewUser([newUser])");
     }
+
+
 
     @Override
     public ResultTo<String> signIn(String pEmail, String pClearTextPassword) {

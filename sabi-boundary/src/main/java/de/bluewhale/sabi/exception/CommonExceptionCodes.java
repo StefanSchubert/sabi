@@ -13,6 +13,7 @@ package de.bluewhale.sabi.exception;
 public enum CommonExceptionCodes implements ExceptionCode {
 
     INTERNAL_ERROR(1),
+    NETWORK_ERROR(2)
     ;
 
     private int errorCode;

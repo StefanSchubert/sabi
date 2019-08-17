@@ -64,5 +64,4 @@ public interface UserService {
      */
     void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException;
 
-
 }

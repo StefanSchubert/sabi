@@ -13,22 +13,25 @@
 
 <f:loadBundle basename="i18n.messages" var="msg"/>
 
+<f:metadata>
+    <f:viewAction action="#{captchaClient.fetchNewCaptchaChallenge}" />
+</f:metadata>
+
 <h:body>
 
     <ui:composition template="/template/masterLayout.xhtml">
 
         <ui:define name="content">
 
-            <p>
-                <h:outputText value="#{msg['register.t.welcome']}"/>
-            </p>
-
-            <p>
-                #{msg['register.lab.sabi_on_github']}
-                <h:outputLink value="https://github.com/StefanSchubert/sabi">
-                    #{msg['register.lab.homepage']}
-                </h:outputLink>
-            </p>
+            <p:panel id="welcome" header="#{msg['register.h.welcome']}" style="margin-bottom:20px">
+                #{msg['register.t.welcome']}
+                <p>
+                    #{msg['register.lab.sabi_on_github']}
+                    <h:outputLink value="https://github.com/StefanSchubert/sabi">
+                        #{msg['register.lab.homepage']}
+                    </h:outputLink>
+                </p>
+            </p:panel>
 
             <h:form id="register-form">
 
@@ -36,7 +39,11 @@
                     #{msg['register.t.gdpr']}
                 </p:panel>
 
-                Little Captcha to Proof that you are no robot
+                <p:panel id="captcha" header="#{msg['register.h.captcha']}" style="margin-bottom:20px">
+                    <p>#{msg['register.t.captcha']}</p>
+                    <i>#{captchaClient.challenge.question}</i>
+
+                </p:panel>
 
                 Dataform
 

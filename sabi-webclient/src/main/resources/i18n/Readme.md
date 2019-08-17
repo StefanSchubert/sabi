@@ -1,4 +1,4 @@
-# Please follow the naming convention in message files.
+# Please follow the naming convention in sabi message files.
 
     <page>.<element>.<context>
     Example: login.h.welcomeheader
