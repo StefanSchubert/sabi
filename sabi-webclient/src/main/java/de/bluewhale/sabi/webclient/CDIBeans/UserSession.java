@@ -125,7 +125,7 @@ public class UserSession implements Serializable {
    @PostConstruct
    private void checkForSystemMessage(){
         // TODO STS (2019-08-18): Implement Backendfunction to retrieve some motd.
-       MessageUtil.info("DEV Environment: WIP (Implement MOTD Function :-))");
+       MessageUtil.info("common", "DEV Environment: WIP (Implement MOTD Function :-))");
    }
 
     /**

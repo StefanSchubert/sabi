@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.model.ChallengeTo;
+import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,8 @@ public class CaptchaClient implements Serializable {
 
         } catch (RestClientException e) {
             logger.error("Coudn't reach captcha backend.", e);
-            // TODO STS (2019-08-17): Fill jsf error context, if backend error occured.
+            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.lab",userSession.getLocale());
+            MessageUtil.fatal("captcha", message);
         }
     }
 }

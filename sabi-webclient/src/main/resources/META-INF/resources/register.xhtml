@@ -48,7 +48,9 @@
                                 <f:selectItems value="#{captchaClient.challenge.answers}"/>
                         </p:selectOneRadio>
                     </p>
-                    <h:message for="captcha" style="color:red" />
+                    <p:messages id="messages" for="captcha" showDetail="true" closable="true">
+                        <p:autoUpdate />
+                    </p:messages>
                 </p:panel>
 
                 Dataform

@@ -8,7 +8,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <i>Logged in as: #{SPRING_SECURITY_LAST_USERNAME}</i> | Link to User Profile<br/>
-    <p:messages id="messages" showDetail="true" closable="true">
+    <p:messages id="messages" for="common" showDetail="true" closable="true">
         <p:autoUpdate />
     </p:messages>
     <p:separator/>
