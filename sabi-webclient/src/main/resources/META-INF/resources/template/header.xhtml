@@ -6,7 +6,11 @@
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
->
-    <i>Logged in as: #{SPRING_SECURITY_LAST_USERNAME}</i> | Link to User Profile
-    <hr/>
+        xmlns:p="http://primefaces.org/ui">
+    <i>Logged in as: #{SPRING_SECURITY_LAST_USERNAME}</i> | Link to User Profile<br/>
+    <p:messages id="messages" showDetail="true" closable="true">
+        <p:autoUpdate />
+    </p:messages>
+    <p:separator/>
+
 </ui:composition>

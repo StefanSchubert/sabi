@@ -5,8 +5,9 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <br/>
-    <hr/>
-    <i>Sabi #{applicationInfo.version}</i> | Impressum | Contact
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:separator/>
+    <i>Sabi #{applicationInfo.version}</i> | GDPR | Impressum | Contact
+<!--    todo GDPR, Impressum as popup infos / Contact as well but openly un github as issue -->
 </ui:composition>

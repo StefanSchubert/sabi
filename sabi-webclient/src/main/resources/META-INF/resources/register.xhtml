@@ -28,7 +28,7 @@
                 #{msg['register.welcome.t']}
                 <p>
                     #{msg['register.sabi_on_github.lab']}
-                    <h:outputLink value="https://github.com/StefanSchubert/sabi">
+                    <h:outputLink value="https://github.com/StefanSchubert/sabi" target="_blank">
                         #{msg['register.homepage.lab']}
                     </h:outputLink>
                 </p>
@@ -48,6 +48,7 @@
                                 <f:selectItems value="#{captchaClient.challenge.answers}"/>
                         </p:selectOneRadio>
                     </p>
+                    <h:message for="captcha" style="color:red" />
                 </p:panel>
 
                 Dataform

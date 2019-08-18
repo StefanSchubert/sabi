@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.CDIBeans;
 
 import de.bluewhale.sabi.model.SupportedLocales;
+import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.annotation.PostConstruct;
@@ -110,13 +111,22 @@ public class UserSession implements Serializable {
      * as long as it is supported by sabi, if not we choose english as fallback.
      */
     @PostConstruct
-    public void init() {
+    private void init() {
         locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
         Locale supportedLocale;
         supportedLocale = getEnsuredSupportedLocale(locale.getLanguage());
         FacesContext.getCurrentInstance().getViewRoot().setLocale(supportedLocale);
         locale = supportedLocale;
     }
+
+    /**
+     * Checks Backend for some Info message which should be displayed and set it as Faces Message Context.
+     */
+   @PostConstruct
+   private void checkForSystemMessage(){
+        // TODO STS (2019-08-18): Implement Backendfunction to retrieve some motd.
+       MessageUtil.info("DEV Environment: WIP (Implement MOTD Function :-))");
+   }
 
     /**
      * Sabi has only a few languages for which translation exists - this ensures that
