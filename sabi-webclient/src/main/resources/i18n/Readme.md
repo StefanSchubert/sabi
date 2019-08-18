@@ -1,7 +1,7 @@
 # Please follow the naming convention in sabi message files.
 
-    <page>.<element>.<context>
-    Example: login.h.welcomeheader
+    <page>.<context>.<element>
+    Example: login.welcome.h
     
     Hint use "common" as page name when this is shared across pages
     

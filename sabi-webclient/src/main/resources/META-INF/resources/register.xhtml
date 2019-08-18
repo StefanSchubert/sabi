@@ -14,7 +14,7 @@
 <f:loadBundle basename="i18n.messages" var="msg"/>
 
 <f:metadata>
-    <f:viewAction action="#{captchaClient.fetchNewCaptchaChallenge}" />
+    <f:viewAction action="#{captchaClient.fetchNewCaptchaChallenge}"/>
 </f:metadata>
 
 <h:body>
@@ -23,26 +23,30 @@
 
         <ui:define name="content">
 
-            <p:panel id="welcome" header="#{msg['register.h.welcome']}" style="margin-bottom:20px">
-                #{msg['register.t.welcome']}
+            <p:panel id="welcome" header="#{msg['register.welcome.h']}" style="margin-bottom:20px">
+                #{msg['register.welcome.t']}
                 <p>
-                    #{msg['register.lab.sabi_on_github']}
+                    #{msg['register.sabi_on_github.lab']}
                     <h:outputLink value="https://github.com/StefanSchubert/sabi">
-                        #{msg['register.lab.homepage']}
+                        #{msg['register.homepage.lab']}
                     </h:outputLink>
                 </p>
             </p:panel>
 
             <h:form id="register-form">
 
-                <p:panel id="gdpr" header="#{msg['register.h.gdpr']}" style="margin-bottom:20px">
-                    #{msg['register.t.gdpr']}
+                <p:panel id="gdpr" header="#{msg['register.gdpr.h']}" style="margin-bottom:20px">
+                    #{msg['register.gdpr.t']}
                 </p:panel>
 
-                <p:panel id="captcha" header="#{msg['register.h.captcha']}" style="margin-bottom:20px">
-                    <p>#{msg['register.t.captcha']}</p>
+                <p:panel id="captcha" header="#{msg['register.captcha.h']}" style="margin-bottom:20px">
+                    <p>#{msg['register.captcha.t']}</p>
                     <i>#{captchaClient.challenge.question}</i>
-
+                    <p>
+                        <p:selectOneRadio id="userAnswer" value="#{captchaClient.choosenAnswer}" columns="4" layout="responsive">
+                                <f:selectItems value="#{captchaClient.challenge.answers}"/>
+                        </p:selectOneRadio>
+                    </p>
                 </p:panel>
 
                 Dataform
@@ -50,8 +54,8 @@
                 Error Messages
 
                 <h:panelGrid columns="2" cellpadding="20">
-                    <p:button outcome="register" value="#{msg['register.but.register']}"/>
-                    <p:button outcome="index" value="#{msg['register.but.cancel']}"/>
+                    <p:button outcome="register" value="#{msg['register.register.but']}"/>
+                    <p:button outcome="index" value="#{msg['register.cancel.but']}"/>
                 </h:panelGrid>
             </h:form>
 
