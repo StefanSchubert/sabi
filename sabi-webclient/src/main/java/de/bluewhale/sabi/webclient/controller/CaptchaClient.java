@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.model.ChallengeTo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,9 @@ public class CaptchaClient implements Serializable {
     @Autowired
     private ObjectMapper objectMapper;  // json mapper
 
+    @Autowired
+    private UserSession userSession;
+
     private ChallengeTo challenge;
 
     private String choosenAnswer = "N/A";
@@ -65,11 +69,8 @@ public class CaptchaClient implements Serializable {
      * Used to retrieve a new Challenge from the used Captcha Service
      */
     public void fetchNewCaptchaChallenge() {
-        // todo fetching captcha challenge from UserContext
-        // make sure to check it against Suppoeted Languages and use englisch as fallback
-        String lang = "de";
 
-        String checkURI = captchaBackendUrl + "/challenge/" + lang;
+        String checkURI = captchaBackendUrl + "/challenge/" + userSession.getLanguage();
 
         try {
             challenge = restTemplate.getForObject(checkURI, ChallengeTo.class);

@@ -9,7 +9,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="#{userSession.language}">
 
 <f:loadBundle basename="i18n.messages" var="msg"/>
 
@@ -41,7 +42,7 @@
 
                 <p:panel id="captcha" header="#{msg['register.captcha.h']}" style="margin-bottom:20px">
                     <p>#{msg['register.captcha.t']}</p>
-                    <i>#{captchaClient.challenge.question}</i>
+                    <i style="color: forestgreen">#{captchaClient.challenge.question}</i>
                     <p>
                         <p:selectOneRadio id="userAnswer" value="#{captchaClient.choosenAnswer}" columns="4" layout="responsive">
                                 <f:selectItems value="#{captchaClient.challenge.answers}"/>
@@ -55,7 +56,7 @@
 
                 <h:panelGrid columns="2" cellpadding="20">
                     <p:button outcome="register" value="#{msg['register.register.but']}"/>
-                    <p:button outcome="index" value="#{msg['register.cancel.but']}"/>
+                    <p:button outcome="logout"  value="#{msg['register.cancel.but']}"/>
                 </h:panelGrid>
             </h:form>
 
