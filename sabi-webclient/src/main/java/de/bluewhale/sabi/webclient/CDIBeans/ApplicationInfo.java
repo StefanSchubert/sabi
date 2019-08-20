@@ -5,9 +5,13 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
+import de.bluewhale.sabi.webclient.utils.MessageUtil;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Container for application specific static information.
@@ -23,5 +27,11 @@ public class ApplicationInfo implements Serializable {
 
     public String getVersion() {
         return buildVersion;
+    }
+
+    public void fetchCookieAnnouncement(){
+        final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
+        String msg = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
+        MessageUtil.info("common",msg);
     }
 }

@@ -9,7 +9,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
 <f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:viewAction action="#{applicationInfo.fetchCookieAnnouncement}"/>
+</f:metadata>
+
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -27,6 +32,9 @@
                 <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
                 <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
         </h:panelGrid>
-
+    <br/>
+    <p:messages id="messages" for="common" showDetail="true" closable="true">
+        <p:autoUpdate />
+    </p:messages>
 </h:body>
 </html>

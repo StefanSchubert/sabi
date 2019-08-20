@@ -12,8 +12,10 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       lang="#{userSession.language}">
 
-<f:loadBundle basename="i18n.messages" var="msg"/>
-<f:view locale="#{userSession.locale}"/>
+<f:metadata>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:view locale="#{userSession.locale}"/>
+</f:metadata>
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>

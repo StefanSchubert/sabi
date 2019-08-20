@@ -6,7 +6,7 @@
     Hint use "common" as page name when this is shared across pages
     
     Element-Legend
-    but = button
-    lab = label
+    b = button
+    l = label
     h = headline
     t = text

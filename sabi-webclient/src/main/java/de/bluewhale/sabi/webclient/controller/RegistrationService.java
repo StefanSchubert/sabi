@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.model.ChallengeTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
@@ -30,10 +31,10 @@ import java.util.Map;
  */
 @Named
 @ViewScoped
-public class CaptchaClient implements Serializable {
+public class RegistrationService implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    static Logger logger = LoggerFactory.getLogger(CaptchaClient.class);
+    static Logger logger = LoggerFactory.getLogger(RegistrationService.class);
 
     @Value("${captcha.backend.url}")
     private String captchaBackendUrl;
@@ -46,7 +47,8 @@ public class CaptchaClient implements Serializable {
 
     private ChallengeTo challenge;
 
-    private String choosenAnswer = "N/A";
+    // Standard to verify typos in password
+    private String verificationPassword;
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -56,15 +58,18 @@ public class CaptchaClient implements Serializable {
         return this.challenge;
     }
 
-    public String getChoosenAnswer() {
-        return this.choosenAnswer;
-    }
-
-    public void setChoosenAnswer(final String choosenAnswer) {
-        this.choosenAnswer = choosenAnswer;
-    }
-
 // -------------------------- OTHER METHODS --------------------------
+
+    private NewRegistrationTO model = new NewRegistrationTO();
+
+
+    public NewRegistrationTO getModel() {
+        return model;
+    }
+
+    public void setModel(NewRegistrationTO model) {
+        this.model = model;
+    }
 
     /**
      * Used to retrieve a new Challenge from the used Captcha Service
@@ -84,8 +89,16 @@ public class CaptchaClient implements Serializable {
 
         } catch (RestClientException e) {
             logger.error("Coudn't reach captcha backend.", e);
-            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.lab",userSession.getLocale());
+            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l",userSession.getLocale());
             MessageUtil.fatal("captcha", message);
         }
+    }
+
+    public String getVerificationPassword() {
+        return verificationPassword;
+    }
+
+    public void setVerificationPassword(String verificationPassword) {
+        this.verificationPassword = verificationPassword;
     }
 }

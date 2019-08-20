@@ -107,7 +107,7 @@ public class UserSession implements Serializable {
     }
 
     /**
-     * Gets the current locale from users browser and set it as default -
+     * Gets the current locale from users browser and store it to the session.
      * as long as it is supported by sabi, if not we choose english as fallback.
      */
     @PostConstruct
