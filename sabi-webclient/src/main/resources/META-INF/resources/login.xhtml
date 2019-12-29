@@ -22,6 +22,9 @@
 
     We specify prependId="false" on the form as otherwise the JSF framework will prefix the parameters with the ID of the form.
     but we require username and password inputfields unchanges, as spring-security will look them up.
+
+    You may wonder that there is no specific target of the command button defined. The form is automatically
+    wired through Springs WebSecurity-Mechanisms. Have a look into the class WebSecurityConfig.
     -->
 
     <h:form id="login-form" prependId="false">

@@ -11,6 +11,7 @@ package de.bluewhale.sabi.api;
  * @author Stefan Schubert
  */
 public enum Endpoint {
+    // requires complete path after root context, as this one is also used by HttpSecurityConfig
     LOGIN("/api/auth/login"),
     GALLONS("gal");
 

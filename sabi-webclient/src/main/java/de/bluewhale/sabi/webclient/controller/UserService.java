@@ -12,12 +12,13 @@ import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 
 /**
  * Provides all required controller for user management use cases.
  */
-public interface UserService {
+public interface UserService extends Serializable {
 
     /**
      * Creates a new User. The returned object contains a result message along with the created

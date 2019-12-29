@@ -47,9 +47,6 @@ public class RegistrationService implements Serializable {
 
     private ChallengeTo challenge;
 
-    // Standard to verify typos in password
-    private String verificationPassword;
-
     private RestTemplate restTemplate = new RestTemplate();
 
 // --------------------- GETTER / SETTER METHODS ---------------------
@@ -94,11 +91,4 @@ public class RegistrationService implements Serializable {
         }
     }
 
-    public String getVerificationPassword() {
-        return verificationPassword;
-    }
-
-    public void setVerificationPassword(String verificationPassword) {
-        this.verificationPassword = verificationPassword;
-    }
 }

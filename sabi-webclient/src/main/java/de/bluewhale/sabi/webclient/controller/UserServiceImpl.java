@@ -14,16 +14,19 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
+import de.bluewhale.sabi.webclient.utils.I18nUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.inject.Named;
+import java.util.Locale;
 
 /**
  * Responsible to handle auth and profile operations that are directly related to the user.
@@ -42,19 +45,24 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ObjectMapper objectMapper;  // json mapper
 
-    // FIXME: 2019-07-24 JSF2.3 way would be to work with a SessionMap, refactor this
     @Autowired
     private UserSession userSession;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private I18nUtil i18nUtil;
 
+    /* Does not work this way currently with joinfaces
+       Tried to use ist, to get browsers locale, but reefactored the code to use springs context instead via LocaleContextHolder()
+    @Inject
+    private FacesContext facesContext;
+    */
+
+    private RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public ResultTo<UserTo> registerNewUser(NewRegistrationTO newUser) {
         throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.UserTo> registerNewUser([newUser])");
     }
-
-
 
     @Override
     public ResultTo<String> signIn(String pEmail, String pClearTextPassword) {
@@ -96,6 +104,17 @@ public class UserServiceImpl implements UserService {
             // We need to extract and remember the header for subsequent REST request
             String jwtSabiBackendToken = responseHeaders.getFirst(HttpHeader.AUTH_TOKEN);
             userSession.setSabiBackendToken(jwtSabiBackendToken);
+
+            // TODO STS (29.12.19): Should be done only, if he or she hasn't set it explicitly.
+            // In addition we determine users locale here.
+            Locale browsersLocale = LocaleContextHolder.getLocale();
+            Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
+            LocaleContextHolder.setLocale(supportedLocale);
+            userSession.setLocale(supportedLocale);
+
+            // TODO STS (29.12.19): Refactor this to contain the chosen username instead of the email.
+            userSession.setUserName(loginData.getUsername());
+
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED));
         } else {
             // catchall - won't happen, as the 401 will we thrown as exception catched above.

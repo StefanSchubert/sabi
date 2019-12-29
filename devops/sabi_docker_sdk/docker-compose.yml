@@ -6,12 +6,16 @@ services:
     # available by http://localhost:8081/captcha/swagger-ui.html
     container_name: captcha-as
     build: ./captcha
+    networks:
+      - sabinet
     ports:
       - "8081:8081"
   sabi-backend:
     # available by http://localhost:8080/sabi/swagger-ui.html
     container_name: sabi-as
     build: ./sabi-backend
+    networks:
+      - sabinet
     ports:
       - "8080:8080"
       - "8880:8880"
@@ -22,6 +26,8 @@ services:
     command: -url=jdbc:mariadb://db:3306/sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
     volumes:
       - ../../sabi-database/src/main/resources:/flyway/sql
+    networks:
+      - sabinet
     depends_on:
       - db
   db:
@@ -32,6 +38,8 @@ services:
       - MYSQL_USER=sabiapp
       - MYSQL_PASSWORD=sabi123
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - sabinet
     ports:
       - "3306:3306"
   fakeSMTP:
@@ -41,10 +49,15 @@ services:
       - fakesmtp.port=2525
       - fakesmtp.authentication.username=sabi@bluewhale.de
       - fakesmtp.authentication.password=YouWillNeverKnow
+    networks:
+      - sabinet
     ports:
       - "5025:2525"
       - "5080:5080"
+networks:
+  sabinet:
+    driver: bridge
 
-# TODO: application.propertie files contains "localhost" this does not matche the hosts,
+# TODO: application.properties files contains "localhost" this does not matche the hosts,
 # db, fakeSMTP etc.. so the application.properties need to be externalized as in production
 # through the assets.

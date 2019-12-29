@@ -5,8 +5,9 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
-import de.bluewhale.sabi.model.SupportedLocales;
-import de.bluewhale.sabi.webclient.utils.MessageUtil;
+import de.bluewhale.sabi.webclient.utils.I18nUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.annotation.PostConstruct;
@@ -25,11 +26,14 @@ import java.util.Locale;
 public class UserSession implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    private String sabiBackendToken;
+    private String sabiBackendToken = "N/A";
 
     private String userName = "";
 
     private Locale locale;
+
+    @Autowired
+    private I18nUtil i18nUtil;
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
@@ -40,6 +44,10 @@ public class UserSession implements Serializable {
      */
     public Locale getLocale() {
         return locale;
+    }
+
+    public void setLocale(final Locale locale) {
+        this.locale = locale;
     }
 
     /**
@@ -85,11 +93,29 @@ public class UserSession implements Serializable {
 // -------------------------- OTHER METHODS --------------------------
 
     /**
+     * Checks Backend for some Info message which should be displayed and set it as Faces Message Context.
+     */
+   @PostConstruct
+   private void checkForSystemMessage(){
+       // FIXME STS (29.12.19): leads to runtime errors - @Autowire Injection fails when having this.
+       // BTW it violates SRP, too. It's not the task of a specific user session to check this.
+       // TODO STS (2019-08-18): Implement Backendfunction to retrieve some motd.
+       // MessageUtil.info("common", "DEV Environment: WIP (Implement MOTD Function :-))");
+   }
+
+    /**
      * Choosed Language of the User
      *
      * @return
      */
     public String getLanguage() {
+
+        if (locale == null) {
+            Locale browsersLocale = LocaleContextHolder.getLocale();
+            Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
+            locale = supportedLocale;
+        }
+
         return locale.getLanguage();
     }
 
@@ -101,49 +127,8 @@ public class UserSession implements Serializable {
      */
     public void setLanguage(String language) {
         Locale requestedUserLocale;
-        requestedUserLocale = getEnsuredSupportedLocale(language);
+        requestedUserLocale = i18nUtil.getEnsuredSupportedLocale(language);
         FacesContext.getCurrentInstance().getViewRoot().setLocale(requestedUserLocale);
         locale = requestedUserLocale;
-    }
-
-    /**
-     * Gets the current locale from users browser and store it to the session.
-     * as long as it is supported by sabi, if not we choose english as fallback.
-     */
-    @PostConstruct
-    private void init() {
-        locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-        Locale supportedLocale;
-        supportedLocale = getEnsuredSupportedLocale(locale.getLanguage());
-        FacesContext.getCurrentInstance().getViewRoot().setLocale(supportedLocale);
-        locale = supportedLocale;
-    }
-
-    /**
-     * Checks Backend for some Info message which should be displayed and set it as Faces Message Context.
-     */
-   @PostConstruct
-   private void checkForSystemMessage(){
-        // TODO STS (2019-08-18): Implement Backendfunction to retrieve some motd.
-       MessageUtil.info("common", "DEV Environment: WIP (Implement MOTD Function :-))");
-   }
-
-    /**
-     * Sabi has only a few languages for which translation exists - this ensures that
-     *
-     * @param language
-     * @return belonging requested URL or English as Fallback.
-     */
-    private Locale getEnsuredSupportedLocale(String language) {
-        Locale requestedLocale = new Locale(language);
-        Locale fallBackLocale = Locale.ENGLISH;
-        boolean fallBack = true;
-        for (SupportedLocales sabiLocale : SupportedLocales.values()) {
-            if (sabiLocale.getLocale().getLanguage().equals(requestedLocale.getLanguage())) {
-                fallBack = false;
-                break;
-            }
-        }
-        return (fallBack ? fallBackLocale : requestedLocale);
     }
 }

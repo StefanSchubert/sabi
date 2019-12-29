@@ -69,15 +69,17 @@
                             <p:autoUpdate/>
                         </p:messages>
 
-                        <p:outputLabel for="password" value="#{msg['register.password.l']}"/>
-                        <p:inputText id="password" value="#{registrationService.model.password}"/>
-                        <p:messages id="messages4" for="password" showDetail="true" closable="true">
+                        <p:outputLabel for="pwd1" value="#{msg['register.password.l']}"/>
+                        <p:password id="pwd1" value="#{registrationService.model.password}"
+                                   feedback="true" label="Password 1" required="true"/>
+                        <p:messages id="messages4" for="pwd1" showDetail="true" closable="true">
                             <p:autoUpdate/>
                         </p:messages>
 
-                        <p:outputLabel for="verifiedpassword" value="#{msg['register.verifypassword.l']}"/>
-                        <p:inputText id="verifiedpassword" value="#{registrationService.verificationPassword}"/>
-                        <p:messages id="messages5" for="verifiedpassword" showDetail="true" closable="true">
+                        <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
+                        <p:password id="pwd2" value="#{registrationService.model.password}"
+                                    label="Password 2" required="true"/>
+                        <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
                             <p:autoUpdate/>
                         </p:messages>
 
