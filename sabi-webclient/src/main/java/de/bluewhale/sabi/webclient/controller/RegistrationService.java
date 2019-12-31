@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.annotation.RequestScope;
 
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Stefan Schubert
  */
 @Named
-@ViewScoped
+@RequestScope
 public class RegistrationService implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -89,6 +89,18 @@ public class RegistrationService implements Serializable {
             String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l",userSession.getLocale());
             MessageUtil.fatal("captcha", message);
         }
+    }
+
+    public String doRegister() {
+        String outcome = "register"; // default is to stay on the registration page
+        // check if captcha is valid
+
+        // check if user does not exists already
+
+        // create new user and redirect him to the pre-register page.
+        outcome = "sec/preregistration";
+
+        return outcome;
     }
 
 }

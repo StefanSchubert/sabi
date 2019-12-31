@@ -86,7 +86,8 @@
                 </p:panelGrid>
 
                 <p:panelGrid columns="2" cellpadding="20">
-                    <p:button outcome="register" value="#{msg['register.register.b']}"/>
+                    <p:commandButton action="#{registrationService.doRegister}"
+                                     id="doRegister" value="#{msg['register.register.b']}" />
                     <p:button outcome="logout" value="#{msg['register.cancel.b']}"/>
                 </p:panelGrid>
             </h:form>

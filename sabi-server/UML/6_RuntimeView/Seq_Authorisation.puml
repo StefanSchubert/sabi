@@ -9,22 +9,24 @@ group Login
     Client -> Sabi_WebAPP:Login(user,Pw)
     Sabi_WebAPP -> Sabi_REST_Facade:Login(user,Pw)
     Sabi_REST_Facade -> Sabi_Services:Login(user,Pw)
-    Sabi_Services -> Sabi_REST_Facade:AuthToken
-    Sabi_REST_Facade -> Sabi_WebAPP:AuthToken
+    Sabi_Services -> Sabi_REST_Facade:BE-AuthToken
+    Sabi_REST_Facade -> Sabi_WebAPP:BE-AuthToken
 
-    Sabi_WebAPP -> Sabi_WebAPP:personalize links with AuthToken
-    note left: The WebAPP does not create\n long lasting sessions or\n sessions at all.\n Instead of a WebAPP it could\n be a native app.
+    Sabi_WebAPP -> Sabi_WebAPP:personalize Backendlinks with BE-AuthToken
+    note left: The WebAPP usually creates it's own\nAuthRealm (via Session-Cookie, JWT, etc...)\nhowever this is completly decoupled from\nthe backend which uses the BE-AuthToken.
     Client <- Sabi_WebAPP:personalized GUI
 end
 ...
 
 group Authenticated Request
-    Client -> Sabi_WebAPP:somePostOrGetRequest(AuthToken)
-    Sabi_WebAPP -> Sabi_REST_Facade:translatedRESTRequest(AuthToken)
-    Sabi_REST_Facade -> Sabi_Services:handleRequest(AuthToken)
-    Sabi_REST_Facade <- Sabi_Services:response(AuthToken)
-    Sabi_WebAPP <- Sabi_REST_Facade:response(AuthToken)
-    Sabi_WebAPP -> Sabi_WebAPP:render response and\n personalize links with AuthToken
+    Client -> Sabi_WebAPP:somePostOrGetRequest(FE-AuthContext)
+    note right: The webAPP identifies the user and\nuse the belonging BE-AuthToken for\nbackend API calls.
+    Sabi_WebAPP -> Sabi_REST_Facade:translatedRESTRequest(BE-AuthToken)
+    Sabi_REST_Facade -> Sabi_Services:handleRequest(BE-AuthToken)
+    Sabi_REST_Facade <- Sabi_Services:response(BE-AuthToken)
+    Sabi_WebAPP <- Sabi_REST_Facade:response(BE-AuthToken)
+    Sabi_WebAPP -> Sabi_WebAPP:render response and\n updated the stored BE-AuthToken
+    note left: As the BE-AuthToken has a configured\nexpire time, it may happen that the\nToken will be cycled by the BE (also\nfor security reasons).
     Client <- Sabi_WebAPP:personalized GUI
 end
 

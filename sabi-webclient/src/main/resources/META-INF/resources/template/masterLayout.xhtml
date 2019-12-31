@@ -14,12 +14,11 @@
 
 <f:metadata>
     <f:loadBundle basename="i18n.messages" var="msg"/>
-    <f:view locale="#{userSession.locale}"/>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="charset=utf-8"/>
 </f:metadata>
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 </h:head>
 
 <h:outputStylesheet library="css" name="sabistyle.css"/>

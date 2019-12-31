@@ -14,18 +14,19 @@
 </h:head>
 
 <h:body>
+
     <ui:composition template="../template/masterLayout.xhtml">
         <ui:define name="content">
-            <p:panel header="Welcome back #{userSession.userName}">
-                <p:outputPanel style="color: mediumaquamarine">
-                    You are in...and your Backend Token is<br/>
-
-                    #{userSession.sabiBackendToken}
-
-                    This token is forth to be send as header along to each backend REST request.
-                </p:outputPanel>
+            <p:panel>
+                <!-- TODO: i18n for messages -->
+                Almost perfect. Your choosen username and password has been accepted.
+                Within the next minute you should retrieve a validation email with an activation link.
+                Please click this link or copy it into the browsers URL to validate your email address.
+                Once the email has been validated, you can use your credentials to log into sabi to
+                configure your tank and add measurements.
             </p:panel>
         </ui:define>
     </ui:composition>
+
 </h:body>
 </html>
