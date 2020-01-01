@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -87,7 +87,8 @@
 
                 <p:panelGrid columns="2" cellpadding="20">
                     <p:commandButton action="#{registrationService.doRegister}"
-                                     id="doRegister" value="#{msg['register.register.b']}" />
+                                     id="preregister" value="#{msg['register.register.b']}"
+                                     ajax="false"/>
                     <p:button outcome="logout" value="#{msg['register.cancel.b']}"/>
                 </p:panelGrid>
             </h:form>

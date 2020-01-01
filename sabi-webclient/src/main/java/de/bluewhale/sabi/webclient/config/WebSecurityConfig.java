@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -33,8 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // require all requests to be authenticated except for the resources
         http.authorizeRequests()
                 .antMatchers("/javax.faces.resource/**").permitAll()
-                // Allow Welcome Page
-                .antMatchers(HttpMethod.GET,"/", "/index.xhtml", "/register.xhtml", "/logout.xhtml").permitAll()
+                // Allow Pages that don't require an auth context.
+                .antMatchers(HttpMethod.GET,"/", "/index.xhtml", "/register.xhtml", "/preregistration.xhtml", "/logout.xhtml").permitAll()
                 // Allow Monitoring Endpoint
                 .antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
 

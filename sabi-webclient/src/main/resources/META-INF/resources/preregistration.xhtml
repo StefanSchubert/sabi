@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -15,15 +15,10 @@
 
 <h:body>
 
-    <ui:composition template="../template/masterLayout.xhtml">
+    <ui:composition template="template/masterLayout.xhtml">
         <ui:define name="content">
             <p:panel>
-                <!-- TODO: i18n for messages -->
-                Almost perfect. Your choosen username and password has been accepted.
-                Within the next minute you should retrieve a validation email with an activation link.
-                Please click this link or copy it into the browsers URL to validate your email address.
-                Once the email has been validated, you can use your credentials to log into sabi to
-                configure your tank and add measurements.
+                <h:outputText value="#{msg['preregistration.info.t']}"/>
             </p:panel>
         </ui:define>
     </ui:composition>

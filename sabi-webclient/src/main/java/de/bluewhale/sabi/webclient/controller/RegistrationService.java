@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -98,7 +98,7 @@ public class RegistrationService implements Serializable {
         // check if user does not exists already
 
         // create new user and redirect him to the pre-register page.
-        outcome = "sec/preregistration";
+        outcome = "preregistration";
 
         return outcome;
     }
