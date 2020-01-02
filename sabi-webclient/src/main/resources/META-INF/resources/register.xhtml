@@ -65,6 +65,7 @@
 
                         <p:outputLabel for="email" value="#{msg['register.email.l']}"/>
                         <p:inputText id="email" value="#{registrationService.model.email}"/>
+                        <!-- todo add a faces email validator here. -->
                         <p:messages id="messages3" for="email" showDetail="true" closable="true">
                             <p:autoUpdate/>
                         </p:messages>
