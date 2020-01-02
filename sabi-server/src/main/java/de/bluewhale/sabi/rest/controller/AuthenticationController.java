@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -134,7 +134,7 @@ public class AuthenticationController {
 
     @ApiOperation("/email/{email}/validation/{token}")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - User can proceed using this service by login now..", response = HttpStatus.class),
+            @ApiResponse(code = 202, message = "Accepted - User can proceed using this service by login now.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - validation code or user unknown.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/email/{email}/validation/{token}"}, method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  ~ See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+
+    <ui:composition template="template/masterLayout.xhtml">
+        <ui:define name="content">
+            <h3 style="margin-top:0">#{msg['credits.sponsor_thx.h']}</h3>
+            <p:panelGrid columns="3">
+
+                <h:outputText value="icons8" />
+                <h:outputLink value="https://icons8.com" />
+                <h:outputText value="#{msg['credits.sponsor_icon8.t']}" />
+
+                <h:outputText value="#{msg['credits.sponsor_developer.l']}" />
+                <h:outputLink value="https://github.com/StefanSchubert/sabi/graphs/contributors" />
+                <h:outputText value="#{msg['credits.sponsor_developer.t']}" />
+
+            </p:panelGrid>
+
+            <p:panel>
+                <h:outputText value="#{msg['preregistration.info.t']}"/>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+
+</h:body>
+</html>

@@ -12,7 +12,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       lang="#{userSession.language}">
 
-
 <f:metadata>
     <f:viewAction action="#{registrationService.fetchNewCaptchaChallenge}"/>
     <f:loadBundle basename="i18n.messages" var="msg"/>
@@ -57,32 +56,34 @@
 
                 <p:panelGrid columns="3" cellpadding="20">
 
-                        <p:outputLabel for="username" value="#{msg['register.username.l']}"/>
-                        <p:inputText id="username" value="#{registrationService.model.username}"/>
-                        <p:messages id="messages2" for="username" showDetail="true" closable="true">
-                            <p:autoUpdate/>
-                        </p:messages>
+                    <p:outputLabel for="username" value="#{msg['register.username.l']}"/>
+                    <p:inputText id="username" value="#{registrationService.model.username}" required="true"/>
+                    <p:messages id="messages2" for="username" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
 
-                        <p:outputLabel for="email" value="#{msg['register.email.l']}"/>
-                        <p:inputText id="email" value="#{registrationService.model.email}"/>
-                        <!-- todo add a faces email validator here. -->
-                        <p:messages id="messages3" for="email" showDetail="true" closable="true">
-                            <p:autoUpdate/>
-                        </p:messages>
+                    <p:outputLabel for="email" value="#{msg['register.email.l']}"/>
+                    <p:inputText id="email" value="#{registrationService.model.email}" required="true"/>
+                    <ui:remove>
+                        <!-- Validation happens on server side anyway, but we could improve with a client side validation, too. -->
+                    </ui:remove>
+                    <p:messages id="messages3" for="email" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
 
-                        <p:outputLabel for="pwd1" value="#{msg['register.password.l']}"/>
-                        <p:password id="pwd1" value="#{registrationService.model.password}"
-                                   feedback="true" label="Password 1" required="true"/>
-                        <p:messages id="messages4" for="pwd1" showDetail="true" closable="true">
-                            <p:autoUpdate/>
-                        </p:messages>
+                    <p:outputLabel for="pwd1" value="#{msg['register.password.l']}"/>
+                    <p:password id="pwd1" value="#{registrationService.model.password}"
+                                feedback="true" label="Password 1" required="true"/>
+                    <p:messages id="messages4" for="pwd1" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
 
-                        <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
-                        <p:password id="pwd2" value="#{registrationService.model.password}"
-                                    label="Password 2" required="true"/>
-                        <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
-                            <p:autoUpdate/>
-                        </p:messages>
+                    <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
+                    <p:password id="pwd2" value="#{registrationService.model.password}"
+                                label="Password 2" required="true"/>
+                    <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
 
                 </p:panelGrid>
 
@@ -92,6 +93,9 @@
                                      ajax="false"/>
                     <p:button outcome="logout" value="#{msg['register.cancel.b']}"/>
                 </p:panelGrid>
+                <p:messages id="messages6" for="commonFailure" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
             </h:form>
 
         </ui:define>

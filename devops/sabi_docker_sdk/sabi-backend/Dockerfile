@@ -1,6 +1,6 @@
 # Base container with amazon corretto 8
 
-FROM amazoncorretto:8u212
+FROM amazoncorretto:8u232
 
 # Copy sabis executable jar. You need to replace the jar from the assets dir after a new build
 # copyjars.sh will do it for you

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -104,7 +104,7 @@ public class UserSession implements Serializable {
    }
 
     /**
-     * Choosed Language of the User
+     * Choosed Language of the User derived by browsers settings, if not explicit set before.
      *
      * @return
      */

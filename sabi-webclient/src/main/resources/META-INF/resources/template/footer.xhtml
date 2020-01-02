@@ -8,8 +8,9 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:separator/>
-    <i>Sabi #{applicationInfo.version}</i> | GDPR | Impressum | Contact
+    <i>Sabi #{applicationInfo.version}</i> | GDPR | Impressum | Contact | <p:link outcome="credits" value="Credits" id="creditLink"/>
+    | <p:link href="https://github.com/StefanSchubert/sabi/issues" value="Report Issues" id="issueLink"/>
     <ui:remove>
-        <!--  TODO GDPR, Impressum as popup infos / Contact as well but openly un github as issue -->
+        <!--  TODO GDPR, Impressum as popup infos / Contact as well -->
     </ui:remove>
 </ui:composition>
