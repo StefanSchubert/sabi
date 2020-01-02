@@ -62,7 +62,7 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
 * JSF2.3 based WebClient
-** Primefaces 6.x
+** Primefaces 7.x
 * Spring-Boot-Application
 
 Why JSF and not some current modern framework like angular? In fact it took me quite a while to came to a decision here.
@@ -157,6 +157,3 @@ ONLY AVAILABLE on IPv6-networks. (Check with http://www.test-ipv6.com) if your m
 ### Testing of a successfully deployed backend:
  
 I use postman to test the login REST API (or the REST client from IntelliJ)
-
-
- 

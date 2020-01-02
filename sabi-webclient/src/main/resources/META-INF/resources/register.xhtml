@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  ~ See project LICENSE file for the detailed terms and conditions.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="#{userSession.language}">
+
+<f:metadata>
+    <f:viewAction action="#{registrationService.fetchNewCaptchaChallenge}"/>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+</f:metadata>
+
+<h:body>
+
+    <ui:composition template="/template/masterLayout.xhtml">
+
+        <ui:define name="content">
+
+            <p:panel id="welcome" header="#{msg['register.welcome.h']}" style="margin-bottom:20px">
+                #{msg['register.welcome.t']}
+                <p>
+                    #{msg['register.sabi_on_github.l']}
+                    <h:outputLink value="https://github.com/StefanSchubert/sabi" target="_blank">
+                        #{msg['register.homepage.l']}
+                    </h:outputLink>
+                </p>
+            </p:panel>
+
+            <h:form id="register-form">
+
+                <p:panel id="gdpr" header="#{msg['register.gdpr.h']}" style="margin-bottom:20px">
+                    #{msg['register.gdpr.t']}
+                </p:panel>
+
+                <p:panel id="captcha" header="#{msg['register.captcha.h']}" style="margin-bottom:20px">
+                    <p>#{msg['register.captcha.t']}</p>
+                    <i style="color: forestgreen">#{registrationService.challenge.question}</i>
+                    <p>
+                        <p:selectOneRadio id="userAnswer" value="#{registrationService.model.captchaCode}" columns="4"
+                                          layout="responsive">
+                            <f:selectItems value="#{registrationService.challenge.answers}"/>
+                        </p:selectOneRadio>
+                    </p>
+                    <p:messages id="messages" for="captcha" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+                </p:panel>
+
+
+                <p:panelGrid columns="3" cellpadding="20">
+
+                    <p:outputLabel for="username" value="#{msg['register.username.l']}"/>
+                    <p:inputText id="username" value="#{registrationService.model.username}" required="true"/>
+                    <p:messages id="messages2" for="username" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                    <p:outputLabel for="email" value="#{msg['register.email.l']}"/>
+                    <p:inputText id="email" value="#{registrationService.model.email}" required="true"/>
+                    <ui:remove>
+                        <!-- Validation happens on server side anyway, but we could improve with a client side validation, too. -->
+                    </ui:remove>
+                    <p:messages id="messages3" for="email" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                    <p:outputLabel for="pwd1" value="#{msg['register.password.l']}"/>
+                    <p:password id="pwd1" value="#{registrationService.model.password}"
+                                feedback="true" label="Password 1" required="true"/>
+                    <p:messages id="messages4" for="pwd1" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                    <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
+                    <p:password id="pwd2" value="#{registrationService.model.password}"
+                                label="Password 2" required="true"/>
+                    <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                </p:panelGrid>
+
+                <p:panelGrid columns="2" cellpadding="20">
+                    <p:commandButton action="#{registrationService.doRegister}"
+                                     id="preregister" value="#{msg['register.register.b']}"
+                                     ajax="false"/>
+                    <p:button outcome="logout" value="#{msg['register.cancel.b']}"/>
+                </p:panelGrid>
+                <p:messages id="messages6" for="commonFailure" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+            </h:form>
+
+        </ui:define>
+    </ui:composition>
+
+</h:body>
+</html>

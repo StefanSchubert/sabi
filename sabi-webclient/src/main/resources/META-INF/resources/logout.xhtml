@@ -7,14 +7,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-<f:metadata>
 <f:loadBundle basename="i18n.messages" var="msg"/>
-    <f:viewAction action="#{applicationInfo.fetchCookieAnnouncement}"/>
-</f:metadata>
-
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -26,18 +21,12 @@
 <h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
 
-        <h1>#{msg['login.header.h']}</h1>
+        <h1>#{msg['logout.header.h']}</h1>
         <div style="height:380px"/>
         <p>
-            <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
+            <h:outputText value="#{msg['logout.message.t']}" style="width: 50px;"/>
+            <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         </p>
-        <h:panelGrid columns="2" cellpadding="20">
-                <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
-                <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
-        </h:panelGrid>
-    <br/>
-    <p:messages id="messages" for="common" showDetail="true" closable="true">
-        <p:autoUpdate />
-    </p:messages>
+
 </h:body>
 </html>

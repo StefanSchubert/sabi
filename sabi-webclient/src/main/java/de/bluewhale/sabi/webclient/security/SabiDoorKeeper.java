@@ -43,7 +43,7 @@ public class SabiDoorKeeper implements AuthenticationProvider {
         ResultTo<String> resultTo = null;
 
         try {
-            // it happend that the auth req. was repeated though the first one was answered unconfirmed.
+            // it happened that the auth req. was repeated though the first one was answered unconfirmed.
             // in the second call the credentials were null...leading to an NPE
             if (unconfirmedAuthentication.getPrincipal() != null && unconfirmedAuthentication.getCredentials() != null) {
                 resultTo = userService.signIn(unconfirmedAuthentication.getPrincipal().toString(),

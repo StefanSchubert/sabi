@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -31,22 +31,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         // require all requests to be authenticated except for the resources
-        http.authorizeRequests()
+        http
+                .authorizeRequests()
                 .antMatchers("/javax.faces.resource/**").permitAll()
-                // Allow Welcome Page
-                .antMatchers(HttpMethod.GET,"/", "/index.xhtml").permitAll()
+                // Allow Pages that don't require an auth context.
+                 .antMatchers("/", "/index.xhtml", "/register.xhtml",
+                        "/preregistration.xhtml", "/logout.xhtml", "/credits.xhtml").permitAll()
                 // Allow Monitoring Endpoint
-                .antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
-
+                .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 // all others require authentication
-                .anyRequest().authenticated();
-        // login - using this the browser redirect to this page if login is required and you are not logged in.
-        http.formLogin().loginPage("/login.xhtml").permitAll()
-                .failureUrl("/login.xhtml?error=true").successForwardUrl("/sec/userportal.xhtml");
-        // logout - back to login, you may specify a logout confirmation page with delayed redirect.
-        http.logout().logoutSuccessUrl("/login.xhtml");
-        // not needed as JSF 2.2 is implicitly protected against CSRF
-        http.csrf().disable();
+                .anyRequest().authenticated()
+
+                .and()
+                
+                // login - using this the browser redirect to this page if login is required and you are not logged in.
+                .formLogin().loginPage("/login.xhtml").permitAll()
+                .failureUrl("/login.xhtml?error=true").successForwardUrl("/secured/userportal.xhtml")
+
+                .and()
+
+                // logout - back to login, you may specify a logout confirmation page with delayed redirect.
+                .logout().logoutSuccessUrl("/logout.xhtml")
+
+                .and()
+
+                // not needed as JSF 2.2 is implicitly protected against CSRF
+                .csrf().disable();
 
     }
 

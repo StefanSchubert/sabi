@@ -4,5 +4,18 @@
  */
 
 .splashscreen {
-    background: url("#{resource['images:RiffStefan2.png']}");
+    background-image: url("#{resource['images:RiffStefan2.png']}");
+    background-size: 500px;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    color: yellow;
+    padding: 15px;
+    width: 450px;
 }
+/*
+a.splashscreen:link {color: white;}
+a.splashscreen:visited {color: beige;}
+a.splashscreen:hover {color: antiquewhite;}
+a.splashscreen:active {color: aqua;}
+*/

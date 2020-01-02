@@ -3,38 +3,42 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.api;
+package de.bluewhale.sabi.model;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.Locale;
 
 /**
- * Listing of API-Endpoints provided by Sabi-Backend
+ * Listing of languages that are currently supported by sabi.
  *
  * @author Stefan Schubert
  */
-public enum Endpoint {
-    // requires complete path after root context, as this one is also used by HttpSecurityConfig
-    LOGIN("/api/auth/login"),
-    GALLONS("gal");
+public enum SupportedLocales {
+    German(Locale.GERMANY),
+    English(Locale.ENGLISH);
 
 // ------------------------------ FIELDS ------------------------------
 
-    private String path;
+    private Locale locale;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    Endpoint(String pPath) {
-        this.path = pPath;
+    SupportedLocales(Locale locale) {
+        this.locale = locale;
     }
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    public String getPath() {
-        return this.path;
+    @JsonValue
+    public Locale getLocale() {
+        return this.locale;
     }
 
 // ------------------------ CANONICAL METHODS ------------------------
 
     @Override
     public String toString() {
-        return path;
+        return locale.getISO3Language();
     }
 }
