@@ -129,86 +129,46 @@ public class RegistrationService implements Serializable {
                 logger.warn("Wrong Captcha answer during registration attempt.");
                 String message = MessageUtil.getFromMessageProperties("register.captcha_wrongAnswer.t", userSession.getLocale());
                 MessageUtil.warn("captcha", message);
-                fetchNewCaptchaChallenge();
-                return REGISTER_PAGE;
             }
-        } catch(RestClientException e){
-                logger.error("Backend processing error.", e);
-                String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
-                MessageUtil.fatal("commonFailure", message);
-                return REGISTER_PAGE;
+            if (HttpStatus.CONFLICT.equals(e.getStatusCode())) {
+                logger.warn("Register attempt with already existing username or email.");
+                String message = MessageUtil.getFromMessageProperties("register.conflict.t", userSession.getLocale());
+                MessageUtil.warn("username", message);
+                MessageUtil.warn("email", message);
+
             }
+            fetchNewCaptchaChallenge();
+            return REGISTER_PAGE;
+        } catch (RestClientException e) {
+            logger.error("Backend processing error.", e);
+            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
+            MessageUtil.fatal("commonFailure", message);
+            return REGISTER_PAGE;
+        }
 
-        /* Possible outcomes are:
-        X    @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserRegConfirmationTo.class),
-            @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
-            @ApiResponse(code = 503, message = "Backend-Service not available, please try again later.", response = HttpStatus.class),
-            @ApiResponse(code = 415, message = "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?", response = HttpStatus.class),
-            @ApiResponse(code = 409, message = "Conflict - username and/or emailaddress already exists.", response = NewRegistrationTO.class),
-            @ApiResponse(code = 400, message = "JSON Syntax invalid. Please check your paylod.", response = HttpStatus.class)
-         */
+        // any unhandled case? stays on the same page!
+        return REGISTER_PAGE;
+    }
 
-
-
-        /* Backend checks this already
-
-        String checkURI = captchaBackendUrl + "/check/" + userAnswer;
-        ResponseEntity<String> response = null;
+    /**
+     * Used to retrieve a new Challenge from the used Captcha Service
+     */
+    public void fetchNewCaptchaChallenge() {
+        String challengeURI = captchaBackendUrl + "/challenge/" + userSession.getLanguage();
 
         try {
-            response = restTemplate.getForEntity(checkURI, String.class);
-            // returns 202 for valid code or 406 (which comes as a RestClientException) for wrong answer.
-            if (HttpStatus.ACCEPTED.equals(response.getStatusCode())) {
-                logger.debug("CaptchaCode has been successfully verified.");
-            } else {
-                logger.error("Unexpected return code from Captcha validation.");
-                String message = MessageUtil.getFromMessageProperties("register.captcha_wrongAnswer.t", userSession.getLocale());
-                MessageUtil.warn("captcha", message);
-                fetchNewCaptchaChallenge();
-                return REGISTER_PAGE;
-            }
-        } catch (HttpClientErrorException e) {
-            if (HttpStatus.NOT_ACCEPTABLE.equals(e.getStatusCode())) {
-                logger.warn("Wrong Captcha answer during registration attempt.");
-                String message = MessageUtil.getFromMessageProperties("register.captcha_wrongAnswer.t", userSession.getLocale());
-                MessageUtil.warn("captcha", message);
-                fetchNewCaptchaChallenge();
-                return REGISTER_PAGE;
-            }
+            challenge = restTemplate.getForObject(challengeURI, ChallengeTo.class);
+
+            // jsf requires the map not in Key->Value but in Lable->Value Format for the selectOneRadio tag.
+            // so we transpose the retrieved map from captcha service here.
+            Map<String, String> answers_transposed = new HashMap<String, String>(challenge.getAnswers().size());
+            challenge.getAnswers().forEach((key, value) -> answers_transposed.put(value, key));
+            challenge.setAnswers(answers_transposed);
         } catch (RestClientException e) {
             logger.error("Coudn't reach captcha backend.", e);
             String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
-            return REGISTER_PAGE;
         }
-
-
-
-         */
-
-            // any unhandled case? stays on the same page!
-            return REGISTER_PAGE;
-        }
-
-        /**
-         * Used to retrieve a new Challenge from the used Captcha Service
-         */
-        public void fetchNewCaptchaChallenge () {
-            String challengeURI = captchaBackendUrl + "/challenge/" + userSession.getLanguage();
-
-            try {
-                challenge = restTemplate.getForObject(challengeURI, ChallengeTo.class);
-
-                // jsf requires the map not in Key->Value but in Lable->Value Format for the selectOneRadio tag.
-                // so we transpose the retrieved map from captcha service here.
-                Map<String, String> answers_transposed = new HashMap<String, String>(challenge.getAnswers().size());
-                challenge.getAnswers().forEach((key, value) -> answers_transposed.put(value, key));
-                challenge.setAnswers(answers_transposed);
-            } catch (RestClientException e) {
-                logger.error("Coudn't reach captcha backend.", e);
-                String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
-                MessageUtil.fatal("captcha", message);
-            }
-        }
-
     }
+
+}

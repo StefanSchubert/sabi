@@ -20,19 +20,15 @@
             <h3 style="margin-top:0">#{msg['credits.sponsor_thx.h']}</h3>
             <p:panelGrid columns="3">
 
-                <h:outputText value="icons8" />
-                <h:outputLink value="https://icons8.com" />
+                <h:outputText value="icons8.com" />
+                <p:link href="https://icons8.com" value="https://icons8.com" />
                 <h:outputText value="#{msg['credits.sponsor_icon8.t']}" />
 
                 <h:outputText value="#{msg['credits.sponsor_developer.l']}" />
-                <h:outputLink value="https://github.com/StefanSchubert/sabi/graphs/contributors" />
+                <p:link href="https://github.com/StefanSchubert/sabi/graphs/contributors" value="https://github.com/StefanSchubert/sabi/graphs/contributors" />
                 <h:outputText value="#{msg['credits.sponsor_developer.t']}" />
 
             </p:panelGrid>
-
-            <p:panel>
-                <h:outputText value="#{msg['preregistration.info.t']}"/>
-            </p:panel>
         </ui:define>
     </ui:composition>
 
