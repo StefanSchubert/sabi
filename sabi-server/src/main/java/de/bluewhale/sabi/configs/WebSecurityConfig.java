@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -60,6 +60,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
                 // Open statistics
                 .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()
+                // Motd can be requested before login
+                .antMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                 // all others require JWT authentication
                 .anyRequest().authenticated()
                 .and()

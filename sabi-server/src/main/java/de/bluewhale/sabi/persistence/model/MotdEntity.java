@@ -15,7 +15,7 @@ import java.util.List;
  */
 @NamedQueries({@NamedQuery(name = "Motd.getValidModt",
         query = "select a from MotdEntity a where a.publishDate <= current_timestamp " +
-                "and (a.vanishDate is null or a.vanishDate > current_timestamp")})
+                "and (a.vanishDate is null or a.vanishDate > current_timestamp)")})
 @Table(name = "motd", schema = "sabi")
 @Entity
 public class MotdEntity extends Auditable {
