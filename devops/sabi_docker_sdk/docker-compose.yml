@@ -22,8 +22,8 @@ services:
     depends_on:
       - db
   flyway:
-    image: boxfuse/flyway:6
-    command: -url=jdbc:mariadb://db:3306/sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
+    image: flyway/flyway:6.1.3
+    command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
     volumes:
       - ../../sabi-database/src/main/resources:/flyway/sql
     networks:
