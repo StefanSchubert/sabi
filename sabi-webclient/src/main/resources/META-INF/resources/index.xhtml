@@ -11,7 +11,7 @@
       xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <f:metadata>
-<f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
     <f:viewAction action="#{applicationInfo.fetchCookieAnnouncement}"/>
 </f:metadata>
 
@@ -26,18 +26,18 @@
 <h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
 
-        <h1>#{msg['login.header.h']}</h1>
-        <div style="height:380px"/>
-        <p>
-            <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
-        </p>
-        <h:panelGrid columns="2" cellpadding="20">
-                <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
-                <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
-        </h:panelGrid>
+    <h1>#{msg['login.header.h']}</h1>
+    <div style="height:380px"/>
+    <p>
+        <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
+    </p>
+    <h:panelGrid columns="2" cellpadding="20">
+        <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
+        <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
+    </h:panelGrid>
     <br/>
     <p:messages id="messages" for="common" showDetail="true" closable="true">
-        <p:autoUpdate />
+        <p:autoUpdate/>
     </p:messages>
 </h:body>
 </html>
