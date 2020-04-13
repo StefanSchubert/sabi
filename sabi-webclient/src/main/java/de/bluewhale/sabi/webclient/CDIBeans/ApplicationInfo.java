@@ -67,6 +67,9 @@ public class ApplicationInfo implements Serializable {
 
         try {
             motdTo = restTemplate.getForObject(motdURI, MotdTo.class);
+            if (logger.isDebugEnabled()){
+                logger.debug("Called MOTD");
+            };
             if (motdTo != null && Strings.isNotEmpty(motdTo.getMotd())) {
                 MessageUtil.info("motd", motdTo.getMotd());
             }
