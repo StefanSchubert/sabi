@@ -8,20 +8,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
 </h:head>
 
 <h:body>
-
     <ui:composition template="/template/masterLayout.xhtml">
-        <ui:define name="content">
-            <p:panel>
-                <h:outputText value="#{msg['preregistration.info.t']}"/>
-            </p:panel>
-        </ui:define>
-    </ui:composition>
 
+        <ui:define name="metadata">
+            <!-- will be added to f:metadata section of the master template -->
+            <f:viewAction action="#{applicationInfo.fetchMotd}"/>
+        </ui:define>
+
+        <ui:define name="content">
+            <ui:remove>
+                <!--  This is a little hack as using the viewAction from Metadata doesn't seem to work. -->
+            </ui:remove>
+            <p:outputPanel>userProfile</p:outputPanel>
+        </ui:define>
+
+    </ui:composition>
 </h:body>
 </html>
