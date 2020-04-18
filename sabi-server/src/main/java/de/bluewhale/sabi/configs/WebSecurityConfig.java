@@ -51,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
                 // Allow Swagger api-doc access
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources",
-                        "/configuration/security", "/swagger-ui.html", "/webjars/**",
+                        "/configuration/security", "/swagger-ui.html#/**", "/swagger-ui.html", "/webjars/**",
                         "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security").permitAll()
                 // Registration and Login are accessible without JWT based authentication
                 .antMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
