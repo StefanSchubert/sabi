@@ -1,0 +1,4 @@
+# Common to [sabi raspberrypi] Servers
+ansible_user: pi
+ansible_become: yes
+
