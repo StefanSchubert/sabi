@@ -1,0 +1,28 @@
+- hosts: sabiMiddleware
+  vars_files:
+    - ./group_vars/sabiMiddleware.yml
+  tasks:
+    - name: Stop existing captcha service
+      service:
+        name: captcha
+        state: stopped
+    - name: Copy new jar file
+      copy:
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/captcha/target/captcha-service.jar
+        dest: /var/captcha
+        owner: captcha
+        group: captcha
+        mode: '0500'
+    - name: Copy JVM config file
+      copy:
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/captcha/captcha-service.conf
+        dest: /var/captcha
+        owner: captcha
+        group: captcha
+        mode: '0444'
+    - name: enforce deamon config reload
+      command: systemctl daemon-reload
+    - name: Start captcha service
+      service:
+        name: captcha
+        state: started
