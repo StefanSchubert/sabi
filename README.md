@@ -130,7 +130,7 @@ Because of eclipselink we are using weaving at runtime which required the follow
 option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/4.3.13.RELEASE/spring-instrument-4.3.13.RELEASE.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/5.2.5.RELEASE/spring-instrument-5.2.5.RELEASE.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE
