@@ -6,8 +6,7 @@
 package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
@@ -20,13 +19,12 @@ import javax.inject.Named;
  */
 @Named
 @RequestScoped
+@Slf4j
 public class MenuView {
-
-    static Logger logger = LoggerFactory.getLogger(MenuView.class);
 
     public void logout() {
         // FIXME STS (13.04.20): Won't be called and no logging output with logback here
-        logger.info("User logged out.");
+        log.info("User logged out.");
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().invalidateSession();
     }

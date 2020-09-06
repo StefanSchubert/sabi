@@ -1,6 +1,6 @@
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
-  ~ See project LICENSE file for the detailed terms and conditions.
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
   -->
 
 <ui:composition
@@ -11,11 +11,13 @@
     <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
 
     <h:form>
-        <p:menuButton value="Options">
-            <p:menuitem value="MainView" outcome="/secured/userportal" icon="pi pi-home"/>
-            <p:menuitem value="Export Reports" action="#{menuView.sendReport}" icon="pi pi-file-excel"/>
-            <p:menuitem value="User Profile" outcome="/secured/userProfile" icon="pi pi-user-edit"/>
-            <p:menuitem value="Project Statistics" outcome="/projectStats" icon="pi pi-chart-line"/>
+        <p:menuButton value="Menu">
+            <p:menuitem value="#{msg['menu.home.l']}" outcome="/secured/userportal" icon="pi pi-home"/>
+            <p:menuitem value="#{msg['menu.tankView.l']}" outcome="/secured/tankView" icon="pi pi-image"/>
+            <p:menuitem value="#{msg['menu.report.l']}" action="#{menuView.sendReport}" icon="pi pi-file-excel"/>
+            <p:menuitem value="#{msg['menu.userProfile.l']}" outcome="/secured/userProfile" icon="pi pi-user"/>
+            <p:menuitem value="#{msg['menu.statistics.l']}" outcome="/projectStats" icon="pi pi-chart-bar"/>
+            <p:menuitem value="#{msg['menu.feedback.l']}" outcome="/secured/feedback" icon="pi pi-comment"/>
             <p:separator/>
             <p:menuitem value="Logout" action="#{menuView.logout}" outcome="/logout" icon="pi pi-sign-out"/>
         </p:menuButton>

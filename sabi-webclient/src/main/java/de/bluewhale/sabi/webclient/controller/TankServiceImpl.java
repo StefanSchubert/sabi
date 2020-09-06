@@ -5,35 +5,111 @@
 
 package de.bluewhale.sabi.webclient.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
+import de.bluewhale.sabi.exception.CommonExceptionCodes;
+import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.webclient.rest.exceptions.TankMessageCodes;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.annotation.RequestScope;
 
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
+import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 
 /**
  * Calls Sabi Backend to retrieve the list of users aquariums.
  *
  * @author Stefan Schubert
  */
+@Named
+@RequestScope
+@Slf4j
 public class TankServiceImpl implements TankService {
+
+    @Value("${sabi.backend.url}")
+    private String sabiBackendUrl;
+
+    @Autowired
+    private ObjectMapper objectMapper;  // json mapper
+
+
     @Override
-    public @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTAuthtoken) throws BusinessException {
+    public @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTBackendAuthtoken) throws BusinessException {
 
-        // FIXME STS (18.04.20): Replace dummy impl.
-        AquariumTo aquariumTo1 = new AquariumTo();
-        AquariumTo aquariumTo2 = new AquariumTo();
+        String listTankUri = sabiBackendUrl + "/api/tank/list";
 
-        aquariumTo1.setId(1L);
-        aquariumTo2.setId(2L);
-        aquariumTo1.setDescription("Test Aqua One");
-        aquariumTo2.setDescription("Test Aqua Two");
+        RestTemplate restTemplate = new RestTemplate();
+        List<AquariumTo> tankList = new ArrayList<>();
+        ResponseEntity<String> responseEntity;
 
-        ArrayList<AquariumTo> aquariumTos = new ArrayList<>();
-        aquariumTos.add(aquariumTo1);
-        aquariumTos.add(aquariumTo2);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        return aquariumTos;
+        try {
+            responseEntity = restTemplate.exchange(listTankUri, HttpMethod.GET, requestEntity, String.class);
+        } catch (RestClientException e) {
+            log.error(String.format("Couldn't reach %s",listTankUri),e.getLocalizedMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+
+        try {
+            AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
+            tankList = Arrays.asList(myObjects);
+        } catch (JsonProcessingException e) {
+            log.error(String.format("Didn't understand response from %s got parsing exception %s",listTankUri,e.getMessage()),e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+
+        return tankList;
+
+    }
+
+    @Override
+    public void deleteTankById(@NotNull Long tankId, @NotNull String JWTBackendAuthtoken) throws BusinessException {
+        String tankUri = sabiBackendUrl + "/api/tank/"+tankId;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            responseEntity = restTemplate.exchange(tankUri, HttpMethod.DELETE, requestEntity, String.class);
+        } catch (RestClientException e) {
+            log.error(String.format("Couldn't reach %s",tankUri),e.getLocalizedMessage());
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful()){
+            if (responseEntity.getStatusCodeValue()==409) {
+                log.warn("Tried to delete non existing tank",tankId);
+                throw new BusinessException(Message.error(TankMessageCodes.NO_SUCH_TANK));
+            }
+            if (responseEntity.getStatusCodeValue()==401) {
+                log.warn("Invalid Token when trying to delete tank",tankId);
+                throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_VALID));
+            }
+        }
     }
 }

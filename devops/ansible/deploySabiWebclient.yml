@@ -1,21 +1,21 @@
-- hosts: sabiMiddleware
+- hosts: sabiFrontend
   vars_files:
-    - ./group_vars/sabiMiddleware.yml
+    - ./group_vars/sabiFrontend.yml
   tasks:
-    - name: Stop existing sabi service
+    - name: Stop existing webservice service
       service:
         name: sabi
         state: stopped
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-server/target/sabi-service-1.0-SNAPSHOT.jar
-        dest: /var/sabi/sabi-service.jar
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/target/sabi-webclient-1.0-SNAPSHOT.jar
+        dest: /var/sabi/sabi-webclient.jar
         owner: sabi
         group: sabi
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-server/sabi-service.conf
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/sabi-webclient.conf
         dest: /var/sabi
         owner: sabi
         group: sabi

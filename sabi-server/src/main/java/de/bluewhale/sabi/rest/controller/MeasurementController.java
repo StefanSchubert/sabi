@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -15,8 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,9 +35,8 @@ import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
  */
 @RestController
 @RequestMapping(value = "api/measurement")
+@Slf4j
 public class MeasurementController {
-
-    static Logger logger = LoggerFactory.getLogger(MeasurementController.class);
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -91,7 +89,7 @@ public class MeasurementController {
         try {
             pTankID = Long.valueOf(id);
         } catch (NumberFormatException e) {
-            logger.warn("API Request sent with wrong TankID",e);
+            log.warn("API Request sent with wrong TankID",e);
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
         }
 
@@ -160,7 +158,7 @@ public class MeasurementController {
             responseEntity = new ResponseEntity<>(createdMeasurement, HttpStatus.CREATED);
         } else {
             String msg="Measurement cannot be added twice. A Measurement with Id " + measurementTo.getId() + " already exist.";
-            logger.warn(msg);
+            log.warn(msg);
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
@@ -188,7 +186,7 @@ public class MeasurementController {
             MeasurementTo updatedMeasurement = measurementResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedMeasurement, HttpStatus.OK);
         } else {
-            logger.warn("Measurementupdate failed. "+ resultMessage.toString());
+            log.warn("Measurementupdate failed. "+ resultMessage.toString());
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

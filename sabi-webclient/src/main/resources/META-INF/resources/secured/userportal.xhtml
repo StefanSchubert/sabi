@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
-  ~ See project LICENSE file for the detailed terms and conditions.
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -31,33 +31,26 @@
 
             <p:panel header="Sabi for #{userSession.userName}">
 
-                <p:messages id="messages" for="motd" showDetail="true" closable="true">
+                <p:messages id="messages" showDetail="true" closable="true">
                     <p:autoUpdate/>
                 </p:messages>
 
                 <p:outputPanel style="color: mediumaquamarine">
-                    You are in...and your Backend Token is<br/>
+                    You are in...looking at userportal.xhtml and your Backend Token is<br/>
                     #{userSession.sabiBackendToken}
-                    This token is forth to be send as header along to each backend REST request.
                 </p:outputPanel>
 
-                <!--
-                  Options from here:
-                   alt:
-                      create tank button -> tank form
-                      ====
-                      Tank-drop down &
-                      Tank Description &
-                      add measurement Action &
+                <p:outputPanel style="color: cornflowerblue">
 
-                   MenuButton:
-                     * MainView (Tank)
-                     * Export Reports
-                     * UserProfile
-                     * Project Statistics
-                     * Logout
-                -->
+                    <h:outputText>TODO -Stats View</h:outputText>
 
+                    <h:outputText>Welcome Back #{userSession.userName}!</h:outputText>
+                    <ul>
+                        <li>Current-Project-State: Stage I</li>
+                        <li>Project-Participants: XY</li>
+                        <li>Registered-Tanks: XY</li>
+                    </ul>
+                </p:outputPanel>
 
             </p:panel>
         </ui:define>

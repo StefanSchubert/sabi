@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence.model;
 
 
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public abstract class Auditable {
 
     @CreatedDate
@@ -38,12 +40,4 @@ public abstract class Auditable {
     @Column(name = "optlock", columnDefinition = "integer DEFAULT 0", nullable = false)
     private long optlock = 0L;
 
-
-    public LocalDateTime getCreatedOn() {
-        return this.createdOn;
-    }
-
-    public LocalDateTime getLastmodOn() {
-        return this.lastmodOn;
-    }
 }

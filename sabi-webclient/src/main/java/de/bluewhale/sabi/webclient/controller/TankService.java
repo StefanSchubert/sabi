@@ -24,10 +24,17 @@ public interface TankService extends Serializable {
     /**
      * List Users tanks. Concrete user will be derived by the calling context
      *
-     * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @return List of tanks that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-   @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTAuthtoken) throws BusinessException;
+   @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTBackendAuthtoken) throws BusinessException;
 
+    /**
+     * Request Tank deletion in Backend.
+     * @param tankId Identifier of the tank to delete
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @throws BusinessException
+     */
+    void deleteTankById(@NotNull Long tankId, @NotNull String JWTBackendAuthtoken) throws BusinessException;
 }

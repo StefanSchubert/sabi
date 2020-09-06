@@ -3,15 +3,17 @@
 skinparam monochrome true
 skinparam componentStyle uml2
 
-package "Sabi GUI" {
-HTTP - [HTML5-WebApp]
+package "Sabi Webclient" {
+HTTP - [JSF-WebApp]
+database Prometheus
+[grafana] -> Prometheus
 }
 
 package "Sabi Backend" {
 title Level 1 view
 interface "SABI REST API" as rest
 database db
-[HTML5-WebApp] ..> rest : use
+[JSF-WebApp] ..> rest : use
 [REST Facade] - rest
 [Services] <- [REST Facade]
 [Repository] --> db

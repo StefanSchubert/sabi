@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -34,19 +34,20 @@ import java.util.Properties;
 @EnableJpaAuditing
 public class JPAConfig {
 
-    @Value( "${jdbc.url}" )
-    private String jdbcUrl;
+    @Value("${eclipselink.target-database}")
+    private String eclipseLinkTargetDatabase;
 
-    @Value( "${db.username}" )
-    private String dbUsername;
+    @Value("${eclipselink.logging.level:INFO}")
+    private String eclipseLinkLoggingLevel;
 
-    @Value( "${db.password}" )
-    private String dbPassword;
+    @Autowired
+    private DataSource dataSource;
+
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource());
+        em.setDataSource(dataSource);
         em.setPackagesToScan(new String[]{"de.bluewhale.sabi.persistence.model"});
         em.setPersistenceUnitName("sabi");
 
@@ -56,16 +57,6 @@ public class JPAConfig {
         em.setJpaProperties(additionalProperties());
 
         return em;
-    }
-
-    @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-        dataSource.setUrl(jdbcUrl);
-        dataSource.setUsername(dbUsername);
-        dataSource.setPassword(dbPassword);
-        return dataSource;
     }
 
     @Bean
@@ -87,7 +78,7 @@ public class JPAConfig {
         properties.setProperty("eclipselink.ddl-generation.output-mode", "sql-script");
         properties.setProperty("eclipselink.create-ddl-jdbc-file-name", "createDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.drop-ddl-jdbc-file-name", "dropDDL_ddlGeneration.jdbc");
-        properties.setProperty("eclipselink.target-database", "MYSQL");
+        properties.setProperty("eclipselink.target-database", eclipseLinkTargetDatabase);
         properties.setProperty("eclipselink.weaving", "static");
 
         // only for debugging more jpa logging
@@ -102,7 +93,7 @@ public class JPAConfig {
         FINEST	This level enables logging of more debugging information than the FINER setting, such as a very detailed information about certain features (for example, sequencing). You may want to use this log level during debugging and testing, but not at production.
         ALL	This level currently logs at the same level as FINEST.
          */
-        properties.setProperty("eclipselink.logging.level", "FINE");
+        properties.setProperty("eclipselink.logging.level", eclipseLinkLoggingLevel);
         properties.setProperty("eclipselink.logging.exception", "true");
 
         // To Convert CamelCase on JavaProps to Camel_Case on DB-Level,

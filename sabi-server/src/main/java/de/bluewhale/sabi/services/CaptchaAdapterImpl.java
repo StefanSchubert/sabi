@@ -5,8 +5,7 @@
 
 package de.bluewhale.sabi.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -25,9 +24,9 @@ import java.util.Map;
  * @author Stefan Schubert
  */
 @Service
+@Slf4j
 public class CaptchaAdapterImpl implements CaptchaAdapter {
 
-    static Logger logger = LoggerFactory.getLogger(CaptchaAdapterImpl.class);
     static int CONNECT_TIMEOUT_IN_MILLIS = 20000;
 
     @Value("${captcha.check.url}")
@@ -55,13 +54,13 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
             }
         } catch (HttpClientErrorException e) {
             if (HttpStatus.NOT_ACCEPTABLE.equals(e.getStatusCode())) {
-                logger.warn("captcha token not accepted.");
+                log.warn("captcha token not accepted.");
                 isValid = false;
             }
         }
         catch (RestClientException e) {
             String reason = "Could not connect to the captcha service " + checkURI;
-            logger.error(reason,e);
+            log.error(reason,e);
             throw new IOException(reason);
         }
 

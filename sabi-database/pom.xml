@@ -19,7 +19,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
         checkin those secrets for stage and production
         <mariadb.schema>sabi</mariadb.schema>
@@ -57,7 +57,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>6.5.0</version>
+                        <version>6.5.5</version>
                         <configuration>
                             <url>jdbc:mysql://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
                             <user>${mariadb.server.app.username}</user>
@@ -91,7 +91,7 @@
                             <dependency>
                                 <groupId>org.mariadb.jdbc</groupId>
                                 <artifactId>mariadb-java-client</artifactId>
-                                <version>2.6.1</version>
+                                <version>2.6.2</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -106,10 +106,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>

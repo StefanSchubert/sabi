@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence.model;
 
 import de.bluewhale.sabi.model.SizeUnit;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.List;
                 query = "select a FROM AquariumEntity a where a.user.id = :pUserID")})
 @Table(name = "aquarium", schema = "sabi")
 @Entity
+@Data
+@EqualsAndHashCode(exclude={"user", "measurements"})
 public class AquariumEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -50,94 +54,4 @@ public class AquariumEntity extends Auditable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium")
     private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
 
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String validateToken) {
-        this.description = validateToken;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<MeasurementEntity> getMeasurements() {
-        return this.measurements;
-    }
-
-    public void setMeasurements(List<MeasurementEntity> measurements) {
-        this.measurements = measurements;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-
-    public SizeUnit getSizeUnit() {
-        return sizeUnit;
-    }
-
-    public void setSizeUnit(SizeUnit sizeUnit) {
-        this.sizeUnit = sizeUnit;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-// ------------------------ CANONICAL METHODS ------------------------
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || this.getClass() != o.getClass()) return false;
-
-        AquariumEntity that = (AquariumEntity) o;
-
-        if (!this.id.equals(that.id)) return false;
-        if (this.size != null ? !this.size.equals(that.size) : that.size != null) return false;
-        if (this.sizeUnit != that.sizeUnit) return false;
-        if (this.description != null ? !this.description.equals(that.description) : that.description != null) return false;
-        if (this.active != null ? !this.active.equals(that.active) : that.active != null) return false;
-        if (!this.user.equals(that.user)) return false;
-        return this.measurements != null ? this.measurements.equals(that.measurements) : that.measurements == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = this.id.hashCode();
-        result = 31 * result + (this.size != null ? this.size.hashCode() : 0);
-        result = 31 * result + (this.sizeUnit != null ? this.sizeUnit.hashCode() : 0);
-        result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
-        result = 31 * result + (this.active != null ? this.active.hashCode() : 0);
-        result = 31 * result + this.user.hashCode();
-        result = 31 * result + (this.measurements != null ? this.measurements.hashCode() : 0);
-        return result;
-    }
 }

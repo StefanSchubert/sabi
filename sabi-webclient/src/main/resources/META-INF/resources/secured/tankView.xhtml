@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+
+        <ui:define name="content">
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <h:form id="master">
+                <p:dataList value="#{tankListView.tanks}" var="tank" type="definition">
+                    <f:facet name="header">#{msg['tankview.tanklist.h']}</f:facet>
+                    #{tank.description}, Size: #{tank.size} #{tank.sizeUnit}
+                    <!-- TODO add dummy picture or real picture -->
+                    <!--                        <f:facet name="description">-->
+                    <!--                            <p:graphicImage name="demo/images/car/#{car.brand}.gif"/>-->
+                    <!--                        </f:facet>-->
+                    <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
+                                     id="delAction"
+                                     update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
+
+                    <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.select(tank)}"
+                                     id="editAction" update=":detail"
+                                     icon="pi pi-pencil" title="#{msg['common.edit.b']}"
+                                     oncomplete="PF('detail').show()"/>
+
+                    <p:commandButton value="#{msg['common.add.b']}" action="#{tankListView.addTank}"
+                                     id="addAction" update=":detail"
+                                     icon="pi pi-plus" title="#{msg['common.add.b']}"
+                                     oncomplete="PF('detail').show()"/>
+
+                </p:dataList>
+            </h:form>
+
+            <p:dialog id="detail" widgetVar="detail">
+                <h:form>
+                    <p:inputText value="#{tankListView.selectedTank.description}"/>
+                    <p:inputText value="#{tankListView.selectedTank.size}"/>
+                    <!--                        <p:inputText value="#{tankListView.selectedTank.sizeUnit}" />-->
+
+                    <p:button value="#{msg['common.cancel.b']}" onclick="PF('detail').hide(); return false"/>
+                    <p:commandButton value="#{msg['common.save.b']}" action="#{tankListView.save}"
+                                     update=":master" oncomplete="PF('detail').hide()"/>
+                </h:form>
+            </p:dialog>
+
+        </ui:define>
+
+    </ui:composition>
+</h:body>
+</html>

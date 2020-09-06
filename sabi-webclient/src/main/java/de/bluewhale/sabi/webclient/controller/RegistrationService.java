@@ -14,9 +14,8 @@ import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.model.ChallengeTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+
 /**
  * Client to the used Captcha Service
  *
@@ -41,10 +41,9 @@ import java.util.Map;
  */
 @Named
 @SessionScope // ViewScope would be better, but bean will be renewed on captcha errors
+@Slf4j
 public class RegistrationService implements Serializable {
 // ------------------------------ FIELDS ------------------------------
-
-    static Logger logger = LoggerFactory.getLogger(RegistrationService.class);
 
     static String REGISTER_PAGE = "register";
     static String PREREGISTER_PAGE = "preregistration";
@@ -108,7 +107,7 @@ public class RegistrationService implements Serializable {
         try {
             requestJson = objectMapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
-            logger.error("Coudn't convert form data into JSON reprasentation.", e);
+            log.error("Coudn't convert form data into JSON reprasentation.", e);
             String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
             return REGISTER_PAGE;
@@ -126,12 +125,12 @@ public class RegistrationService implements Serializable {
 
         } catch (HttpClientErrorException e) {
             if (HttpStatus.PRECONDITION_FAILED.equals(e.getStatusCode())) {
-                logger.warn("Wrong Captcha answer during registration attempt.");
+                log.warn("Wrong Captcha answer during registration attempt.");
                 String message = MessageUtil.getFromMessageProperties("register.captcha_wrongAnswer.t", userSession.getLocale());
                 MessageUtil.warn("captcha", message);
             }
             if (HttpStatus.CONFLICT.equals(e.getStatusCode())) {
-                logger.warn("Register attempt with already existing username or email.");
+                log.warn("Register attempt with already existing username or email.");
                 String message = MessageUtil.getFromMessageProperties("register.conflict.t", userSession.getLocale());
                 MessageUtil.warn("username", message);
                 MessageUtil.warn("email", message);
@@ -140,7 +139,7 @@ public class RegistrationService implements Serializable {
             fetchNewCaptchaChallenge();
             return REGISTER_PAGE;
         } catch (RestClientException e) {
-            logger.error("Backend processing error.", e);
+            log.error("Backend processing error.", e);
             String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("commonFailure", message);
             return REGISTER_PAGE;
@@ -165,7 +164,7 @@ public class RegistrationService implements Serializable {
             challenge.getAnswers().forEach((key, value) -> answers_transposed.put(value, key));
             challenge.setAnswers(answers_transposed);
         } catch (RestClientException e) {
-            logger.error("Coudn't reach captcha backend.", e);
+            log.error("Coudn't reach captcha backend.", e);
             String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
         }

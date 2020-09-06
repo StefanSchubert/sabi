@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -24,7 +24,7 @@ public class MessageUtil {
      * @return localized string
      */
     public static String getFromMessageProperties(String key, Locale locale){
-        ResourceBundle messages = ResourceBundle.getBundle("i18n.Messages", locale);
+        ResourceBundle messages = ResourceBundle.getBundle("i18n.messages", locale);
         String message = messages.getString(key);
         return message;
     }

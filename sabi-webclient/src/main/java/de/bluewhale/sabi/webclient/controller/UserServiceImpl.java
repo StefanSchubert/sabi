@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -15,8 +15,7 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -35,9 +34,8 @@ import java.util.Locale;
  */
 @Named
 @SessionScope
+@Slf4j
 public class UserServiceImpl implements UserService {
-
-    static Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Value("${sabi.backend.url}")
     private String sabiBackendUrl;
@@ -78,7 +76,7 @@ public class UserServiceImpl implements UserService {
         try {
             requestJson = objectMapper.writeValueAsString(loginData);
         } catch (JsonProcessingException e) {
-            logger.error("Object Mapper failed with Login Data - No Logins possible!", e);
+            log.error("Object Mapper failed with Login Data - No Logins possible!", e);
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
         }
 
@@ -96,7 +94,9 @@ public class UserServiceImpl implements UserService {
             if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
                 return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.UNKNOWN_USERNAME));
             } else {
+                log.error("Couldn't talk proper to sabiBackend");
                 e.printStackTrace();
+                return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
             }
         }
 
