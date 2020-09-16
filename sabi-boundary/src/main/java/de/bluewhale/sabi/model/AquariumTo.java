@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.model;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Transport Object for Aquarium
@@ -15,7 +16,6 @@ import java.io.Serializable;
  * @author Stefan Schubert
  */
 public class AquariumTo implements Serializable {
-// ------------------------------ FIELDS ------------------------------
 
     private Long id;
 
@@ -29,9 +29,20 @@ public class AquariumTo implements Serializable {
 
     private Long userId;
 
-// --------------------- GETTER / SETTER METHODS ---------------------
+    private Date inceptionDate;
 
     @SuppressWarnings("UnqualifiedFieldAccess")
+    @ApiModelProperty(notes = "Date since when this tank is up and running.", required = false)
+    public Date getInceptionDate() {
+        return this.inceptionDate;
+    }
+
+    public void setInceptionDate(final Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
+    @SuppressWarnings("UnqualifiedFieldAccess")
+    @ApiModelProperty(notes = "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
     public Boolean getActive() {
         return active;
     }
@@ -89,9 +100,6 @@ public class AquariumTo implements Serializable {
     public void setUserId(final Long userId) {
         this.userId = userId;
     }
-
-// ------------------------ CANONICAL METHODS ------------------------
-
 
     @Override
     public boolean equals(Object o) {

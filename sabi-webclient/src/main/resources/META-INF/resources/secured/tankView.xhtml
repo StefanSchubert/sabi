@@ -48,15 +48,32 @@
                 </p:dataList>
             </h:form>
 
-            <p:dialog id="detail" widgetVar="detail">
+            <p:dialog id="detail" widgetVar="detail" styleClass="popupdialog">
                 <h:form>
-                    <p:inputText value="#{tankListView.selectedTank.description}"/>
-                    <p:inputText value="#{tankListView.selectedTank.size}"/>
-                    <!--                        <p:inputText value="#{tankListView.selectedTank.sizeUnit}" />-->
+                    <p:panelGrid columns="2" layout="grid" size="400" style="border:2;">
+                        <p:outputLabel for="description" value="#{msg['tankview.description.l']}"/>
+                        <p:inputText id="description"
+                                     value="#{tankListView.selectedTank.description}"
+                                     size="12"/>
 
-                    <p:button value="#{msg['common.cancel.b']}" onclick="PF('detail').hide(); return false"/>
-                    <p:commandButton value="#{msg['common.save.b']}" action="#{tankListView.save}"
-                                     update=":master" oncomplete="PF('detail').hide()"/>
+                        <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
+                        <p:inputText id="size"
+                                     value="#{tankListView.selectedTank.size}"
+                                     size="5"/>
+
+                        <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
+                        <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
+                            <f:selectItems value="#{units.sizeUnits}"/>
+                        </h:selectOneMenu>
+
+                        <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
+                        <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
+                                      pattern="dd.MM.yyyy" showOtherMonths="true" size="11"/>
+
+                        <p:button value="#{msg['common.cancel.b']}" onclick="PF('detail').hide(); return false"/>
+                        <p:commandButton value="#{msg['common.save.b']}" action="#{tankListView.save}"
+                                         update=":master" oncomplete="PF('detail').hide()"/>
+                    </p:panelGrid>
                 </h:form>
             </p:dialog>
 

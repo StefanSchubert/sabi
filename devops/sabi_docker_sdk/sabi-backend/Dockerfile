@@ -5,6 +5,12 @@ FROM amazoncorretto:11.0.8
 # copyjars.sh will do it for you
 COPY assets/ /
 
+# Fix the timezone
+# RUN apt-get update ;\
+#    apt-get install -y tzdata ;\
+#    ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime ;\
+#    dpkg-reconfigure -f noninteractive tzdata;\
+
 RUN chmod 600 /opt/config/application.properties
 
 # http port

@@ -14,6 +14,8 @@ services:
     # available by http://localhost:8080/sabi/swagger-ui.html
     container_name: sabi-as
     build: ./sabi-backend
+    environment:
+      - TZ=Europe/Berlin
     networks:
       - sabinet
     ports:

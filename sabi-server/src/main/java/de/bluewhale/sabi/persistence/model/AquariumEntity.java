@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @NamedQueries({@NamedQuery(name = "Aquarium.getAquarium",
@@ -53,5 +54,9 @@ public class AquariumEntity extends Auditable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium", cascade = CascadeType.ALL)
     private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "inception_date", nullable = true, insertable = true, updatable = true)
+    private Date inceptionDate;
 
 }
