@@ -3,7 +3,7 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.webclient.controller;
+package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -37,4 +37,12 @@ public interface TankService extends Serializable {
      * @throws BusinessException
      */
     void deleteTankById(@NotNull Long tankId, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+
+    /**
+     * Update an existing or create a new tank for the user.
+     * @param tank Tank to patch or to create
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @throws BusinessException
+     */
+    void save(AquariumTo tank, String JWTBackendAuthtoken) throws BusinessException;
 }

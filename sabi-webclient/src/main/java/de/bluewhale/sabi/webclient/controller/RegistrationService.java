@@ -45,6 +45,8 @@ import java.util.Map;
 public class RegistrationService implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
+    // TODO STS (15.09.20): Separate View Controller and apigateway here
+
     static String REGISTER_PAGE = "register";
     static String PREREGISTER_PAGE = "preregistration";
 
@@ -108,7 +110,7 @@ public class RegistrationService implements Serializable {
             requestJson = objectMapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
             log.error("Coudn't convert form data into JSON reprasentation.", e);
-            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
+            String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
             return REGISTER_PAGE;
         }
@@ -140,7 +142,7 @@ public class RegistrationService implements Serializable {
             return REGISTER_PAGE;
         } catch (RestClientException e) {
             log.error("Backend processing error.", e);
-            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
+            String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("commonFailure", message);
             return REGISTER_PAGE;
         }
@@ -165,7 +167,7 @@ public class RegistrationService implements Serializable {
             challenge.setAnswers(answers_transposed);
         } catch (RestClientException e) {
             log.error("Coudn't reach captcha backend.", e);
-            String message = MessageUtil.getFromMessageProperties("common.error_backend_unreachable.l", userSession.getLocale());
+            String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
         }
     }

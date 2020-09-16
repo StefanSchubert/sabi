@@ -3,7 +3,7 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.webclient.controller;
+package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,8 +108,73 @@ public class TankServiceImpl implements TankService {
             }
             if (responseEntity.getStatusCodeValue()==401) {
                 log.warn("Invalid Token when trying to delete tank",tankId);
-                throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_VALID));
+                throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
             }
+        }
+    }
+
+    @Override
+    public void save(AquariumTo tank, String JWTBackendAuthtoken) throws BusinessException {
+
+        String updateTankURI = sabiBackendUrl + "/api/tank/"; // PUT here
+        String createTankURI = sabiBackendUrl + "/api/tank/create"; // POST here
+        String requestJson;
+        try {
+            requestJson = objectMapper.writeValueAsString(tank);
+        } catch (JsonProcessingException e) {
+            log.error("Couldn't convert tank object to jason: ",tank);
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson,headers);
+
+        if (tank.getId() == null) {
+            // Save case
+            try {
+                responseEntity = restTemplate.postForEntity(createTankURI, requestEntity, String.class);
+            } catch (RestClientException e) {
+                log.error(String.format("Couldn't reach %s",createTankURI),e.getLocalizedMessage());
+                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+            }
+            if (!responseEntity.getStatusCode().is2xxSuccessful()){
+                if (responseEntity.getStatusCodeValue()==409) {
+                    log.info("Tried to create the same tank twice. Will be just ignored as we favour idempotent behavior. Tank ID: ",tank.getId());
+                }
+                if (responseEntity.getStatusCodeValue()==401) {
+                    log.warn("Invalid Token when trying to update tank: ",tank.getId());
+                    throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
+                }
+            }
+
+        } else {
+            // update case
+            try {
+                responseEntity = restTemplate.exchange(updateTankURI, HttpMethod.PUT, requestEntity, String.class);
+            } catch (RestClientException e) {
+                log.error(String.format("Couldn't reach %s",updateTankURI),e.getLocalizedMessage());
+                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+            }
+
+            if (!responseEntity.getStatusCode().is2xxSuccessful()){
+                if (responseEntity.getStatusCodeValue()==409) {
+                    log.warn("Tried to update non existing tank or internal error. Tank ID: ",tank.getId());
+                    throw new BusinessException(Message.error(TankMessageCodes.NO_SUCH_TANK));
+                }
+                if (responseEntity.getStatusCodeValue()==401) {
+                    log.warn("Invalid Token when trying to update tank: ",tank.getId());
+                    throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
+                }
+            }
+
         }
     }
 }

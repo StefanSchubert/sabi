@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.webclient.controller;
+package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.AuthExceptionCodes;
 import de.bluewhale.sabi.exception.AuthMessageCodes;

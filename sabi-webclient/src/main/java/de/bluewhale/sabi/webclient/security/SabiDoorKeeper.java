@@ -7,7 +7,7 @@ package de.bluewhale.sabi.webclient.security;
 
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.webclient.controller.UserService;
+import de.bluewhale.sabi.webclient.apigateway.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

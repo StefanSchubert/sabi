@@ -51,7 +51,7 @@ public class AquariumEntity extends Auditable {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium", cascade = CascadeType.ALL)
     private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
 
 }

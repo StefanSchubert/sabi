@@ -8,6 +8,8 @@ package de.bluewhale.sabi.webclient.controller;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
+import de.bluewhale.sabi.webclient.apigateway.TankService;
+import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,10 @@ public class TankListView implements Serializable {
 
     @Autowired
     TankService tankService;
+
     @Inject
     UserSession userSession;
+
     private List<AquariumTo> tanks;
     private AquariumTo selectedTank;
 
@@ -67,14 +71,23 @@ public class TankListView implements Serializable {
             // Leave list untouched in this case.
             // tanks = new ArrayList<>();
             log.error(e.getLocalizedMessage());
-            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", e.getLocalizedMessage()));
+            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Sorry!",
+                    MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
         }
     }
 
     public void save() {
-        // TODO STS (13.09.20):
-        // merge selected with backend and reload list
-        // notice could also be a new one, check handling of IDs in this case.
+        if (selectedTank != null) {
+            // Already stored
+            try {
+                tankService.save(selectedTank, userSession.getSabiBackendToken());
+                tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
+            } catch (BusinessException e) {
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Sorry!",
+                        MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
+            }
+        }
     }
 
 }

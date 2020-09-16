@@ -3,7 +3,7 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.webclient.controller;
+package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
