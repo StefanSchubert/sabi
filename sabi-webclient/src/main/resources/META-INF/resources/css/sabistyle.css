@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -19,3 +19,13 @@ a.splashscreen:visited {color: beige;}
 a.splashscreen:hover {color: antiquewhite;}
 a.splashscreen:active {color: aqua;}
 */
+
+.mobilescreen {
+    padding: 15px;
+    width: 600px;
+}
+
+.popupdialog {
+    background-color: darkseagreen;
+    width: 400px;
+}

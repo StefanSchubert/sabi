@@ -7,9 +7,8 @@ package de.bluewhale.sabi.webclient.CDIBeans;
 
 import de.bluewhale.sabi.model.MotdTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -27,9 +26,8 @@ import java.util.Locale;
  */
 @Named
 @ApplicationScoped
+@Slf4j
 public class ApplicationInfo implements Serializable {
-
-    static Logger logger = LoggerFactory.getLogger(ApplicationInfo.class);
 
     // TODO maven build version into meta-INF and lazy init this here as property
     public static String buildVersion = "v0.0.1 snapshot";
@@ -67,15 +65,15 @@ public class ApplicationInfo implements Serializable {
 
         try {
             motdTo = restTemplate.getForObject(motdURI, MotdTo.class);
-            if (logger.isDebugEnabled()){
-                logger.debug("Called MOTD");
+            if (log.isDebugEnabled()){
+                log.debug("Called MOTD");
             };
             if (motdTo != null && Strings.isNotEmpty(motdTo.getMotd())) {
                 MessageUtil.info("motd", motdTo.getMotd());
             }
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            logger.error("MOTD Restcall failure.",e);
+            log.error("MOTD Restcall failure.",e);
         }
     }
 

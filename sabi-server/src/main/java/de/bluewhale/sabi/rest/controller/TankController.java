@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -14,8 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,9 +33,8 @@ import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
  */
 @RestController
 @RequestMapping(value = "api/tank")
+@Slf4j
 public class TankController {
-
-    static Logger logger = LoggerFactory.getLogger(TankController.class);
 
 // ------------------------------ FIELDS ------------------------------
 
@@ -62,6 +60,7 @@ public class TankController {
     public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
+        log.debug("Request Tank list for ",principal.getName());
         List<AquariumTo> aquariumToList = tankService.listTanks(principal.getName());
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }
@@ -140,7 +139,7 @@ public class TankController {
             responseEntity = new ResponseEntity<>(createdAquarium, HttpStatus.CREATED);
         } else {
             String msg="A Tank with Id " + aquariumTo.getId() + " already exist.";
-            logger.warn("Cannot create twice: "+msg);
+            log.warn("Cannot create twice: "+msg);
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
@@ -167,7 +166,7 @@ public class TankController {
             AquariumTo updatedAquarium = aquariumToResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedAquarium, HttpStatus.OK);
         } else {
-            logger.warn("Could not update tank: "+resultMessage.toString());
+            log.warn("Could not update tank: "+resultMessage.toString());
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

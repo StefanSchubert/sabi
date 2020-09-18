@@ -1,0 +1,27 @@
+### Login Request
+POST http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/auth/login
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "username": "schubert@bluewhale.de",
+  "password": "test"
+}
+
+### Register new User Request
+POST http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/auth/register
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "captchaCode": "QMhHh",
+  "country": "de",
+  "email": "schubert@bluewhale.de",
+  "language": "de",
+  "password": "test",
+  "username": "tester"
+}
+
+###

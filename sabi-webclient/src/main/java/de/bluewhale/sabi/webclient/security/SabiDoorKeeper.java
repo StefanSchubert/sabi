@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,9 +7,8 @@ package de.bluewhale.sabi.webclient.security;
 
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.webclient.controller.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.bluewhale.sabi.webclient.apigateway.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,9 +29,8 @@ import java.util.Collections;
  */
 @Service
 @Configurable
+@Slf4j
 public class SabiDoorKeeper implements AuthenticationProvider {
-
-    static Logger logger = LoggerFactory.getLogger(SabiDoorKeeper.class);
 
     @Autowired
     UserService userService;
@@ -50,7 +48,8 @@ public class SabiDoorKeeper implements AuthenticationProvider {
                         unconfirmedAuthentication.getCredentials().toString());
             }
         } catch (Exception e) {
-            logger.error("AuthService failed!", e);
+            log.warn("AuthService failed!", e);
+            throw new BadCredentialsException(e.getLocalizedMessage());
         }
 
         if (resultTo != null && resultTo.getMessage().getCode().equals(AuthMessageCodes.SIGNIN_SUCCEEDED)) {
@@ -63,8 +62,13 @@ public class SabiDoorKeeper implements AuthenticationProvider {
 
             return confirmedAuthentication;
         } else {
+            log.info("AuthService detected failed login.");
             //return unconfirmedAuthentication;
-            throw new BadCredentialsException(resultTo.getMessage().toString());
+            if (resultTo != null) {
+                throw new BadCredentialsException(resultTo.getMessage().toString());
+            } else {
+                throw new BadCredentialsException("Authentication failed...");
+            }
         }
     }
 

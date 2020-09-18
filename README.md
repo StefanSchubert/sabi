@@ -55,7 +55,7 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 
 ### Common
 
-* JDK 1.8
+* Java 11
 * openAPI (Swagger)
  
 ### Client site

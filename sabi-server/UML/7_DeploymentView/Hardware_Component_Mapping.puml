@@ -27,12 +27,12 @@ cloud "Home LAN" {
 
   node "RaspberryPi-2" {
 
-      package "SpringBootApp Captcha" {
+      package "Captcha-Light" {
           interface "CAPTCHA\nREST API" as rest2
           rest2 - [CAPTCHA]
       }
 
-      package "SpringBootApp Sabi-BE" {
+      package "Sabi-Server" {
          interface "SABI\nREST API" as rest
          rest - [REST Facade]
          [REST Facade] -> [Services]
@@ -44,16 +44,18 @@ cloud "Home LAN" {
   }
 
   node "RaspberryPi-1" {
-    package "Tomcat FE" {
+    package "Sabi-Webclient" {
       HTTP - [WebApp]
       [WebApp] ..> rest : https
       [WebApp] ..> rest2 : https
+      database Prometheus
+      [grafana] -> Prometheus
     }
   }
 
 node "RaspberryPi-3" {
-     database "MySQL" as db {
-        folder "SabiDB" {
+     database "MariaDB" as db {
+        folder "Sabi-Database" {
           interface SQL
           [sabi-prod-db] - SQL
           [sabi-stage-db]

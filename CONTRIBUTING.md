@@ -12,7 +12,11 @@ Those ones with the highest count have better chances for being scheduled for th
 
 ## As a Developer
 
+Seek contact, let me know if you plan to work on something, to avoid double work.
+
 ### Branching, Merging
+Fork the projekt, for being able to create pull requests.
+
 Please work along the issue log and create feature-branches and use pull requests. 
 Don't start huge refactorings especially on architectural design (those are only accepted if we agree upon them, 
 i.e. you need to communicate as in real life ;-) )
@@ -26,4 +30,4 @@ Look especially for features marked with "HELP WANTED"
 ## As a Sponsor
 
 Any support in terms of infrastructure, software licences or donations are welcome.
-I plan to integrate a sponsor splash screen or something like this.
+I plan to integrate a sponsor credit screen or something like this.

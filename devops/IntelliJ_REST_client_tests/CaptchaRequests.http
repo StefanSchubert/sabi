@@ -1,0 +1,6 @@
+GET http://{{captcha-host}}:{{captcha-port}}/captcha/api/challenge/de
+Accept: */*
+Content-Type: application/json
+
+###
+

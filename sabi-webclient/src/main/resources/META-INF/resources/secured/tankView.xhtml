@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+
+        <ui:define name="content">
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <h:form id="master">
+                <p:dataList value="#{tankListView.tanks}" var="tank" type="definition">
+                    <f:facet name="header">#{msg['tankview.tanklist.h']}</f:facet>
+
+                    <p:panelGrid columns="2" layout="grid" style="border:2;">
+                        <p:outputLabel value="#{msg['tankview.description.l']}"/>
+                        <h:outputText value="#{tank.description}"
+                                      size="14"/>
+
+                        <p:outputLabel value="#{msg['tankview.volume.l']}"/>
+                        <h:outputText value="#{tank.size} #{tank.sizeUnit.unitSign}"
+                                      size="10"/>
+
+                        <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
+                        <h:outputText value="#{tank.inceptionDate}"
+                                      size="10">
+                            <!-- FIXME proper Timezone handling when we have the user profile -->
+                            <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
+                        </h:outputText>
+
+                        <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.edit(tank)}"
+                                         id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>
+
+                        <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
+                                         id="delAction"
+                                         update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
+                    </p:panelGrid>
+
+                </p:dataList>
+
+                <p:commandButton value="#{msg['common.add.b']}" action="#{tankListView.addTank}"
+                                 id="addAction" icon="pi pi-plus" title="#{msg['common.add.b']}"/>
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</h:body>
+</html>

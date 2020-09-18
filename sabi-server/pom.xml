@@ -11,7 +11,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.6.RELEASE</version>
+        <version>2.3.3.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -44,11 +44,11 @@
         <sabi.version>1.0-SNAPSHOT</sabi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <swagger.version>2.9.2</swagger.version>
         <eclipselink.version>2.7.7</eclipselink.version>
-        <micrometer.prometheus.version>1.5.1</micrometer.prometheus.version>
-        <spring.instrument.version>5.2.5.RELEASE</spring.instrument.version>
+        <micrometer.prometheus.version>1.5.4</micrometer.prometheus.version>
+        <spring.instrument.version>5.2.8.RELEASE</spring.instrument.version>
     </properties>
 
     <dependencyManagement>
@@ -146,6 +146,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <!-- For using javax.validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- used JPA Configuration / Implementation -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
@@ -156,11 +162,16 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.6.1</version>
+            <version>2.6.2</version>
         </dependency>
 
 
         <!-- Common Stuff -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+        </dependency>
 
         <!-- Monitoring
              The next ones are required for providing
@@ -272,7 +283,15 @@
     <build>
         <finalName>sabi-service-${sabi.version}</finalName>
         <plugins>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>${java.version}</release>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -300,22 +319,13 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <agent>
-                        ${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
-                    </agent>
+                    <jvmArguments>
+                        -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
+                    </jvmArguments>
                     <!-- Build a fully executable jar to use it via /etc/init.d
                          see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
                     -->
                     <executable>true</executable>
-                    <!-- Tuning the required heap size / shrinked after analysing usage via grafana /
-                         revisit and readjust if necessary from time to time.
-
-                          Notice: This flag is being ignored by the plugin (Bug! 4/2019)
-                          As workaround/solution drop a YOURAPP.conf aside the YOURAPP.jar
-                          with the following content:
-                          export JAVA_OPTS="-Xmx128m -Xms64m"
-                    -->
-                    <jvmArguments>-Xmx128m</jvmArguments>
                 </configuration>
             </plugin>
 

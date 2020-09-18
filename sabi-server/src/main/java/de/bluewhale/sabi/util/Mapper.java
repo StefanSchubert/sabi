@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -39,6 +39,7 @@ public class Mapper {
         pAquariumTo.setDescription(pAquariumEntity.getDescription());
         pAquariumTo.setUserId(pAquariumEntity.getUser().getId());
         pAquariumTo.setActive(pAquariumEntity.getActive());
+        pAquariumTo.setInceptionDate(pAquariumEntity.getInceptionDate());
     }
 
 
@@ -54,6 +55,7 @@ public class Mapper {
         pAquariumEntity.setSize(pAquariumTo.getSize());
         pAquariumEntity.setDescription(pAquariumTo.getDescription());
         pAquariumEntity.setActive(pAquariumTo.getActive());
+        pAquariumEntity.setInceptionDate(pAquariumTo.getInceptionDate());
     }
 
     /**

@@ -17,8 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,9 +40,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(value = "api/auth")
+@Slf4j
 public class AuthenticationController {
-
-    static Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired
     UserService userService;
@@ -156,7 +154,7 @@ public class AuthenticationController {
             try {
                 notificationService.sendWelcomeMail(email);
             } catch (MessagingException e) {
-                logger.error("Validation users email confirmation via token could not be send to the user", e);
+                log.error("Validation users email confirmation via token could not be send to the user", e);
             }
         } else {
             responseEntity = new ResponseEntity<>("<html><body><h1>Account validation failed!</h1><p>Your account is still locked." +
@@ -215,7 +213,8 @@ public class AuthenticationController {
                 try {
                     notificationService.sendValidationMail(createdUser);
                 } catch (MessagingException e) {
-                    logger.error("Users registration incomplete and aborted, since notification mail coud not be sent.", e);
+                    log.error("Users registration incomplete and aborted, since notification mail coud not be sent.", e);
+                    userService.unregisterUserAndClearPersonalData(pRegistrationUserTo.getEmail());
                     responseEntity = new ResponseEntity<UserRegConfirmationTo>(userRegConfirmationTo, HttpStatus.SERVICE_UNAVAILABLE);
                 }
 
@@ -223,13 +222,13 @@ public class AuthenticationController {
 
                 if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL.equals(resultMessage.getCode())) {
                     String msg = "User registration failed. A User with eMail " + pRegistrationUserTo.getEmail() + " already exist.";
-                    logger.warn(msg);
+                    log.warn(msg);
                     responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.CONFLICT);
                 }
 
                 if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME.equals(resultMessage.getCode())) {
                     String msg = "User registration failed. A User with username " + pRegistrationUserTo.getUsername() + " already exist.";
-                    logger.warn(msg);
+                    log.warn(msg);
                     responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.CONFLICT);
                 }
 

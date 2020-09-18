@@ -16,7 +16,13 @@ repository.
 ## Examples
 
 _Execute something on all pis_
+
 	ansible sabi -a "/bin/uname -a"
+
+or check the unattended update logs
+
+	ansible sabi -a "tail -n20 /var/log/unattended-upgrades/unattended-upgrades.log"
+
 
 ## Deployment of a new captcha release
 
@@ -26,4 +32,9 @@ _Execute something on all pis_
 ## Deployment of a sabi backend release
 
 1) Build the new sabi server release
-2) ansible-playbook deploy_sabiService.yml
+2) ansible-playbook deploySabiService.yml
+
+## Deployment of a sabi frontend release
+
+1) Build the new sabi webclient release
+2) ansible-playbook deploySabiWebclient.yml

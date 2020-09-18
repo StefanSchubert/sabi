@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+
+        <ui:define name="content">
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <h:form>
+                <p:panelGrid columns="2" layout="grid" size="400" style="border:2;">
+                    <p:outputLabel for="description" value="#{msg['tankview.description.l']}"/>
+                    <p:inputText id="description"
+                                 value="#{tankListView.selectedTank.description}"
+                                 size="12"/>
+
+                    <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
+                    <p:inputText id="size"
+                                 value="#{tankListView.selectedTank.size}"
+                                 size="5"/>
+
+                    <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
+                    <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
+                        <f:selectItems value="#{units.sizeUnits}"/>
+                    </h:selectOneMenu>
+
+                    <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
+                    <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
+                                  pattern="dd.MM.yyyy"
+                                  showOtherMonths="true"
+                                  size="11"/>
+
+                    <p:button value="#{msg['common.cancel.b']}" outcome="tankView"/>
+
+                    <p:commandButton value="#{msg['common.save.b']}" action="#{tankListView.save}" />
+                </p:panelGrid>
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</h:body>
+</html>
