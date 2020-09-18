@@ -35,6 +35,9 @@ import java.util.List;
 @Getter
 public class TankListView implements Serializable {
 
+    private static final String TANK_EDITOR_PAGE = "tankEditor";
+    private static final String TANK_VIEW_PAGE = "tankView";
+
     @Autowired
     TankService tankService;
 
@@ -55,12 +58,14 @@ public class TankListView implements Serializable {
         }
     }
 
-    public void select(AquariumTo tank) {
+    public String edit(AquariumTo tank) {
         selectedTank = tank;
+        return TANK_EDITOR_PAGE;
     }
 
-    public void addTank() {
+    public String addTank() {
         selectedTank = new AquariumTo();
+        return TANK_EDITOR_PAGE;
     }
 
     public void delete(AquariumTo tank) {
@@ -76,7 +81,7 @@ public class TankListView implements Serializable {
         }
     }
 
-    public void save() {
+    public String save() {
         if (selectedTank != null) {
             // Already stored
             try {
@@ -88,6 +93,7 @@ public class TankListView implements Serializable {
                         MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
             }
         }
+        return TANK_VIEW_PAGE;
     }
 
 }

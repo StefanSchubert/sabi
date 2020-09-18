@@ -26,56 +26,36 @@
             <h:form id="master">
                 <p:dataList value="#{tankListView.tanks}" var="tank" type="definition">
                     <f:facet name="header">#{msg['tankview.tanklist.h']}</f:facet>
-                    #{tank.description}, Size: #{tank.size} #{tank.sizeUnit}
-                    <!-- TODO add dummy picture or real picture -->
-                    <!--                        <f:facet name="description">-->
-                    <!--                            <p:graphicImage name="demo/images/car/#{car.brand}.gif"/>-->
-                    <!--                        </f:facet>-->
-                    <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
-                                     id="delAction"
-                                     update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
 
-                    <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.select(tank)}"
-                                     id="editAction" update=":detail"
-                                     icon="pi pi-pencil" title="#{msg['common.edit.b']}"
-                                     oncomplete="PF('detail').show()"/>
+                    <p:panelGrid columns="2" layout="grid" style="border:2;">
+                        <p:outputLabel value="#{msg['tankview.description.l']}"/>
+                        <h:outputText value="#{tank.description}"
+                                      size="14"/>
 
-                    <p:commandButton value="#{msg['common.add.b']}" action="#{tankListView.addTank}"
-                                     id="addAction" update=":detail"
-                                     icon="pi pi-plus" title="#{msg['common.add.b']}"
-                                     oncomplete="PF('detail').show()"/>
+                        <p:outputLabel value="#{msg['tankview.volume.l']}"/>
+                        <h:outputText value="#{tank.size} #{tank.sizeUnit.unitSign}"
+                                      size="10"/>
+
+                        <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
+                        <h:outputText value="#{tank.inceptionDate}"
+                                      size="10">
+                            <!-- FIXME proper Timezone handling when we have the user profile -->
+                            <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
+                        </h:outputText>
+
+                        <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.edit(tank)}"
+                                         id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>
+
+                        <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
+                                         id="delAction"
+                                         update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
+                    </p:panelGrid>
 
                 </p:dataList>
+
+                <p:commandButton value="#{msg['common.add.b']}" action="#{tankListView.addTank}"
+                                 id="addAction" icon="pi pi-plus" title="#{msg['common.add.b']}"/>
             </h:form>
-
-            <p:dialog id="detail" widgetVar="detail" styleClass="popupdialog">
-                <h:form>
-                    <p:panelGrid columns="2" layout="grid" size="400" style="border:2;">
-                        <p:outputLabel for="description" value="#{msg['tankview.description.l']}"/>
-                        <p:inputText id="description"
-                                     value="#{tankListView.selectedTank.description}"
-                                     size="12"/>
-
-                        <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
-                        <p:inputText id="size"
-                                     value="#{tankListView.selectedTank.size}"
-                                     size="5"/>
-
-                        <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
-                        <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
-                            <f:selectItems value="#{units.sizeUnits}"/>
-                        </h:selectOneMenu>
-
-                        <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
-                        <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
-                                      pattern="dd.MM.yyyy" showOtherMonths="true" size="11"/>
-
-                        <p:button value="#{msg['common.cancel.b']}" onclick="PF('detail').hide(); return false"/>
-                        <p:commandButton value="#{msg['common.save.b']}" action="#{tankListView.save}"
-                                         update=":master" oncomplete="PF('detail').hide()"/>
-                    </p:panelGrid>
-                </h:form>
-            </p:dialog>
 
         </ui:define>
 
