@@ -46,7 +46,7 @@ public class TankController {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @ApiOperation(value = "/list", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "List all tanks belonging to calling user.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
                     message = "Success tanks returned.",
@@ -65,7 +65,7 @@ public class TankController {
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }
 
-    @ApiOperation(value = "/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "Read details of a specific tank.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_OK,
                     message = "Success tank returned.", response = AquariumTo.class),
@@ -85,7 +85,7 @@ public class TankController {
         return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "Delete a tank from users profile.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_OK,
                     message = "Tank deleted", response = HttpStatus.class),
@@ -116,7 +116,7 @@ public class TankController {
         return responseEntity;
     }
 
-    @ApiOperation("/create")
+    @ApiOperation(value="Add a new tank to users profile.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - Remember Id of returned tank if you want to update it afterwards or retrieve it via list operation.",
                     response = AquariumTo.class),
@@ -145,7 +145,7 @@ public class TankController {
         return responseEntity;
     }
 
-    @ApiOperation("")
+    @ApiOperation(value="Update a specific tank.",notes="Tank data needs to be provides via json body.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK - Aquarium has been updated",response = AquariumTo.class),
             @ApiResponse(code = 409, message = "Something wrong - Tank ID does not exists or something like that."),

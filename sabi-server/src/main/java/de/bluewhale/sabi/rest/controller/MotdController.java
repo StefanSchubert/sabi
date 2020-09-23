@@ -33,7 +33,7 @@ public class MotdController {
     @Autowired
     AppService appService;
 
-    @ApiOperation("/motd/{language}")
+    @ApiOperation(value="Retrieves the Message of today.",notes="Used by sabis operator to make announcements, such as planned maintenance work.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK - Motd retrieved.",
                     response = MotdTo.class),
