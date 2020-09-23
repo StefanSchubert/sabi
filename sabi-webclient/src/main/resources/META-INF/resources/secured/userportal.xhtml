@@ -45,11 +45,18 @@
                     <h:outputText>TODO -Stats View</h:outputText>
 
                     <h:outputText>Welcome Back #{userSession.userName}!</h:outputText>
-                    <ul>
-                        <li>Current-Project-State: Stage I</li>
-                        <li>Project-Participants: XY</li>
-                        <li>Registered-Tanks: XY</li>
-                    </ul>
+                    <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
+
+                        <p:outputLabel value="#{msg['userportal.projectstate.l']}"/>
+                        <p:outputLabel value="#{msg['userportal.currentprojectstate.l']}"/>
+
+                        <p:outputLabel value="#{msg['userportal.usercount.l']}"/>
+                        <p:outputLabel value="#{applicationInfo.numberOfParticipants}"/>
+
+                        <p:outputLabel value="#{msg['userportal.tankcount.l']}"/>
+                        <p:outputLabel value="#{applicationInfo.numberOfTanks}"/>
+
+                    </p:panelGrid>
                 </p:outputPanel>
 
             </p:panel>

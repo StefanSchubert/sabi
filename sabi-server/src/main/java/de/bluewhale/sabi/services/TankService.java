@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -72,4 +72,10 @@ public interface TankService {
      */
     @Transactional
     ResultTo<AquariumTo> removeTank(Long persistedTankId, String pUsersEmail);
+
+    /**
+     * Used to display some project stats.
+     * @return Number of Tanks.
+     */
+    String fetchAmountOfTanks();
 }

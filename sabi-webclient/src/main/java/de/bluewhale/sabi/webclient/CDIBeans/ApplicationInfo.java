@@ -31,8 +31,10 @@ public class ApplicationInfo implements Serializable {
 
     // TODO maven build version into meta-INF and lazy init this here as property
     public static String buildVersion = "v0.0.1 snapshot";
+
     @Value("${sabi.backend.url}")
     private String sabiBackendUrl;
+
     private RestTemplate restTemplate = new RestTemplate();
 
     public String getMotd() {
@@ -49,6 +51,46 @@ public class ApplicationInfo implements Serializable {
         final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
         String msg = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
         MessageUtil.info("common", msg);
+    }
+
+    /**
+     * Retrieves the Number of project participants.
+     * @return Number as String
+     */
+    public String getNumberOfParticipants() {
+        String numberOfParticipants = "N/A";
+        String infoURL = sabiBackendUrl + "/api/stats/participants";
+        try {
+            // todo only update max. every hour
+            numberOfParticipants = restTemplate.getForObject(infoURL, String.class);
+            if (log.isDebugEnabled()){
+                log.debug("Called Number of participants stats");
+            };
+        } catch (RestClientException e) {
+            // Treat as non existing MOTD to be resilient here.
+            log.error("Participant-Stats Restcall failure.",e);
+        }
+        return numberOfParticipants;
+    }
+
+    /**
+     * Retrieves the Number of registered tanks.
+     * @return Number as String
+     */
+    public String getNumberOfTanks() {
+        String numberOfTanks = "N/A";
+        String infoURL = sabiBackendUrl + "/api/stats/tanks";
+        try {
+            // todo only update max. every hour
+            numberOfTanks = restTemplate.getForObject(infoURL, String.class);
+            if (log.isDebugEnabled()){
+                log.debug("Called Number of tanks stats");
+            };
+        } catch (RestClientException e) {
+            // Treat as non existing MOTD to be resilient here.
+            log.error("Tank-Stats Restcall failure.",e);
+        }
+        return numberOfTanks;
     }
 
     /**

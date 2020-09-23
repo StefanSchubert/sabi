@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
-  ~ See project LICENSE file for the detailed terms and conditions.
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
   -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -20,8 +20,9 @@
           href="#{resource['images:icons8-crab-64.png']}"/>
 </h:head>
 
-<h:body>
-    <!--    <h:outputStylesheet library="css" name="sabistyle.css"/>
+<h:outputStylesheet library="css" name="sabistyle.css"/>
+<h:body styleClass="splashscreen">
+    <!--
 
     We specify prependId="false" on the form as otherwise the JSF framework will prefix the parameters with the ID of the form.
     but we require username and password inputfields unchanges, as spring-security will look them up.
@@ -29,29 +30,26 @@
     You may wonder that there is no specific target of the command button defined. The form is automatically
     wired through Springs WebSecurity-Mechanisms. Have a look into the class WebSecurityConfig.
     -->
-
+    <div style="height:60vh"/>
     <h:form id="login-form" prependId="false">
 
-        <p:panel header="#{msg['login.header.h']} (#{applicationInfo.version})">
-            <p:panelGrid columns="1" styleClass="ui-fluid center ui-noborder">
+        <p:panel header="#{msg['login.welcome.h']} (#{applicationInfo.version})">
+            <h2>#{msg['login.panel.h']}</h2>
+            <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
 
-                <h2>Please login</h2>
+                <p:outputLabel value="#{msg['login.username.l']}" for="username"/>
+                <p:inputText id="username" placeholder="username or email"/>
 
-                <p:outputLabel value="Login failed!" style="font-style: oblique; color: red"
-                               rendered="${!empty param['error']}" />
-
-                <p:inputText id="username" placeholder="registered email"/>
-
-                <h:outputText value="Password: "/>
+                <p:outputLabel value="#{msg['login.password.l']}" for="password"/>
                 <p:password id="password" placeholder="password"/>
 
-                <p:commandButton ajax="false"
-                                 value="Login"/>
-
-                <h:outputText value="Password forgotten: "/>
-                <p:link href="#" value="Reset PW Form"/>
+                <p:commandButton ajax="false" value="Login"/>
+                <p:link href="#" value="#{msg['login.resetPW.b']}"/>
 
             </p:panelGrid>
+
+            <p:outputLabel value="#{msg['login.forgottenPW.l']}" style="font-style: oblique; color: red"
+                           rendered="${!empty param['error']}"/>
         </p:panel>
 
     </h:form>
