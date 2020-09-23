@@ -48,7 +48,7 @@ public class MeasurementController {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @ApiOperation(value = "/list", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "Lists measurements taken by the user.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
                     message = "Success - list of all users measurements returned.",
@@ -66,7 +66,7 @@ public class MeasurementController {
         return new ResponseEntity<>(MeasurementToList, HttpStatus.ACCEPTED);
     }
 
-    @ApiOperation(value = "/tank/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "List measurements belonging to a specific tank", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_OK,
                     message = "Success - list of tanks measurements returned.",
@@ -104,7 +104,7 @@ public class MeasurementController {
         return new ResponseEntity<>(MeasurementToList, HttpStatus.ACCEPTED);
     }
 
-    @ApiOperation(value = "/{id}", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiOperation(value = "Drop a specific measurement.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_OK,
                     message = "Measurement deleted", response = HttpStatus.class),
@@ -135,7 +135,7 @@ public class MeasurementController {
         return responseEntity;
     }
 
-    @ApiOperation("")
+    @ApiOperation(value="Add a new measurement", notes="Needs to be provided via json body.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - Remember Id of returned measurement if you want to update it afterwards or retrieve it via list operation.",
                     response = MeasurementTo.class),
@@ -164,7 +164,7 @@ public class MeasurementController {
         return responseEntity;
     }
 
-    @ApiOperation("")
+    @ApiOperation(value="Correct an existing measurement", notes="Needs to be provided via json body.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK - Measurement has been updated",
                     response = MeasurementTo.class),

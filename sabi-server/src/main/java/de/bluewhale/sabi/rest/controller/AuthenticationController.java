@@ -52,7 +52,7 @@ public class AuthenticationController {
     @Autowired
     CaptchaAdapter captchaAdapter;
 
-    @ApiOperation("/login")
+    @ApiOperation(value="Login a user.", notes="Creates an authorization token for subsequent requests.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - extract user authorization token from header for further requests.", response = HttpStatus.class),
             @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
@@ -69,7 +69,7 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation("/pwd_reset")
+    @ApiOperation(value="Reset users password", notes="Legitimation and new passwort are transmitted via json body.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - password has been reset.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
@@ -99,7 +99,7 @@ public class AuthenticationController {
 
     }
 
-    @ApiOperation("/req_pwd_reset")
+    @ApiOperation(value="Request to reset users password", notes="User will retrieve an email with instructions.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - email with reset token has been sent to user.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
@@ -130,7 +130,7 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation("/email/{email}/validation/{token}")
+    @ApiOperation(value="Used to validate a users email", notes="User sends in a token which has been deliverd via email.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - User can proceed using this service by login now.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - validation code or user unknown.", response = HttpStatus.class)
@@ -164,7 +164,7 @@ public class AuthenticationController {
         return responseEntity;
     }
 
-    @ApiOperation("/register")
+    @ApiOperation(value="Register a new User", notes="User object needs to be transmitted via json body.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserRegConfirmationTo.class),
             @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
