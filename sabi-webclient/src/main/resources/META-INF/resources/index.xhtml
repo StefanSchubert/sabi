@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
-  ~ See project LICENSE file for the detailed terms and conditions.
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
   -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -26,10 +26,10 @@
 <h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
 
-    <h1>#{msg['login.header.h']}</h1>
-    <div style="height:380px"/>
+    <h1>#{msg['login.welcome.h']}</h1>
+    <div style="height:52vh"/>
     <p>
-        <h:outputText value="#{msg['welcome.t.introduction']}" style="width: 50px;"/>
+        <h:outputText value="#{msg['welcome.t.introduction']}" styleClass="text"/>
     </p>
     <h:panelGrid columns="2" cellpadding="20">
         <p:button outcome="login" value="#{msg['welcome.but.login']}"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -148,7 +148,11 @@ public class UserServiceImpl implements UserService {
             final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmail);
             return new ResultTo<String>("Fraud?", errorMsg);
         }
+    }
 
+    @Override
+    public String fetchAmountOfParticipants() {
+        return String.valueOf(userRepository.count());
     }
 
     @Override

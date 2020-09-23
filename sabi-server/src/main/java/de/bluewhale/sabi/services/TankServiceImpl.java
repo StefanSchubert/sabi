@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -187,5 +187,10 @@ public class TankServiceImpl implements TankService {
                 resultTo = new ResultTo<>(new AquariumTo(), Message.error(TankMessageCodes.UNKNOWN_USER));
         }
         return resultTo;
+    }
+
+    @Override
+    public String fetchAmountOfTanks() {
+        return String.valueOf(aquariumRepository.count());
     }
 }

@@ -3,15 +3,16 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
+
 .splashscreen {
     background-image: url("#{resource['images:RiffStefan2.png']}");
-    background-size: 500px;
+    background-size: 100%;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    background-color: black;
 
     color: yellow;
     padding: 15px;
-    width: 450px;
 }
 /*
 a.splashscreen:link {color: white;}
@@ -22,10 +23,20 @@ a.splashscreen:active {color: aqua;}
 
 .mobilescreen {
     padding: 15px;
-    width: 600px;
+    /*width: 600px;*/
 }
 
 .popupdialog {
     background-color: darkseagreen;
     width: 400px;
+}
+
+.text {
+    font-size: 3.2vw;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Primefaces adoptions */
+.ui-messages ul {
+    font-size: 3.0vw;
 }

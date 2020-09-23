@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -83,5 +83,10 @@ public interface UserService {
     @Transactional
     void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException;
 
+    /**
+     * Used to display some project stats.
+     * @return Number of Participants.
+     */
+    String fetchAmountOfParticipants();
 
 }

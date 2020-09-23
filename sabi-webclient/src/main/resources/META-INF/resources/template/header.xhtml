@@ -11,9 +11,11 @@
     <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
 
     <h:form>
+        <!-- For Icons see: https://www.primefaces.org/showcase/ui/misc/primeicons.xhtml -->
         <p:menuButton value="Menu">
             <p:menuitem value="#{msg['menu.home.l']}" outcome="/secured/userportal" icon="pi pi-home"/>
             <p:menuitem value="#{msg['menu.tankView.l']}" outcome="/secured/tankView" icon="pi pi-image"/>
+            <p:menuitem value="#{msg['menu.measureView.l']}" outcome="/secured/measureView" icon="pi pi-pencil"/>
             <p:menuitem value="#{msg['menu.report.l']}" action="#{menuView.sendReport}" icon="pi pi-file-excel"/>
             <p:menuitem value="#{msg['menu.userProfile.l']}" outcome="/secured/userProfile" icon="pi pi-user"/>
             <p:menuitem value="#{msg['menu.statistics.l']}" outcome="/projectStats" icon="pi pi-chart-bar"/>

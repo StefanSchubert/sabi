@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
-import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -91,17 +90,6 @@ public class UserSession implements Serializable {
     }
 
 // -------------------------- OTHER METHODS --------------------------
-
-    /**
-     * Checks Backend for some Info message which should be displayed and set it as Faces Message Context.
-     */
-   @PostConstruct
-   private void checkForSystemMessage(){
-       // FIXME STS (29.12.19): leads to runtime errors - @Autowire Injection fails when having this.
-       // BTW it violates SRP, too. It's not the task of a specific user session to check this.
-       // TODO STS (2019-08-18): Implement Backendfunction to retrieve some motd.
-       // MessageUtil.info("common", "DEV Environment: WIP (Implement MOTD Function :-))");
-   }
 
     /**
      * Choosed Language of the User derived by browsers settings, if not explicit set before.
