@@ -8,7 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -23,39 +23,44 @@
                 <p:autoUpdate/>
             </p:messages>
 
-            <h:form id="master">
-                <p:dataList value="#{tankListView.tanks}" var="tank" type="definition">
-                    <f:facet name="header">#{msg['tankview.tanklist.h']}</f:facet>
+            <p:outputLabel value="#{msg['measureview.tankchoice.l']}"/>
+            <p:outputLabel value="#{msg['measureview.measurekind.l']}"/>
+            <p:outputLabel value="#{msg['measureview.value.l']}"/>
+            <p:outputLabel value="#{msg['measureview.unit.l']}"/>
+            <p:outputLabel value="#{msg['measureview.date.l']}"/>
+            <p:outputLabel value="#{msg['common.save.b']}"/>
+            <p:outputLabel value="#{msg['common.clear.b']}"/>
+            
+            <!--
+               Label "Choose your tank":
+               Dropdown as Tank-Selection
 
-                    <p:panelGrid columns="2" layout="grid" style="border:2;">
-                        <p:outputLabel value="#{msg['tankview.description.l']}"/>
-                        <h:outputText value="#{tank.description}"
-                                      size="14"/>
+               Label "Was wurde gemessen?
+               Dropdown (Auswahlmöglichkeit)
 
-                        <p:outputLabel value="#{msg['tankview.volume.l']}"/>
-                        <h:outputText value="#{tank.size} #{tank.sizeUnit.unitSign}"
-                                      size="10"/>
+               Label: Messwert
+               Input-Field: Messwert
 
-                        <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
-                        <h:outputText value="#{tank.inceptionDate}"
-                                      size="10">
-                            <!-- FIXME proper Timezone handling when we have the user profile -->
-                            <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
-                        </h:outputText>
+               Label: Einheit
+               Dropdown (Einheit)
 
-                        <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.edit(tank)}"
-                                         id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>
+               Label: Datum der Messung (mit Uhrzeit?)
+               Inputfield mit Datepicker
 
-                        <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
-                                         id="delAction"
-                                         update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
-                    </p:panelGrid>
+               Save-Button  / Clear-Button
 
-                </p:dataList>
+               =====
 
-                <p:commandButton value="#{msg['common.add.b']}" action="#{tankListView.addTank}"
-                                 id="addAction" icon="pi pi-plus" title="#{msg['common.add.b']}"/>
-            </h:form>
+               Liste der zuletzt erfassten 5 Messwerte
+               * Möglichkeit diesen zu editieren
+               * Möglichkeit diesen zu löschen
+
+               Hinweis mit Link auf Reportbereich
+               == Darstellung der eigenen Messwerte als Grafik
+               == Möglichkeit des Datenexports (csv)
+
+            -->
+
 
         </ui:define>
 
