@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- *
  * Author: Stefan Schubert
  * Date: 05.09.15
  */
@@ -40,6 +39,9 @@ public class JPAConfig {
     @Value("${eclipselink.logging.level:INFO}")
     private String eclipseLinkLoggingLevel;
 
+    @Value("${h2.test.mode}")
+    private Boolean h2TestMode;
+
     @Autowired
     private DataSource dataSource;
 
@@ -51,7 +53,7 @@ public class JPAConfig {
         em.setPackagesToScan(new String[]{"de.bluewhale.sabi.persistence.model"});
         em.setPersistenceUnitName("sabi");
 
-       //  JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        //  JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         JpaVendorAdapter vendorAdapter = new EclipseLinkJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(additionalProperties());
@@ -74,8 +76,15 @@ public class JPAConfig {
 
     Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("eclipselink.ddl-generation", "create-or-extend-tables");
-        properties.setProperty("eclipselink.ddl-generation.output-mode", "sql-script");
+
+        if (h2TestMode) {
+            properties.setProperty("eclipselink.ddl-generation.output-mode", "database");
+            properties.setProperty("eclipselink.ddl-generation", "drop-and-create-tables");
+        } else {
+            properties.setProperty("eclipselink.ddl-generation", "create-or-extend-tables");
+            properties.setProperty("eclipselink.ddl-generation.output-mode", "sql-script");
+        }
+
         properties.setProperty("eclipselink.create-ddl-jdbc-file-name", "createDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.drop-ddl-jdbc-file-name", "dropDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.target-database", eclipseLinkTargetDatabase);

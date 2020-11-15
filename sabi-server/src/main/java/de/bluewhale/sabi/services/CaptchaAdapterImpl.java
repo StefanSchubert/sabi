@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * useing Bluewhales own simplified captcha service.
+ * using Bluewhales own simplified captcha service.
  *
  * @author Stefan Schubert
  */

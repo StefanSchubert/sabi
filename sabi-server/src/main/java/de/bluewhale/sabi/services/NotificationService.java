@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -10,7 +10,7 @@ import de.bluewhale.sabi.model.UserTo;
 import javax.mail.MessagingException;
 
 /**
- * Provides all required controller for user notifications.
+ * Provides services around user notifications.
  */
 public interface NotificationService {
 

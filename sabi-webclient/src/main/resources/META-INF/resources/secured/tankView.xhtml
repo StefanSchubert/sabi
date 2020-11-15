@@ -47,7 +47,7 @@
                                          id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>
 
                         <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
-                                         id="delAction"
+                                         id="delAction" ajax="true"
                                          update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
                     </p:panelGrid>
 

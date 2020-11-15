@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -69,7 +69,7 @@ public class TestDataFactory {
     }
 
     /**
-     * Links preexisting testdata for aquariun (user) and unit.
+     * Links preexisting testdata for aquarium (user) and unit.
      *
      * @return
      * @param pTankID

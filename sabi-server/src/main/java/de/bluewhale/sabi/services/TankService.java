@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Provides all required controller for use cases around the {@link de.bluewhale.sabi.persistence.model.AquariumEntity}
+ * Provides logic for use cases around the {@link de.bluewhale.sabi.persistence.model.AquariumEntity}
  */
 public interface TankService {
 
