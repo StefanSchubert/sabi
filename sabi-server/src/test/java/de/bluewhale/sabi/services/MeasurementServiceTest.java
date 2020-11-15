@@ -1,26 +1,31 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.BasicDataFactory;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
+import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.UserTo;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -35,10 +40,10 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ContextConfiguration(classes = AppConfig.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MeasurementServiceTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class MeasurementServiceTest extends BasicDataFactory {
 
-    // pre existing test user
-    private static final String P_USER_EMAIL = "sabi@bluewhale.de";
+
     // ------------------------------ FIELDS ------------------------------
 
     @Autowired
@@ -47,10 +52,26 @@ public class MeasurementServiceTest {
     @Autowired
     private UserService userService;
 
+
     @Autowired
     private MeasurementService measurementService;
 
 // -------------------------- OTHER METHODS --------------------------
+
+    /**
+     * There seems to be a timing problem with H2, that causes, that the basic data is not available
+     * for some test classes, while for others it worked out. Until we know what's going wrong...
+     * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
+     * The different behaviour can be observed by e.g. calling the master test suite and as comparising
+     * the measurement testsuite while this is method is deaktivated.
+     */
+    @Before
+    public void ensureBasicDataAvailability() {
+        List<MeasurementTo> list = measurementService.listMeasurements(P_USER_EMAIL);
+        if (list.isEmpty()) populateBasicData();
+        List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER_EMAIL);
+        assertTrue("H2-Basicdata injection did not work!" ,list2.size()>0);
+    }
 
     @Test
     @Transactional
@@ -64,8 +85,8 @@ public class MeasurementServiceTest {
         // Then
         assertNotNull(tank1Measurements);
         assertNotNull(usersMeasurements);
-        assertTrue("Testdata gone?", tank1Measurements.size() > 1);
-        assertTrue("Stored Testdata changed?", tank1Measurements.containsAll(usersMeasurements));
+        assertTrue("Testdata gone?", tank1Measurements.size() >= 1);
+        assertTrue("Stored Testdata changed?", usersMeasurements.containsAll(tank1Measurements));
     }
 
     @Test
@@ -88,10 +109,22 @@ public class MeasurementServiceTest {
     @Test
     @Transactional
     public void testRemoveMeasurement() throws Exception {
-        // Given already stored measurement (ID 100L)
+        // Given a stored measurement for a tank and user
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        testDataFactory.withUserService(userService);
+        testDataFactory.withTankService(tankService);
+        String newTestUserMail = "junit@sabi.de";
+        UserTo persistedTestUserTo = testDataFactory.getPersistedTestUserTo(newTestUserMail);
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(persistedTestUserTo);
+        testAquariumTo.setId(57654L);
+        ResultTo<AquariumTo> newTankResultTo = tankService.registerNewTank(testAquariumTo, newTestUserMail);
+
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(newTankResultTo.getValue().getId());
+        testMeasurementTo.setId(889911L); // to ensure not to interfere with others
+        ResultTo<MeasurementTo> measurementToResultTo1 = measurementService.addMeasurement(testMeasurementTo, newTestUserMail);
 
         // When
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(100L, P_USER_EMAIL);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(testMeasurementTo.getId(), newTestUserMail);
 
         // Then
         assertNotNull(measurementToResultTo);
@@ -104,7 +137,7 @@ public class MeasurementServiceTest {
     @Test
     @Transactional
     public void testUpdateMeasurement() throws Exception {
-        // Given already stores measurments
+        // Given already stored measurements
         List<MeasurementTo> measurementToList = measurementService.listMeasurements(P_USER_EMAIL);
         MeasurementTo prestoresMeasurementTo = measurementToList.get(0);
         float oldValue = prestoresMeasurementTo.getMeasuredValue();

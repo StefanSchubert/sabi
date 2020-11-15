@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 
 /**
- * Provides all required controller for user management use cases.
+ * Provides all logic for user management use cases.
  */
 public interface UserService {
 

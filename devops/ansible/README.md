@@ -17,17 +17,17 @@ repository.
 
 _Execute something on all pis_
 
-	ansible sabi -a "/bin/uname -a"
+	ansible sabi -i hosts -u pi -a "/bin/uname -a"
 
 or check the unattended update logs
 
-	ansible sabi -a "tail -n20 /var/log/unattended-upgrades/unattended-upgrades.log"
+	ansible sabi -i hosts -u pi -a "tail -n20 /var/log/unattended-upgrades/unattended-upgrades.log"
 
 
 ## Deployment of a new captcha release
 
 1) Build the new captcha release
-2) ansible-playbook deployCaptchaService.yml
+2) ansible-playbook -i hosts deployCaptchaService.yml
 
 ## Deployment of a sabi backend release
 

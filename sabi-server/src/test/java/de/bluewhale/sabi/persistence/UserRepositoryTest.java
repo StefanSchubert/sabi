@@ -1,17 +1,20 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence;
 
+import de.bluewhale.sabi.BasicDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -32,30 +35,36 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = AppConfig.class)
-public class UserRepositoryTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class UserRepositoryTest extends BasicDataFactory {
 
     @Autowired
     UserRepository userRepository;
 
-/*
-    @BeforeClass
-    public static void init() throws NamingException {
+    /**
+     * There seems to be a timing problem with H2, that causes, that the basic data is not available
+     * for some test classes, while for others it worked out. Until we know what's going wrong...
+     * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
+     * The different behaviour can be observed by e.g. calling the master test suite and as comparising
+     * the measurement testsuite while this is method is deaktivated.
+     */
+    @Before
+    public void ensureBasicDataAvailability() {
+        UserEntity byEmail = userRepository.getByEmail(P_USER_EMAIL);
+        if (byEmail == null) populateBasicData();
+        UserEntity byEmail2 = userRepository.getByEmail(P_USER_EMAIL);
+        assertNotNull("H2-Basicdata injection did not work!" ,byEmail2);
     }
-*/
-
-/*    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-*/
 
     @Test
+    @Transactional
     public void testProbeTracebleAttributeMappingsOnTestData() throws Exception {
+
         UserEntity userEntity = userRepository.getByEmail("sabi@bluewhale.de");
         assertNotNull("Missing Default Testdata", userEntity);
         assertNotNull("Temporal Column CreatedOn not mapped.", userEntity.getCreatedOn());
         assertNotNull("Temporal Column LastmodOn not mapped.", userEntity.getLastmodOn());
     }
-
 
     @Test
     @Transactional
@@ -107,30 +116,5 @@ public class UserRepositoryTest {
         assertNotEquals("LastModDates should differ.",initalModDate,updatedUserEntity.getLastmodOn());
 
     }
-
-/*
-    USED TO TEST SPRING-DATA-JPA APPROACH. CURRENTLY AUTOWIRING OF THE REPOSITORY IS NOT WORKING.
-    @Test
-    @Transactional
-    // @Rollback(false)
-    public void testCreateUserViaRepository() throws Exception {
-
-
-        // given
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail("Test@bluewhale.de");
-        userEntity.setPassword("Test123");
-        userEntity.setxAuthToken("abc123");
-        userEntity.setId(4711l);
-
-        // when
-        repository.saveAndFlush(userEntity);
-
-        // then
-        UserEntity foundUserEntity = repository.findOne(userEntity.getId());
-
-        assertEquals(foundUserEntity.getEmail(), userEntity.getEmail());
-
-    }*/
 
 }

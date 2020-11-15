@@ -1,6 +1,7 @@
 # Seawater Aquarium Business Intelligence (sabi)
 
-...aims to gain insights from aquarium hobbyist for aquarium hobbyist according seawater measures.
+...is a semi-scientific (or public science) project that aims to gain insights
+ from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
 
 ## Vision I
 
@@ -9,7 +10,8 @@ Some things we fully understand, while on others we have just a lot of guesses a
 I was wondering, if we will be able to gain some more insights if we start to share our measurement data and placing some business intelligence style reporting on top of it.
 This should enable us to to answer some questions like:
 
-* How often do all measure the KH-Value, when not using the Balling method?
+* How often do all measure the KH-Value, when not using the Balling method? Is there a propability of getting
+a cyano bacteria plague when measuring too less?
 * Is there a thing in common when Alveoproa dies (are there similar PO4 levels)?
 
 There must be quite a lot of interesting questions, especially in the field of aquaristic forensics.
@@ -69,7 +71,7 @@ Why JSF and not some current modern framework like angular? In fact it took me q
 The two main reasons are:
 
 * I don't believe that the traffic will be that big, that the server (though a rasperryPi at the beginnig) can't handle it, so that I need to shift the resources (session, logic) rather to the client side.
-* Though since 2014-2017 it became rather quite around JSF (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I deceided to improve my skills in JSF again.
+* Though since 2014-2017 it became rather quite around the mature JSF technology (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I decided to improve my skills in JSF again.
 
 ### Server side
 * Spring-Boot-Application

@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
   flyway:
-    image: flyway/flyway:6.5.5-alpine
+    image: flyway/flyway:7.0
     command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
     volumes:
       - ../../sabi-database/src/main/resources:/flyway/sql
@@ -45,7 +45,7 @@ services:
     ports:
       - "3306:3306"
   fakeSMTP:
-    image: gessnerfl/fake-smtp-server:1.5.0
+    image: gessnerfl/fake-smtp-server:1.6.0
     environment:
       - server.port=5080
       - fakesmtp.port=2525
@@ -60,6 +60,6 @@ networks:
   sabinet:
     driver: bridge
 
-# TODO: application.properties files contains "localhost" this does not matche the hosts,
+# TODO: application.properties files contains "localhost" this does not matches the hosts,
 # db, fakeSMTP etc.. so the application.properties need to be externalized as in production
 # through the assets.
