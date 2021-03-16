@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -14,6 +15,7 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Configures our Swagger usage
@@ -21,6 +23,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @author Stefan Schubert
  */
 @Configuration
+@EnableSwagger2
 public class ApiDocumentationConfiguration {
 
     private static final Contact MY_CONTACT_DATA = new Contact("Stefan Schubert", "", "Stefan.Schubert@bluewhale.de");
@@ -29,7 +32,7 @@ public class ApiDocumentationConfiguration {
     public Docket documentation() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                    .apis(RequestHandlerSelectors.any())
+                    .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                     .paths(PathSelectors.any())
                     .build()
                 .pathMapping("/")

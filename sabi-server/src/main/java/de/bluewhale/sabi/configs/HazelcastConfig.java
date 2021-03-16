@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.configs;
 
-import com.hazelcast.config.*;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.NetworkConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -43,10 +46,8 @@ public class HazelcastConfig {
                 .addMapConfig(
                         new MapConfig()
                                 .setName("pwfToken")
-                                .setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
-                                .setEvictionPolicy(EvictionPolicy.LRU)
                                 .setTimeToLiveSeconds(TOKEN_TTL_10_MIN));
-
+        // TODO STS (16.03.21): Elaborate MapConfig to suite possible DoS.
 
         // Cluster Communication via TCP
         NetworkConfig network = config.getNetworkConfig();

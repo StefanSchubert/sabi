@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  *
@@ -22,7 +21,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Date: 04.09.15
  */
 @Configuration
-@EnableSwagger2
 @ComponentScan(basePackages = "de.bluewhale.sabi")
 @PropertySource("classpath:application.properties")
 public class AppConfig {
