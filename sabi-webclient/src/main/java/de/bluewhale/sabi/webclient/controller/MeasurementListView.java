@@ -8,7 +8,6 @@ package de.bluewhale.sabi.webclient.controller;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
-import de.bluewhale.sabi.webclient.apigateway.TankService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller for the Tanklist View as shown in tankView.xhtml
+ * Controller for the Measurement View as shown in tankView.xhtml
  *
  * @author Stefan Schubert
  */
@@ -33,13 +32,13 @@ import java.util.List;
 @SessionScope
 @Slf4j
 @Getter
-public class TankListView implements Serializable {
+public class MeasurementListView implements Serializable {
 
-    private static final String TANK_EDITOR_PAGE = "tankEditor";
-    private static final String TANK_VIEW_PAGE = "tankView";
+//    private static final String TANK_EDITOR_PAGE = "tankEditor";
+    private static final String MEASUREMENT_VIEW_PAGE = "measureView";
 
     @Autowired
-    TankService tankService;
+    MeasurementService measurementService;
 
     @Inject
     UserSession userSession;
@@ -93,7 +92,7 @@ public class TankListView implements Serializable {
                         MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
             }
         }
-        return TANK_VIEW_PAGE;
+        return MEASUREMENT_VIEW_PAGE;
     }
 
 }

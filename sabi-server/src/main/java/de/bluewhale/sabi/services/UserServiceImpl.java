@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,7 +7,7 @@ package de.bluewhale.sabi.services;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import de.bluewhale.sabi.configs.HazelcastConfig;
 import de.bluewhale.sabi.configs.HazelcastMapItem;
 import de.bluewhale.sabi.exception.AuthExceptionCodes;

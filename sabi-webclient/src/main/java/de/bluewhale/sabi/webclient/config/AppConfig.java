@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -42,7 +42,6 @@ public class AppConfig {
     public SabiDoorKeeper sabiAuthenticationManager(){
         return new SabiDoorKeeper();
     } ;
-
 
 
 }
