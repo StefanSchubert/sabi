@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -23,7 +22,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 // @EnableWebMvc WITH THIS SWAGGER WON'T WORK
 @EnableSwagger2
 @ComponentScan(basePackages = "de.bluewhale.captcha")
-@PropertySource("classpath:application.properties")
 public class AppConfig {
 
     /*

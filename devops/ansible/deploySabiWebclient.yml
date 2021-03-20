@@ -2,6 +2,11 @@
   vars_files:
     - ./group_vars/sabiFrontend.yml
   tasks:
+    - name: Adding existing user "sabi" to group video for being able to use vcgencmd
+      user:
+        name: sabi
+        groups: video
+        append: yes
     - name: Stop existing webservice service
       service:
         name: sabi

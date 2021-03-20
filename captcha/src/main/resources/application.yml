@@ -1,0 +1,37 @@
+cachesize:
+  # minimum number of items that must be reached before cleanup job removed expired tokens
+  cleanup:
+    threshold: 101
+
+challenge:
+  # Max challenges requests per minute / try to avoid flooding DoS attack vectors through
+  # requesting challenges e.g. per jmeter jobs
+  throttle:
+    per:
+      minute: 30
+
+debug: false
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+server:
+  port: 8081
+  servlet:
+    context-path: /captcha
+spring:
+  application:
+    name: captcha-service
+token:
+  # Time in milliseconds before a cached answer token expires.
+  TTL: 120000
