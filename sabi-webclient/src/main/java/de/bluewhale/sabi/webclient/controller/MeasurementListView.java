@@ -5,16 +5,23 @@
 
 package de.bluewhale.sabi.webclient.controller;
 
+import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
+import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
+import de.bluewhale.sabi.webclient.apigateway.TankService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.SessionScope;
 
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,22 +41,31 @@ public class MeasurementListView implements Serializable {
     @Autowired
     MeasurementService measurementService;
 
+    @Autowired
+    TankService tankService;
+
     @Inject
     UserSession userSession;
 
     private List<AquariumTo> tanks;
-    private AquariumTo selectedTank;
+    private AquariumTo selectedTank; // choosen from dropdown
 
-//    @PostConstruct
-//    public void init() {
-//        try {
-//            tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
-//        } catch (BusinessException e) {
-//            tanks = new ArrayList<>();
-//            log.error(e.getLocalizedMessage());
-//            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
-//        }
-//    }
+    @PostConstruct
+    public void init() {
+        // user should be able to choose from his tanks
+        try {
+            tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
+            if (tanks.size() == 1) {
+                // default selection if user has only one tank
+                selectedTank = tanks.get(0);
+            }
+        } catch (BusinessException e) {
+            tanks = new ArrayList<>();
+            log.error(e.getLocalizedMessage());
+            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
+        }
+    }
+
 //
 //    public String edit(AquariumTo tank) {
 //        selectedTank = tank;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -57,7 +57,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>6.5.5</version>
+                        <version>7.7.0</version>
                         <configuration>
                             <url>jdbc:mysql://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
                             <user>${mariadb.server.app.username}</user>

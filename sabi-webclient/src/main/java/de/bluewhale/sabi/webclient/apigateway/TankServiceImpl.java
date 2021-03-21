@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -31,7 +31,7 @@ import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 
 /**
- * Calls Sabi Backend to retrieve the list of users aquariums.
+ * Calls Sabi Backend to manage users aquariums.
  *
  * @author Stefan Schubert
  */
