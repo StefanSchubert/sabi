@@ -239,7 +239,6 @@
         </dependency>
 
 
-
         <dependency>
             <!-- This is the replacement database which will
                  we used by tests which have been annotated with @JpaDataTest

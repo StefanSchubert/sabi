@@ -1,0 +1,48 @@
+- hosts: sabiBackend
+  vars_files:
+    - ./group_vars/sabiBackend.yml
+  tasks:
+    - name: Create pimetric User
+      user:
+        name: pimetric
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "Pimetric Collector Service Account, no login possible."
+        expires: -1
+    - name: Adding existing user "pimetric" to group video for being able to use vcgencmd
+      user:
+        name: pimetric
+        groups: video
+        append: yes
+    - name: Create apps home directory
+      file:
+        path: /var/pimetric
+        state: directory
+        owner: pimetric
+        group: pimetric
+        mode: 0775
+    - name: Copy new jar file
+      copy:
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/devops/GenericPiMetricsEndpoint/target/pimetric-service-1.0.jar
+        dest: /var/pimetric/pimetric-service.jar
+        owner: pimetric
+        group: pimetric
+        mode: '0500'
+    - name: Copy JVM config file
+      copy:
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/devops/GenericPiMetricsEndpoint/pimetric-service.conf
+        dest: /var/pimetric
+        owner: pimetric
+        group: pimetric
+        mode: '0444'
+    - name: Linking the executable jar to init.d to use it with the ansibles service module
+      file:
+        src: /var/pimetric/pimetric-service.jar
+        dest: "/etc/init.d/pimetric"
+        state: link
+    - name: enforce deamon config reload
+      command: systemctl daemon-reload
+    - name: restart (or create if not exist) pimetric service
+      service:
+        name: pimetric
+        state: restarted
