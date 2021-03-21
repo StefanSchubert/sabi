@@ -1,0 +1,69 @@
+## Connection parameter to the captcha service
+captcha:
+  backend:
+    url: http://localhost:8081/captcha/api
+
+
+# JSF/Primefaces Config
+# possible props see: https://docs.joinfaces.org/current/reference/#properties
+joinfaces:
+  jsf:
+    project-stage: development
+  primefaces:
+    theme: omega
+
+# Logback Configuration
+logging:
+  level:
+    de:
+      bluewhale:
+        sabi: DEBUG
+    org:
+      springframework: ERROR
+  pattern:
+    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
+
+# Health check for cloud deployment
+# https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-enabling-endpoints
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: metrics,health,info,prometheus
+name: sabi-webclient
+
+# sabi backend can be found (here without /api on purpose)
+sabi:
+  backend:
+    url: http://localhost:8080/sabi
+server:
+  port: 8088
+  servlet:
+    context-path: /
+servlet:
+  container:
+    maxThreads: 513
+spring:
+  # INTERNATIONALIZATION
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+  servlet:
+    encoding:
+      # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
+      charset: UTF-8
+      # Enable http encoding support.
+      enabled: true
+      # Force the encoding to the configured charset on HTTP requests and responses.
+      force: true

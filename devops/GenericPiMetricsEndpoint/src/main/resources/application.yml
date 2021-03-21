@@ -7,10 +7,16 @@ spring:
   application:
     name: pimetric-service
 
-# Slf4J Configuration
 logging:
-  level: WARN
-  pattern: %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n
+  level:
+    de:
+      bluewhale:
+        iot: WARN
+    org:
+      springframework: ERROR
+  pattern:
+    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
+            %logger.%M - %msg%n'
 
 # Health check for cloud deployment
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-enabling-endpoints
