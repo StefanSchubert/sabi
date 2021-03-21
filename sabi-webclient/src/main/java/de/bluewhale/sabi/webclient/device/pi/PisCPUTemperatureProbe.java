@@ -94,7 +94,7 @@ public class PisCPUTemperatureProbe implements MeterBinder {
                     new InputStreamReader(process.getInputStream()));
 
             while ((line = reader.readLine()) != null) {
-                log.info("PIs GPU-Temperature readout: {}", line);
+                log.debug("PIs GPU-Temperature readout: {}", line);
                 String[] token = line.split(GPU_RESULT_REGEXP);
                 tempValue = Double.valueOf(token[1]);
             }
