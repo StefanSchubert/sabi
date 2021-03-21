@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -42,10 +42,8 @@ import java.util.Map;
 @Named
 @SessionScope // ViewScope would be better, but bean will be renewed on captcha errors
 @Slf4j
-public class RegistrationService implements Serializable {
+public class RegistrationView implements Serializable {
 // ------------------------------ FIELDS ------------------------------
-
-    // TODO STS (15.09.20): Separate View Controller and apigateway here
 
     static String REGISTER_PAGE = "register";
     static String PREREGISTER_PAGE = "preregistration";

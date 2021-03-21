@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -8,7 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -23,44 +23,61 @@
                 <p:autoUpdate/>
             </p:messages>
 
-            <p:outputLabel value="#{msg['measureview.tankchoice.l']}"/>
-            <p:outputLabel value="#{msg['measureview.measurekind.l']}"/>
-            <p:outputLabel value="#{msg['measureview.value.l']}"/>
-            <p:outputLabel value="#{msg['measureview.unit.l']}"/>
-            <p:outputLabel value="#{msg['measureview.date.l']}"/>
-            <p:outputLabel value="#{msg['common.save.b']}"/>
-            <p:outputLabel value="#{msg['common.clear.b']}"/>
-            
-            <!--
-               Label "Choose your tank":
-               Dropdown as Tank-Selection
+            <h:form>
+                <p:panelGrid columns="2" style="border:2;">
 
-               Label "Was wurde gemessen?
-               Dropdown (Auswahlmöglichkeit)
+                    <p:outputLabel for="tankselection" value="#{msg['measureview.tankchoice.l']}"/>
+                    <p:selectOneMenu id="tankselection" value="#{measurementListView.selectedTank}">
+                       <!-- todo when selectedTank has a value set this instead of the Select Entry -->
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                        <f:selectItems value="#{measurementListView.tanks}"
+                                       var="n"
+                                       itemValue="#{n.id}"
+                                       itemLabel="#{n.description}"
+                        />
+                    </p:selectOneMenu>
 
-               Label: Messwert
-               Input-Field: Messwert
+                    <p:outputLabel value="#{msg['measureview.measurekind.l']}"/>
+                    <p:outputLabel value="#{msg['measureview.value.l']}"/>
 
-               Label: Einheit
-               Dropdown (Einheit)
+                    <p:outputLabel value="#{msg['measureview.unit.l']}"/>
+                    <p:outputLabel value="#{msg['measureview.date.l']}"/>
 
-               Label: Datum der Messung (mit Uhrzeit?)
-               Inputfield mit Datepicker
+                    <p:outputLabel value="#{msg['common.save.b']}"/>
+                    <p:outputLabel value="#{msg['common.clear.b']}"/>
 
-               Save-Button  / Clear-Button
+                </p:panelGrid>
 
-               =====
+                <!--
+                   Label "Choose your tank":
+                   Dropdown as Tank-Selection
 
-               Liste der zuletzt erfassten 5 Messwerte
-               * Möglichkeit diesen zu editieren
-               * Möglichkeit diesen zu löschen
+                   Label "Was wurde gemessen?
+                   Dropdown (Auswahlmöglichkeit)
 
-               Hinweis mit Link auf Reportbereich
-               == Darstellung der eigenen Messwerte als Grafik
-               == Möglichkeit des Datenexports (csv)
+                   Label: Messwert
+                   Input-Field: Messwert
 
-            -->
+                   Label: Einheit
+                   Dropdown (Einheit)
 
+                   Label: Datum der Messung (mit Uhrzeit?)
+                   Inputfield mit Datepicker
+
+                   Save-Button  / Clear-Button
+
+                   =====
+
+                   Liste der zuletzt erfassten 5 Messwerte
+                   * Möglichkeit diesen zu editieren
+                   * Möglichkeit diesen zu löschen
+
+                   Hinweis mit Link auf Reportbereich
+                   == Darstellung der eigenen Messwerte als Grafik
+                   == Möglichkeit des Datenexports (csv)
+
+                -->
+            </h:form>
 
         </ui:define>
 

@@ -32,8 +32,18 @@ public interface MeasurementService extends Serializable {
      * @return List of measurements that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-   @NotNull List<MeasurementTo> getUsersMeasurements(@NotNull String JWTBackendAuthtoken,
-                                                     @NotNull Integer maxResultCount) throws BusinessException;
+   @NotNull List<MeasurementTo> getMeasurmentsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
+
+    /**
+     * List Users tanks. Concrete user will be derived by the calling context
+     *
+     * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param tankId Id of users tank to which the measures belong.
+     * @return List of measurements that belong to current user. List may be empty but never NULL.
+     * @throws BusinessException in case of backend auth failures.
+     */
+    @NotNull List<MeasurementTo> getMeasurmentsForUsersTank(@NotNull String JWTAuthtoken, @NotNull Long tankId) throws BusinessException;
+
 
     /**
      * Request Measurement deletion in Backend, in case he or she did a typo.
