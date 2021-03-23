@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -41,10 +40,9 @@ import static org.junit.Assert.assertNotNull;
  */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
 @ContextConfiguration(classes = AppConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-// @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - mayby not compatible with eclipse way?
+// @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - maybe not compatible with eclipse way?
 public class MeasurementRepositoryTest extends BasicDataFactory {
 
     static TestDataFactory testDataFactory;

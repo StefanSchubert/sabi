@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -33,7 +33,7 @@ import java.util.Properties;
 @EnableJpaAuditing
 public class JPAConfig {
 
-    @Value("${eclipselink.target-database}")
+    @Value("${eclipselink.target-database:Auto}")
     private String eclipseLinkTargetDatabase;
 
     @Value("${eclipselink.logging.level:INFO}")

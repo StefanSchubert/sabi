@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -17,10 +17,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * Date: 30.08.15
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
+@SpringBootTest
 @ContextConfiguration(classes = AppConfig.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

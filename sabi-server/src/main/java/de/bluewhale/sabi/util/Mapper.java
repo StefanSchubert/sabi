@@ -1,18 +1,12 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.util;
 
-import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.model.FishTo;
-import de.bluewhale.sabi.model.MeasurementTo;
-import de.bluewhale.sabi.model.UserTo;
-import de.bluewhale.sabi.persistence.model.AquariumEntity;
-import de.bluewhale.sabi.persistence.model.FishEntity;
-import de.bluewhale.sabi.persistence.model.MeasurementEntity;
-import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.persistence.model.*;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
@@ -145,7 +139,7 @@ public class Mapper {
     }
 
     /**
-     * Maps givven Entity attributes into provided To
+     * Maps given Entity attributes into provided To
      *
      * @param pUserEntity
      * @param pUserTo
@@ -162,4 +156,16 @@ public class Mapper {
     }
 
 
+    /**
+     * Maps given Entity attributes into provided To
+     *
+     * @param unitEntity
+     * @param unitTo
+     */
+    public static void mapUnitEntity2To(UnitEntity unitEntity, UnitTo unitTo) {
+        unitTo.setId(unitEntity.getId());
+        unitTo.setDescription(unitEntity.getDescription());
+        unitTo.setUnitSign(unitEntity.getName());
+
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,11 +8,14 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
+import de.bluewhale.sabi.persistence.model.UnitEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
+import de.bluewhale.sabi.persistence.repositories.UnitRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,17 +43,20 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Autowired
     AquariumRepository aquariumRepository;
 
+    @Autowired
+    UnitRepository unitRepository;
+
     @Override
     public List<MeasurementTo> listMeasurements(Long pTankID) {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
         @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findMeasurementEntitiesByAquarium(aquarium);
 
-        List<MeasurementTo> measurementTos = mapEntities2TOs(measurementsOfAquarium);
+        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
 
         return measurementTos;
     }
 
-    private List<MeasurementTo> mapEntities2TOs(@NotNull List<MeasurementEntity> measurementsOfAquarium) {
+    private List<MeasurementTo> mapMeasurementEntities2TOs(@NotNull List<MeasurementEntity> measurementsOfAquarium) {
         List<MeasurementTo> measurementTos = new ArrayList<MeasurementTo>();
         for (MeasurementEntity measurementEntity : measurementsOfAquarium) {
             MeasurementTo measurementTo = new MeasurementTo();
@@ -60,11 +67,32 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
+    public @NotNull List<UnitTo> listAllMeasurementUnits() {
+        List<UnitTo> unitToList = Collections.emptyList();
+        List<UnitEntity> unitEntityList = unitRepository.findAll();
+        if (unitEntityList != null && !unitEntityList.isEmpty()) {
+            unitToList = mapUnitEntities2TOs(unitEntityList);
+
+        }
+        return unitToList;
+    }
+
+    private List<UnitTo> mapUnitEntities2TOs(@NotNull List<UnitEntity> measurementUnits) {
+        List<UnitTo> unitTos = new ArrayList<UnitTo>();
+        for (UnitEntity unitEntity : measurementUnits) {
+            UnitTo unitTo = new UnitTo();
+            Mapper.mapUnitEntity2To(unitEntity, unitTo);
+            unitTos.add(unitTo);
+        }
+        return unitTos;
+    }
+
+    @Override
     public List<MeasurementTo> listMeasurements(String pUserEmail) {
 
         UserEntity user = userRepository.getByEmail(pUserEmail);
         @NotNull List<MeasurementEntity> measurementsOfUser = measurementRepository.findMeasurementEntitiesByUser(user);
-        List<MeasurementTo> measurementTos = mapEntities2TOs(measurementsOfUser);
+        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfUser);
 
         return measurementTos;
     }

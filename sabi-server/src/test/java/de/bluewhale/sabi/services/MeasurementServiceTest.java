@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -10,20 +10,17 @@ import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
-import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.model.MeasurementTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -37,7 +34,7 @@ import static org.junit.Assert.*;
  * Date: 30.08.15
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
+@SpringBootTest
 @ContextConfiguration(classes = AppConfig.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -87,6 +84,20 @@ public class MeasurementServiceTest extends BasicDataFactory {
         assertNotNull(usersMeasurements);
         assertTrue("Testdata gone?", tank1Measurements.size() >= 1);
         assertTrue("Stored Testdata changed?", usersMeasurements.containsAll(tank1Measurements));
+    }
+
+    @Test
+    @Transactional
+    public void testListMeasurementUnits() throws Exception {
+        // Given already stored testdata for measurements
+
+        // When
+        List<UnitTo> measurementUnits = measurementService.listAllMeasurementUnits();
+
+        // Then
+        assertNotNull(measurementUnits);
+        assertTrue("Testdata gone?", measurementUnits.size() >= 1);
+
     }
 
     @Test
