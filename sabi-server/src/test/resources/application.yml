@@ -1,66 +1,66 @@
 accessToken:
-    SECRET: p$vmb4*.UV51Ke7akjkjhkjhnbmn7687632jhkjhkj
-    TTL: 600
+  SECRET: p$vmb4*.UV51Ke7akjkjhkjhnbmn7687632jhkjhkj
+  TTL: 600
 captcha:
-    check:
-        url: http://localhost:8081/captcha/api/check
+  check:
+    url: http://localhost:8081/captcha/api/check
 debug: false
 eclipselink:
-    logging:
-        level: INFO
-    target-database: Auto
+  logging:
+    level: INFO
+  target-database: Auto
 h2:
-    test:
-        mode: true
+  test:
+    mode: true
 logging:
-    level:
-        org:
-            springframework:
-                transaction:
-                    interceptor: TRACE
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: TRACE
 management:
-    endpoint:
-        health:
-            enabled: true
-            show-details: always
-        info:
-            enabled: true
-        metrics:
-            enabled: true
-        prometheus:
-            enabled: true
-    endpoints:
-        enabled-by-default: false
-        web:
-            exposure:
-                include: metrics,health,info,prometheus
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: metrics,health,info,prometheus
 sabi:
-    mailvalidation:
-        url: http://localhost:8080/sabi/api/auth/
+  mailvalidation:
+    url: http://localhost:8080/sabi/api/auth/
 server:
-    port: 8080
-    servlet:
-        context-path: /sabi
+  port: 8080
+  servlet:
+    context-path: /sabi
 spring:
-    application:
-        name: sabi-service
-    datasource:
-        hikari:
-            connection-timeout: 3000
-            maximum-pool-size: 5
-            minimum-idle: 2
-        type: com.zaxxer.hikari.HikariDataSource
-        url: jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=true;DB_CLOSE_DELAY=-1
-    mail:
-        host: localhost
-        password: YouWillNeverKnow
-        port: 2525
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
-        username: sabi@bluewhale.de
-    main:
-        allow-bean-definition-overriding: true
+  application:
+    name: sabi-service
+  datasource:
+    hikari:
+      connection-timeout: 3000
+      maximum-pool-size: 5
+      minimum-idle: 2
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=true;DB_CLOSE_DELAY=-1
+  mail:
+    host: localhost
+    password: YouWillNeverKnow
+    port: 2525
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: sabi@bluewhale.de
+  main:
+    allow-bean-definition-overriding: true

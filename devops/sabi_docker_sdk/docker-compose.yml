@@ -54,7 +54,7 @@ services:
     networks:
       - sabinet
     ports:
-      - "5025:2525"
+      - "2525:2525"
       - "5080:5080"
 networks:
   sabinet:

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,6 +9,7 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.services.MeasurementService;
 import de.bluewhale.sabi.services.TankService;
 import io.swagger.annotations.ApiOperation;
@@ -62,8 +63,28 @@ public class MeasurementController {
     public ResponseEntity<List<MeasurementTo>> listUsersMeasurements(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        List<MeasurementTo> MeasurementToList = measurementService.listMeasurements(principal.getName());
-        return new ResponseEntity<>(MeasurementToList, HttpStatus.ACCEPTED);
+        List<MeasurementTo> measurementToList = measurementService.listMeasurements(principal.getName());
+        return new ResponseEntity<>(measurementToList, HttpStatus.ACCEPTED);
+    }
+
+
+    @ApiOperation(value = "Lists all measurements units which are currently known by the backend.",
+            notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
+                    message = "Success - list of all supported measurement units returned.",
+                    response = UnitTo.class, responseContainer = "List"),
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
+                    response = String.class)
+    })
+    @RequestMapping(value = {"/units/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<List<UnitTo>> listAllMeasurementUnits(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        List<UnitTo> unitToList = measurementService.listAllMeasurementUnits();
+        return new ResponseEntity<>(unitToList, HttpStatus.ACCEPTED);
     }
 
     @ApiOperation(value = "List measurements belonging to a specific tank", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
@@ -89,7 +110,7 @@ public class MeasurementController {
         try {
             pTankID = Long.valueOf(id);
         } catch (NumberFormatException e) {
-            log.warn("API Request sent with wrong TankID",e);
+            log.warn("API Request sent with wrong TankID", e);
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
         }
 
@@ -135,7 +156,7 @@ public class MeasurementController {
         return responseEntity;
     }
 
-    @ApiOperation(value="Add a new measurement", notes="Needs to be provided via json body.")
+    @ApiOperation(value = "Add a new measurement", notes = "Needs to be provided via json body.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - Remember Id of returned measurement if you want to update it afterwards or retrieve it via list operation.",
                     response = MeasurementTo.class),
@@ -157,14 +178,14 @@ public class MeasurementController {
             MeasurementTo createdMeasurement = measurementResultTo.getValue();
             responseEntity = new ResponseEntity<>(createdMeasurement, HttpStatus.CREATED);
         } else {
-            String msg="Measurement cannot be added twice. A Measurement with Id " + measurementTo.getId() + " already exist.";
+            String msg = "Measurement cannot be added twice. A Measurement with Id " + measurementTo.getId() + " already exist.";
             log.warn(msg);
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
     }
 
-    @ApiOperation(value="Correct an existing measurement", notes="Needs to be provided via json body.")
+    @ApiOperation(value = "Correct an existing measurement", notes = "Needs to be provided via json body.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK - Measurement has been updated",
                     response = MeasurementTo.class),
@@ -186,7 +207,7 @@ public class MeasurementController {
             MeasurementTo updatedMeasurement = measurementResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedMeasurement, HttpStatus.OK);
         } else {
-            log.warn("Measurementupdate failed. "+ resultMessage.toString());
+            log.warn("Measurementupdate failed. " + resultMessage.toString());
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

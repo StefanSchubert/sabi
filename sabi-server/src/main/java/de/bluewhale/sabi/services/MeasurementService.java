@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.UnitTo;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -28,6 +29,14 @@ public interface MeasurementService {
      */
     @NotNull
     List<MeasurementTo> listMeasurements(Long pTankID);
+
+    /**
+     * Measurement units are not hard coded via enums, they can dynamically added through the database if required.
+     * Use this function to retrieve the list of known ones.
+     * @return List of supported measurement units
+     */
+    @NotNull
+    List<UnitTo> listAllMeasurementUnits();
 
     /**
      * Lists all measurements of a specific user.
@@ -77,5 +86,7 @@ public interface MeasurementService {
     @NotNull
     @Transactional
     ResultTo<MeasurementTo> updateMeasurement(@NotNull MeasurementTo pMeasurementTo, @NotNull String pUserEmail);
+
+
 
 }
