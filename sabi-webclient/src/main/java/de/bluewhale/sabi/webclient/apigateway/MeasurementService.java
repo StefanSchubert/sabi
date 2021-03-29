@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.UnitTo;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -33,6 +34,19 @@ public interface MeasurementService extends Serializable {
      * @throws BusinessException in case of backend auth failures.
      */
    @NotNull List<MeasurementTo> getMeasurmentsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
+
+    /**
+     * To avoid unnecessary Backend calls, the implementation is suggested to
+     * cache the results.
+     *
+     * TODO: JMX Beans such that the cache can be reloaded in case
+     * the backend introduces more units.
+     *
+     * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return List of units known by the backend.
+     * @throws BusinessException in case of backend auth failures.
+     */
+   @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException;
 
     /**
      * List Users tanks. Concrete user will be derived by the calling context

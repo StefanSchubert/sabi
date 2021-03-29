@@ -7,6 +7,8 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
@@ -21,7 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,7 +37,6 @@ import java.util.List;
 @Getter
 public class MeasurementListView implements Serializable {
 
-//    private static final String TANK_EDITOR_PAGE = "tankEditor";
     private static final String MEASUREMENT_VIEW_PAGE = "measureView";
 
     @Autowired
@@ -47,8 +48,10 @@ public class MeasurementListView implements Serializable {
     @Inject
     UserSession userSession;
 
+    // View Modell
     private List<AquariumTo> tanks;
-    private AquariumTo selectedTank; // choosen from dropdown
+    private List<UnitTo> knownUnits;
+    private MeasurementTo measurement = new MeasurementTo();
 
     @PostConstruct
     public void init() {
@@ -57,16 +60,26 @@ public class MeasurementListView implements Serializable {
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             if (tanks.size() == 1) {
                 // default selection if user has only one tank
-                selectedTank = tanks.get(0);
+                measurement.setAquariumId(tanks.get(0).getId());
             }
         } catch (BusinessException e) {
-            tanks = new ArrayList<>();
+            tanks = Collections.emptyList();
             log.error(e.getLocalizedMessage());
             FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
         }
+
+        try {
+            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
+        } catch (BusinessException e) {
+            knownUnits = Collections.emptyList();
+            log.error(e.getLocalizedMessage());
+            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
+        }
+
+
     }
 
-//
+    //
 //    public String edit(AquariumTo tank) {
 //        selectedTank = tank;
 //        return TANK_EDITOR_PAGE;
@@ -77,18 +90,10 @@ public class MeasurementListView implements Serializable {
 //        return TANK_EDITOR_PAGE;
 //    }
 //
-//    public void delete(AquariumTo tank) {
-//        try {
-//            tankService.deleteTankById(tank.getId(), userSession.getSabiBackendToken());
-//            tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
-//        } catch (BusinessException e) {
-//            // Leave list untouched in this case.
-//            // tanks = new ArrayList<>();
-//            log.error(e.getLocalizedMessage());
-//            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Sorry!",
-//                    MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
-//        }
-//    }
+    public String resetForm() {
+        measurement = new MeasurementTo();
+        return MEASUREMENT_VIEW_PAGE;
+    }
 //
 //    public String save() {
 //        if (selectedTank != null) {

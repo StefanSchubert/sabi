@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -30,6 +30,9 @@ public class UserSession implements Serializable {
     private String userName = "";
 
     private Locale locale;
+
+    private Character numberGroupingSign;
+    private Character numberDecimalSeparator;
 
     @Autowired
     private I18nUtil i18nUtil;
@@ -105,6 +108,30 @@ public class UserSession implements Serializable {
         }
 
         return locale.getLanguage();
+    }
+
+    /**
+     * The Grouping Sign will be initially derived by sessions locale and will be cached.
+     * You must use the setter to change it if required.
+     * @return NumberGroupingSign
+     */
+    public Character getNumberGroupingSign() {
+        if (numberGroupingSign == null) {
+            numberGroupingSign = i18nUtil.getNumberGroupingSign(locale);
+        }
+        return numberGroupingSign;
+    }
+
+    /**
+     * The Decimal Separator will be initially derived by sessions locale and will be cached.
+     * You must use the setter to change it if required.
+     * @return NumberGroupingSign
+     */
+    public Character getNumberDecimalSeparator() {
+        if (numberDecimalSeparator == null) {
+            numberDecimalSeparator = i18nUtil.getDecimalSeparator(locale);
+        }
+        return numberDecimalSeparator;
     }
 
     /**

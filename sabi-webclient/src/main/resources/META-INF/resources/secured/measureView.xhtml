@@ -23,11 +23,11 @@
                 <p:autoUpdate/>
             </p:messages>
 
-            <h:form>
+            <h:form id="measureform">
                 <p:panelGrid columns="2" style="border:2;">
 
                     <p:outputLabel for="tankselection" value="#{msg['measureview.tankchoice.l']}"/>
-                    <p:selectOneMenu id="tankselection" value="#{measurementListView.selectedTank}">
+                    <p:selectOneMenu id="tankselection" value="#{measurementListView.measurement.aquariumId}">
                        <!-- todo when selectedTank has a value set this instead of the Select Entry -->
                         <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                         <f:selectItems value="#{measurementListView.tanks}"
@@ -37,14 +37,36 @@
                         />
                     </p:selectOneMenu>
 
-                    <p:outputLabel value="#{msg['measureview.measurekind.l']}"/>
-                    <p:outputLabel value="#{msg['measureview.value.l']}"/>
+                    <p:outputLabel for="unitselection" value="#{msg['measureview.measurekind.l']}"/>
+                    <p:selectOneMenu id="unitselection" value="#{measurementListView.measurement.unitId}">
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                        <f:selectItems value="#{measurementListView.knownUnits}"
+                                       var="m"
+                                       itemValue="#{m.id}"
+                                       itemLabel="#{m.unitSign}"
+                        />
+                    </p:selectOneMenu>
 
-                    <p:outputLabel value="#{msg['measureview.unit.l']}"/>
+                    <p:outputLabel for="measuredValue" value="#{msg['measureview.value.l']}"/>
+                    <p:inputNumber id="measuredValue"
+                                   size="6"
+                                   decimalPlaces="2"
+                                   decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
+                                   thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
+                                   value="#{measurementListView.measurement.measuredValue}" />
+
                     <p:outputLabel value="#{msg['measureview.date.l']}"/>
+                    <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
+                                  pattern="dd.MM.yyyy" showTime="true" locale="#{userSession.locale}"
+                                  showOtherMonths="true" yearNavigator="true"/>
 
-                    <p:outputLabel value="#{msg['common.save.b']}"/>
-                    <p:outputLabel value="#{msg['common.clear.b']}"/>
+                    <p:commandButton value="#{msg['common.save.b']}" action="#{measurementListView.save()}"
+                                     id="saveAction" icon="pi pi-save"
+                                     ajax="true" update=":measureform" title="#{msg['common.save.b']}"/>
+
+                    <p:commandButton value="#{msg['common.clear.b']}" action="#{measurementListView.resetForm()}"
+                                     id="delAction" ajax="true" resetValues="true"
+                                     update=":measureform" icon="pi pi-refresh" title="#{msg['common.clear.b']}"/>
 
                 </p:panelGrid>
 
