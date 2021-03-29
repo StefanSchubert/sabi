@@ -23,8 +23,8 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
@@ -53,7 +53,7 @@ public class TankServiceImpl implements TankService {
         String listTankUri = sabiBackendUrl + "/api/tank/list";
 
         RestTemplate restTemplate = new RestTemplate();
-        List<AquariumTo> tankList = new ArrayList<>();
+        List<AquariumTo> tankList = Collections.emptyList();
         ResponseEntity<String> responseEntity;
 
         HttpHeaders headers = new HttpHeaders();
