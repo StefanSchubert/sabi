@@ -1,0 +1,13 @@
+[Unit]
+Description=Sabi Service App
+Documentation=https://github.com/StefanSchubert/sabi/wiki
+After=network-online.target
+
+[Service]
+User=sabi
+Restart=on-failure
+
+ExecStart=/var/sabi/sabi-service.jar
+
+[Install]
+WantedBy=multi-user.target

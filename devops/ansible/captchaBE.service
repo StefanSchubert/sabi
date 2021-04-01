@@ -1,0 +1,13 @@
+[Unit]
+Description=Captcha Light App
+Documentation=https://github.com/StefanSchubert/sabi/wiki
+After=network-online.target
+
+[Service]
+User=captcha
+Restart=on-failure
+
+ExecStart=/var/captcha/captcha-service.jar
+
+[Install]
+WantedBy=multi-user.target

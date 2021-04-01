@@ -7,13 +7,29 @@
         name: sabi
         groups: video
         append: yes
+    - name: Create sabi directory
+      file:
+        path: /var/sabi
+        state: directory
+        owner: sabi
+        group: sabi
     - name: Stop existing webservice service
-      service:
+      systemd:
         name: sabi
         state: stopped
+    - name: Drop old tmp folder
+      file:
+        state: absent
+        path: /var/sabi/tmp
+    - name: reCreate sabis own tmp directory
+      file:
+        path: /var/sabi/tmp
+        state: directory
+        owner: sabi
+        group: sabi
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/target/sabi-webclient-1.0-SNAPSHOT.jar
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/target/sabi-webclient.jar
         dest: /var/sabi/sabi-webclient.jar
         owner: sabi
         group: sabi
@@ -25,9 +41,21 @@
         owner: sabi
         group: sabi
         mode: '0444'
+    - name: Copy systemd service file to server
+      copy:
+        src: sabiFE.service
+        dest: /etc/systemd/system/sabi.service
+        owner: root
+        group: root
     - name: enforce deamon config reload
       command: systemctl daemon-reload
-    - name: Start sabi service
-      service:
+    - name: Enable service sabi and ensure it is not masked
+      systemd:
         name: sabi
-        state: started
+        enabled: yes
+        masked: no
+      async: 120
+    - name: Start sabi service
+      systemd:
+        name: sabi
+        state: restarted

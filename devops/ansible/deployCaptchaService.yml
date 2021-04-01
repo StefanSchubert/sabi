@@ -2,10 +2,6 @@
   vars_files:
     - ./group_vars/sabiMiddleware.yml
   tasks:
-    - name: Stop existing captcha service
-      service:
-        name: captcha
-        state: stopped
     - name: Copy new jar file
       copy:
         src: /Users/schubert/dev/Intellij-wss/github/sabi/captcha/target/captcha-service.jar
@@ -20,9 +16,31 @@
         owner: captcha
         group: captcha
         mode: '0444'
+    - name: Drop old tmp folder
+      file:
+        state: absent
+        path: /var/captcha/tmp
+    - name: reCreate captchas own tmp directory
+      file:
+        path: /var/captcha/tmp
+        state: directory
+        owner: captcha
+        group: captcha
+    - name: Copy systemd service file to server
+      copy:
+        src: captchaBE.service
+        dest: /etc/systemd/system/captcha.service
+        owner: root
+        group: root
     - name: enforce deamon config reload
       command: systemctl daemon-reload
-    - name: Start captcha service
-      service:
+    - name: Enable service captcha and ensure it is not masked
+      systemd:
         name: captcha
-        state: started
+        enabled: yes
+        masked: no
+      async: 120
+    - name: Start captcha service
+      systemd:
+        name: captcha
+        state: restarted
