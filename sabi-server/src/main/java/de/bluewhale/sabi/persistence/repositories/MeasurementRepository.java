@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.persistence.repositories;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.constraints.NotNull;
@@ -22,14 +23,26 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
 
     /**
      * Used to get an overview of users measurements.
-     * @param pUserId OwnerID of the measurements
+     * @param user, i.e. owner of the measurements
      * @return List of Measurements, that belong to the User.
      */
-    @NotNull
-   // List<MeasurementTo> findUsersMeasurements(@NotNull Long pUserId);
+    @NotNull List<MeasurementEntity> findByUser(@NotNull UserEntity user);
 
-    List<MeasurementEntity> findMeasurementEntitiesByUser(@NotNull UserEntity user);
-    List<MeasurementEntity> findMeasurementEntitiesByUser_IdIs(@NotNull Long userId);
+    /**
+     * Used to get an overview of users measurements.
+     * @param user, i.e. owner of the measurements
+     * @param pageable, defines how many results should be retrieved (pageble) and how to be sorted,
+     *                  example <i>Pageable page = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "measuredOn"));</i>
+     * @return List of Measurements, that belong to the User.
+     */
+    @NotNull List<MeasurementEntity> findByUser(@NotNull UserEntity user, @NotNull Pageable pageable);
+
+    /**
+     * Used to get an overview of users measurements.
+     * @param userId, identifies the owner of the measurements
+     * @return List of Measurements, that belong to the User.
+     */
+    @NotNull List<MeasurementEntity> findByUser_IdIs(@NotNull Long userId);
 
     /**
      * Retrieves a measurement of provided user.
@@ -38,20 +51,17 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      * @param pUserId
      * @return null if the measurement does not belong to the user, or does not exists.
      */
-    // MeasurementTo getUsersMeasurement(@NotNull Long pPersistedMeasurementId, @NotNull Long pUserId);
+    MeasurementEntity getByIdAndUser_Id(@NotNull Long pPersistedMeasurementId, @NotNull Long pUserId);
 
-    MeasurementEntity getMeasurementEntityByIdAndUser(@NotNull Long pPersistedMeasurementId, @NotNull UserEntity user);
-    MeasurementEntity getMeasurementEntityByIdAndUser_IdIs(@NotNull Long pPersistedMeasurementId, @NotNull Long userId);
+    MeasurementEntity getByIdAndUser(@NotNull Long pPersistedMeasurementId, @NotNull UserEntity user);
 
     /**
      * Retrieves all measurements for a specific tank.
-     * @param pTankID identifies your aquarium.
+     * @param aquariumId identifies your aquarium.
      * @return empty list, if no measurement have been found.
      */
-    @NotNull
-    // List<MeasurementTo> listTanksMeasurements(Long pTankID);
+    @NotNull List<MeasurementEntity> findByAquarium_Id(@NotNull Long aquariumId);
 
-    List<MeasurementEntity> findMeasurementEntitiesByAquarium(@NotNull AquariumEntity aquariumEntity);
-    List<MeasurementEntity> findMeasurementEntitiesByAquarium_IdIs(@NotNull Long aquariumId);
+    @NotNull List<MeasurementEntity> findByAquarium(@NotNull AquariumEntity aquariumEntity);
 
 }

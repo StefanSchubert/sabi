@@ -19,6 +19,9 @@ import de.bluewhale.sabi.persistence.repositories.UnitRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -49,7 +52,7 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Override
     public List<MeasurementTo> listMeasurements(Long pTankID) {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
-        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findMeasurementEntitiesByAquarium(aquarium);
+        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquarium(aquarium);
 
         List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
 
@@ -88,12 +91,19 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public List<MeasurementTo> listMeasurements(String pUserEmail) {
+    public List<MeasurementTo> listMeasurements(String pUserEmail, Integer resultLimit) {
 
         UserEntity user = userRepository.getByEmail(pUserEmail);
-        @NotNull List<MeasurementEntity> measurementsOfUser = measurementRepository.findMeasurementEntitiesByUser(user);
-        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfUser);
+        List<MeasurementEntity> measurementsOfUser;
 
+        if (resultLimit == null || resultLimit ==0) {
+            measurementsOfUser = measurementRepository.findByUser(user);
+        } else {
+            Pageable page = PageRequest.of(0, resultLimit, Sort.by(Sort.Direction.DESC, "measuredOn"));
+            measurementsOfUser = measurementRepository.findByUser(user, page);
+        }
+
+        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfUser);
         return measurementTos;
     }
 
@@ -109,7 +119,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             return new ResultTo<>(usersMeasurementTo, resultMsg);
         }
 
-        MeasurementEntity usersMeasurementEntity = measurementRepository.getMeasurementEntityByIdAndUser(pMeasurementID, user);
+        MeasurementEntity usersMeasurementEntity = measurementRepository.getByIdAndUser(pMeasurementID, user);
         // usersMeasurement = measurementDao.getUsersMeasurement(pMeasurementID, userTo.getId());
 
         if (usersMeasurementEntity == null) {
@@ -168,7 +178,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             return new ResultTo<>(pMeasurementTo, resultMsg);
         }
 
-        MeasurementEntity measurementEntity = measurementRepository.getMeasurementEntityByIdAndUser(pMeasurementTo.getId(), user);
+        MeasurementEntity measurementEntity = measurementRepository.getByIdAndUser(pMeasurementTo.getId(), user);
 
         if (measurementEntity != null) {
 

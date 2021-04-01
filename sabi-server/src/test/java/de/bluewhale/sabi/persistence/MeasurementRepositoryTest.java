@@ -23,6 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -108,10 +111,23 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         // given some stored testdata for userID 1
         UserEntity userEntity = userRepository.getOne(1L);
         // when
-        List<MeasurementEntity> usersMeasurements = measurementRepository.findMeasurementEntitiesByUser(userEntity);
+        List<MeasurementEntity> usersMeasurements = measurementRepository.findByUser(userEntity);
         // then
         Assert.assertTrue("Basic testdata missing!?", usersMeasurements.size() > 0);
     }
+
+    @Test
+    public void testFetchStoredTestUsersMeasurementsWithResultLimit() throws Exception {
+
+        // given some stored testdata for userID 1 (has two test measurements)
+        UserEntity userEntity = userRepository.getOne(1L);
+        // when
+        Pageable page = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "measuredOn"));
+        List<MeasurementEntity> usersMeasurements = measurementRepository.findByUser(userEntity,page);
+        // then expect 2 because of paging out of 3 rows available via BasicTestDataFactory
+        Assert.assertTrue("Basic testdata missing!?", usersMeasurements.size() == 2);
+    }
+
 
     @Test
     public void testGetConcreteMeasurement() throws Exception {
@@ -121,7 +137,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         Long testMeasurementId = 1L;
         UserEntity userEntity = userRepository.getOne(testUserId);
         // When
-        MeasurementEntity measurement = measurementRepository.getMeasurementEntityByIdAndUser(testMeasurementId, userEntity);
+        MeasurementEntity measurement = measurementRepository.getByIdAndUser(testMeasurementId, userEntity);
         // Then
         Assert.assertEquals("Missing testdata for user 1L",  measurement.getAquarium().getId(),testAquariumId);
     }

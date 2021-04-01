@@ -64,9 +64,9 @@ public class MeasurementServiceTest extends BasicDataFactory {
      */
     @Before
     public void ensureBasicDataAvailability() {
-        List<MeasurementTo> list = measurementService.listMeasurements(P_USER_EMAIL);
+        List<MeasurementTo> list = measurementService.listMeasurements(P_USER_EMAIL, 0);
         if (list.isEmpty()) populateBasicData();
-        List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER_EMAIL);
+        List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER_EMAIL, 0);
         assertTrue("H2-Basicdata injection did not work!" ,list2.size()>0);
     }
 
@@ -77,7 +77,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
         // When
         List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(1L);
-        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER_EMAIL);
+        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER_EMAIL, 0);
 
         // Then
         assertNotNull(tank1Measurements);
@@ -149,7 +149,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
     @Transactional
     public void testUpdateMeasurement() throws Exception {
         // Given already stored measurements
-        List<MeasurementTo> measurementToList = measurementService.listMeasurements(P_USER_EMAIL);
+        List<MeasurementTo> measurementToList = measurementService.listMeasurements(P_USER_EMAIL, 0);
         MeasurementTo prestoresMeasurementTo = measurementToList.get(0);
         float oldValue = prestoresMeasurementTo.getMeasuredValue();
 

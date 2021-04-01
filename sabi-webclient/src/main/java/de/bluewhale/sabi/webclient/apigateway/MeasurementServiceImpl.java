@@ -57,12 +57,11 @@ public class MeasurementServiceImpl implements MeasurementService {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> responseEntity;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+            HttpHeaders headers = prepareHttpHeader(JWTBackendAuthtoken);
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
             try {
+                // Notice the that the controller defines a list, the resttemplate will get it as array.
                 responseEntity = restTemplate.exchange(listMeasurementUnitsUri, HttpMethod.GET, requestEntity, String.class);
             } catch (RestClientException e) {
                 log.error(String.format("Couldn't reach %s",listMeasurementUnitsUri),e.getLocalizedMessage());
@@ -84,9 +83,45 @@ public class MeasurementServiceImpl implements MeasurementService {
         return cachedAvailableMeasurementUnits;
     }
 
+    private HttpHeaders prepareHttpHeader(String JWTBackendAuthtoken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        return headers;
+    }
+
     @Override
-    public @NotNull List<MeasurementTo> getMeasurmentsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException {
-        throw new UnsupportedOperationException("java.util.List<de.bluewhale.sabi.model.MeasurementTo> getMeasurmentsTakenByUser([JWTBackendAuthtoken, maxResultCount])");
+    public @NotNull List<MeasurementTo> getMeasurementsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException {
+
+        List<MeasurementTo> usersMeasurements;
+
+        String listOfUsersMeasurements = sabiBackendUrl + "/api/measurement/list/" + maxResultCount;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity;
+
+        HttpHeaders headers = prepareHttpHeader(JWTBackendAuthtoken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            // Notice the that the controller defines a list, the resttemplate will get it as array.
+            responseEntity = restTemplate.exchange(listOfUsersMeasurements, HttpMethod.GET, requestEntity, String.class);
+        } catch (RestClientException e) {
+            log.error(String.format("Couldn't reach %s",listOfUsersMeasurements),e.getLocalizedMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+
+        try {
+            MeasurementTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), MeasurementTo[].class);
+            usersMeasurements = Arrays.asList(myObjects);
+        } catch (JsonProcessingException e) {
+            log.error(String.format("Didn't understand response from %s got parsing exception %s",listOfUsersMeasurements,e.getMessage()),e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+
+        return usersMeasurements;
     }
 
     @Override

@@ -57,13 +57,26 @@ public class MeasurementController {
             @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
                     response = String.class)
     })
-    @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/list/{maxResultCount}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<List<MeasurementTo>> listUsersMeasurements(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
+    public ResponseEntity<List<MeasurementTo>> listUsersMeasurements(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                     @PathVariable(value = "maxResultCount", required = false)
+                                                                     @ApiParam(name = "maxResultCount", value = "If provided only the latest maxResultCount recorded measurements will be returned. If ommittet you will get them all.") String maxResultCount,
+                                                                     Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        List<MeasurementTo> measurementToList = measurementService.listMeasurements(principal.getName());
+
+        Integer resultLimit = 0;
+        if (maxResultCount != null) {
+            try {
+                resultLimit = Integer.valueOf(maxResultCount);
+            } catch (NumberFormatException e) {
+                resultLimit = 0;
+            }
+        }
+
+        List<MeasurementTo> measurementToList = measurementService.listMeasurements(principal.getName(),resultLimit);
         return new ResponseEntity<>(measurementToList, HttpStatus.ACCEPTED);
     }
 
