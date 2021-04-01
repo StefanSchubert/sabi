@@ -28,7 +28,7 @@
 
                     <p:outputLabel for="tankselection" value="#{msg['measureview.tankchoice.l']}"/>
                     <p:selectOneMenu id="tankselection" value="#{measurementListView.measurement.aquariumId}">
-                       <!-- todo when selectedTank has a value set this instead of the Select Entry -->
+                        <!-- todo when selectedTank has a value set this instead of the Select Entry -->
                         <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                         <f:selectItems value="#{measurementListView.tanks}"
                                        var="n"
@@ -53,7 +53,7 @@
                                    decimalPlaces="2"
                                    decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
                                    thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
-                                   value="#{measurementListView.measurement.measuredValue}" />
+                                   value="#{measurementListView.measurement.measuredValue}"/>
 
                     <p:outputLabel value="#{msg['measureview.date.l']}"/>
                     <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
@@ -70,36 +70,50 @@
 
                 </p:panelGrid>
 
-                <!--
-                   Label "Choose your tank":
-                   Dropdown as Tank-Selection
-
-                   Label "Was wurde gemessen?
-                   Dropdown (Auswahlmöglichkeit)
-
-                   Label: Messwert
-                   Input-Field: Messwert
-
-                   Label: Einheit
-                   Dropdown (Einheit)
-
-                   Label: Datum der Messung (mit Uhrzeit?)
-                   Inputfield mit Datepicker
-
-                   Save-Button  / Clear-Button
-
-                   =====
-
-                   Liste der zuletzt erfassten 5 Messwerte
-                   * Möglichkeit diesen zu editieren
-                   * Möglichkeit diesen zu löschen
-
-                   Hinweis mit Link auf Reportbereich
-                   == Darstellung der eigenen Messwerte als Grafik
-                   == Möglichkeit des Datenexports (csv)
-
-                -->
             </h:form>
+
+            <hr/>
+            <!--
+               Liste der zuletzt erfassten 5 Messwerte
+               * Möglichkeit diesen zu editieren
+               * Möglichkeit diesen zu löschen
+
+               Hinweis mit Link auf Reportbereich
+               == Darstellung der eigenen Messwerte als Grafik
+               == Möglichkeit des Datenexports (csv)
+            -->
+            <h:form id="listing">
+                <div>
+                    <h5><p:outputLabel value="#{msg['measureview.listing.h']}"/></h5>
+                    <p:dataTable id="measuresDT" var="m" value="#{measurementListView.measurementsTakenByUser}">
+
+                        <p:column headerText="#{msg['measureview.date.l']}">
+                            <h:outputText value="#{m.measuredOn}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{msg['measureview.unit.l']}">
+                            <h:outputText value="#{measurementListView.getUnitSignForId(m.unitId)}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['measureview.value.l']}">
+                            <h:outputText value="#{m.measuredValue}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['measureview.tankchoice.l']}">
+                            <h:outputText value="#{measurementListView.getTankNameForId(m.aquariumId)}"/>
+                        </p:column>
+
+                        <p:column style="width:3rem;text-align: center">
+                            <p:commandButton update="measureform" ajax="true"
+                                             icon="pi pi-pencil" title="Edit"
+                                             action="#{measurementListView.editMeasurement(m)}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+
 
         </ui:define>
 

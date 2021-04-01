@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,10 +9,13 @@ import de.bluewhale.sabi.model.MotdTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -29,11 +32,13 @@ import java.util.Locale;
 @Slf4j
 public class ApplicationInfo implements Serializable {
 
-    // TODO maven build version into meta-INF and lazy init this here as property
-    public static String buildVersion = "v0.0.1 snapshot";
+    @Autowired
+    BuildProperties buildProperties;
 
     @Value("${sabi.backend.url}")
     private String sabiBackendUrl;
+
+    public static String buildVersion = "N/A";
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -43,8 +48,14 @@ public class ApplicationInfo implements Serializable {
         return "";
     }
 
+    @PostConstruct
+    public void lazyInit() {
+        // Lazy Initialiser
+        buildVersion = buildProperties.getVersion();
+    }
+
     public String getVersion() {
-        return ApplicationInfo.buildVersion;
+        return buildVersion;
     }
 
     public void fetchCookieAnnouncement() {

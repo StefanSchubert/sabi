@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -144,13 +144,22 @@ public class BasicDataFactory {
         MeasurementEntity measurementEntity2 = new MeasurementEntity();
         measurementEntity2.setId(2L);
         measurementEntity2.setMeasuredOn(LocalDateTime.now());
-        measurementEntity2.setMeasuredValue(15.5f);
-        measurementEntity2.setUnitId(unitEntity.getId());
-        measurementEntity2.setAquarium(aquariumEntity2);
+        measurementEntity2.setMeasuredValue(20.5f);
+        measurementEntity2.setUnitId(unitEntity2.getId());
+        measurementEntity2.setAquarium(aquariumEntity);
         measurementEntity2.setUser(testuser);
+
+        MeasurementEntity measurementEntity3 = new MeasurementEntity();
+        measurementEntity3.setId(3L);
+        measurementEntity3.setMeasuredOn(LocalDateTime.now());
+        measurementEntity3.setMeasuredValue(15.5f);
+        measurementEntity3.setUnitId(unitEntity.getId());
+        measurementEntity3.setAquarium(aquariumEntity2);
+        measurementEntity3.setUser(testuser);
 
         measurementRepository.saveAndFlush(measurementEntity);
         measurementRepository.saveAndFlush(measurementEntity2);
+        measurementRepository.saveAndFlush(measurementEntity3);
     }
 
 //    @After

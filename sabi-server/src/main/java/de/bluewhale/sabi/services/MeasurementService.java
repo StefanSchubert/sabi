@@ -42,10 +42,11 @@ public interface MeasurementService {
      * Lists all measurements of a specific user.
      *
      * @param pUserEmail identifies the user who has taken the measurements.
+     * @param resultLimit used to limit the number of retrieved records (will return most recent ones). 0 means fetch them all.
      * @return List of measurements, maybe empty but never null.
      */
     @NotNull
-    List<MeasurementTo> listMeasurements(@NotNull String pUserEmail);
+    List<MeasurementTo> listMeasurements(@NotNull String pUserEmail, Integer resultLimit);
 
     /**
      * Removes a measurements (physically)

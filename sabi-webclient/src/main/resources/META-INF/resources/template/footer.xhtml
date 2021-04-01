@@ -1,6 +1,6 @@
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
-  ~ See project LICENSE file for the detailed terms and conditions.
+  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
   -->
 
 <ui:composition
@@ -8,7 +8,9 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:separator/>
-    <i>Sabi #{applicationInfo.version}</i> | GDPR | Impressum | Contact | <p:link outcome="/credits" value="Credits" id="creditLink"/>
+    <i>Sabi #{applicationInfo.version}</i> | GDPR | Impressum | Contact
+    | <p:link outcome="/CrowdFunding" value="CrowdFunding" id="crowdFundingLink"/>
+    | <p:link outcome="/credits" value="Credits" id="creditLink"/>
     | <p:link href="https://github.com/StefanSchubert/sabi/issues" value="Report Issues" id="issueLink"/>
     <ui:remove>
         <!--  TODO GDPR, Impressum as popup infos / Contact as well -->

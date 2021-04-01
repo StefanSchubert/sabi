@@ -33,7 +33,7 @@ public interface MeasurementService extends Serializable {
      * @return List of measurements that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-   @NotNull List<MeasurementTo> getMeasurmentsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
+   @NotNull List<MeasurementTo> getMeasurementsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
 
     /**
      * To avoid unnecessary Backend calls, the implementation is suggested to
@@ -42,7 +42,7 @@ public interface MeasurementService extends Serializable {
      * TODO: JMX Beans such that the cache can be reloaded in case
      * the backend introduces more units.
      *
-     * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @return List of units known by the backend.
      * @throws BusinessException in case of backend auth failures.
      */

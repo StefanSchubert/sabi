@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+>
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <!-- How much money do we have and what did we spent ist for? -->
+            <h3 style="margin-top:0">#{msg['crowdfounding.title.h']}</h3>
+
+            <h:outputText escape="false" value="#{msg['crowdfunding.introduction.t']}"/>
+
+            <h4>Available Budget XY € as of dd.mm.yyyy</h4>
+            Should come from the database as well.
+
+            <h4>Money spent on single positions so far:</h4>
+            <p>TODO dataTable should come from the database</p>
+            <p>Position / Costs / Remark</p>
+
+            <h4>Operational costs per anno:</h4>
+            <p>TODO dataTable should come from the database</p>
+            <p>Position / Costs / Year / Remark</p>
+
+        </ui:define>
+    </ui:composition>
+
+</h:body>
+</html>

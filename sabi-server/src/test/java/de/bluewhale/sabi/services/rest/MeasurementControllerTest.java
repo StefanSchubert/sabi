@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -111,7 +111,7 @@ public class MeasurementControllerTest {
         List<MeasurementEntity> testMeasurements = new ArrayList<>(1);
         testMeasurements.add(measurementEntity);
 
-        given(this.measurementRepository.findMeasurementEntitiesByUser(userEntity)).willReturn(testMeasurements);
+        given(this.measurementRepository.findByUser(userEntity)).willReturn(testMeasurements);
         // given(this.measurementDao.findUsersMeasurements(userTo.getId())).willReturn(testMeasurements);
 
         // and we need a valid authentication token for our mocked user
@@ -169,7 +169,7 @@ public class MeasurementControllerTest {
         List<MeasurementEntity> testMeasurements = new ArrayList<>(2);
         testMeasurements.add(measurementEntity);
         testMeasurements.add(measurementEntity2);
-        given(measurementRepository.findMeasurementEntitiesByAquarium(aquariumEntity)).willReturn(testMeasurements);
+        given(measurementRepository.findByAquarium(aquariumEntity)).willReturn(testMeasurements);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -314,7 +314,7 @@ public class MeasurementControllerTest {
 
         Optional<MeasurementEntity> optionalMeasurementEntity = Optional.of(updatableMeasurementEntity);
 
-        given(this.measurementRepository.getMeasurementEntityByIdAndUser(updatableMeasurementTo.getId(), userEntity)).willReturn(updatableMeasurementEntity);
+        given(this.measurementRepository.getByIdAndUser(updatableMeasurementTo.getId(), userEntity)).willReturn(updatableMeasurementEntity);
         given(this.measurementRepository.findById(updatableMeasurementTo.getId())).willReturn(optionalMeasurementEntity);
         given(this.measurementRepository.save(updatableMeasurementEntity)).willReturn(updatedMeasurementEntity);
 
