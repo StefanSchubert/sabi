@@ -1,0 +1,13 @@
+[Unit]
+Description=Sabi Webapplication
+Documentation=https://github.com/StefanSchubert/sabi/wiki
+After=network-online.target
+
+[Service]
+User=sabi
+Restart=on-failure
+
+ExecStart=/var/sabi/sabi-webclient.jar
+
+[Install]
+WantedBy=multi-user.target
