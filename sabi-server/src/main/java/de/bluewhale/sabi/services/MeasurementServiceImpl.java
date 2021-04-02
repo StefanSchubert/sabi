@@ -97,10 +97,10 @@ public class MeasurementServiceImpl implements MeasurementService {
         List<MeasurementEntity> measurementsOfUser;
 
         if (resultLimit == null || resultLimit ==0) {
-            measurementsOfUser = measurementRepository.findByUser(user);
+            measurementsOfUser = measurementRepository.findByUserOrderByMeasuredOnDesc(user);
         } else {
             Pageable page = PageRequest.of(0, resultLimit, Sort.by(Sort.Direction.DESC, "measuredOn"));
-            measurementsOfUser = measurementRepository.findByUser(user, page);
+            measurementsOfUser = measurementRepository.findByUserOrderByMeasuredOnDesc(user, page);
         }
 
         List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfUser);

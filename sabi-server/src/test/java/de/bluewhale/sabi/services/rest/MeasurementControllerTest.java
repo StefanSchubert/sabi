@@ -111,7 +111,7 @@ public class MeasurementControllerTest {
         List<MeasurementEntity> testMeasurements = new ArrayList<>(1);
         testMeasurements.add(measurementEntity);
 
-        given(this.measurementRepository.findByUser(userEntity)).willReturn(testMeasurements);
+        given(this.measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity)).willReturn(testMeasurements);
         // given(this.measurementDao.findUsersMeasurements(userTo.getId())).willReturn(testMeasurements);
 
         // and we need a valid authentication token for our mocked user

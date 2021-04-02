@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -59,9 +59,8 @@ public class CaptchaAdapterImpl implements CaptchaAdapter {
             }
         }
         catch (RestClientException e) {
-            String reason = "Could not connect to the captcha service " + checkURI;
-            log.error(reason,e);
-            throw new IOException(reason);
+            log.error("Could not connect to the captcha service {}. {}",checkURI, e);
+            throw new IOException("Could not connect to the captcha service "+ checkURI);
         }
 
         return isValid;

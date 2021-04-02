@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -154,7 +154,7 @@ public class AuthenticationController {
             try {
                 notificationService.sendWelcomeMail(email);
             } catch (MessagingException e) {
-                log.error("Validation users email confirmation via token could not be send to the user", e);
+                log.error("Validation users email confirmation via token could not be send to the user. {}", e);
             }
         } else {
             responseEntity = new ResponseEntity<>("<html><body><h1>Account validation failed!</h1><p>Your account is still locked." +
@@ -213,7 +213,7 @@ public class AuthenticationController {
                 try {
                     notificationService.sendValidationMail(createdUser);
                 } catch (MessagingException e) {
-                    log.error("Users registration incomplete and aborted, since notification mail coud not be sent.", e);
+                    log.error("Users registration incomplete and aborted, since notification mail coud not be sent. {}", e);
                     userService.unregisterUserAndClearPersonalData(pRegistrationUserTo.getEmail());
                     responseEntity = new ResponseEntity<UserRegConfirmationTo>(userRegConfirmationTo, HttpStatus.SERVICE_UNAVAILABLE);
                 }

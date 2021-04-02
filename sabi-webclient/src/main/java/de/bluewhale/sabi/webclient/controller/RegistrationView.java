@@ -107,7 +107,7 @@ public class RegistrationView implements Serializable {
         try {
             requestJson = objectMapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
-            log.error("Coudn't convert form data into JSON reprasentation.", e);
+            log.error("Coudn't convert form data into JSON reprasentation. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
             return REGISTER_PAGE;
@@ -139,7 +139,7 @@ public class RegistrationView implements Serializable {
             fetchNewCaptchaChallenge();
             return REGISTER_PAGE;
         } catch (RestClientException e) {
-            log.error("Backend processing error.", e);
+            log.error("Backend processing error. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("commonFailure", message);
             return REGISTER_PAGE;
@@ -164,7 +164,7 @@ public class RegistrationView implements Serializable {
             challenge.getAnswers().forEach((key, value) -> answers_transposed.put(value, key));
             challenge.setAnswers(answers_transposed);
         } catch (RestClientException e) {
-            log.error("Coudn't reach captcha backend.", e);
+            log.error("Coudn't reach captcha backend. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
         }

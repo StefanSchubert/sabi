@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -54,7 +52,7 @@ public class TankListView implements Serializable {
         } catch (BusinessException e) {
             tanks = new ArrayList<>();
             log.error(e.getLocalizedMessage());
-            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
+            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
         }
     }
 
@@ -76,8 +74,7 @@ public class TankListView implements Serializable {
             // Leave list untouched in this case.
             // tanks = new ArrayList<>();
             log.error(e.getLocalizedMessage());
-            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Sorry!",
-                    MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
+            MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
         }
     }
 
@@ -89,8 +86,7 @@ public class TankListView implements Serializable {
                 tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             } catch (BusinessException e) {
                 e.printStackTrace();
-                FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Sorry!",
-                        MessageUtil.getFromMessageProperties("common.error.internal_server_problem",userSession.getLocale())));
+                MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
             }
         }
         return TANK_VIEW_PAGE;

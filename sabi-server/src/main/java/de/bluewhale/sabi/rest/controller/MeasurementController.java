@@ -123,7 +123,7 @@ public class MeasurementController {
         try {
             pTankID = Long.valueOf(id);
         } catch (NumberFormatException e) {
-            log.warn("API Request sent with wrong TankID", e);
+            log.warn("API Request sent with wrong TankID {}", e);
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
         }
 
@@ -220,7 +220,7 @@ public class MeasurementController {
             MeasurementTo updatedMeasurement = measurementResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedMeasurement, HttpStatus.OK);
         } else {
-            log.warn("Measurementupdate failed. " + resultMessage.toString());
+            log.warn("Measurementupdate failed. {}",resultMessage.toString());
             responseEntity = new ResponseEntity<>(measurementTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

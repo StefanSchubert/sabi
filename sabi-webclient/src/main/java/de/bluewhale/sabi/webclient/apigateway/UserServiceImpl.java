@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         try {
             requestJson = objectMapper.writeValueAsString(loginData);
         } catch (JsonProcessingException e) {
-            log.error("Object Mapper failed with Login Data - No Logins possible!", e);
+            log.error("Object Mapper failed with Login Data - No Logins possible! {}", e);
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
         }
 
@@ -94,8 +94,7 @@ public class UserServiceImpl implements UserService {
             if (e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
                 return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.UNKNOWN_USERNAME));
             } else {
-                log.error("Couldn't talk proper to sabiBackend");
-                e.printStackTrace();
+                log.error("Couldn't talk proper to sabiBackend. {}",e);
                 return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
             }
         }
