@@ -111,7 +111,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         // given some stored testdata for userID 1
         UserEntity userEntity = userRepository.getOne(1L);
         // when
-        List<MeasurementEntity> usersMeasurements = measurementRepository.findByUser(userEntity);
+        List<MeasurementEntity> usersMeasurements = measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity);
         // then
         Assert.assertTrue("Basic testdata missing!?", usersMeasurements.size() > 0);
     }
@@ -123,7 +123,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         UserEntity userEntity = userRepository.getOne(1L);
         // when
         Pageable page = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "measuredOn"));
-        List<MeasurementEntity> usersMeasurements = measurementRepository.findByUser(userEntity,page);
+        List<MeasurementEntity> usersMeasurements = measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity,page);
         // then expect 2 because of paging out of 3 rows available via BasicTestDataFactory
         Assert.assertTrue("Basic testdata missing!?", usersMeasurements.size() == 2);
     }

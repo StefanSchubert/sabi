@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -60,7 +60,7 @@ public class TankController {
     public ResponseEntity<List<AquariumTo>> listUsersTanks(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        log.debug("Request Tank list for ",principal.getName());
+        log.debug("Request Tank list for {}",principal.getName());
         List<AquariumTo> aquariumToList = tankService.listTanks(principal.getName());
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }
@@ -139,7 +139,7 @@ public class TankController {
             responseEntity = new ResponseEntity<>(createdAquarium, HttpStatus.CREATED);
         } else {
             String msg="A Tank with Id " + aquariumTo.getId() + " already exist.";
-            log.warn("Cannot create twice: "+msg);
+            log.warn("Cannot create twice: {}",msg);
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
@@ -166,7 +166,7 @@ public class TankController {
             AquariumTo updatedAquarium = aquariumToResultTo.getValue();
             responseEntity = new ResponseEntity<>(updatedAquarium, HttpStatus.OK);
         } else {
-            log.warn("Could not update tank: "+resultMessage.toString());
+            log.warn("Could not update tank: {}",resultMessage.toString());
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;

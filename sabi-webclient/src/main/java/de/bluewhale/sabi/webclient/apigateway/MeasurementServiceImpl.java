@@ -7,14 +7,21 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
+import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UnitTo;
+import de.bluewhale.sabi.webclient.rest.exceptions.MeasurementMessageCodes;
+import de.bluewhale.sabi.webclient.utils.RestHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.RequestScope;
@@ -24,9 +31,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
-import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 
 /**
  * Calls Sabi Backend to manage users measurements.
@@ -57,7 +61,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> responseEntity;
 
-            HttpHeaders headers = prepareHttpHeader(JWTBackendAuthtoken);
+            HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
             try {
@@ -77,18 +81,11 @@ public class MeasurementServiceImpl implements MeasurementService {
                 e.printStackTrace();
                 throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
             }
-
         }
 
         return cachedAvailableMeasurementUnits;
     }
 
-    private HttpHeaders prepareHttpHeader(String JWTBackendAuthtoken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
-        return headers;
-    }
 
     @Override
     public @NotNull List<MeasurementTo> getMeasurementsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException {
@@ -100,7 +97,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity;
 
-        HttpHeaders headers = prepareHttpHeader(JWTBackendAuthtoken);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         try {
@@ -136,6 +133,57 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Override
     public void save(MeasurementTo measurement, String JWTBackendAuthtoken) throws BusinessException {
-        throw new UnsupportedOperationException("void save([measurement, JWTBackendAuthtoken])");
+
+        String saveMeasurmentURI = sabiBackendUrl + "/api/measurement/"; // PUT for update POST for create
+        String requestJson;
+        try {
+            requestJson = objectMapper.writeValueAsString(measurement);
+        } catch (JsonProcessingException e) {
+            log.error("Couldn't convert measurement object to json: {}",measurement);
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity;
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson,headers);
+
+        if (measurement.getId() == null) {
+            // initial creation (POST)
+            try {
+                responseEntity = restTemplate.postForEntity(saveMeasurmentURI, requestEntity, String.class);
+            } catch (RestClientException e) {
+                log.error(String.format("Couldn't reach %s",saveMeasurmentURI),e.getLocalizedMessage());
+                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+            }
+            if (!responseEntity.getStatusCode().is2xxSuccessful()){
+                if (responseEntity.getStatusCodeValue()==409) {
+                    log.info("Tried to create the same measurement twice. Will be just ignored as we favour idempotent behavior. MeasurementID: {}",measurement.getId());
+                }
+                if (responseEntity.getStatusCodeValue()==401) {
+                    log.warn("Invalid Token when trying to create measurement: {}",measurement.getId());
+                    throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
+                }
+            }
+        } else {
+            // update case (PUT)
+            try {
+                responseEntity = restTemplate.exchange(saveMeasurmentURI, HttpMethod.PUT, requestEntity, String.class);
+            } catch (RestClientException e) {
+                log.error(String.format("Couldn't reach %s", saveMeasurmentURI), e.getLocalizedMessage());
+                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+            }
+            if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+                if (responseEntity.getStatusCodeValue() == 409) {
+                    log.warn("Tried to update non existing measurement or internal error. Measurement ID: {}", measurement.getId());
+                    throw new BusinessException(Message.error(MeasurementMessageCodes.NO_SUCH_MEAUREMENT));
+                }
+                if (responseEntity.getStatusCodeValue() == 401) {
+                    log.warn("Invalid Token when trying to update measurement: {}", measurement.getId());
+                    throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
+                }
+            }
+        }
     }
 }

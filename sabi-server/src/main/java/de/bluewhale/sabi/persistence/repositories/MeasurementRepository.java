@@ -26,16 +26,17 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      * @param user, i.e. owner of the measurements
      * @return List of Measurements, that belong to the User.
      */
-    @NotNull List<MeasurementEntity> findByUser(@NotNull UserEntity user);
+    @NotNull List<MeasurementEntity> findByUserOrderByMeasuredOnDesc(@NotNull UserEntity user);
 
     /**
      * Used to get an overview of users measurements.
      * @param user, i.e. owner of the measurements
      * @param pageable, defines how many results should be retrieved (pageble) and how to be sorted,
      *                  example <i>Pageable page = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "measuredOn"));</i>
+     *                  <b>UPDATE:</b> Page sorting doesn't seem to work so we sort directly
      * @return List of Measurements, that belong to the User.
      */
-    @NotNull List<MeasurementEntity> findByUser(@NotNull UserEntity user, @NotNull Pageable pageable);
+    @NotNull List<MeasurementEntity> findByUserOrderByMeasuredOnDesc(@NotNull UserEntity user, @NotNull Pageable pageable);
 
     /**
      * Used to get an overview of users measurements.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,9 @@ package de.bluewhale.sabi.webclient.utils;
 import de.bluewhale.sabi.webclient.CDIBeans.ApplicationInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
+import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 
 /**
  * Everything that can be reused and helps in communication with the backend.
@@ -26,4 +29,16 @@ public class RestHelper {
         headers.add("user-agent", "Sabi JSF Webclient "+ ApplicationInfo.buildVersion);
         return headers;
     }
+
+    /**
+     * Contains Mediatype Application Json, User Agent and Auth-Informations
+     * @param JWTBackendAuthtoken valid Auth-Token for the Backend-Session
+     * @return http header required to mak calls against secured API
+     */
+    public static HttpHeaders prepareAuthedHttpHeader(String JWTBackendAuthtoken) {
+        HttpHeaders headers = buildHttpHeader();
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        return headers;
+    }
+
 }

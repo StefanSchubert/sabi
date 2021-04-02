@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -31,7 +31,7 @@ public class MotdRepositoryCustomImpl implements MotdRepositoryCustom {
         try {
             modt = (MotdEntity) query.getSingleResult();
         } catch (Exception e) {
-            log.error("Please check motd records or query impl. "+e);
+            log.error("Please check motd records or query impl. {}",e);
             // we handle this as no motd to be resilient.
         }
 

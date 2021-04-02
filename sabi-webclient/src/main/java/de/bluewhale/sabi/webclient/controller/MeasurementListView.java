@@ -19,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
@@ -69,7 +67,7 @@ public class MeasurementListView implements Serializable {
         } catch (BusinessException e) {
             tanks = Collections.emptyList();
             log.error(e.getLocalizedMessage());
-            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
+            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
         }
 
         try {
@@ -77,7 +75,7 @@ public class MeasurementListView implements Serializable {
         } catch (BusinessException e) {
             knownUnits = Collections.emptyList();
             log.error(e.getLocalizedMessage());
-            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
+            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
         }
 
         fetchUsersLatestMeasurements();
@@ -90,7 +88,7 @@ public class MeasurementListView implements Serializable {
         } catch (BusinessException e) {
             measurementsTakenByUser = Collections.emptyList();
             log.error(e.getLocalizedMessage());
-            FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning!", "Backendtoken expired? Please relogin."));
+            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
         }
     }
 
@@ -141,13 +139,6 @@ public class MeasurementListView implements Serializable {
     }
 
 
-    //
-//    public String edit(AquariumTo tank) {
-//        selectedTank = tank;
-//        return TANK_EDITOR_PAGE;
-//    }
-//
-
     public String resetForm() {
         measurement = new MeasurementTo();
         return MEASUREMENT_VIEW_PAGE;
@@ -155,16 +146,16 @@ public class MeasurementListView implements Serializable {
 
     public String save() {
         if (allDataProvided(measurement)) {
-            // Already stored
             try {
                 measurementService.save(measurement, userSession.getSabiBackendToken());
                 fetchUsersLatestMeasurements();
-                resetForm();
-            } catch (BusinessException e) {
-                e.printStackTrace();
-                FacesContext.getCurrentInstance().addMessage("Exception", new FacesMessage(FacesMessage.SEVERITY_WARN, "Sorry!",
-                        MessageUtil.getFromMessageProperties("common.error.internal_server_problem", userSession.getLocale())));
+                MessageUtil.info("messages", "common.save.confirmation.t", userSession.getLocale());
+            } catch (Exception e) {
+                log.error("Couldn't save measurement {} {}",measurement, e);
+                MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
             }
+        } else {
+            MessageUtil.info("messages", "common.incompleted_formdata.t", userSession.getLocale());
         }
         return MEASUREMENT_VIEW_PAGE;
     }
