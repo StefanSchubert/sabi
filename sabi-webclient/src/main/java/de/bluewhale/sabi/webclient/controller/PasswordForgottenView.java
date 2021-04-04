@@ -43,6 +43,7 @@ import java.util.Map;
 public class PasswordForgottenView implements Serializable {
 
     static String PASSWORD_FORGOTTON_PAGE = "pwreset";
+    static String LOGIN_PAGE = "login";
 
     @Value("${captcha.backend.url}")
     private String captchaBackendUrl;
@@ -61,8 +62,13 @@ public class PasswordForgottenView implements Serializable {
     private RestTemplate restTemplate = new RestTemplate();
     private RequestNewPasswordTo pwReqModel = new RequestNewPasswordTo();
     private ResetPasswordTo pwResetModel = new ResetPasswordTo();
-    // May be used to conditionally render the next part of the form.
+
     private boolean captchaAccepted = false;
+    private boolean pwResetted = false;
+
+    public boolean isPwResetted() {
+        return this.pwResetted;
+    }
 
     public RequestNewPasswordTo getPwReqModel() {
         return this.pwReqModel;
@@ -88,7 +94,38 @@ public class PasswordForgottenView implements Serializable {
         return this.challenge;
     }
 
+    /**
+     * Step 2 - Request real reset
+     * @return outcome
+     */
+    public String resetPassword() {
 
+        // reuse email from previews step
+        pwResetModel.setEmailAddress(pwReqModel.getEmailAddress());
+
+        // FIXME: 04.04.21 Impl stuff here
+
+        // if successful
+        pwResetted = true;
+
+        return PASSWORD_FORGOTTON_PAGE;
+    }
+
+    /**
+     * Reset state machine - just in case user requires to run over
+     */
+    public String resetWorkflow() {
+        captchaAccepted = false;
+        pwResetted = false;
+        pwReqModel = new RequestNewPasswordTo();
+        pwResetModel = new ResetPasswordTo();
+        return LOGIN_PAGE;
+    }
+
+    /**
+     * Step 1 - request a reset token via email
+     * @return outcome
+     */
     public String reqPasswordResetMail() {
 
         String reqPWResetURI = sabiBackendUrl + "/api/auth/req_pwd_reset";
@@ -167,4 +204,11 @@ public class PasswordForgottenView implements Serializable {
         }
     }
 
+    /**
+     * Criteria to render Step 2 of the form.
+     * @return
+     */
+    public Boolean getStep2Visible() {
+        return (captchaAccepted && !pwResetted);
+    }
 }

@@ -23,14 +23,12 @@
 
         <ui:define name="content">
 
-            <h3>Step 1 - Enter Email and proove you are human.</h3>
-            <h3>Step 2 - Check your Email, provide new password along with change token.</h3>
-            <h3>Step 3 - Relogin after receiving confirmation mail.</h3>
-
+            <h2>#{msg['pw_forgotten.request.h']}</h2>
 
             <h:form id="req_pw_reset_form">
 
-                <p:panel id="step1" header="#{msg['pw_forgotten.request.h']}" style="margin-bottom:20px">
+                <p:panel id="step1" header="#{msg['pw_forgotten.request.step1.h']}"
+                         style="margin-bottom:20px" rendered="#{!passwordForgottenView.captchaAccepted}">
 
                     <p:panelGrid columns="3" cellpadding="20">
 
@@ -63,24 +61,60 @@
 
                     <p:panelGrid columns="2" cellpadding="20">
                         <p:commandButton action="#{passwordForgottenView.reqPasswordResetMail}"
-                                         id="cmdReqReset" value="#{msg['pw_forgotten.request.p']}"
+                                         id="cmdReqReset" value="#{msg['pw_forgotten.request.b']}"
                                          ajax="false"/>
                         <p:button outcome="login" value="#{msg['register.cancel.b']}"/>
                     </p:panelGrid>
-                    <p:messages id="messages6" for="commonFailure" showDetail="true" closable="true">
+                    <p:messages id="messages2" for="commonFailure" showDetail="true" closable="true">
                         <p:autoUpdate/>
                     </p:messages>
 
                 </p:panel>
             </h:form>
 
+            <h:form id="pw_reset_form" rendered="#{passwordForgottenView.step2Visible}">
 
-            <h:form id="pw_reset_form" rendered="#{passwordForgottenView.captchaAccepted}">
+                <p:panel id="step2" header="#{msg['pw_forgotten.request.step2.h']}"
+                         style="margin-bottom:20px">
 
-                Step 2 ....
+                    <p:panelGrid columns="3" cellpadding="20"
+                                 id="step2grid"
+                                 style="margin-bottom:20px">
+
+                        <p:outputLabel for="resettoken" value="#{msg['pw_forgotten.reset_token.l']}"/>
+                        <p:inputText id="resettoken" value="#{passwordForgottenView.pwResetModel.resetToken}"
+                                     required="true"/>
+                        <p:messages id="messages3" for="resettoken" showDetail="true" closable="true">
+                            <p:autoUpdate/>
+                        </p:messages>
+
+                        <p:outputLabel for="pwd1" value="#{msg['register.password.l']}"/>
+                        <p:password id="pwd1" value="#{passwordForgottenView.pwResetModel.newPassword}"
+                                    feedback="true" label="Password 1" required="true"/>
+                        <p:messages id="messages4" for="pwd1" showDetail="true" closable="true">
+                            <p:autoUpdate/>
+                        </p:messages>
+
+                        <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
+                        <p:password id="pwd2" value="#{passwordForgottenView.pwResetModel.newPassword}"
+                                    label="Password 2" required="true"/>
+                        <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
+                            <p:autoUpdate/>
+                        </p:messages>
+
+                    </p:panelGrid>
+
+                    <p:commandButton action="#{passwordForgottenView.resetPassword}"
+                                     id="cmdPWReset" value="#{msg['pw_forgotten.reset.b']}"
+                                     ajax="false"/>
+                </p:panel>
 
             </h:form>
 
+            <p:panel id="step3" header="#{msg['pw_forgotten.request.step3.h']}"
+                     style="margin-bottom:20px" rendered="#{passwordForgottenView.pwResetted}">
+                <p:commandLink action="#{passwordForgottenView.resetWorkflow}" value="#{msg['pw_forgotten.login_link.l']}"/>
+            </p:panel>
 
         </ui:define>
     </ui:composition>
