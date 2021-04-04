@@ -79,7 +79,7 @@
                     </p:messages>
 
                     <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
-                    <p:password id="pwd2" value="#{registrationView.model.password}"
+                    <p:password id="pwd2" value="#{registrationView.checkPwd}"
                                 label="Password 2" required="true"/>
                     <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
                         <p:autoUpdate/>

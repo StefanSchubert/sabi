@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -22,11 +22,13 @@ import javax.inject.Named;
 @Slf4j
 public class MenuView {
 
-    public void logout() {
-        // FIXME STS (13.04.20): Won't be called and no logging output with logback here
-        log.info("User logged out.");
+    static String LOGOUT_PAGE = "/logout";
+
+    public String logout() {
+        log.info(" #### User logged out. ####");
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().invalidateSession();
+        return LOGOUT_PAGE;
     }
 
     public void sendReport() {

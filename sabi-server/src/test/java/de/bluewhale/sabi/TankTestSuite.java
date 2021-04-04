@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi;
 
+import de.bluewhale.sabi.persistence.TankRepositoryTest;
 import de.bluewhale.sabi.services.TankServiceTest;
 import de.bluewhale.sabi.services.rest.TankControllerTest;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        TankRepositoryTest.class,
         TankServiceTest.class,
         TankControllerTest.class
 })
