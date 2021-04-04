@@ -29,22 +29,17 @@
             </ui:remove>
             <p:outputPanel>#{applicationInfo.motd}</p:outputPanel>
 
-            <p:panel header="Sabi for #{userSession.userName}">
+            <p:panel header="#{msg['userportal.greeting.l']} #{userSession.userName}">
 
                 <p:messages id="messages" showDetail="true" closable="true">
                     <p:autoUpdate/>
                 </p:messages>
 
-<!--                <p:outputPanel style="color: mediumaquamarine">-->
-<!--                    You are in...looking at userportal.xhtml and your Backend Token is<br/>-->
-<!--                    #{userSession.sabiBackendToken}-->
-<!--                </p:outputPanel>-->
-
                 <p:outputPanel style="color: cornflowerblue">
 
                     <h:outputText>TODO -Stats View</h:outputText>
 
-                    <h:outputText>Welcome Back #{userSession.userName}!</h:outputText>
+                    <h:outputText>#{msg['userportal.welcome.l']} #{userSession.userName}!</h:outputText>
                     <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
 
                         <p:outputLabel value="#{msg['userportal.projectstate.l']}"/>

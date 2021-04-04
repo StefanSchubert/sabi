@@ -74,9 +74,9 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
     @Before
     public void ensureBasicDataAvailability() {
 
-        UserEntity byEmail = userRepository.getByEmail(P_USER_EMAIL);
+        UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
         if (byEmail == null) populateBasicData();
-        UserEntity byEmail2 = userRepository.getByEmail(P_USER_EMAIL);
+        UserEntity byEmail2 = userRepository.getByEmail(P_USER1_EMAIL);
         assertNotNull("H2-Basicdata injection did not work!" ,byEmail2);
     }
 

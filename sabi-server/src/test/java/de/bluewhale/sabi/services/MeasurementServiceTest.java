@@ -64,9 +64,9 @@ public class MeasurementServiceTest extends BasicDataFactory {
      */
     @Before
     public void ensureBasicDataAvailability() {
-        List<MeasurementTo> list = measurementService.listMeasurements(P_USER_EMAIL, 0);
+        List<MeasurementTo> list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
         if (list.isEmpty()) populateBasicData();
-        List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER_EMAIL, 0);
+        List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER1_EMAIL, 0);
         assertTrue("H2-Basicdata injection did not work!" ,list2.size()>0);
     }
 
@@ -77,7 +77,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
         // When
         List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(1L);
-        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER_EMAIL, 0);
+        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER1_EMAIL, 0);
 
         // Then
         assertNotNull(tank1Measurements);
@@ -108,7 +108,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(1L);
 
         // When
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, P_USER_EMAIL);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, P_USER1_EMAIL);
 
         // Then
         assertNotNull(measurementToResultTo);
@@ -149,14 +149,14 @@ public class MeasurementServiceTest extends BasicDataFactory {
     @Transactional
     public void testUpdateMeasurement() throws Exception {
         // Given already stored measurements
-        List<MeasurementTo> measurementToList = measurementService.listMeasurements(P_USER_EMAIL, 0);
+        List<MeasurementTo> measurementToList = measurementService.listMeasurements(P_USER1_EMAIL, 0);
         MeasurementTo prestoresMeasurementTo = measurementToList.get(0);
         float oldValue = prestoresMeasurementTo.getMeasuredValue();
 
         // When we update the measurement
         float newValue = oldValue + 1.5f;
         prestoresMeasurementTo.setMeasuredValue(newValue);
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(prestoresMeasurementTo, P_USER_EMAIL);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(prestoresMeasurementTo, P_USER1_EMAIL);
 
         // Then
         assertNotNull(measurementToResultTo);

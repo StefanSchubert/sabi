@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -47,6 +48,7 @@ public class TankListView implements Serializable {
 
     @PostConstruct
     public void init() {
+        log.debug("Called postconstruct init of TankListView.");
         try {
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
         } catch (BusinessException e) {
@@ -54,6 +56,11 @@ public class TankListView implements Serializable {
             log.error(e.getLocalizedMessage());
             MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
         }
+    }
+
+    @PreDestroy
+    public void endOfService() {
+        log.debug("Called predestroy on TankListView");
     }
 
     public String edit(AquariumTo tank) {
