@@ -13,6 +13,7 @@ import de.bluewhale.sabi.webclient.CDIBeans.ApplicationInfo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.model.ChallengeTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
+import de.bluewhale.sabi.webclient.utils.PasswordPolicy;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -65,6 +66,16 @@ public class RegistrationView implements Serializable {
 
     private ChallengeTo challenge;
 
+    public String getCheckPwd() {
+        return this.checkPwd;
+    }
+
+    public void setCheckPwd(final String checkPwd) {
+        this.checkPwd = checkPwd;
+    }
+
+    private String checkPwd;
+
     private RestTemplate restTemplate = new RestTemplate();
     private NewRegistrationTO model = new NewRegistrationTO();
 
@@ -91,8 +102,12 @@ public class RegistrationView implements Serializable {
         // Preliminary checks before sending requests to the backend.
         String userAnswer = model.getCaptchaCode();
         if (Strings.isEmpty(userAnswer)) {
-            String message = MessageUtil.getFromMessageProperties("register.captcha_missing.t", userSession.getLocale());
-            MessageUtil.error("captcha", message);
+            MessageUtil.error("captcha", "register.captcha_missing.t", userSession.getLocale());
+            return REGISTER_PAGE;
+        }
+
+        if (PasswordPolicy.failedCheck(model.getPassword(), checkPwd)) {
+            MessageUtil.error("messages5", "register.password.policy_failed.t", userSession.getLocale());
             return REGISTER_PAGE;
         }
 
@@ -148,6 +163,7 @@ public class RegistrationView implements Serializable {
         // any unhandled case? stays on the same page!
         return REGISTER_PAGE;
     }
+
 
     /**
      * Used to retrieve a new Challenge from the used Captcha Service

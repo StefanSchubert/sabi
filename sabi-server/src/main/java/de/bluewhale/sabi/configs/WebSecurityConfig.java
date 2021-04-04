@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/req_pwd_reset").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/auth/pwd_reset").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
                 // Open statistics
                 .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()

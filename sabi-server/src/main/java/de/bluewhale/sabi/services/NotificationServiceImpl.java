@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -106,7 +106,7 @@ public class NotificationServiceImpl implements NotificationService {
         helper.setText("<html><body>" +
                 "<h1>Password reset confirmed</h1>" +
                 "<p>As requested your password has been changed. Please re-login or reconfigure your app to use" +
-                "the new one from now on.</b>" +
+                " the new one from now on.</b>" +
                 "</p> " +
                 "<p></p>" +
                 "</body></html>", true);

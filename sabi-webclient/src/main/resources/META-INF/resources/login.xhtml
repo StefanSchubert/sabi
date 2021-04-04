@@ -8,9 +8,15 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-<f:loadBundle basename="i18n.messages" var="msg"/>
+<f:metadata>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+    <!-- Workaround (for broken workflow) -->
+    <f:viewAction action="#{passwordForgottenView.resetWorkflow}"/>
+</f:metadata>
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -22,14 +28,15 @@
 
 <h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
+    <ui:remove>
     <!--
-
     We specify prependId="false" on the form as otherwise the JSF framework will prefix the parameters with the ID of the form.
     but we require username and password inputfields unchanges, as spring-security will look them up.
 
     You may wonder that there is no specific target of the command button defined. The form is automatically
     wired through Springs WebSecurity-Mechanisms. Have a look into the class WebSecurityConfig.
     -->
+    </ui:remove>
     <div style="height:60vh"/>
     <h:form id="login-form" prependId="false">
 

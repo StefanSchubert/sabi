@@ -96,7 +96,7 @@
                         </p:messages>
 
                         <p:outputLabel for="pwd2" value="#{msg['register.verifypassword.l']}"/>
-                        <p:password id="pwd2" value="#{passwordForgottenView.pwResetModel.newPassword}"
+                        <p:password id="pwd2" value="#{passwordForgottenView.checkPwd}"
                                     label="Password 2" required="true"/>
                         <p:messages id="messages5" for="pwd2" showDetail="true" closable="true">
                             <p:autoUpdate/>
@@ -109,12 +109,21 @@
                                      ajax="false"/>
                 </p:panel>
 
+                <p:messages id="commonerror" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
             </h:form>
 
-            <p:panel id="step3" header="#{msg['pw_forgotten.request.step3.h']}"
-                     style="margin-bottom:20px" rendered="#{passwordForgottenView.pwResetted}">
-                <p:commandLink action="#{passwordForgottenView.resetWorkflow}" value="#{msg['pw_forgotten.login_link.l']}"/>
-            </p:panel>
+            <h:form id="step3frm" rendered="#{passwordForgottenView.pwResetted}">
+
+                <p:panel id="step3" header="#{msg['pw_forgotten.request.step3.h']}"
+                         style="margin-bottom:20px">
+                    <p:commandLink action="#{passwordForgottenView.resetWorkflow}"
+                                   value="#{msg['pw_forgotten.login_link.l']}"/>
+                </p:panel>
+
+            </h:form>
 
         </ui:define>
     </ui:composition>
