@@ -57,7 +57,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>7.7.0</version>
+                        <version>7.7.2</version>
                         <configuration>
                             <url>jdbc:mysql://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
                             <user>${mariadb.server.app.username}</user>
