@@ -21,6 +21,5 @@ jobs:
       with:
         java-version: 11
     - name: CAPTCHA-Module build and test with Maven
-      run: cd captcha
-      run: mvn -B package --file pom.xml
+      run: cd captcha; mvn -B package --file pom.xml
     
