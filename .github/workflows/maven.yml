@@ -22,4 +22,6 @@ jobs:
         java-version: 11
     - name: CAPTCHA-Module build and test with Maven
       run: cd captcha; mvn -B package --file pom.xml
+    - name: SABI-Boundary package for dependend builds with Maven
+      run: cd ../sabi-boundary; mvn -B package --file pom.xml  
     
