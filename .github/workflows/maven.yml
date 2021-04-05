@@ -20,8 +20,29 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: CAPTCHA-Module build and test with Maven
-      run: cd captcha; mvn -B package --file pom.xml
-    - name: SABI-Boundary package for dependend builds with Maven
-      run: ls -la; cd sabi-boundary; mvn -B package --file pom.xml
+    - name: CAPTCHA App
+      run: cd captcha; mvn -B compile --file pom.xml
+    - name: SABI-Boundary package for dependend builds
+      run: cd sabi-boundary; mvn -B package --file pom.xml
+    - name: SABI-Server App
+      run: cd sabi-server; mvn -B compile --file pom.xml
+    - name: SABI-Webclient App
+      run: cd sabi-server; mvn -B compile --file pom.xml
+    - name: GenericPiMetricsEndpoint Helper to measure PIs temperatures
+      run: cd devops/GenericPiMetricsEndpoint; mvn -B compile --file pom.xml
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: CAPTCHA App
+        run: cd captcha; mvn -B package --file pom.xml
+      - name: SABI-Boundary package for dependend builds
+        run: ls -la; cd sabi-boundary; mvn -B package --file pom.xml
+
   
