@@ -21,5 +21,6 @@ jobs:
       with:
         java-version: 11
     - name: CAPTCHA-Module build and test with Maven
-      run: mvn -Dmaven.multiModuleProjectDirectory=sabi/captcha -B package --file pom.xml
+      run: cd captcha
+      run: mvn -B package --file pom.xml
     
