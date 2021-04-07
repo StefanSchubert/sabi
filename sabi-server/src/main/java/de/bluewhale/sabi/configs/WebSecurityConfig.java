@@ -35,8 +35,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .disable()
+                // GitHub complains here. We will check if it is may caue troubles in current setup.
+                // fixme But if enabled the MeasurementControllerTest fails. This needs to be investigated.
+                .csrf()
+                 .disable()
             .sessionManagement()
                 // This will turn off creating sessions (as without it you would get a JSESSION-ID Cookie
                 // However we provide REST Services here, having an additional session would be absurd.

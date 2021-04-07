@@ -76,6 +76,9 @@ public class MeasurementControllerTest {
     MeasurementRepository measurementRepository;
 
     @Autowired
+    private TokenAuthenticationService encryptionService;
+
+    @Autowired
     ObjectMapper objectMapper;  // json mapper
 
     TestDataFactory testDataFactory = TestDataFactory.getInstance();
