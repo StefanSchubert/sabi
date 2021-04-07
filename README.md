@@ -1,6 +1,6 @@
 # Seawater Aquarium Business Intelligence (sabi)
 
-...is a semi-scientific (or public science) project that aims to gain insights
+...is a semi-scientific (or open science) project that aims to gain insights
  from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
 
 ## Vision I
@@ -136,7 +136,8 @@ option:
 ```
 
 You will need the agent for the springboot application run-config in your IDE
-as well as VM parameter for you test runner config.
+as well as VM parameter for you test runner config. **Please** verify that you use the correct version
+as denoted in the pom.xml. You may also need to adopt your setting if that version in the pom changes.
 
 ## Architectural Notes
 
