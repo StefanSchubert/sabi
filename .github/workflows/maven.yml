@@ -44,5 +44,5 @@ jobs:
         run: cd captcha; mvn -B package --file pom.xml
       - name: SABI-Boundary install locally for dependend builds
         run: cd sabi-boundary; mvn -B install --file pom.xml
-      - name: SABI-Boundary install locally for dependend builds
+      - name: SABI-Server APP
         run: cd sabi-server; mvn -B package --file pom.xml
