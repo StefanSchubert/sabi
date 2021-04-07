@@ -46,11 +46,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <swagger.version>2.9.2</swagger.version>
-<!--
-        Caution API change with version 3, you need to change more than just the dep version.
-        Haven't figured it out with spring yet
-        <swagger.version>3.0.0</swagger.version>
--->
+        <!--
+                Caution API change with version 3, you need to change more than just the dep version.
+                Haven't figured it out with spring yet
+                <swagger.version>3.0.0</swagger.version>
+        -->
 
         <eclipselink.version>2.7.8</eclipselink.version>
         <!--        <eclipselink.version>3.0.0</eclipselink.version>
@@ -60,6 +60,7 @@
         -->
         <micrometer.prometheus.version>1.6.4</micrometer.prometheus.version>
         <spring.instrument.version>5.3.4</spring.instrument.version>
+        <surefire.version>3.0.0-M5</surefire.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +70,12 @@
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
                 <version>1.5.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.surefire</groupId>
+                <artifactId>surefire-junit47</artifactId>
+                <version>${surefire.version}</version>
             </dependency>
 
         </dependencies>
@@ -270,9 +277,10 @@
             </exclusions>
         </dependency>
         <dependency>
+            <!-- In case you want to switch from junit4.x make sure to adopt the surefire provider as well. -->
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -281,6 +289,17 @@
 
     <build>
         <finalName>sabi-service-${sabi.version}</finalName>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -294,15 +313,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-instrument</artifactId>
                         <version>${spring.instrument.version}</version>
                     </dependency>
+                    <dependency>
+                        <!-- Surefire seemed to have difficulties to determine the test provider junit4
+                        in our case, so we configured the provider manualy here.-->
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefire.version}</version>
+                    </dependency>
                 </dependencies>
                 <configuration>
+                    <test>de.bluewhale.sabi.MasterTestSuite</test>
                     <argLine>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
                     </argLine>
