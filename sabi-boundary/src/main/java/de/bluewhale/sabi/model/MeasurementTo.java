@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -92,11 +92,21 @@ public class MeasurementTo implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = this.id.hashCode();
+        int result = this.id != null ? this.id.hashCode() : 0;
         result = 31 * result + this.measuredOn.hashCode();
         result = 31 * result + (this.measuredValue != +0.0f ? Float.floatToIntBits(this.measuredValue) : 0);
         result = 31 * result + this.unitId;
         result = 31 * result + this.aquariumId.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "MeasurementTo{" +
+                ", measuredOn=" + measuredOn +
+                ", measuredValue=" + measuredValue +
+                ", unitId=" + unitId +
+                ", aquariumId=" + aquariumId +
+                '}';
     }
 }
