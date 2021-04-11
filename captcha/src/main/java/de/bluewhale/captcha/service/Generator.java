@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -162,6 +162,14 @@ public class Generator {
         challenge15.answerMap.put("E.T.", TRUE);
         challenge15.answerMap.put("R2D2", FALSE);
         challenge15.answerMap.put("No.5", FALSE);
+
+        ChallengeData challenge16 = new ChallengeData();
+        challenge16.questionMap.put(Locale.GERMAN, "Welche Eigenschaften von Seegraswiesen können uns zukünftig helfen?");
+        challenge16.questionMap.put(Locale.ENGLISH, "What are the best capabilities of Seaweed-Cultures for our furture?");
+        challenge16.answerMap.put("\\|/\\|/", FALSE);
+        challenge16.answerMap.put("Superfood", FALSE);
+        challenge16.answerMap.put("C02-Storage", TRUE);
+        challenge16.answerMap.put("=~=~=~~", FALSE);
         
         dataSet.add(challenge1);
         dataSet.add(challenge2);
@@ -178,6 +186,7 @@ public class Generator {
         dataSet.add(challenge13);
         dataSet.add(challenge14);
         dataSet.add(challenge15);
+        dataSet.add(challenge16);
     }
 
 // -------------------------- OTHER METHODS --------------------------
