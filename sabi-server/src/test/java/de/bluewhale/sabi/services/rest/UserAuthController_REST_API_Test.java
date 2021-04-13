@@ -15,6 +15,7 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.util.Mapper;
+import de.bluewhale.sabi.util.RestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,9 +96,7 @@ public class UserAuthController_REST_API_Test {
         newUser.setCaptchaCode("captcha mock not programmed so check will be false.");
 
         // when a new user sends a sign-in request
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
+        HttpHeaders headers = RestHelper.buildHttpHeader();
         String requestJson = objectMapper.writeValueAsString(newUser);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
@@ -131,8 +130,7 @@ public class UserAuthController_REST_API_Test {
         given(this.userRepository.saveAndFlush(any(UserEntity.class))).willReturn(userEntity);
 
         // when a new user sends a sign-in request
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = RestHelper.buildHttpHeader();
         String requestJson = objectMapper.writeValueAsString(userTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
@@ -200,8 +198,7 @@ public class UserAuthController_REST_API_Test {
         given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userFromDatabase);
 
         // When user tries to sign-In
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = RestHelper.buildHttpHeader();
 
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -231,8 +228,7 @@ public class UserAuthController_REST_API_Test {
         given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userFromDatabase);
 
         // When user tries to sign-In
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = RestHelper.buildHttpHeader();
 
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);

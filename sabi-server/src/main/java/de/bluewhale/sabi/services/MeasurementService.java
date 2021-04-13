@@ -89,5 +89,13 @@ public interface MeasurementService {
     ResultTo<MeasurementTo> updateMeasurement(@NotNull MeasurementTo pMeasurementTo, @NotNull String pUserEmail);
 
 
-
+    /**
+     * Lists measurements of a specific tank and measured unit.
+     *
+     * @param pTankID identifies the tank for which the the measurement were taken.
+     * @param pUnitID identifies the unit for which the the measurement were taken.
+     * @return List of measurements, maybe empty but never null.
+     */
+    @NotNull
+    List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID);
 }

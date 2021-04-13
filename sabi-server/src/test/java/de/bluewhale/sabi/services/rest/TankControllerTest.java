@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -15,6 +15,7 @@ import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.Mapper;
+import de.bluewhale.sabi.util.RestHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,10 +91,7 @@ public class TankControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests his aquarium list
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
-
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the resttemplate will get it as array.
@@ -149,10 +147,7 @@ public class TankControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests his aquarium list
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
-
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the resttemplate will get it as array.
@@ -195,9 +190,7 @@ public class TankControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests to create a aquarium
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
         String requestJson = objectMapper.writeValueAsString(aquariumTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -237,9 +230,7 @@ public class TankControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests to create a aquarium
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
         String requestJson = objectMapper.writeValueAsString(aquariumTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -283,9 +274,7 @@ public class TankControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests to update an aquarium
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
         updatableAquariumTo.setDescription(updateTestString);
         String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);

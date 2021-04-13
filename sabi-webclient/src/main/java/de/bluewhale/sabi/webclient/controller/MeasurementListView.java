@@ -9,6 +9,7 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UnitTo;
+import de.bluewhale.sabi.webclient.CDIBeans.ApplicationInfo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
@@ -100,19 +101,7 @@ public class MeasurementListView implements Serializable {
      */
     @NotNull
     public String getUnitSignForId(Integer unitId) {
-        String result = "N/A";
-        if (unitId != null) {
-            for (UnitTo unitTo : knownUnits) {
-                if (unitTo.getId().equals(unitId)) {
-                    result = unitTo.getUnitSign();
-                    break;
-                }
-            }
-        }
-        if (result.equals("N/A")) {
-            log.warn("Could not determine the unit sign for unitID: {}", unitId);
-        }
-        return result;
+        return ApplicationInfo.getUnitSignForId(unitId,knownUnits);
     }
 
     /**
@@ -123,19 +112,7 @@ public class MeasurementListView implements Serializable {
      */
     @NotNull
     public String getTankNameForId(Long tankId) {
-        String result = "N/A";
-        if (tankId != null) {
-            for (AquariumTo aquariumTo : tanks) {
-                if (aquariumTo.getId().equals(tankId)) {
-                    result = aquariumTo.getDescription();
-                    break;
-                }
-            }
-        }
-        if (result.equals("N/A")) {
-            log.warn("Could not determine the tankname for tankID: {}", tankId);
-        }
-        return result;
+        return ApplicationInfo.getTankNameForId(tankId,tanks);
     }
 
 

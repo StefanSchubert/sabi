@@ -32,11 +32,16 @@ h2:
     mode: false
 logging:
   level:
+    de:
+      bluewhale:
+        sabi: DEBUG
     org:
       springframework:
         # Trace transaction behavior, change this to info for production
         transaction:
           interceptor: TRACE
+  pattern:
+    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
 
 # Health check for cloud deployment
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-enabling-endpoints

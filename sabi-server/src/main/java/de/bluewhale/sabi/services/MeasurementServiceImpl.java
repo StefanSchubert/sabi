@@ -59,6 +59,16 @@ public class MeasurementServiceImpl implements MeasurementService {
         return measurementTos;
     }
 
+    @Override
+    public List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID) {
+        AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
+        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquariumAndUnitId(aquarium,pUnitID);
+
+        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
+
+        return measurementTos;
+    }
+
     private List<MeasurementTo> mapMeasurementEntities2TOs(@NotNull List<MeasurementEntity> measurementsOfAquarium) {
         List<MeasurementTo> measurementTos = new ArrayList<MeasurementTo>();
         for (MeasurementEntity measurementEntity : measurementsOfAquarium) {

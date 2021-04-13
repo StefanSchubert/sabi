@@ -35,3 +35,13 @@ spring:
 token:
   # Time in milliseconds before a cached answer token expires.
   TTL: 120000
+
+logging:
+  level:
+    de:
+      bluewhale:
+        sabi: INFO
+    org:
+      springframework: ERROR
+  pattern:
+    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'

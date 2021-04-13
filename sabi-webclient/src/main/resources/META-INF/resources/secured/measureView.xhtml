@@ -23,7 +23,7 @@
             <h:form id="measureform">
                 <p:panelGrid columns="2" style="border:2;">
 
-                    <p:outputLabel for="tankselection" value="#{msg['measureview.tankchoice.l']}"/>
+                    <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
                     <p:selectOneMenu id="tankselection" value="#{measurementListView.measurement.aquariumId}">
                         <!-- todo when selectedTank has a value set this instead of the Select Entry -->
                         <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
@@ -84,7 +84,7 @@
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="#{msg['measureview.unit.l']}">
+                        <p:column headerText="#{msg['common.unitchoise.l']}">
                             <h:outputText value="#{measurementListView.getUnitSignForId(m.unitId)}"/>
                         </p:column>
 
@@ -92,7 +92,7 @@
                             <h:outputText value="#{m.measuredValue}"/>
                         </p:column>
 
-                        <p:column headerText="#{msg['measureview.tankchoice.l']}">
+                        <p:column headerText="#{msg['common.tankchoice.l']}">
                             <h:outputText value="#{measurementListView.getTankNameForId(m.aquariumId)}"/>
                         </p:column>
 

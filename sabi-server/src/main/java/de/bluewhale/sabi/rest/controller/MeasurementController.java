@@ -138,6 +138,49 @@ public class MeasurementController {
         return new ResponseEntity<>(MeasurementToList, HttpStatus.ACCEPTED);
     }
 
+    @ApiOperation(value = "List measurements belonging to a specific tank and measurement unit", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(code = HttpURLConnection.HTTP_OK,
+                    message = "Success - list of tanks measurements for requested measurement unit returned.",
+                    response = MeasurementTo.class, responseContainer = "List"),
+            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
+                    response = String.class)
+    })
+    @RequestMapping(value = {"/tank/{tankid}/unit/{unitid}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<MeasurementTo>> listUsersTankMeasurementsOfSpecificUnit(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                         @PathVariable(value = "tankid", required = true)
+                                                                         @ApiParam(name = "tankid", value = "id of your aquarium..") String tankID,
+                                                                         @PathVariable(value = "unitid", required = true)
+                                                                         @ApiParam(name = "unitid", value = "id of interested unit") String unitID,
+                                                                         Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+
+
+        Long pTankID;
+        Integer pUnitID;
+        try {
+            pTankID = Long.valueOf(tankID);
+            pUnitID = Integer.valueOf(unitID);
+        } catch (NumberFormatException e) {
+            log.warn("API Request sent with wrong TankID or UnitID. {}", e);
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+        }
+
+        // We need to be sure if provided Tank does belong to the user.
+        AquariumTo aquariumTo = tankService.getTank(pTankID, principal.getName());
+
+        if (aquariumTo == null) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<MeasurementTo> MeasurementToList = measurementService.listMeasurementsFilteredBy(pTankID,pUnitID);
+        return new ResponseEntity<>(MeasurementToList, HttpStatus.ACCEPTED);
+    }
+
+
     @ApiOperation(value = "Drop a specific measurement.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(code = HttpURLConnection.HTTP_OK,
