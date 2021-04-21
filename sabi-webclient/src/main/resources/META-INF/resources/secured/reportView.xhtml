@@ -59,17 +59,86 @@
                     </p:selectOneMenu>
 
                     <p:commandButton value="#{msg['reportview.request_data.b']}" action="#{reportView.requestData()}"
-                                     id="saveAction" icon="pi pi-save"
+                                     id="reportAction" icon="pi pi-chart-line"
                                      ajax="true" update=":datasection"
                                      title="#{msg['reportview.request_data.b']}"/>
-
                 </p:panelGrid>
             </h:form>
-            <!--
-            <div>
-                <p:lineChart model="#{reportview.CACO3_Model}" style="width: 100%; height: 250px;"/>
-            </div>
--->
+
+            <h:form id="datasection">
+                <div class="card">
+                    <p:lineChart model="#{reportView.lineModel}"
+                                 style="width: 100%; height: 250px;"
+                                 rendered="#{reportView.lineModel != null}"/>
+                </div>
+
+                <div>
+                    <h5>Data Export Options</h5>
+
+                    <ui:remove>
+
+<!--                        Revisit Q3/21 when joinfaces has the latest PF 10.-->
+<!--                        Which has migrated from the old apache poi and itext deps-->
+<!--                        which are currently seem not working with java 11 and spring boot-->
+<!--                        -->
+<!--                        <p:commandButton value="XLS" styleClass="p-mr-2 p-mb-2">-->
+<!--                            <p:dataExporter type="xls" target="tbl" fileName="measurements"/>-->
+<!--                        </p:commandButton>-->
+
+<!--                        <p:commandButton value="XLXS" styleClass="p-mr-2 p-mb-2">-->
+<!--                            <p:dataExporter type="xlsxstream" target="tbl" fileName="measurements"/>-->
+<!--                        </p:commandButton>-->
+
+<!--                        <p:commandButton value="XML" styleClass="p-mr-2 p-mb-2">-->
+<!--                            <p:dataExporter type="xml" target="tbl" fileName="measurements"/>-->
+<!--                        </p:commandButton>-->
+
+                    </ui:remove>
+
+                    <p:commandButton value="CSV" styleClass="p-mr-2 p-mb-2">
+                        <p:dataExporter type="csv" target="tbl" fileName="measurements"/>
+                    </p:commandButton>
+
+                </div>
+
+                <div>
+                    <p:dataTable id="tbl" var="m" value="#{reportView.measurementTos}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                 paginator="true" rows="10" styleClass="p-mt-2">
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Measured on"/>
+                            </f:facet>
+                            <h:outputText value="#{m.measuredOn}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Aquarium"/>
+                            </f:facet>
+                            <h:outputText value="#{reportView.getTankNameForId(m.aquariumId,reportView.tanks)}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Einheit"/>
+                            </f:facet>
+                            <h:outputText value="#{reportView.getUnitSignForId(m.unitId,reportView.knownUnits)}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Wert"/>
+                            </f:facet>
+                            <h:outputText value="#{m.measuredValue}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </div>
+
+            </h:form>
 
         </ui:define>
 

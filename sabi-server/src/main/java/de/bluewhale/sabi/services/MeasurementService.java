@@ -94,7 +94,7 @@ public interface MeasurementService {
      *
      * @param pTankID identifies the tank for which the the measurement were taken.
      * @param pUnitID identifies the unit for which the the measurement were taken.
-     * @return List of measurements, maybe empty but never null.
+     * @return List of measurements, maybe empty but never null. Result will be sorted asc according measure date.
      */
     @NotNull
     List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID);

@@ -74,6 +74,7 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      * @param unitID identifies your unit.
      * @return empty list, if no measurement have been found.
      */
-    @NotNull List<MeasurementEntity> findByAquariumAndUnitId(@NotNull AquariumEntity aquariumEntity, @NotNull Integer unitID);
+    @NotNull List<MeasurementEntity> findByAquariumAndUnitIdOrderByMeasuredOnAsc(@NotNull AquariumEntity aquariumEntity, @NotNull Integer unitID);
+
 
 }

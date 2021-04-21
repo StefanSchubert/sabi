@@ -9,12 +9,12 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UnitTo;
-import de.bluewhale.sabi.webclient.CDIBeans.ApplicationInfo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.line.LineChartDataSet;
@@ -41,7 +41,8 @@ import java.util.List;
 @SessionScope
 @Slf4j
 @Getter
-public class ReportView implements Serializable {
+@Setter
+public class ReportView extends AbstractControllerTools implements Serializable {
 
     private static final String REPORT_VIEW_PAGE = "reportView";
 
@@ -60,6 +61,7 @@ public class ReportView implements Serializable {
     private Long selectedTankId;
     private Integer selectedUnitId;
     private LineChartModel lineModel;
+    private List<MeasurementTo> measurementTos;
 
     public String requestData() {
 
@@ -69,12 +71,14 @@ public class ReportView implements Serializable {
         }
 
         try {
-            List<MeasurementTo> measurementTos = measurementService.getMeasurementsForUsersTankFilteredByUnit(userSession.getSabiBackendToken(), selectedTankId, selectedUnitId);
-            // TODO STS (13.04.21): Transform data into chart line modell, also data table for export
+            measurementTos = measurementService.getMeasurementsForUsersTankFilteredByUnit(userSession.getSabiBackendToken(), selectedTankId, selectedUnitId);
+
+            if (measurementTos == null || measurementTos.isEmpty()) {
+                return REPORT_VIEW_PAGE;
+            }
 
             lineModel = new LineChartModel();
             ChartData data = new ChartData();
-
             LineChartDataSet dataSet = new LineChartDataSet();
             List<Object> values = new ArrayList<>();
             List<String> labels = new ArrayList<>();
@@ -87,7 +91,7 @@ public class ReportView implements Serializable {
             dataSet.setData(values);
             data.setLabels(labels);
             dataSet.setFill(false);
-            dataSet.setLabel(ApplicationInfo.getUnitSignForId(selectedUnitId, knownUnits));
+            dataSet.setLabel(getUnitSignForId(selectedUnitId, knownUnits));
             dataSet.setBorderColor("rgb(75, 192, 192)");
             dataSet.setLineTension(0.1);
             data.addChartDataSet(dataSet);
@@ -96,15 +100,13 @@ public class ReportView implements Serializable {
             LineChartOptions options = new LineChartOptions();
             Title title = new Title();
             title.setDisplay(true);
-            // TODO STS (13.04.21): i18n
             String chartTitle = String.format(MessageUtil.getFromMessageProperties("reportview.chart.h", userSession.getLocale()),
-                    ApplicationInfo.getTankNameForId(selectedTankId, tanks));
+                    getTankNameForId(selectedTankId, tanks));
             title.setText(chartTitle);
             options.setTitle(title);
 
             lineModel.setOptions(options);
             lineModel.setData(data);
-
 
         } catch (BusinessException e) {
             MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());

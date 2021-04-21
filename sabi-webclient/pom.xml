@@ -53,7 +53,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <micrometer.prometheus.version>1.5.4</micrometer.prometheus.version>
-        <joinfaces.version>4.4.3</joinfaces.version>
+<!-- PF10.0 -->
+        <joinfaces.version>4.5.0-m2</joinfaces.version>
+<!--    PF8.0
+<joinfaces.version>4.4.3</joinfaces.version>-->
         <sabi.backend.version>1.0-SNAPSHOT</sabi.backend.version>
     </properties>
 
@@ -128,6 +131,19 @@
             <artifactId>sabi-boundary</artifactId>
             <version>${sabi.backend.version}</version>
         </dependency>
+
+        <!-- Required for data export functionality
+
+            ON HOLD lowagie and apachie poi libs with primefaces < 10.x
+            With latest release of PF they are going to shift to
+            open libre and successor libs...
+            However this depends on the PF version, that comes
+            bundled with join-faces. Revisit this issue Q3/2021
+            CSV Export works out of the box and will be sufficient
+            for the start.
+
+        -->
+
 
         <!-- Test Context -->
         <dependency>

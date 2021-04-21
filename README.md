@@ -38,7 +38,7 @@ The KI challenge here is, that if the human provided data on a given problem con
   recalibration by its own.
 
 
-## Release Planning
+## Project Planning
 
 ### Stage I
 
@@ -55,6 +55,10 @@ Document insights gained through this project. If possible try to make forecasts
 ### Possible NON-Scientific extensions
 
 I have some siblings in my nano reef tank and need to do some gardening. But where to with the siblings? Where are all the other aquarists and is there someone nearby? They are organized in standard internet forums, but what if there are someone near but not located in the same forum I use (more or less frequently). If they all could be motivated using sabi it should be possible to introduce them to each other for nearby support purposes.
+
+## Release Planning
+
+Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/milestones?direction=asc&sort=due_date&state=open) from the Issue Board
 
 ## Technology Stack
 
@@ -87,7 +91,7 @@ The two main reasons are:
 
 ## Setting up the development environment
 
-With a look at https://github.com/StefanSchubert/sabi/wiki/05.-Building-Block-View you see that sabi is not just a single app but consists of using several modules that are configured to work together. Your environment might look different, depending on which module you intent to work on, but the good news is that we already rely on docker here, which makes the setup for you so much easier.
+With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki/05.-Building-Block-View) from the arc42 documentation you see that sabi is not just a single app but consists of using several modules that are configured to work together. Your environment might look different, depending on which module you intent to work on, but the good news is that we already rely on docker here, which makes the setup for you so much easier.
 
 ### Preconditions
 
@@ -118,7 +122,7 @@ and there you are. Give it 2 min for the services to come up and then your you c
 
 * the swagger-APIs here:
   * Catpcha: http://localhost:8081/captcha/swagger-ui.html
-  * Sabi-Service: localhost:8080/sabi/swagger-ui.html
+  * Sabi-Service: http://localhost:8080/sabi/swagger-ui.html
   
 * the Faked SMTP Server to Catch all Registration-Workflow Emails:
   * http://localhost:5080

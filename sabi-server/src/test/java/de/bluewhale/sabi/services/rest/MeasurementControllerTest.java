@@ -216,7 +216,7 @@ public class MeasurementControllerTest {
 
         List<MeasurementEntity> testMeasurements = new ArrayList<>(2);
         testMeasurements.add(measurementEntity);
-        given(measurementRepository.findByAquariumAndUnitId(aquariumEntity, measurementTo.getUnitId())).willReturn(testMeasurements);
+        given(measurementRepository.findByAquariumAndUnitIdOrderByMeasuredOnAsc(aquariumEntity, measurementTo.getUnitId())).willReturn(testMeasurements);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);

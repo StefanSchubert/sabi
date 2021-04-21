@@ -5,9 +5,7 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
-import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MotdTo;
-import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -21,9 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -132,54 +128,6 @@ public class ApplicationInfo implements Serializable {
             // Treat as non existing MOTD to be resilient here.
             log.error("MOTD Restcall failure. {}",e);
         }
-    }
-
-    /**
-     * Used to request the Unitsign, when all you have is a reference Id.
-     *
-     * @param unitId technical key of the Unit.
-     * @return "N/A" if unitId is unknown
-     */
-    @NotNull
-    public static String getUnitSignForId(Integer unitId, List<UnitTo> fromUnitList) {
-        // TODO STS (13.04.21): Impromement: instead of providing the list of known units those should be fetched here
-        // wee need to change the auth scope on the api for this
-        String result = "N/A";
-        if (unitId != null) {
-            for (UnitTo unitTo : fromUnitList) {
-                if (unitTo.getId().equals(unitId)) {
-                    result = unitTo.getUnitSign();
-                    break;
-                }
-            }
-        }
-        if (result.equals("N/A")) {
-            log.warn("Could not determine the unit sign for unitID: {}", unitId);
-        }
-        return result;
-    }
-
-    /**
-     * Used to request the TankName, when all you have is a reference Id.
-     *
-     * @param tankId technical key of the Tank.
-     * @return "N/A" if tankId is unknown
-     */
-    @NotNull
-    public static String getTankNameForId(Long tankId, List<AquariumTo> tanks) {
-        String result = "N/A";
-        if (tankId != null) {
-            for (AquariumTo aquariumTo : tanks) {
-                if (aquariumTo.getId().equals(tankId)) {
-                    result = aquariumTo.getDescription();
-                    break;
-                }
-            }
-        }
-        if (result.equals("N/A")) {
-            log.warn("Could not determine the tankname for tankID: {}", tankId);
-        }
-        return result;
     }
 
 }

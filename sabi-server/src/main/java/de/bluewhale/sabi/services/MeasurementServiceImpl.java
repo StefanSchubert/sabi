@@ -62,7 +62,7 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Override
     public List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID) {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
-        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquariumAndUnitId(aquarium,pUnitID);
+        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquariumAndUnitIdOrderByMeasuredOnAsc(aquarium,pUnitID);
 
         List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
 

@@ -9,7 +9,6 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UnitTo;
-import de.bluewhale.sabi.webclient.CDIBeans.ApplicationInfo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
@@ -36,7 +35,7 @@ import java.util.List;
 @SessionScope
 @Slf4j
 @Getter
-public class MeasurementListView implements Serializable {
+public class MeasurementListView extends AbstractControllerTools implements Serializable  {
 
     private static final String MEASUREMENT_VIEW_PAGE = "measureView";
     private static final int MAX_RESULT_COUNT = 5;
@@ -101,7 +100,7 @@ public class MeasurementListView implements Serializable {
      */
     @NotNull
     public String getUnitSignForId(Integer unitId) {
-        return ApplicationInfo.getUnitSignForId(unitId,knownUnits);
+        return getUnitSignForId(unitId,knownUnits);
     }
 
     /**
@@ -112,7 +111,7 @@ public class MeasurementListView implements Serializable {
      */
     @NotNull
     public String getTankNameForId(Long tankId) {
-        return ApplicationInfo.getTankNameForId(tankId,tanks);
+        return getTankNameForId(tankId,tanks);
     }
 
 
