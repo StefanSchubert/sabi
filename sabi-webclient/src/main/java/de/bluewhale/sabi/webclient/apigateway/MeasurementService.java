@@ -49,15 +49,26 @@ public interface MeasurementService extends Serializable {
    @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException;
 
     /**
-     * List Users tanks. Concrete user will be derived by the calling context
+     * List Users Measurements for a specific tank. Concrete user will be derived by the calling context
      *
      * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @param tankId Id of users tank to which the measures belong.
      * @return List of measurements that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-    @NotNull List<MeasurementTo> getMeasurmentsForUsersTank(@NotNull String JWTAuthtoken, @NotNull Long tankId) throws BusinessException;
+    @NotNull List<MeasurementTo> getMeasurementsForUsersTank(@NotNull String JWTAuthtoken, @NotNull Long tankId) throws BusinessException;
 
+
+    /**
+     * List Users Measurements for a specific tank and measurement unit. Concrete user will be derived by the calling context
+     *
+     * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param tankId Id of users tank to which the measures belong.
+     * @param unitId Id which is used to filter the results for a specifc measurement unit.
+     * @return List of measurements that belong to current user. List may be empty but never NULL.
+     * @throws BusinessException in case of backend auth failures.
+     */
+    @NotNull List<MeasurementTo> getMeasurementsForUsersTankFilteredByUnit(@NotNull String JWTAuthtoken, @NotNull Long tankId, @NotNull Integer unitId) throws BusinessException;
 
     /**
      * Request Measurement deletion in Backend, in case he or she did a typo.

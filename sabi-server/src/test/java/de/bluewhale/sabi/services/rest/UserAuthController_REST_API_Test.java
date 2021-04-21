@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -15,7 +15,7 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.util.Mapper;
-import de.bluewhale.sabi.util.Obfuscator;
+import de.bluewhale.sabi.util.RestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -62,6 +63,9 @@ public class UserAuthController_REST_API_Test {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Before
     public void initFakeMailer() throws NamingException {
         smtpServer = SimpleSmtpServer.start(2525);
@@ -92,9 +96,7 @@ public class UserAuthController_REST_API_Test {
         newUser.setCaptchaCode("captcha mock not programmed so check will be false.");
 
         // when a new user sends a sign-in request
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
+        HttpHeaders headers = RestHelper.buildHttpHeader();
         String requestJson = objectMapper.writeValueAsString(newUser);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
@@ -128,8 +130,7 @@ public class UserAuthController_REST_API_Test {
         given(this.userRepository.saveAndFlush(any(UserEntity.class))).willReturn(userEntity);
 
         // when a new user sends a sign-in request
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = RestHelper.buildHttpHeader();
         String requestJson = objectMapper.writeValueAsString(userTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
 
@@ -183,12 +184,11 @@ public class UserAuthController_REST_API_Test {
     public void testInvalidatedUserCanNotSignIn() throws Exception {
         // Given
         String plain_password = "test";
-        String encrypted_Password = Obfuscator.encryptPasswordForHeavensSake(plain_password);
+        String encrypted_Password = passwordEncoder.encode(plain_password);
         UserTo userTo = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
         userTo.setValidated(false);
         UserEntity userFromDatabase = new UserEntity();
         Mapper.mapUserTo2Entity(userTo,userFromDatabase);
-
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();
         accountCredentialsTo.setUsername(userFromDatabase.getEmail());
@@ -198,8 +198,7 @@ public class UserAuthController_REST_API_Test {
         given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userFromDatabase);
 
         // When user tries to sign-In
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = RestHelper.buildHttpHeader();
 
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -214,7 +213,7 @@ public class UserAuthController_REST_API_Test {
     public void testSuccessfulSignIn() throws Exception {
         // Given
         String plain_password = "test";
-        String encrypted_Password = Obfuscator.encryptPasswordForHeavensSake(plain_password);
+        String encrypted_Password = passwordEncoder.encode(plain_password);
         UserTo userTo = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
         userTo.setValidated(true);
         UserEntity userFromDatabase = new UserEntity();
@@ -229,8 +228,7 @@ public class UserAuthController_REST_API_Test {
         given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userFromDatabase);
 
         // When user tries to sign-In
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = RestHelper.buildHttpHeader();
 
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);

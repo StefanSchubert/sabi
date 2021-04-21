@@ -17,9 +17,9 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -29,7 +29,6 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Random;
 
-import static de.bluewhale.sabi.util.Obfuscator.encryptPasswordForHeavensSake;
 
 /**
  * User: Stefan Schubert
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private NotificationService notificationService;
 
     @Autowired
-    private TokenAuthenticationService encryptionService;
+    private PasswordEncoder passwordEncoder;
 
     public ResultTo<UserTo> registerNewUser(@NotNull NewRegistrationTO pRegistrationUserTo) {
 
@@ -68,10 +67,9 @@ public class UserServiceImpl implements UserService {
         if ((alreadyExistingUserWithSameEmail == null) && (alreadyExistingUserWithSameUsername == null)) {
 
             UserEntity newUserEntity = new UserEntity();
-            String encryptedPassword = encryptPasswordForHeavensSake(newUser.getPassword());
             newUser.setId(null); // to make sure we have no collision
             Mapper.mapUserTo2Entity(newUser, newUserEntity);
-            newUserEntity.setPassword(encryptedPassword);
+            newUserEntity.setPassword(passwordEncoder.encode(newUser.getPassword()));
             newUserEntity.setValidated(false);
 
             UserEntity userEntity = userRepository.saveAndFlush(newUserEntity);
@@ -128,8 +126,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultTo<String> signIn(@NotNull final String pEmail, @NotNull final String pClearTextPassword) {
-        // todo integrate some password policy here and throw an too weak exception
-        final String password = encryptPasswordForHeavensSake(pClearTextPassword);
+
         UserEntity userEntity = userRepository.getByEmail(pEmail);
 
         if (userEntity != null) {
@@ -137,7 +134,7 @@ public class UserServiceImpl implements UserService {
             if (!userEntity.isValidated()) {
                 final Message errorMsg = Message.info(AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS, pEmail);
                 return new ResultTo<String>("Email address validation missing.", errorMsg);
-            } else if (userEntity.getPassword().equals(password)) {
+            } else if (passwordEncoder.matches(pClearTextPassword,userEntity.getPassword())) {
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
                 return new ResultTo<String>("Happy", successMessage);
             } else {
@@ -177,11 +174,10 @@ public class UserServiceImpl implements UserService {
 
         String cachedToken = cachedTokenMap.get(emailAddress);
         if (cachedToken != null && resetToken.equals(cachedToken)) {
-            String encryptedPassword = encryptPasswordForHeavensSake(newPassword);
 
             UserEntity userEntity = userRepository.getByEmail(emailAddress);
             if (userEntity != null) {
-                userEntity.setPassword(encryptedPassword);
+                userEntity.setPassword(passwordEncoder.encode(newPassword));
                 try {
                     notificationService.sendPasswordResetConfirmation(emailAddress);
                 } catch (MessagingException e) {

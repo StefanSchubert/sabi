@@ -1,6 +1,6 @@
-# Seawater Aquarium Business Intelligence (sabi)
+# Welcome to Open Science at the SABI-Project - Seawater Aquarium Business Intelligence
 
-...is a semi-scientific (or public science) project that aims to gain insights
+This is a semi-scientific (or open-science) project that aims to gain insights
  from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
 
 ## Vision I
@@ -10,8 +10,7 @@ Some things we fully understand, while on others we have just a lot of guesses a
 I was wondering, if we will be able to gain some more insights if we start to share our measurement data and placing some business intelligence style reporting on top of it.
 This should enable us to to answer some questions like:
 
-* How often do all measure the KH-Value, when not using the Balling method? Is there a propability of getting
-a cyano bacteria plague when measuring too less?
+* How often do all measure the CaCO3 level when not using the Balling method? Is there a probability of getting a cyano bacteria plague when measuring too less?
 * Is there a thing in common when Alveoproa dies (are there similar PO4 levels)?
 
 There must be quite a lot of interesting questions, especially in the field of aquaristic forensics.
@@ -39,19 +38,27 @@ The KI challenge here is, that if the human provided data on a given problem con
   recalibration by its own.
 
 
-## Release Planning
+## Project Planning
 
-### First Release
+### Stage I
 
 Being able to collect the basic values and to display them in a rather static reporting manner.
 
-### Second Release
+### Stage II
 
 Offering some query mechanism to do some analysis. And maybe a set of some standard reports. If possible we might acquire support from one of the big BI vendors.
 
-### Third Release
+### Stage III
 
-I have some siblings in my nano reef tank and need to do some gardening. But where to with the siblings? Where ar all the other aquarists and is there someone nearby? They are organized in standard internet forums, but what if there are someone near but not located in the same forum I use (more or less frequently). If they all could be motivated using sabi it should be possible to introduce them to each other for nearby support purposes.
+Document insights gained through this project. If possible try to make forecasts (i.e. take care of that measurement level, if not raised it is likely that ... happen)
+
+### Possible NON-Scientific extensions
+
+I have some siblings in my nano reef tank and need to do some gardening. But where to with the siblings? Where are all the other aquarists and is there someone nearby? They are organized in standard internet forums, but what if there are someone near but not located in the same forum I use (more or less frequently). If they all could be motivated using sabi it should be possible to introduce them to each other for nearby support purposes.
+
+## Release Planning
+
+Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/milestones?direction=asc&sort=due_date&state=open) from the Issue Board
 
 ## Technology Stack
 
@@ -59,7 +66,7 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 
 * Java 11
 * openAPI (Swagger)
- 
+
 ### Client site
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
@@ -84,18 +91,75 @@ The two main reasons are:
 
 ## Setting up the development environment
 
-### Database
+With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki/05.-Building-Block-View) from the arc42 documentation you see that sabi is not just a single app but consists of using several modules that are configured to work together. Your environment might look different, depending on which module you intent to work on, but the good news is that we already rely on docker here, which makes the setup for you so much easier.
 
-* Install a local MariaDB (latest version should do it)
-* Create a DB called sabi and and a user sabiapp with permissions for localhost.
-```
-    CREATE DATABASE sabi;
-    GRANT ALL ON sabi.* TO sabiapp@localhost IDENTIFIED by 'sabi123';
-    FLUSH PRIVILEGES;
-```
-* Use the password as specified by the database module pom.
+### Preconditions
 
-## Add a the following profile to your maven settings.xml
+* You have a JDK11 and current Maven installed
+* You have docker installed on your machine, and you know docker usage fairly well.
+
+#### Prepare your local docker environment
+
+Do some maven builds in the following order:
+1. mvn package on captcha-light
+2. mvn install on sabi-boundary
+3. mvn package on sabi-server
+
+Next you run this script:
+
+  devops/sabi_docker_sdk/copyjars.sh
+
+Which makes sure, that the docker container, gets the necessary app modules. 
+
+### DEV-Environment for a frontend engineer working on sabi-webclient module
+
+That's fairly easy. Go to devops/sabi_docker_sdk have a look into the docker-compose.yml.
+You may need to do some port tweaking in case it collides with your personal environment, but all you need to do is a
+
+`docker-compose up -d`
+
+and there you are. Give it 2 min for the services to come up and then your you can access 
+
+* the swagger-APIs here:
+  * Catpcha: http://localhost:8081/captcha/swagger-ui.html
+  * Sabi-Service: http://localhost:8080/sabi/swagger-ui.html
+  
+* the Faked SMTP Server to Catch all Registration-Workflow Emails:
+  * http://localhost:5080
+  
+* the database (though you won't need it) via your favorite DB-Browser here:
+  * User: sabiapp / Password: sabi123  
+  * jdbc:mariadb://localhost:3306/sabi
+  
+Now you can pick up your favourite IDE (as the module is maven based), and
+launch 
+`sabi-webclient/src/main/java/de/bluewhale/sabi/webclient/SpringPrimeFacesApplication.java`
+
+After that you can access the current's frontend stage at:
+
+  http://localhost:8088/index.xhtml
+
+### Dev-Environment for a backend engineer to work on sabi-server.
+
+#### Preparations
+
+Do all the steps above which are required as frontend-engineer.
+
+Understand when working on sabi-boundary than you need to do a maven install so that maven builds of sabi-server and sabi-webclient can fetch your changes. 
+
+#### Database-Evolution
+
+Schema evolution follows the flyway approach, as all changes will be rolled out to production only through flyway.
+Meaning pre-existing scripts in
+
+`sabi-database/src/main/resources/db/migration/version*`
+
+are inmutable to you, you require to add a new one for any changes.
+
+##### Add the following profile to your maven settings.xml
+
+To ease the work with flyway you shoud add the following snippet to your maven profile or settings.xml:
+
 ```
    <profiles>
     <profile>
@@ -115,7 +179,7 @@ The two main reasons are:
    </profiles>
 ```
 
-## Used maven goals on module sabi_database
+##### Used maven goals on module sabi_database
 
 | Maven command | Purpose  |
 | ------------- |-------------| 
@@ -125,37 +189,34 @@ The two main reasons are:
 | mvn flyway:repair -P configure_flyway db_local_secrets_sabi | Repair flyway metadata       | 
 
 
-## Preparing your productive and IDE environment
+#### Working on sabi-server
 
-Customize your own server properties and do not checkin for security reasons!
+Nothing very special here, except two things you need to know:
+
+##### Junit testing.
+
+Introducing new functionalities require addition of junit test. Please integrate them such way that they will be picked up along with execution of
+
+`sabi-server/src/test/java/de/bluewhale/sabi/MasterTestSuite.java`
+
+Notice this test class will be also executed via githubs action.
+Naturally we expect that changes won't break anything.
+
+As we are using eclipselink you must add a specific javaagent, when running your tests. See section prepare your IDE below for it:
+
+
+##### Preparing your productive and IDE environment
+
 Because of eclipselink we are using weaving at runtime which required the following vm 
 option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/5.2.5.RELEASE/spring-instrument-5.2.5.RELEASE.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/5.3.4/spring-instrument-5.3.4.jar
 ```
 
-You will need the agent for the springboot application run-config in your IDE
-as well as VM parameter for you test runner config.
+You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you test runner config. **Please verify** that you use the correct version as denoted in the pom.xml. You may also need to adopt your setting if that version in the pom changes.
 
 ## Architectural Notes
 
 Before starting to contribute on this project, make sure that you have read the architectural notes in the [wiki](https://github.com/StefanSchubert/sabi/wiki) which
 are based upon arc42 templates. 
-
----
-
-### REST-API Doc
-As we are using swagger, you will find the API doc after starting the application here:
-* http://localhost:8080/swagger-ui.html
-
-Or you take a look into the current productive environment (in case you are just developing the GUI and have no need of an own running backend:
-
-ONLY AVAILABLE on IPv6-networks. (Check with http://www.test-ipv6.com) if your machine has ipv6 connectivity). 
-
-* http://sabi.bluewhale.de:8080/swagger-ui.html
-* http://sabi.bluewhale.de:8081/captcha/swagger-ui.html
-
-### Testing of a successfully deployed backend:
- 
-I use postman to test the login REST API (or the REST client from IntelliJ)

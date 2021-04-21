@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.services.rest;
 
 import de.bluewhale.sabi.model.MotdTo;
 import de.bluewhale.sabi.services.AppService;
+import de.bluewhale.sabi.util.RestHelper;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -55,9 +59,7 @@ public class MotdController_REST_API_Test {
         // given a motd
         MotdTo motdTo = new MotdTo("junit modt");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
+        HttpHeaders headers = RestHelper.buildHttpHeader();
         ResponseEntity<String> responseEntity = restTemplate.exchange("/api/app/motd/xx", HttpMethod.GET, null, String.class);
 
         // then we should get a 204 as result.
@@ -77,9 +79,7 @@ public class MotdController_REST_API_Test {
         given(this.appService.fetchMotdFor("en")).willReturn(motd);
 
         // when
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
+        HttpHeaders headers = RestHelper.buildHttpHeader();
         ResponseEntity<String> responseEntity = restTemplate.exchange("/api/app/motd/en", HttpMethod.GET, null, String.class);
 
         // then we should get a 200 as result.

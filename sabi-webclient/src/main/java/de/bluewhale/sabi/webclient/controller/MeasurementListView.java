@@ -35,7 +35,7 @@ import java.util.List;
 @SessionScope
 @Slf4j
 @Getter
-public class MeasurementListView implements Serializable {
+public class MeasurementListView extends AbstractControllerTools implements Serializable  {
 
     private static final String MEASUREMENT_VIEW_PAGE = "measureView";
     private static final int MAX_RESULT_COUNT = 5;
@@ -100,19 +100,7 @@ public class MeasurementListView implements Serializable {
      */
     @NotNull
     public String getUnitSignForId(Integer unitId) {
-        String result = "N/A";
-        if (unitId != null) {
-            for (UnitTo unitTo : knownUnits) {
-                if (unitTo.getId().equals(unitId)) {
-                    result = unitTo.getUnitSign();
-                    break;
-                }
-            }
-        }
-        if (result.equals("N/A")) {
-            log.warn("Could not determine the unit sign for unitID: {}", unitId);
-        }
-        return result;
+        return getUnitSignForId(unitId,knownUnits);
     }
 
     /**
@@ -123,19 +111,7 @@ public class MeasurementListView implements Serializable {
      */
     @NotNull
     public String getTankNameForId(Long tankId) {
-        String result = "N/A";
-        if (tankId != null) {
-            for (AquariumTo aquariumTo : tanks) {
-                if (aquariumTo.getId().equals(tankId)) {
-                    result = aquariumTo.getDescription();
-                    break;
-                }
-            }
-        }
-        if (result.equals("N/A")) {
-            log.warn("Could not determine the tankname for tankID: {}", tankId);
-        }
-        return result;
+        return getTankNameForId(tankId,tanks);
     }
 
 

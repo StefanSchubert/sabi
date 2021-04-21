@@ -49,7 +49,6 @@ public class MeasurementServiceTest extends BasicDataFactory {
     @Autowired
     private UserService userService;
 
-
     @Autowired
     private MeasurementService measurementService;
 
@@ -88,6 +87,20 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
     @Test
     @Transactional
+    public void testListMeasurementsForSpecificTankAndUnit() throws Exception {
+        // Given already stored testdata for measurements
+        // for tank 2 only one measurement with unit id 1
+
+        // When
+        List<MeasurementTo> measurements = measurementService.listMeasurementsFilteredBy(2L,1);
+
+        // Then
+        assertNotNull(measurements);
+        assertTrue("Testdata gone or changed? Received more or less than expected on measurement.", measurements.size() == 1);
+    }
+
+    @Test
+    @Transactional
     public void testListMeasurementUnits() throws Exception {
         // Given already stored testdata for measurements
 
@@ -97,7 +110,6 @@ public class MeasurementServiceTest extends BasicDataFactory {
         // Then
         assertNotNull(measurementUnits);
         assertTrue("Testdata gone?", measurementUnits.size() >= 1);
-
     }
 
     @Test

@@ -9,7 +9,10 @@
         xmlns:p="http://primefaces.org/ui">
     <p:separator/>
     <i>Sabi #{applicationInfo.version}</i> | GDPR | Impressum | Contact
-    | <p:link outcome="/CrowdFunding" value="CrowdFunding" id="crowdFundingLink"/>
+    <ui:remove>
+        <!-- Prepared for later usage, and may be required to be reworked -->
+        | <p:link outcome="/CrowdFunding" value="CrowdFunding" id="crowdFundingLink"/>
+    </ui:remove>
     | <p:link outcome="/credits" value="Credits" id="creditLink"/>
     | <p:link href="https://github.com/StefanSchubert/sabi/issues" value="Report Issues" id="issueLink"/>
     <ui:remove>

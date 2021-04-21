@@ -5,7 +5,6 @@
 
 package de.bluewhale.sabi.webclient.controller;
 
-import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.RequestScoped;
@@ -29,11 +28,6 @@ public class MenuView {
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().invalidateSession();
         return LOGOUT_PAGE;
-    }
-
-    public void sendReport() {
-        // TODO STS (13.04.20): Implement me.
-        MessageUtil.info("common","Report will be generated and sent to your email shortly.");
     }
 
 }

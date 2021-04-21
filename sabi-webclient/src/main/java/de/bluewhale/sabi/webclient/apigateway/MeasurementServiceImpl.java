@@ -122,8 +122,40 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public @NotNull List<MeasurementTo> getMeasurmentsForUsersTank(@NotNull String JWTAuthtoken, @NotNull Long tankId) throws BusinessException {
-        throw new UnsupportedOperationException("java.util.List<de.bluewhale.sabi.model.MeasurementTo> getMeasurmentsForUsersTank([JWTAuthtoken, tankId])");
+    public @NotNull List<MeasurementTo> getMeasurementsForUsersTank(@NotNull String JWTBackendAuthtoken, @NotNull Long tankId) throws BusinessException {
+        throw new UnsupportedOperationException("java.util.List<de.bluewhale.sabi.model.MeasurementTo> getMeasurmentsForUsersTank([JWTBackendAuthtoken, tankId])");
+    }
+
+    @Override
+    public List<MeasurementTo> getMeasurementsForUsersTankFilteredByUnit(String JWTBackendAuthtoken, Long tankId, Integer unitId) throws BusinessException {
+
+        if (tankId == null || unitId == null) return Collections.emptyList();
+
+        List<MeasurementTo> usersMeasurements;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity;
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        String apiURL = String.format(sabiBackendUrl+"/api/measurement/tank/%s/unit/%s", tankId, unitId);
+
+        try {
+            // Notice the that the controller defines a list, the resttemplate will get it as array.
+            responseEntity = restTemplate.exchange(apiURL, HttpMethod.GET, requestEntity, String.class);
+        } catch (RestClientException e) {
+            log.error("Couldn't reach {} Reason: {}",apiURL,e.getLocalizedMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+
+        try {
+            MeasurementTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), MeasurementTo[].class);
+            usersMeasurements = Arrays.asList(myObjects);
+        } catch (JsonProcessingException e) {
+            log.error("Didn't understand response from {} got parsing exception {}",apiURL,e.getLocalizedMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+        return usersMeasurements;
     }
 
     @Override

@@ -63,6 +63,18 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      */
     @NotNull List<MeasurementEntity> findByAquarium_Id(@NotNull Long aquariumId);
 
+    /**
+     * Retrieves all measurements for a specific tank.
+     * @return empty list, if no measurement have been found.
+     */
     @NotNull List<MeasurementEntity> findByAquarium(@NotNull AquariumEntity aquariumEntity);
+
+    /**
+     * Retrieves all measurements for a specific tank filtered by given Unit ID.
+     * @param unitID identifies your unit.
+     * @return empty list, if no measurement have been found.
+     */
+    @NotNull List<MeasurementEntity> findByAquariumAndUnitIdOrderByMeasuredOnAsc(@NotNull AquariumEntity aquariumEntity, @NotNull Integer unitID);
+
 
 }

@@ -31,7 +31,6 @@ rest2 - [Captcha]
 
 
 [Services] ..> rest2 : use
-rest2 <.. [HTML5-WebApp] : use
 
 }
 

@@ -35,8 +35,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .disable()
+                // GitHub CodeQL complains here: Possible CSRF Risk.
+                // However though springs csrf mechanism is disabled does not mean this app has nor CSRF protection.
+                // CSRF attacks are based on the "trust that a site has in a user's browser" (cited from
+                // https://en.wikipedia.org/wiki/Cross-site_request_forgery).
+                // See also demo attack on https://www.baeldung.com/spring-security-csrf
+                // Springs mechanism is to inject additional header or hidden form fields which
+                // are not controlled by the browser (cookie; basic auth etc..).
+                // This App does something very similiar: see BE Token in Authorization Usecase here
+                // https://github.com/StefanSchubert/sabi/wiki/06.-Runtime-View
+                // So we do have a CSRF Protection implemented, just not the spring way.
+                .csrf()
+                 .disable()
             .sessionManagement()
                 // This will turn off creating sessions (as without it you would get a JSESSION-ID Cookie
                 // However we provide REST Services here, having an additional session would be absurd.

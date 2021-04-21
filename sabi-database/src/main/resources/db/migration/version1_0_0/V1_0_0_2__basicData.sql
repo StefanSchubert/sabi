@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
+ */
+
+/*
  * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
@@ -18,10 +23,10 @@ INSERT INTO fish_catalogue (id, scientific_name, description, meerwasserwiki_url
 VALUES (1, 'Acreichthys tomentosus', 'Seegras Feilenfisch',
         'http://meerwasserwiki.de/w/index.php?title=Acreichthys_tomentosus');
 
--- Test users password is: 'test'
+-- Test users password is: 'clibanarius'
 INSERT INTO users (id, email, password, validate_token, validated, language, country, created_on, lastmod_on)
 VALUES
-  (1, 'sabi@bluewhale.de', '098f6bcd4621d373cade4e832627b4f6', 'NO_IDEA', 1, 'de', 'DE', CURRENT_DATE, CURRENT_DATE);
+  (1, 'sabi@bluewhale.de', '$2a$10$X2ckEtvrNaILb68O.7leQeJN0yGI64OUu3iEjr13MtSh87.S2aaIm', 'NO_IDEA', 1, 'de', 'DE', CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO aquarium (id, size, size_unit, description, active, user_id, created_on, lastmod_on)
 VALUES (1, 80, 'LITER', 'Nano-Reef', 1, 1, CURRENT_DATE, CURRENT_DATE);
