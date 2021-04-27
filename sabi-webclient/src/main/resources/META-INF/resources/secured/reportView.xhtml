@@ -35,6 +35,17 @@
                     <p:autoUpdate/>
                 </p:messages>
 
+                <ui:remove>
+                    <!-- Request Wheel -->
+                </ui:remove>
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+                          showHeader="false">
+                    <div class="p-text-center">
+                        <i class="pi pi-spinner loading-icon" />
+                    </div>
+                </p:dialog>
+
                 <p:panelGrid columns="2" style="border:2;">
 
                     <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
@@ -77,21 +88,21 @@
 
                     <ui:remove>
 
-<!--                        Revisit Q3/21 when joinfaces has the latest PF 10.-->
-<!--                        Which has migrated from the old apache poi and itext deps-->
-<!--                        which are currently seem not working with java 11 and spring boot-->
-<!--                        -->
-<!--                        <p:commandButton value="XLS" styleClass="p-mr-2 p-mb-2">-->
-<!--                            <p:dataExporter type="xls" target="tbl" fileName="measurements"/>-->
-<!--                        </p:commandButton>-->
+                        <!--                        Revisit Q3/21 when joinfaces has the latest PF 10.-->
+                        <!--                        Which has migrated from the old apache poi and itext deps-->
+                        <!--                        which are currently seem not working with java 11 and spring boot-->
+                        <!--                        -->
+                        <!--                        <p:commandButton value="XLS" styleClass="p-mr-2 p-mb-2">-->
+                        <!--                            <p:dataExporter type="xls" target="tbl" fileName="measurements"/>-->
+                        <!--                        </p:commandButton>-->
 
-<!--                        <p:commandButton value="XLXS" styleClass="p-mr-2 p-mb-2">-->
-<!--                            <p:dataExporter type="xlsxstream" target="tbl" fileName="measurements"/>-->
-<!--                        </p:commandButton>-->
+                        <!--                        <p:commandButton value="XLXS" styleClass="p-mr-2 p-mb-2">-->
+                        <!--                            <p:dataExporter type="xlsxstream" target="tbl" fileName="measurements"/>-->
+                        <!--                        </p:commandButton>-->
 
-<!--                        <p:commandButton value="XML" styleClass="p-mr-2 p-mb-2">-->
-<!--                            <p:dataExporter type="xml" target="tbl" fileName="measurements"/>-->
-<!--                        </p:commandButton>-->
+                        <!--                        <p:commandButton value="XML" styleClass="p-mr-2 p-mb-2">-->
+                        <!--                            <p:dataExporter type="xml" target="tbl" fileName="measurements"/>-->
+                        <!--                        </p:commandButton>-->
 
                     </ui:remove>
 
@@ -106,32 +117,24 @@
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                  paginator="true" rows="10" styleClass="p-mt-2">
 
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Measured on"/>
-                            </f:facet>
-                            <h:outputText value="#{m.measuredOn}"/>
+                        <p:column headerText="#{msg['measureview.date.l']}">
+                            <h:outputText value="#{m.measuredOn}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                            </h:outputText>
                         </p:column>
 
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Aquarium"/>
-                            </f:facet>
+                        <p:column headerText="#{msg['menu.tankView.l']}">
                             <h:outputText value="#{reportView.getTankNameForId(m.aquariumId,reportView.tanks)}"/>
                         </p:column>
 
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Einheit"/>
-                            </f:facet>
+                        <p:column headerText="#{msg['common.unitchoise.l']}">
                             <h:outputText value="#{reportView.getUnitSignForId(m.unitId,reportView.knownUnits)}"/>
                         </p:column>
 
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Wert"/>
-                            </f:facet>
-                            <h:outputText value="#{m.measuredValue}"/>
+                        <p:column headerText="#{msg['measureview.value.l']}">
+                            <h:outputText value="#{m.measuredValue}">
+                                <f:convertNumber type="number" locale="#{reportView.userSession.locale}"/>
+                            </h:outputText>
                         </p:column>
 
                     </p:dataTable>

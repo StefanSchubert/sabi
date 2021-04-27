@@ -21,6 +21,18 @@
         <ui:define name="content">
 
             <h:form id="measureform">
+
+                <ui:remove>
+                    <!-- Request Wheel -->
+                </ui:remove>
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+                          showHeader="false">
+                    <div class="p-text-center">
+                        <i class="pi pi-spinner loading-icon" />
+                    </div>
+                </p:dialog>
+
                 <p:panelGrid columns="2" style="border:2;">
 
                     <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
@@ -35,14 +47,20 @@
                     </p:selectOneMenu>
 
                     <p:outputLabel for="unitselection" value="#{msg['measureview.measurekind.l']}"/>
-                    <p:selectOneMenu id="unitselection" value="#{measurementListView.measurement.unitId}">
-                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
-                        <f:selectItems value="#{measurementListView.knownUnits}"
-                                       var="m"
-                                       itemValue="#{m.id}"
-                                       itemLabel="#{m.unitSign}"
-                        />
-                    </p:selectOneMenu>
+                    <p:column>
+                        <p:selectOneMenu id="unitselection" value="#{measurementListView.measurement.unitId}">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                            <f:selectItems value="#{measurementListView.knownUnits}"
+                                           var="m"
+                                           itemValue="#{m.id}"
+                                           itemLabel="#{m.unitSign}"
+                            />
+                            <p:ajax event="itemSelect" update=":measureform:unitDescription"/>
+                        </p:selectOneMenu>
+                        <br/>
+                        <h:outputText id="unitDescription"
+                                      value="#{measurementListView.getGetDescriptionFor(measurementListView.measurement.unitId)}"/>
+                    </p:column>
 
                     <p:outputLabel for="measuredValue" value="#{msg['measureview.value.l']}"/>
                     <p:inputNumber id="measuredValue"
@@ -68,6 +86,11 @@
 
                 </p:panelGrid>
 
+
+                <p:messages id="messages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
             </h:form>
 
             <hr/>
@@ -80,7 +103,7 @@
 
                         <p:column headerText="#{msg['measureview.date.l']}">
                             <h:outputText value="#{m.measuredOn}">
-                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
                             </h:outputText>
                         </p:column>
 
@@ -89,7 +112,9 @@
                         </p:column>
 
                         <p:column headerText="#{msg['measureview.value.l']}">
-                            <h:outputText value="#{m.measuredValue}"/>
+                            <h:outputText value="#{m.measuredValue}">
+                                <f:convertNumber type="number" locale="#{reportView.userSession.locale}"/>
+                            </h:outputText>
                         </p:column>
 
                         <p:column headerText="#{msg['common.tankchoice.l']}">
@@ -99,14 +124,10 @@
                         <p:column style="width:3rem;text-align: center">
                             <p:commandButton update="measureform" ajax="true"
                                              icon="pi pi-pencil" title="Edit"
-                                             action="#{measurementListView.editMeasurement(m)}" />
+                                             action="#{measurementListView.editMeasurement(m)}"/>
                         </p:column>
                     </p:dataTable>
                 </div>
-
-                <p:messages id="messages" showDetail="true" closable="true">
-                    <p:autoUpdate/>
-                </p:messages>
 
             </h:form>
 
