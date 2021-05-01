@@ -3,17 +3,11 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.webclient.utils;
+package de.bluewhale.sabi.security;
 
 import org.apache.logging.log4j.util.Strings;
 import org.passay.*;
 import org.springframework.lang.Nullable;
-
-/**
- * Takes care of enforcing some password policy
- *
- * @author Stefan Schubert
- */
 
 /**
  * Serves to enforce a certain password strength.
@@ -53,7 +47,6 @@ public class PasswordPolicy {
      *     <li>at least one symbol (special character)</li>
      *     <li>no illegal sequences >=5 chars / abcde 12345 or qwert etc...</li>
      * </ul>
-     *
      * @param pPhrase the password to check against the policy.
      * @return true if it holds, othervise false.
      */
@@ -62,31 +55,5 @@ public class PasswordPolicy {
         final RuleResult result = validator.validate(new PasswordData(pPhrase));
         return result.isValid();
     }
-
-    /**
-     * Checks if we have a policy violation
-     *
-     * @param password
-     * @param checkPwd should be the same password
-     * @return true if passwords are not identical, or to week
-     */
-    public static boolean failedCheck(String password, String checkPwd) {
-        boolean result = false;
-
-        if (Strings.isBlank(password) || Strings.isBlank(checkPwd)) {
-            result = true;
-        }
-
-        if (!password.equals(checkPwd)) {
-            result = true;
-        }
-
-        if (!isPasswordValid(password)) {
-            result = true;
-        };
-
-        return result;
-    }
-
 
 }

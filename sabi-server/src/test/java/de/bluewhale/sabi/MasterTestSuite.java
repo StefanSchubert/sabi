@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi;
 
 import de.bluewhale.sabi.persistence.UserRepositoryTest;
+import de.bluewhale.sabi.security.PasswordPolicyTest;
 import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
@@ -27,7 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
         TankTestSuite.class,
         MeasurementTestSuite.class,
         FishServiceTest.class,
-        CoralServiceTest.class
+        CoralServiceTest.class,
+        PasswordPolicyTest.class
 })
 public class MasterTestSuite {
 

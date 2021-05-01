@@ -17,6 +17,7 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.security.PasswordPolicy;
 import de.bluewhale.sabi.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,14 +70,20 @@ public class UserServiceImpl implements UserService {
             UserEntity newUserEntity = new UserEntity();
             newUser.setId(null); // to make sure we have no collision
             Mapper.mapUserTo2Entity(newUser, newUserEntity);
-            newUserEntity.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            newUserEntity.setValidated(false);
 
-            UserEntity userEntity = userRepository.saveAndFlush(newUserEntity);
-            createdUser = new UserTo();
-            Mapper.mapUserEntity2To(userEntity, createdUser);
+            if (!PasswordPolicy.isPasswordValid(newUser.getPassword())) {
+                message = Message.error(AuthMessageCodes.PASSWORD_TO_WEAK, "At least 10 Character, Digit, Special Sign, Capitalletter required");
+            } else {
 
-            message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
+                newUserEntity.setPassword(passwordEncoder.encode(newUser.getPassword()));
+                newUserEntity.setValidated(false);
+
+                UserEntity userEntity = userRepository.saveAndFlush(newUserEntity);
+                createdUser = new UserTo();
+                Mapper.mapUserEntity2To(userEntity, createdUser);
+
+                message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
+            }
         } else {
             if (alreadyExistingUserWithSameEmail != null) {
                 message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL, newUser.getEmail());
@@ -134,7 +141,7 @@ public class UserServiceImpl implements UserService {
             if (!userEntity.isValidated()) {
                 final Message errorMsg = Message.info(AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS, pEmail);
                 return new ResultTo<String>("Email address validation missing.", errorMsg);
-            } else if (passwordEncoder.matches(pClearTextPassword,userEntity.getPassword())) {
+            } else if (passwordEncoder.matches(pClearTextPassword, userEntity.getPassword())) {
                 final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
                 return new ResultTo<String>("Happy", successMessage);
             } else {
@@ -155,7 +162,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException {
 
-
         String emailAddress = requestData.getEmailAddress();
         String resetToken = requestData.getResetToken();
         String newPassword = requestData.getNewPassword();
@@ -163,6 +169,10 @@ public class UserServiceImpl implements UserService {
                 (resetToken == null) ||
                 (newPassword == null)) {
             throw BusinessException.with(AuthMessageCodes.INCONSISTENT_PW_RESET_DATA);
+        }
+
+        if (!PasswordPolicy.isPasswordValid(newPassword)) {
+            throw BusinessException.with(AuthMessageCodes.PASSWORD_TO_WEAK);
         }
 
         // todo integrate pw-policy and throw an Password_Too_Weak

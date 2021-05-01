@@ -107,7 +107,7 @@ public class RegistrationView implements Serializable {
         }
 
         if (PasswordPolicy.failedCheck(model.getPassword(), checkPwd)) {
-            MessageUtil.error("messages5", "register.password.policy_failed.t", userSession.getLocale());
+            MessageUtil.error("pwd2", "register.password.policy_failed.t", userSession.getLocale());
             return REGISTER_PAGE;
         }
 

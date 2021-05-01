@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -17,7 +17,8 @@ public enum AuthExceptionCodes implements ExceptionCode {
     INSUFFICIENT_PERMISSIONS(3),
     USER_REGISTRATION_FAILED(4),
     SERVICE_UNAVAILABLE(5),
-    PW_RESET_FAILED(6);
+    PW_RESET_FAILED(6),
+    PASSWORD_TOO_WEAK(7);
     private int errorCode;
 
     AuthExceptionCodes(int pErrorCode) {

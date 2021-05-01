@@ -155,6 +155,13 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- For Password Strength Policy -->
+        <dependency>
+            <groupId>org.passay</groupId>
+            <artifactId>passay</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
         <!-- used JPA Configuration / Implementation -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
