@@ -29,7 +29,7 @@
                 <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
                           showHeader="false">
                     <div class="p-text-center">
-                        <i class="pi pi-spinner loading-icon" />
+                        <i class="pi pi-spinner loading-icon"/>
                     </div>
                 </p:dialog>
 
@@ -64,11 +64,10 @@
 
                     <p:outputLabel for="measuredValue" value="#{msg['measureview.value.l']}"/>
                     <p:inputNumber id="measuredValue"
-                                   size="8"
-                                   decimalPlaces="4"
                                    decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
                                    thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
-                                   value="#{measurementListView.measurement.measuredValue}"/>
+                                   value="#{measurementListView.measurement.measuredValue}"
+                                   />
 
                     <p:outputLabel value="#{msg['measureview.date.l']}"/>
                     <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"

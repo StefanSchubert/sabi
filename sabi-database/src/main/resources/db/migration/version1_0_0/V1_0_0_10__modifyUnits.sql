@@ -3,4 +3,8 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-ALTER TABLE `aquarium` CHANGE COLUMN  `setup_date` `inception_date` DATE NULL;
+update sabi.unit
+set name = 'Mg (ppm)',
+    description = 'Magnesium concentration in ppm (1 ppm = 1.023 mg/L)'
+where id = 4;
+

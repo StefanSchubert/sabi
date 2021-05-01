@@ -1,7 +1,7 @@
 ## Connection parameter to the captcha service
 captcha:
   backend:
-    url: http://blackpearl:8081/captcha/api
+    url: http://localhost:8081/captcha/api
 
 
 # JSF/Primefaces Config
@@ -46,7 +46,7 @@ name: sabi-webclient
 # sabi backend can be found (here without /api on purpose)
 sabi:
   backend:
-    url: http://blackpearl:8080/sabi
+    url: http://localhost:8080/sabi
 server:
   port: 8088
   servlet:

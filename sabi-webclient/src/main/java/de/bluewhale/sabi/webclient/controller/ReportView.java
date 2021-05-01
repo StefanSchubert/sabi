@@ -79,6 +79,8 @@ public class ReportView extends AbstractControllerTools implements Serializable 
 
             lineModel = new LineChartModel();
             ChartData data = new ChartData();
+
+
             LineChartDataSet dataSet = new LineChartDataSet();
             List<Object> values = new ArrayList<>();
             List<String> labels = new ArrayList<>();
@@ -86,6 +88,7 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             for (MeasurementTo measurement : measurementTos) {
                 values.add(measurement.getMeasuredValue());
                 labels.add(measurement.getMeasuredOn().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
             }
 
             dataSet.setData(values);
@@ -104,9 +107,6 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                     getTankNameForId(selectedTankId, tanks));
             title.setText(chartTitle);
             options.setTitle(title);
-
-            lineModel.setOptions(options);
-            lineModel.setData(data);
 
         } catch (BusinessException e) {
             MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
