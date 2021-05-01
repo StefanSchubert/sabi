@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -79,6 +79,7 @@ public interface UserService {
      * @throws BusinessException with
      * {@link AuthExceptionCodes#PW_RESET_FAILED} in case of an invalid request (email, token or password) problem or
      * {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem - you may retry later.
+     * {@link AuthExceptionCodes#PASSWORD_TOO_WEAK} in case of a communication problem - you may retry later.
      */
     @Transactional
     void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException;

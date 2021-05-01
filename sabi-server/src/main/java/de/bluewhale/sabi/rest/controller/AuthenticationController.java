@@ -69,7 +69,7 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation(value="Reset users password", notes="Legitimation and new passwort are transmitted via json body.")
+    @ApiOperation(value="Reset users password", notes="Legitimation and new password are transmitted via json body.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - password has been reset.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
@@ -170,7 +170,7 @@ public class AuthenticationController {
             @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
             @ApiResponse(code = 503, message = "Backend-Service not available, please try again later.", response = HttpStatus.class),
             @ApiResponse(code = 415, message = "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?", response = HttpStatus.class),
-            @ApiResponse(code = 409, message = "Conflict - username and/or emailaddress already exists.", response = NewRegistrationTO.class),
+            @ApiResponse(code = 409, message = "Conflict - username and/or email-address already exists, or password too weak.", response = NewRegistrationTO.class),
             @ApiResponse(code = 400, message = "JSON Syntax invalid. Please check your paylod.", response = HttpStatus.class)
     })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -228,6 +228,12 @@ public class AuthenticationController {
 
                 if (AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME.equals(resultMessage.getCode())) {
                     String msg = "User registration failed. A User with username " + pRegistrationUserTo.getUsername() + " already exist.";
+                    log.warn(msg);
+                    responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.CONFLICT);
+                }
+
+                if (AuthMessageCodes.PASSWORD_TO_WEAK.equals(resultMessage.getCode())) {
+                    String msg = "User Registration failed, Password too weak.";
                     log.warn(msg);
                     responseEntity = new ResponseEntity<UserRegConfirmationTo>(regConfirmationTo, HttpStatus.CONFLICT);
                 }

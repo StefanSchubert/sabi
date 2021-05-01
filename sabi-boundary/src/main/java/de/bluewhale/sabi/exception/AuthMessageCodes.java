@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -25,7 +25,7 @@ public enum AuthMessageCodes implements MessageCode {
     CORRUPTED_TOKEN_DETECTED(AuthExceptionCodes.AUTHENTICATION_FAILED),
     BACKEND_TEMPORARILY_UNAVAILABLE(AuthExceptionCodes.SERVICE_UNAVAILABLE),
     INCONSISTENT_PW_RESET_DATA(AuthExceptionCodes.PW_RESET_FAILED),
-    PASSWORD_TO_WEAK,
+    PASSWORD_TO_WEAK(AuthExceptionCodes.PASSWORD_TOO_WEAK),
     UNKNOWN_OR_STALE_PW_RESET_TOKEN(AuthExceptionCodes.PW_RESET_FAILED),
     INCOMPLETE_REGISTRATION_PROCESS(AuthExceptionCodes.AUTHENTICATION_FAILED);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -21,6 +21,9 @@ public class TestDataFactory {
 
     public static final String TESTUSER_EMAIL1 = "testservice1@bluewhale.de";
     public static final String TESTUSER_EMAIL2 = "testservice2@bluewhale.de";
+
+    public static final String INVALID_PASSWORD = "quertz!1";
+    public static final String VALID_PASSWORD = "All!Rules8-)Applied";
 
     private static TestDataFactory instance;
 
@@ -62,7 +65,7 @@ public class TestDataFactory {
     }
 
     public UserTo getPersistedTestUserTo(String eMail) {
-        String clearTextPassword = "NoPass123";
+        String clearTextPassword = VALID_PASSWORD;
         final NewRegistrationTO userTo = new NewRegistrationTO(eMail, eMail, clearTextPassword);
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         return userToResultTo.getValue();
