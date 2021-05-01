@@ -74,9 +74,19 @@
 
     <dependencies>
 
+        <!-- Primefaces -->
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>primefaces-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <!-- Theme Management has been changed with at least PF 10. Splitted in to commercial and community ones.
+                 they need now to be added as you wish. At least for now Apr'21 they are not automatically included
+                 via joinfaces. -->
+            <groupId>org.primefaces.themes</groupId>
+            <artifactId>flick</artifactId>
+            <version>1.0.10</version>
         </dependency>
 
         <!-- Spring boot actuator to expose metrics endpoint -->

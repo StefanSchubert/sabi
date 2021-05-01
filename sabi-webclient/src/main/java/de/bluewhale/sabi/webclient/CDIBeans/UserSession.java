@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.CDIBeans;
 
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
@@ -22,6 +23,7 @@ import java.util.Locale;
  */
 @Named
 @SessionScope
+@Slf4j
 public class UserSession implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -45,6 +47,15 @@ public class UserSession implements Serializable {
      * @return
      */
     public Locale getLocale() {
+
+        if (locale == null) {
+            Locale browsersLocale = LocaleContextHolder.getLocale();
+            Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
+            locale = supportedLocale;
+
+            log.debug("Session is using «{}» as locale",locale);
+        }
+
         return locale;
     }
 
@@ -100,14 +111,7 @@ public class UserSession implements Serializable {
      * @return
      */
     public String getLanguage() {
-
-        if (locale == null) {
-            Locale browsersLocale = LocaleContextHolder.getLocale();
-            Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
-            locale = supportedLocale;
-        }
-
-        return locale.getLanguage();
+        return getLocale().getLanguage();
     }
 
     /**
@@ -116,9 +120,15 @@ public class UserSession implements Serializable {
      * @return NumberGroupingSign
      */
     public Character getNumberGroupingSign() {
+
+        Locale locale = getLocale();
+
         if (numberGroupingSign == null) {
             numberGroupingSign = i18nUtil.getNumberGroupingSign(locale);
         }
+
+        log.debug("NumberGroupingSign is «{}» for «{}» locale",numberGroupingSign,locale);
+
         return numberGroupingSign;
     }
 
@@ -128,9 +138,15 @@ public class UserSession implements Serializable {
      * @return NumberGroupingSign
      */
     public Character getNumberDecimalSeparator() {
+
+        Locale locale = getLocale();
+
         if (numberDecimalSeparator == null) {
             numberDecimalSeparator = i18nUtil.getDecimalSeparator(locale);
         }
+
+        log.debug("NumberDecimalSeperator is «{}» for «{}» locale",numberDecimalSeparator,locale);
+
         return numberDecimalSeparator;
     }
 

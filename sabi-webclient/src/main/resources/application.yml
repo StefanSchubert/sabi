@@ -9,8 +9,8 @@ captcha:
 joinfaces:
   jsf:
     project-stage: development
-#  primefaces:
-#    theme: omega
+  primefaces:
+    theme: flick
 
 # Logback Configuration
 logging:

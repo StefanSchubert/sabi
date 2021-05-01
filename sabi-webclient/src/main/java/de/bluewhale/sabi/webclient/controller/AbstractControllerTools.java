@@ -46,6 +46,31 @@ public abstract class AbstractControllerTools {
     }
 
     /**
+     * Used to request the UnitDescription, when all you have is a reference Id.
+     *
+     * @param unitId technical key of the Unit.
+     * @return "N/A" if unitId is unknown
+     */
+    @NotNull
+    public String getUnitDescriptionForId(Integer unitId, List<UnitTo> fromUnitList) {
+        // TODO STS (13.04.21): Improvment: instead of providing the list of known units those should be fetched here
+        // wee need to change the auth scope on the api for this
+        String result = "";
+        if (unitId != null) {
+            for (UnitTo unitTo : fromUnitList) {
+                if (unitTo.getId().equals(unitId)) {
+                    result = unitTo.getDescription();
+                    break;
+                }
+            }
+        }
+        if (result.equals("")) {
+            log.warn("Could not determine the unit description for unitID: {}", unitId);
+        }
+        return result;
+    }
+
+    /**
      * Used to request the TankName, when all you have is a reference Id.
      *
      * @param tankId technical key of the Tank.

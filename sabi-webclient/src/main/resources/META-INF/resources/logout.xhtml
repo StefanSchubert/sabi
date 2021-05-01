@@ -21,11 +21,16 @@
 <h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
 
-        <h1>#{msg['logout.header.h']}</h1>
-        <p>
+    <h1>#{msg['logout.header.h']}</h1>
+    <p>
+        <img src="#{resource['images:ByeBye.png']}"/>
+    </p>
+    <p>
+        <h:form>
             <h:outputText value="#{msg['logout.message.t']}" style="width: 50px;"/>
             <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
-        </p>
+        </h:form>
+    </p>
 
 </h:body>
 </html>

@@ -148,4 +148,8 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
     public void editMeasurement(MeasurementTo existingMeasurement) {
         measurement = existingMeasurement;
     }
+
+    public String getGetDescriptionFor(Integer unitId) {
+        return getUnitDescriptionForId(unitId, knownUnits);
+    }
 }
