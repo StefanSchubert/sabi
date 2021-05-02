@@ -86,6 +86,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
     }
 
     @Test
+    @Transactional
     public void testFindMeasurementParameter() throws Exception {
         // Given already stored testdata for measurements
 
@@ -97,6 +98,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
     }
 
     @Test
+    @Transactional
     public void testFindInvalidMeasurementParameter() throws Exception {
         // Given already stored testdata for measurements
         Integer nonExistingUnit = Integer.MAX_VALUE;

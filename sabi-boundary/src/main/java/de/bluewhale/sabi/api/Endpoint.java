@@ -18,6 +18,7 @@ public enum Endpoint {
     PW_RESET("/api/auth/pwd_reset"),
     PARTICIPANTS("/api/stats/participants"),
     TANKS("/api/stats/tanks"),
+    UNITS("/api/units")
     ;
 
 // ------------------------------ FIELDS ------------------------------

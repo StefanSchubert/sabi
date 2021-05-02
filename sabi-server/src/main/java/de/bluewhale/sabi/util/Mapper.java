@@ -163,7 +163,12 @@ public class Mapper {
         unitTo.setId(unitEntity.getId());
         unitTo.setDescription(unitEntity.getDescription());
         unitTo.setUnitSign(unitEntity.getName());
+    }
 
+    public static void mapUnitToEntity(UnitTo pUnitTo, UnitEntity pUnitEntity) {
+        pUnitEntity.setId(pUnitTo.getId());
+        pUnitEntity.setDescription(pUnitTo.getDescription());
+        pUnitEntity.setName(pUnitTo.getUnitSign());
     }
 
     public static void mapParameterEntity2To(ParameterEntity parameterEntity, ParameterTo parameterTo) {
@@ -174,4 +179,11 @@ public class Mapper {
         parameterTo.setMaxThreshold(parameterEntity.getMaxThreshold());
     }
 
+    public static void mapParameterTo2Entity(ParameterTo parameterTo, ParameterEntity parameterEntity) {
+        parameterEntity.setId(parameterTo.getId());
+        parameterEntity.setDescription(parameterTo.getDescription());
+        parameterEntity.setBelongingUnitId(parameterTo.getBelongingUnitId());
+        parameterEntity.setMinThreshold(parameterTo.getMinThreshold());
+        parameterEntity.setMaxThreshold(parameterTo.getMaxThreshold());        
+    }
 }

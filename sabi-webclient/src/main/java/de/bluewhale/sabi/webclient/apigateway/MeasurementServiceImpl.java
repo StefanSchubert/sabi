@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
@@ -54,7 +55,7 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Override
     public @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException {
 
-        String listMeasurementUnitsUri = sabiBackendUrl + "/api/measurement/units/list";
+        String listMeasurementUnitsUri = sabiBackendUrl + Endpoint.UNITS + "/list";
 
         if (cachedAvailableMeasurementUnits.isEmpty()) {
 

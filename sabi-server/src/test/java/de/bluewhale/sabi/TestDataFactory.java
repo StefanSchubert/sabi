@@ -96,4 +96,22 @@ public class TestDataFactory {
         userService = service;
         return this;
     }
+
+    public ParameterTo getTestParameterTo() {
+        ParameterTo parameterTo = new ParameterTo();
+        parameterTo.setBelongingUnitId(4711);
+        parameterTo.setMaxThreshold(10f);
+        parameterTo.setMinThreshold(20f);
+        parameterTo.setId(101);
+        parameterTo.setDescription("Junit");
+        return parameterTo;
+    }
+
+    public UnitTo getTestUnitTo() {
+        UnitTo unitTo = new UnitTo();
+        unitTo.setId(4711);
+        unitTo.setUnitSign("SP");
+        unitTo.setDescription("Scrum Story Points");
+        return unitTo;
+    }
 }

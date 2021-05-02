@@ -13,6 +13,7 @@ import de.bluewhale.sabi.services.UserServiceTest;
 import de.bluewhale.sabi.services.rest.UserAuthController_REST_API_Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -22,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 @RunWith(Suite.class)
-@Suite.SuiteClasses({UserRepositoryTest.class,
+@SuiteClasses({UserRepositoryTest.class,
         UserServiceTest.class,
         UserAuthController_REST_API_Test.class,
         TankTestSuite.class,
