@@ -37,7 +37,6 @@ public class Mapper {
         pAquariumTo.setInceptionDate(pAquariumEntity.getInceptionDate());
     }
 
-
     /**
      * Mapping without user relationsship
      *
@@ -107,7 +106,6 @@ public class Mapper {
         pMeasurementTo.setUnitId(pMeasurementEntity.getUnitId());
     }
 
-
     /**
      * Maps given To attributes into provided Entity.
      *
@@ -155,7 +153,6 @@ public class Mapper {
         pUserTo.setCountry(pUserEntity.getCountry());
     }
 
-
     /**
      * Maps given Entity attributes into provided To
      *
@@ -168,4 +165,13 @@ public class Mapper {
         unitTo.setUnitSign(unitEntity.getName());
 
     }
+
+    public static void mapParameterEntity2To(ParameterEntity parameterEntity, ParameterTo parameterTo) {
+        parameterTo.setId(parameterEntity.getId());
+        parameterTo.setDescription(parameterEntity.getDescription());
+        parameterTo.setBelongingUnitId(parameterEntity.getBelongingUnitId());
+        parameterTo.setMinThreshold(parameterEntity.getMinThreshold());
+        parameterTo.setMaxThreshold(parameterEntity.getMaxThreshold());
+    }
+
 }

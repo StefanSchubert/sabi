@@ -100,13 +100,13 @@ public class BasicDataFactory {
 
         ParameterEntity parameterEntity = new ParameterEntity();
         parameterEntity.setDescription("Karbonathärte");
-        parameterEntity.setUsedThresholdUnitId(1);
+        parameterEntity.setBelongingUnitId(1);
         parameterEntity.setMinThreshold(6.5f);
         parameterEntity.setMaxThreshold(10f);
 
         ParameterEntity parameterEntity2 = new ParameterEntity();
         parameterEntity2.setDescription("Temperatur");
-        parameterEntity2.setUsedThresholdUnitId(2);
+        parameterEntity2.setBelongingUnitId(2);
         parameterEntity2.setMinThreshold(24f);
         parameterEntity2.setMaxThreshold(27f);
 

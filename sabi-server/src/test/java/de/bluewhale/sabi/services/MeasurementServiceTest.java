@@ -66,7 +66,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         List<MeasurementTo> list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
         if (list.isEmpty()) populateBasicData();
         List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER1_EMAIL, 0);
-        assertTrue("H2-Basicdata injection did not work!" ,list2.size()>0);
+        assertTrue("H2-Basicdata injection did not work!", list2.size() > 0);
     }
 
     @Test
@@ -86,13 +86,37 @@ public class MeasurementServiceTest extends BasicDataFactory {
     }
 
     @Test
+    public void testFindMeasurementParameter() throws Exception {
+        // Given already stored testdata for measurements
+
+        // When
+        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(1);
+
+        // Then
+        assertNotNull(parameterTo);
+    }
+
+    @Test
+    public void testFindInvalidMeasurementParameter() throws Exception {
+        // Given already stored testdata for measurements
+        Integer nonExistingUnit = Integer.MAX_VALUE;
+
+        // When
+        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(nonExistingUnit);
+
+        // Then
+        assertNull(parameterTo);
+    }
+
+
+    @Test
     @Transactional
     public void testListMeasurementsForSpecificTankAndUnit() throws Exception {
         // Given already stored testdata for measurements
         // for tank 2 only one measurement with unit id 1
 
         // When
-        List<MeasurementTo> measurements = measurementService.listMeasurementsFilteredBy(2L,1);
+        List<MeasurementTo> measurements = measurementService.listMeasurementsFilteredBy(2L, 1);
 
         // Then
         assertNotNull(measurements);
@@ -172,7 +196,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
         // Then
         assertNotNull(measurementToResultTo);
-        assertEquals(newValue, measurementToResultTo.getValue().getMeasuredValue(),0f);
+        assertEquals(newValue, measurementToResultTo.getValue().getMeasuredValue(), 0f);
         CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Update of measurement failed?", messageType.equals(Message.CATEGORY.INFO));
 

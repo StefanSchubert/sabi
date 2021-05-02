@@ -7,6 +7,7 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UnitTo;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +61,7 @@ public interface MeasurementService {
      *     <li>{@link TankMessageCodes#MEASURMENT_ALREADY_DELETED}</li>
      * </ul>
      * In case a user requests the deletion of a measurement, that he or she does not own, the service response with an error result
-     * message "MEASURMENT_ALREADY_DELETED" disregarding of the root cause (idempotent, fraud...)
+     * message "MEASUREMENT_ALREADY_DELETED" disregarding of the root cause (idempotent, fraud...)
      */
     @NotNull
     @Transactional
@@ -92,10 +93,18 @@ public interface MeasurementService {
     /**
      * Lists measurements of a specific tank and measured unit.
      *
-     * @param pTankID identifies the tank for which the the measurement were taken.
-     * @param pUnitID identifies the unit for which the the measurement were taken.
+     * @param pTankID identifies the tank for which the measurement were taken.
+     * @param pUnitID identifies the unit for which the measurement were taken.
      * @return List of measurements, maybe empty but never null. Result will be sorted asc according measure date.
      */
     @NotNull
     List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID);
+
+    /**
+     * Provides additional information for requested unit.
+     * Required because of the loose coupling.
+     * @param pUnitID identifies the unit for which we are interested on additional parameter infos.
+     * @return ParameterTo with details or null if they do not exists.
+     */
+    ParameterTo fetchParameterInfoFor(Integer pUnitID);
 }

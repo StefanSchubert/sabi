@@ -106,6 +106,7 @@ public class TankControllerTest {
         for (AquariumTo aquarium : myObjects) {
             if (aquarium.equals(aquariumTo)) {
                 contained = true;
+                break;
             }
         }
         assertTrue("Did not received mockd Aquarium",contained);

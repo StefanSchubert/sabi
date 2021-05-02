@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -13,7 +13,12 @@ package de.bluewhale.sabi.api;
 public enum Endpoint {
     // requires complete path after root context, as this one is also used by HttpSecurityConfig
     LOGIN("/api/auth/login"),
-    GALLONS("gal");
+    REGISTER("/api/auth/register"),
+    PW_RESET_REQUEST("/api/auth/req_pwd_reset"),
+    PW_RESET("/api/auth/pwd_reset"),
+    PARTICIPANTS("/api/stats/participants"),
+    TANKS("/api/stats/tanks"),
+    ;
 
 // ------------------------------ FIELDS ------------------------------
 
