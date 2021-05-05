@@ -7,9 +7,11 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,19 +28,19 @@ public interface MeasurementService extends Serializable {
      * List Users tanks. Concrete user will be derived by the calling context
      *
      * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @param maxResultCount If a user has 100 measurements, It won't make sense to retrieve them all,
-     *                       in case we want to display only some latest ones in the view. So we can
-     *                       use this param to limit the results, which will be the youngest entries.
-     *                       <b>A maxResultCount of 0 means retrieves them all.</b>
+     * @param maxResultCount      If a user has 100 measurements, It won't make sense to retrieve them all,
+     *                            in case we want to display only some latest ones in the view. So we can
+     *                            use this param to limit the results, which will be the youngest entries.
+     *                            <b>A maxResultCount of 0 means retrieves them all.</b>
      * @return List of measurements that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-   @NotNull List<MeasurementTo> getMeasurementsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
+    @NotNull List<MeasurementTo> getMeasurementsTakenByUser(@NotNull String JWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
 
     /**
      * To avoid unnecessary Backend calls, the implementation is suggested to
      * cache the results.
-     *
+     * <p>
      * TODO: JMX Beans such that the cache can be reloaded in case
      * the backend introduces more units.
      *
@@ -46,13 +48,13 @@ public interface MeasurementService extends Serializable {
      * @return List of units known by the backend.
      * @throws BusinessException in case of backend auth failures.
      */
-   @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException;
+    @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException;
 
     /**
      * List Users Measurements for a specific tank. Concrete user will be derived by the calling context
      *
      * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @param tankId Id of users tank to which the measures belong.
+     * @param tankId       Id of users tank to which the measures belong.
      * @return List of measurements that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
@@ -63,8 +65,8 @@ public interface MeasurementService extends Serializable {
      * List Users Measurements for a specific tank and measurement unit. Concrete user will be derived by the calling context
      *
      * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @param tankId Id of users tank to which the measures belong.
-     * @param unitId Id which is used to filter the results for a specifc measurement unit.
+     * @param tankId       Id of users tank to which the measures belong.
+     * @param unitId       Id which is used to filter the results for a specifc measurement unit.
      * @return List of measurements that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
@@ -72,7 +74,8 @@ public interface MeasurementService extends Serializable {
 
     /**
      * Request Measurement deletion in Backend, in case he or she did a typo.
-     * @param measurementId Identifier of the Measurement to delete
+     *
+     * @param measurementId       Identifier of the Measurement to delete
      * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
@@ -80,9 +83,20 @@ public interface MeasurementService extends Serializable {
 
     /**
      * Update an existing or create a measurement entry for the user.
-     * @param measurement Measurement Entry to patch or to create
+     *
+     * @param measurement         Measurement Entry to patch or to create
      * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
-    void save(MeasurementTo measurement, String JWTBackendAuthtoken) throws BusinessException;
+    void save(MeasurementTo measurement, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+
+    /**
+     * Fetches detailed Parameterinfos for requested measurement unti
+     *
+     * @param selectedUnitId      ID of measurement unit
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return detailed info if available or null if it does not exists
+     */
+    @Null ParameterTo getParameterFor(@NotNull Integer selectedUnitId, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+
 }
