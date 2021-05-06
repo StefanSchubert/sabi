@@ -82,7 +82,7 @@ public class TestDataFactory {
         measurementTo.setAquariumId(pTankID);
         measurementTo.setUnitId(1);
         measurementTo.setId(4711l);
-        measurementTo.setMeasuredValue(15.5f);
+        measurementTo.setMeasuredValue(1.15f);
         measurementTo.setMeasuredOn(LocalDateTime.now());
         return measurementTo;
     }

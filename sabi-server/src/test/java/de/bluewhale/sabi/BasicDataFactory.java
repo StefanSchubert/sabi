@@ -173,7 +173,7 @@ public class BasicDataFactory {
         MeasurementEntity measurementEntity3 = new MeasurementEntity();
         measurementEntity3.setId(3L);
         measurementEntity3.setMeasuredOn(LocalDateTime.now());
-        measurementEntity3.setMeasuredValue(15.5f);
+        measurementEntity3.setMeasuredValue(0.892f);
         measurementEntity3.setUnitId(unitEntity.getId());
         measurementEntity3.setAquarium(aquariumEntity2);
         measurementEntity3.setUser(testuser1);
