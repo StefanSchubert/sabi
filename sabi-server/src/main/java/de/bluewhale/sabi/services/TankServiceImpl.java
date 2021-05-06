@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -50,7 +50,7 @@ public class TankServiceImpl implements TankService {
         }
 
         Long pAquariumToId = pAquariumTo.getId();
-        if (pAquariumToId != null && (aquariumRepository.existsById(pAquariumToId) == true)) {
+        if (pAquariumToId != null && aquariumRepository.existsById(pAquariumToId)) {
             // ImpotenceCheck: Do not create the same tank twice (identified by id).
             createdAquariumTo = pAquariumTo;
             message = Message.error(TankMessageCodes.TANK_ALREADY_EXISTS, pAquariumTo.getDescription());

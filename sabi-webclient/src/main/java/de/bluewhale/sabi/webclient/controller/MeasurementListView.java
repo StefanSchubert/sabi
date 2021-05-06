@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.controller;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
@@ -67,7 +68,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         } catch (BusinessException e) {
             tanks = Collections.emptyList();
             log.error(e.getLocalizedMessage());
-            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
+            MessageUtil.error("troubleMsg","common.token.expired.t",userSession.getLocale());
         }
 
         try {
@@ -75,7 +76,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         } catch (BusinessException e) {
             knownUnits = Collections.emptyList();
             log.error(e.getLocalizedMessage());
-            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
+            MessageUtil.error("troubleMsg","common.token.expired.t",userSession.getLocale());
         }
 
         fetchUsersLatestMeasurements();
@@ -88,7 +89,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         } catch (BusinessException e) {
             measurementsTakenByUser = Collections.emptyList();
             log.error(e.getLocalizedMessage());
-            MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
+            MessageUtil.error("troubleMsg","common.token.expired.t",userSession.getLocale());
         }
     }
 
@@ -125,13 +126,13 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
             try {
                 measurementService.save(measurement, userSession.getSabiBackendToken());
                 fetchUsersLatestMeasurements();
-                MessageUtil.info("messages", "common.save.confirmation.t", userSession.getLocale());
+                MessageUtil.info("submitState", "common.save.confirmation.t", userSession.getLocale());
             } catch (Exception e) {
                 log.error("Couldn't save measurement {} {}",measurement, e);
-                MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+                MessageUtil.error("submitState", "common.error.internal_server_problem.t", userSession.getLocale());
             }
         } else {
-            MessageUtil.info("messages", "common.incompleted_formdata.t", userSession.getLocale());
+            MessageUtil.warn("troubleMsg", "common.incompleted_formdata.t", userSession.getLocale());
         }
         return MEASUREMENT_VIEW_PAGE;
     }
@@ -141,8 +142,8 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         if (measurement.getMeasuredOn() == null) result = false;
         if (measurement.getAquariumId() == null) result = false;
         if (measurement.getUnitId() == 0) result = false;
+        log.debug("allDataProvided = {}, Object was {}",result,measurement);
         return result;
-
     }
 
     public void editMeasurement(MeasurementTo existingMeasurement) {
@@ -151,5 +152,20 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
 
     public String getGetDescriptionFor(Integer unitId) {
         return getUnitDescriptionForId(unitId, knownUnits);
+    }
+
+    public String getGetThresholdInfoFor(Integer unitId) {
+        String result = "";
+        if (unitId != null && unitId != 0) {
+            try {
+                ParameterTo parameterTo = measurementService.getParameterFor(unitId, userSession.getSabiBackendToken());
+                if (parameterTo != null) {
+                    result = String.format("min = %.03f / max = %.03f", parameterTo.getMinThreshold(), parameterTo.getMaxThreshold());
+                }
+            } catch (Exception e) {
+                log.warn("Could not resolve parameter info for unit {}", unitId);
+            }
+        }
+        return result;
     }
 }

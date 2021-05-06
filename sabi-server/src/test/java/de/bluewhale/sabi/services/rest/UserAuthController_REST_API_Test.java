@@ -267,11 +267,11 @@ public class UserAuthController_REST_API_Test {
         HttpHeaders headers = RestHelper.buildHttpHeader();
 
         String requestJson = objectMapper.writeValueAsString(accountCredentialsTo);
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(requestJson, headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(Endpoint.LOGIN.getPath(), entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(Endpoint.LOGIN.getPath(), requestEntity, String.class);
 
-        // Then we expect a 401
+        // Then we expect a 202
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
     }
 

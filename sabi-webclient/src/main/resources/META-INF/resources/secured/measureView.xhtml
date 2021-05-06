@@ -20,6 +20,10 @@
 
         <ui:define name="content">
 
+            <p:messages id="msg1" for="troubleMsg" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
             <h:form id="measureform">
 
                 <ui:remove>
@@ -55,7 +59,7 @@
                                            itemValue="#{m.id}"
                                            itemLabel="#{m.unitSign}"
                             />
-                            <p:ajax event="itemSelect" update=":measureform:unitDescription"/>
+                            <p:ajax event="itemSelect" update=":measureform:unitDescription :measureform:thresholdInfo"/>
                         </p:selectOneMenu>
                         <br/>
                         <h:outputText id="unitDescription"
@@ -63,11 +67,16 @@
                     </p:column>
 
                     <p:outputLabel for="measuredValue" value="#{msg['measureview.value.l']}"/>
-                    <p:inputNumber id="measuredValue"
-                                   decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
-                                   thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
-                                   value="#{measurementListView.measurement.measuredValue}"
-                                   />
+                    <p:column>
+                        <p:inputNumber id="measuredValue"
+                                       decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
+                                       thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
+                                       value="#{measurementListView.measurement.measuredValue}"
+                        />
+                        <br/>
+                        <h:outputText id="thresholdInfo"
+                                      value="#{measurementListView.getGetThresholdInfoFor(measurementListView.measurement.unitId)}"/>
+                    </p:column>
 
                     <p:outputLabel value="#{msg['measureview.date.l']}"/>
                     <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
@@ -85,12 +94,19 @@
 
                 </p:panelGrid>
 
+                <p:staticMessage severity="warn" summary="INFO"
+                                 detail="#{msg['measureview.mode.editrecord.l']}"
+                                 rendered="#{measurementListView.measurement.id != null}"/>
 
-                <p:messages id="messages" showDetail="true" closable="true">
-                    <p:autoUpdate/>
-                </p:messages>
+                <p:staticMessage severity="info" summary="INFO"
+                                 detail="#{msg['measureview.mode.newrecord.l']}"
+                                 rendered="#{measurementListView.measurement.id == null}"/>
 
             </h:form>
+
+            <p:messages id="msg2" for="submitState" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
 
             <hr/>
 

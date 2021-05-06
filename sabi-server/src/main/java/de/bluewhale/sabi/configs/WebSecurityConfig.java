@@ -65,14 +65,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security").permitAll()
                 // Registration and Login are accessible without JWT based authentication
                 .antMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
-                .antMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/auth/req_pwd_reset").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/auth/pwd_reset").permitAll()
+                .antMatchers(HttpMethod.POST, Endpoint.REGISTER.getPath()).permitAll()
+                .antMatchers(HttpMethod.POST, Endpoint.PW_RESET_REQUEST.getPath()).permitAll()
+                .antMatchers(HttpMethod.POST, Endpoint.PW_RESET.getPath()).permitAll()
                 .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
                 // Open statistics
                 .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/stats/participants").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/stats/tanks").permitAll()
+                .antMatchers(HttpMethod.GET, Endpoint.PARTICIPANTS.getPath()).permitAll()
+                .antMatchers(HttpMethod.GET, Endpoint.TANKS.getPath()).permitAll()
                 // Motd can be requested before login
                 .antMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                 // all others require JWT authentication

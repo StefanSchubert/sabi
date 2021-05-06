@@ -7,17 +7,13 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UnitTo;
-import de.bluewhale.sabi.persistence.model.AquariumEntity;
-import de.bluewhale.sabi.persistence.model.MeasurementEntity;
-import de.bluewhale.sabi.persistence.model.UnitEntity;
-import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
-import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
-import de.bluewhale.sabi.persistence.repositories.UnitRepository;
-import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.persistence.model.*;
+import de.bluewhale.sabi.persistence.repositories.*;
 import de.bluewhale.sabi.util.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +31,7 @@ import java.util.List;
  * @author Stefan Schubert
  */
 @Service
+@Slf4j
 public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
@@ -48,6 +45,9 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
     UnitRepository unitRepository;
+
+    @Autowired
+    ParameterRepository parameterRepository;
 
     @Override
     public List<MeasurementTo> listMeasurements(Long pTankID) {
@@ -205,4 +205,24 @@ public class MeasurementServiceImpl implements MeasurementService {
         return new ResultTo<>(pMeasurementTo, resultMsg);
     }
 
+    @Override
+    public ParameterTo fetchParameterInfoFor(Integer pUnitID) {
+
+        if (pUnitID == null) {
+            log.warn("Tried to fetch Parameter Info for null unit. This smells after a logic flaw.");
+            return null;
+        }
+
+        ParameterEntity parameterEntity = parameterRepository.findByBelongingUnitIdEquals(pUnitID);
+
+        if (parameterEntity == null) {
+            log.warn("Requested parameter info for unitID «{}» is not availabe. Data maintenance recommended.",pUnitID);
+            return null;
+        }
+
+        ParameterTo parameterTo = new ParameterTo();
+        Mapper.mapParameterEntity2To(parameterEntity, parameterTo);
+
+        return parameterTo;
+    }
 }

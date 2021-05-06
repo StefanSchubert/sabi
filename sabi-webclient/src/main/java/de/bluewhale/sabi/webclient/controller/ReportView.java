@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.controller;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
+import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
@@ -77,27 +78,8 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 return REPORT_VIEW_PAGE;
             }
 
+            // reinitialize lineModel, old Data free for GC
             lineModel = new LineChartModel();
-            ChartData data = new ChartData();
-
-
-            LineChartDataSet dataSet = new LineChartDataSet();
-            List<Object> values = new ArrayList<>();
-            List<String> labels = new ArrayList<>();
-
-            for (MeasurementTo measurement : measurementTos) {
-                values.add(measurement.getMeasuredValue());
-                labels.add(measurement.getMeasuredOn().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-
-            }
-
-            dataSet.setData(values);
-            data.setLabels(labels);
-            dataSet.setFill(false);
-            dataSet.setLabel(getUnitSignForId(selectedUnitId, knownUnits));
-            dataSet.setBorderColor("rgb(75, 192, 192)");
-            dataSet.setLineTension(0.1);
-            data.addChartDataSet(dataSet);
 
             //Options
             LineChartOptions options = new LineChartOptions();
@@ -107,6 +89,61 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                     getTankNameForId(selectedTankId, tanks));
             title.setText(chartTitle);
             options.setTitle(title);
+            lineModel.setOptions(options);
+
+            LineChartDataSet dataSet = new LineChartDataSet();
+            List<Object> values = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+
+            for (MeasurementTo measurement : measurementTos) {
+                values.add(measurement.getMeasuredValue());
+                labels.add(measurement.getMeasuredOn().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+            }
+
+            dataSet.setData(values);
+            dataSet.setFill(false);
+            dataSet.setLabel(getUnitSignForId(selectedUnitId, knownUnits));
+            dataSet.setBorderColor("rgb(75, 192, 192)");
+            dataSet.setLineTension(0.1);
+
+            ChartData chartData = new ChartData();
+            chartData.setLabels(labels);
+            chartData.addChartDataSet(dataSet);
+
+            // Add Threshold Lines if threshold data is available
+            ParameterTo parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getSabiBackendToken());
+            if (parameterTo != null) {
+
+                log.debug("Found Threshold infos for {}. Add them to the chart for {}",
+                        parameterTo, getUnitSignForId(selectedUnitId, knownUnits));
+
+                LineChartDataSet minThresholdDataSet = new LineChartDataSet();
+                minThresholdDataSet.setLabel("min.");
+                minThresholdDataSet.setBorderColor("rgb(0, 192, 0)");
+                minThresholdDataSet.setLineTension(0.2);
+                minThresholdDataSet.setShowLine(true);
+
+                LineChartDataSet maxThresholdDataSet = new LineChartDataSet();
+                maxThresholdDataSet.setLabel("max.");
+                maxThresholdDataSet.setBorderColor("rgb(192, 0, 0)");
+                maxThresholdDataSet.setLineTension(0.2);
+                maxThresholdDataSet.setShowLine(true);
+
+                List<Object> min_values = new ArrayList<>();
+                List<Object> max_values = new ArrayList<>();
+
+                for (int i = 0; i < measurementTos.size(); i++) {
+                    min_values.add(parameterTo.getMinThreshold());
+                    max_values.add(parameterTo.getMaxThreshold());
+                }
+
+                minThresholdDataSet.setData(min_values);
+                maxThresholdDataSet.setData(max_values);
+                chartData.addChartDataSet(minThresholdDataSet);
+                chartData.addChartDataSet(maxThresholdDataSet);
+            }
+
+            lineModel.setData(chartData);
 
         } catch (BusinessException e) {
             MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());

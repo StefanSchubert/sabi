@@ -9,7 +9,6 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.services.MeasurementService;
 import de.bluewhale.sabi.services.TankService;
 import io.swagger.annotations.ApiOperation;
@@ -30,10 +29,6 @@ import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 
-/**
- * Author: Stefan Schubert
- * Date: 16.06.17
- */
 @RestController
 @RequestMapping(value = "api/measurement")
 @Slf4j
@@ -78,26 +73,6 @@ public class MeasurementController {
 
         List<MeasurementTo> measurementToList = measurementService.listMeasurements(principal.getName(),resultLimit);
         return new ResponseEntity<>(measurementToList, HttpStatus.ACCEPTED);
-    }
-
-
-    @ApiOperation(value = "Lists all measurements units which are currently known by the backend.",
-            notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
-    @ApiResponses({
-            @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
-                    message = "Success - list of all supported measurement units returned.",
-                    response = UnitTo.class, responseContainer = "List"),
-            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
-                    response = String.class)
-    })
-    @RequestMapping(value = {"/units/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<List<UnitTo>> listAllMeasurementUnits(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
-        // If we come so far, the JWTAuthenticationFilter has already validated the token,
-        // and we can be sure that spring has injected a valid Principal object.
-        List<UnitTo> unitToList = measurementService.listAllMeasurementUnits();
-        return new ResponseEntity<>(unitToList, HttpStatus.ACCEPTED);
     }
 
     @ApiOperation(value = "List measurements belonging to a specific tank", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")

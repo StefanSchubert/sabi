@@ -13,9 +13,9 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 // /resource/template/error/404.html for specific error codes
 // in case you want to do some more, you may implement an ErrorController
 @SpringBootApplication(exclude = {ErrorMvcAutoConfiguration.class})
-public class SpringPrimeFacesApplication {
+public class SabiJSFClientApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringPrimeFacesApplication.class, args);
+        SpringApplication.run(SabiJSFClientApplication.class, args);
     }
 }

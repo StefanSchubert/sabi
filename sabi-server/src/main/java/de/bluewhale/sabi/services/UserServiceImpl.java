@@ -215,7 +215,7 @@ public class UserServiceImpl implements UserService {
 
         HazelcastInstance hzInstance = Hazelcast.getHazelcastInstanceByName(HazelcastConfig.HZ_INSTANCE_NAME);
 
-        if (captchaValid == false) {
+        if (!captchaValid) {
             throw new BusinessException(AuthExceptionCodes.AUTHENTICATION_FAILED, Message.error(AuthMessageCodes.CORRUPTED_TOKEN_DETECTED));
         } else {
 

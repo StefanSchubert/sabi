@@ -100,13 +100,13 @@ public class BasicDataFactory {
 
         ParameterEntity parameterEntity = new ParameterEntity();
         parameterEntity.setDescription("Karbonathärte");
-        parameterEntity.setUsedThresholdUnitId(1);
+        parameterEntity.setBelongingUnitId(1);
         parameterEntity.setMinThreshold(6.5f);
         parameterEntity.setMaxThreshold(10f);
 
         ParameterEntity parameterEntity2 = new ParameterEntity();
         parameterEntity2.setDescription("Temperatur");
-        parameterEntity2.setUsedThresholdUnitId(2);
+        parameterEntity2.setBelongingUnitId(2);
         parameterEntity2.setMinThreshold(24f);
         parameterEntity2.setMaxThreshold(27f);
 
@@ -173,7 +173,7 @@ public class BasicDataFactory {
         MeasurementEntity measurementEntity3 = new MeasurementEntity();
         measurementEntity3.setId(3L);
         measurementEntity3.setMeasuredOn(LocalDateTime.now());
-        measurementEntity3.setMeasuredValue(15.5f);
+        measurementEntity3.setMeasuredValue(0.892f);
         measurementEntity3.setUnitId(unitEntity.getId());
         measurementEntity3.setAquarium(aquariumEntity2);
         measurementEntity3.setUser(testuser1);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -25,9 +25,9 @@ public class ParameterEntity extends Auditable {
     @Basic
     private String description;
 
-    @javax.persistence.Column(name = "used_threshold_unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
+    @javax.persistence.Column(name = "belonging_unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
-    private int usedThresholdUnitId;
+    private int belongingUnitId;
 
     @javax.persistence.Column(name = "min_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
     @Basic
