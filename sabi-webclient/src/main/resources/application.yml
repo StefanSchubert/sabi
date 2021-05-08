@@ -49,6 +49,9 @@ sabi:
     url: http://localhost:8080/sabi
 server:
   port: 8088
+  error:
+    whitelabel:
+      enabled: false
   servlet:
     context-path: /
 servlet:
