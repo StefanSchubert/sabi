@@ -24,9 +24,43 @@
 
         <ui:define name="content">
             <ui:remove>
-                <!--  This is a little hack as using the viewAction from Metadata doesn't seem to work. -->
+                <!--  DO not include calling gravatar here, as this might violate the promise not to pass
+                      any personal data to 3rd parties. -->
             </ui:remove>
-            <p:outputPanel>userProfile</p:outputPanel>
+
+            <p:panel header="#{msg['userprofile.h']} #{userSession.userName}">
+
+                <p:outputPanel>
+                    <h:form id="uprofile">
+                        <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
+
+                            <p:outputLabel for="localeselection" value="#{msg['userprofile.localechoice.l']}"/>
+                            <p:selectOneMenu id="localeselection" value="#{measurementListView.measurement.aquariumId}">
+                                <!-- todo when selectedTank has a value set this instead of the Select Entry -->
+                                <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                                <f:selectItems value="#{measurementListView.tanks}"
+                                               var="n"
+                                               itemValue="#{n.id}"
+                                               itemLabel="#{n.description}"
+                                />
+                            </p:selectOneMenu>
+
+
+<!--                            <p:outputLabel value="#{msg['userportal.projectstate.l']}"/>-->
+<!--                            <p:outputLabel value="#{msg['userportal.currentprojectstate.l']}"/>-->
+
+                        </p:panelGrid>
+                    </h:form>
+
+                    Locale Selector / Language / Country
+
+                    Password Change
+
+                </p:outputPanel>
+
+            </p:panel>
+
+
         </ui:define>
 
     </ui:composition>

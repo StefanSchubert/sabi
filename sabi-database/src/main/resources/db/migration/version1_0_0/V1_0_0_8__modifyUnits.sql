@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
 update unit
 set name = 'KH (mg/l HCO3)',
     description = 'Karbonathärte (KH) = Hydrogenkarbonat (HCO3), SI-Unit mg/l HCO3 | 1 °dH KH =0, 36 mmol/l = 21,8 mg/l HCO3 (Hydrogenkarbonat)'
