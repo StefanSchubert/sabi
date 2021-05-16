@@ -3,6 +3,22 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
+html { font-size: calc(1em + 0.8vw) }
+button { font-size: inherit }
+input { font-size: inherit }
+h1 { font-size: calc(1em + 2.5vw) }
+h2 { font-size: calc(1em + 1vw) }
+/*
+Sample and explanation taken from: https://bits.theorem.co/css-pro-tips-responsive-font-sizes-and-when-to-use-which-units/
+
+"The em part: You can think of the em value as being the size the text bottoms out at.
+If the viewport is 0px wide, then vw is 0, but the font-size will still be at least
+the em value."
+
+"The vw part: The vw value says how responsive you want the font-size to be to the
+viewport width (1vw is 1/100th the width of the viewport). Adding a high vw will make
+it pretty responsive—huge text on huge screens, tiny text on tiny screens."
+ */
 
 .splashscreen {
     background-image: url("#{resource['images:RiffStefan2.png']}");
@@ -32,11 +48,6 @@ a.splashscreen:active {color: aqua;}
 }
 
 .text {
-    font-size: 3.2vw;
+    font-size: calc(1em + 0.8vw);
     font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Primefaces adoptions */
-.ui-messages ul {
-    font-size: 3.0vw;
 }

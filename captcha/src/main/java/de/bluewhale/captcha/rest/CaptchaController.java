@@ -8,7 +8,7 @@ package de.bluewhale.captcha.rest;
 import de.bluewhale.captcha.model.ChallengeTo;
 import de.bluewhale.captcha.service.ChallengeRequestThrottle;
 import de.bluewhale.captcha.service.Checker;
-import de.bluewhale.captcha.service.Generator;
+import de.bluewhale.captcha.service.QAGenerator;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -32,7 +32,7 @@ public class CaptchaController {
     Checker checker;
 
     @Autowired
-    Generator generator;
+    QAGenerator generator;
 
     @ApiOperation("/challenge/{language}")
     @ApiResponses({

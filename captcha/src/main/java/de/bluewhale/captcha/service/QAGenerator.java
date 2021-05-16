@@ -27,7 +27,7 @@ import static java.lang.Boolean.TRUE;
  * @author Stefan Schubert
  */
 @Service
-public class Generator {
+public class QAGenerator {
     private static final int TOKEN_SIZE = 5;
     // ------------------------------ FIELDS ------------------------------
     private static final Random random = new Random();
@@ -170,7 +170,15 @@ public class Generator {
         challenge16.answerMap.put("Superfood", FALSE);
         challenge16.answerMap.put("C02-Storage", TRUE);
         challenge16.answerMap.put("=~=~=~~", FALSE);
-        
+
+        ChallengeData challenge17 = new ChallengeData();
+        challenge17.questionMap.put(Locale.GERMAN, "Welche Zahl ist nur durch eins und sich selbst teilbar, so dass das Ergebnis wieder eine Ganze Zahl ergibt?");
+        challenge17.questionMap.put(Locale.ENGLISH, "If the result must be a whole number, which one of those can be divided only by 1 and itself?");
+        challenge17.answerMap.put("9", FALSE);
+        challenge17.answerMap.put("4", FALSE);
+        challenge17.answerMap.put("22", FALSE);
+        challenge17.answerMap.put("5", TRUE);
+
         dataSet.add(challenge1);
         dataSet.add(challenge2);
         dataSet.add(challenge3);
@@ -187,6 +195,7 @@ public class Generator {
         dataSet.add(challenge14);
         dataSet.add(challenge15);
         dataSet.add(challenge16);
+        dataSet.add(challenge17);
     }
 
 // -------------------------- OTHER METHODS --------------------------

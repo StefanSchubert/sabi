@@ -60,8 +60,10 @@ public class ApplicationInfo implements Serializable {
 
     public void fetchCookieAnnouncement() {
         final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-        String msg = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
-        MessageUtil.info("common", msg);
+        String cookieHint = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
+        String additionalHint = MessageUtil.getFromMessageProperties("common.additional.info.t", locale);
+        MessageUtil.info("additionalHint", additionalHint);
+        MessageUtil.info("common", cookieHint);
     }
 
     /**

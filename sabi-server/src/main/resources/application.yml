@@ -7,7 +7,7 @@ accessToken:
 ## Connection parameter to the captcha service
 captcha:
   check:
-    url: http://localhost:8081/captcha/api/check
+    url: http://blackpearl:8081/captcha/api/check
 debug: false
 
 
@@ -63,7 +63,7 @@ management:
         include: metrics,health,info,prometheus
 sabi:
   mailvalidation:
-    url: http://localhost:8080/sabi/api/auth/
+    url: http://blackpearl:8080/sabi/api/auth/
 server:
   port: 8080
   servlet:
