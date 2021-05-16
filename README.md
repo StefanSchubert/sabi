@@ -78,7 +78,7 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
 * JSF2.3 based WebClient
-** Primefaces 7.x
+** Primefaces 10.x
 * Spring-Boot-Application
 
 Why JSF and not some current modern framework like angular? In fact it took me quite a while to came to a decision here.
