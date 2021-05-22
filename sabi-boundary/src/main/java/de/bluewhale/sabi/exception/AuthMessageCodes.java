@@ -6,7 +6,7 @@
 package de.bluewhale.sabi.exception;
 
 /**
- * MessageCodes that may arise during use cases dealing with authentication or authorization.
+ * MessageCodes that may arise during api processing
  *
  * @author schubert
  */

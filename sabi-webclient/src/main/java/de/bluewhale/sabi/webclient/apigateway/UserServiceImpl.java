@@ -130,4 +130,12 @@ public class UserServiceImpl implements UserService {
     public void resetPassword(ResetPasswordTo requestData) throws BusinessException {
         throw new UnsupportedOperationException("void resetPassword([requestData])");
     }
+
+    @Override
+    public void switchUsersLocale(Locale pNewLocale, String JWTBackendAuthtoken) throws BusinessException {
+
+        String updateUserProfileURL = sabiBackendUrl + "/api/user";
+
+        RestTemplate restTemplate = new RestTemplate();
+    }
 }

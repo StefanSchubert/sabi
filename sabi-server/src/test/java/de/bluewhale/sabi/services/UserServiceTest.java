@@ -6,12 +6,12 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
-import de.bluewhale.sabi.exception.AuthExceptionCodes;
-import de.bluewhale.sabi.exception.AuthMessageCodes;
-import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.model.UserProfileTo;
 import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +21,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Locale;
 
 import static de.bluewhale.sabi.TestDataFactory.*;
 import static org.junit.Assert.*;
@@ -98,6 +100,51 @@ public class UserServiceTest {
         assertEquals(message.getCode(), AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL);
     }
 
+    @Test
+    @Transactional
+    public void testUserProfileUpdate() throws Exception {
+        // Given
+        NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", VALID_PASSWORD);
+        userTo1.setLanguage(Locale.GERMAN.getLanguage());
+        userTo1.setCountry(Locale.GERMAN.getCountry());
+        final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
+
+        // When
+        UserProfileTo userProfileTo = new UserProfileTo(firstUserResultTo.getValue().getId(),
+                Locale.ENGLISH.getLanguage(),
+                Locale.ENGLISH.getCountry());
+
+        ResultTo<UserProfileTo> userProfileResultTo = userService.updateProfile(userProfileTo, TESTUSER_EMAIL1);
+        UserEntity userEntity = userRepository.getByEmail(TESTUSER_EMAIL1);
+
+        // Then
+        final Message message = userProfileResultTo.getMessage();
+        assertNotNull(message);
+        assertEquals(message.getCode(),CommonMessageCodes.UPDATE_SUCCEEDED);
+
+        assertEquals(userEntity.getLanguage(),Locale.ENGLISH.getLanguage());
+        assertEquals(userEntity.getCountry(),Locale.ENGLISH.getCountry());
+    }
+
+    @Test(expected = BusinessException.class)
+    @Transactional
+    public void testFraudUserProfileUpdate() throws Exception {
+        // Given
+        NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", VALID_PASSWORD);
+        userTo1.setLanguage(Locale.GERMAN.getLanguage());
+        userTo1.setCountry(Locale.GERMAN.getCountry());
+        final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
+
+        // When
+        UserProfileTo userProfileTo = new UserProfileTo(firstUserResultTo.getValue().getId(),
+                Locale.ENGLISH.getLanguage(),
+                Locale.ENGLISH.getCountry());
+
+        ResultTo<UserProfileTo> userProfileResultTo = userService.updateProfile(userProfileTo, "DOES@NOT.MATCH");
+
+        // Then
+        // expected Business Exception
+    }
 
     @Test
     @Transactional

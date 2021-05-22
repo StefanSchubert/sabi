@@ -18,27 +18,21 @@ public enum SupportedLocales {
     German(Locale.GERMANY),
     English(Locale.ENGLISH);
 
-// ------------------------------ FIELDS ------------------------------
 
     private Locale locale;
-
-// --------------------------- CONSTRUCTORS ---------------------------
 
     SupportedLocales(Locale locale) {
         this.locale = locale;
     }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
 
     @JsonValue
     public Locale getLocale() {
         return this.locale;
     }
 
-// ------------------------ CANONICAL METHODS ------------------------
-
     @Override
     public String toString() {
         return locale.getISO3Language();
     }
+
 }

@@ -10,15 +10,13 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import de.bluewhale.sabi.configs.HazelcastConfig;
 import de.bluewhale.sabi.configs.HazelcastMapItem;
-import de.bluewhale.sabi.exception.AuthExceptionCodes;
-import de.bluewhale.sabi.exception.AuthMessageCodes;
-import de.bluewhale.sabi.exception.BusinessException;
-import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.PasswordPolicy;
 import de.bluewhale.sabi.util.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,7 @@ import java.util.Random;
  * Date: 29.08.15
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -96,6 +95,43 @@ public class UserServiceImpl implements UserService {
         return userToResultTo;
     }
 
+    @Override
+    public ResultTo<UserProfileTo> updateProfile(UserProfileTo userProfileTo, String principalName) throws BusinessException {
+
+        UserEntity existingUser;
+
+        if (incompleteUserProfile(userProfileTo)) {
+            log.error("Tried to update {} with incomplete profile data {}", principalName, userProfileTo);
+            throw BusinessException.with(CommonMessageCodes.INSUFFICIENT_DATA);
+        }
+
+        try {
+            existingUser = userRepository.getByEmail(principalName);
+        } catch (Exception e) {
+            throw BusinessException.with(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE);
+        }
+        if (existingUser != null && existingUser.getId().equals(userProfileTo.getUserId())) {
+            existingUser.setLanguage(userProfileTo.getLanguage());
+            existingUser.setCountry(userProfileTo.getCountry());
+        } else {
+            throw BusinessException.with(AuthMessageCodes.INVALID_EMAIL_ADDRESS);
+        }
+
+        Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
+        final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
+        return userProfileResultTo;
+    }
+
+    private boolean incompleteUserProfile(UserProfileTo userProfileTo) {
+        boolean result = false;
+        if (userProfileTo == null ||
+                userProfileTo.getUserId() == null ||
+                userProfileTo.getCountry() == null ||
+                userProfileTo.getLanguage() == null) {
+            result = true;
+        }
+        return result;
+    }
 
     private String generateValidationToken() {
         // Thanks goes to: Mister Smith (http://stackoverflow.com/questions/14622622/generating-a-random-hex-string-of-length-50-in-java-me-j2me)

@@ -31,35 +31,40 @@
             <p:panel header="#{msg['userprofile.h']} #{userSession.userName}">
 
                 <p:outputPanel>
-                    <h:form id="uprofile">
+                    <h:form id="localeswitcher">
                         <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
 
                             <p:outputLabel for="localeselection" value="#{msg['userprofile.localechoice.l']}"/>
-                            <p:selectOneMenu id="localeselection" value="#{measurementListView.measurement.aquariumId}">
+                            <p:selectOneMenu id="localeselection" value="#{userProfileView.selectedLocale}">
                                 <!-- todo when selectedTank has a value set this instead of the Select Entry -->
-                                <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
-                                <f:selectItems value="#{measurementListView.tanks}"
+                                <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{userProfileView.selectedLocale}"/>
+                                <f:selectItems value="#{userProfileView.supportedLocales}"
                                                var="n"
-                                               itemValue="#{n.id}"
-                                               itemLabel="#{n.description}"
+                                               itemValue="#{n.locale}"
+                                               itemLabel="#{n.locale.getDisplayName(userSession.locale)}"
                                 />
                             </p:selectOneMenu>
-
-
-<!--                            <p:outputLabel value="#{msg['userportal.projectstate.l']}"/>-->
-<!--                            <p:outputLabel value="#{msg['userportal.currentprojectstate.l']}"/>-->
-
                         </p:panelGrid>
+
+                        <p:commandButton id="updateLocale"
+                                         value="#{msg['common.save.b']}"
+                                         action="#{userProfileView.save}" />
+
                     </h:form>
 
-                    Locale Selector / Language / Country
+                    <p:spacer height="20px"/>
 
-                    Password Change
+                    <h:form id="pwreset">
+                        <p:button value="#{msg['userprofile.pwchange.l']}" outcome="/pwreset"/>
+                    </h:form>
 
                 </p:outputPanel>
 
             </p:panel>
 
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
 
         </ui:define>
 

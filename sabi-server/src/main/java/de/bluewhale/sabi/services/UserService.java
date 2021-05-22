@@ -90,4 +90,17 @@ public interface UserService {
      */
     String fetchAmountOfParticipants();
 
+    /**
+     * Use this whenever you require to update a users profile data.
+     * @param userProfileTo user profile Data which will be updated
+     * @param principalName provided by Spring Security and currently equal to users email address.
+     *                      only when this emailaddress belongs the {@link UserProfileTo#userId} the update will be performed.
+     * @return resultTo containing the successful updated data.
+     * @throws BusinessException with
+      {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem - you may retry later.
+      {@link AuthExceptionCodes#AUTHENTICATION_FAILED} in case of a missmatched principal
+      {@link CommonExceptionCodes#DATA_INCOMPLETE} in case of a missmatched principal
+     */
+    @Transactional
+    ResultTo<UserProfileTo> updateProfile(UserProfileTo userProfileTo, String principalName) throws BusinessException;
 }
