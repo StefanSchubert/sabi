@@ -6,22 +6,12 @@ captcha:
 
 # JSF/Primefaces Config
 # possible props see: https://docs.joinfaces.org/current/reference/#properties
+# primefaces 10 possible themes are saga, arya, vela
 joinfaces:
   jsf:
     project-stage: development
   primefaces:
-    theme: flick
-
-# Logback Configuration
-logging:
-  level:
-    de:
-      bluewhale:
-        sabi: DEBUG
-    org:
-      springframework: ERROR
-  pattern:
-    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
+    theme: saga
 
 # Health check for cloud deployment
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-enabling-endpoints

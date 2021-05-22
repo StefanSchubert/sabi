@@ -27,6 +27,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${sabi.mailvalidation.url}")
     String mailValidationURL;
 
+    @Value("${spring.mail.username}")
+    String senderAddress;
+
     @Override
     public void sendValidationMail(UserTo createdUser) throws MessagingException {
         MimeMessage message = mailer.createMimeMessage();
@@ -35,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(createdUser.getEmail());
         helper.setSubject("sabi Account Validation");
-        helper.setFrom("no-reply@sabi.bluewhale.de");
+        helper.setFrom(senderAddress);
 
         // todo i18n Textbausteine (userTO) extract sabi target URL from application properties
         helper.setText("<html><body>" +
@@ -56,7 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(email);
         helper.setSubject("Sabi account activated");
-        helper.setFrom("no-reply@sabi.bluewhale.de");
+        helper.setFrom(senderAddress);
 
         // todo i18n Textbausteine ggf. DISCLAIMER/ Nutzungsbedingungen
         helper.setText("<html><body>" +
@@ -78,7 +81,7 @@ public class NotificationServiceImpl implements NotificationService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(email);
         helper.setSubject("Your Sabi password reset request");
-        helper.setFrom("no-reply@sabi.bluewhale.de");
+        helper.setFrom(senderAddress);
 
         // todo i18n Textbausteine
         helper.setText("<html><body>" +
@@ -100,7 +103,7 @@ public class NotificationServiceImpl implements NotificationService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(emailAddress);
         helper.setSubject("Your Sabi password reset request");
-        helper.setFrom("no-reply@sabi.bluewhale.de");
+        helper.setFrom(senderAddress);
 
         // todo i18n Textbausteine
         helper.setText("<html><body>" +

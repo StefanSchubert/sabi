@@ -79,15 +79,6 @@
             <artifactId>primefaces-spring-boot-starter</artifactId>
         </dependency>
 
-        <dependency>
-            <!-- Theme Management has been changed with at least PF 10. Splitted in to commercial and community ones.
-                 they need now to be added as you wish. At least for now Apr'21 they are not automatically included
-                 via joinfaces. -->
-            <groupId>org.primefaces.themes</groupId>
-            <artifactId>flick</artifactId>
-            <version>1.0.10</version>
-        </dependency>
-
         <!-- Spring boot actuator to expose metrics endpoint -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -119,8 +110,20 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- favor log4j2 over logback -->
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
+        <dependency>
+            <!-- as log configuration we have a log4j-spring.xml on production server beneath the application.yml  -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
 
         <!-- For spring-security in combination with JWT -->
         <dependency>
