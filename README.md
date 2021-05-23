@@ -6,7 +6,7 @@ This is a semi-scientific (or open-science) project that aims to gain insights
 ## Latest project news:
 | Date | News |
 | ----- | ----- |
-| 16th Mai 2021 | **Sneak Preview** available on http://sabi-project.net (Notice: Only available if you have an IPV6 Internet-Connection (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
+| 16th Mai 2021 | **Sneak Preview** available on http://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
 | *upcoming* | Softlauch announcement. Spreading the word (i.e. above link) in selected forums, to get some Beta-Tester and collect valuable feedback.  |
 
 

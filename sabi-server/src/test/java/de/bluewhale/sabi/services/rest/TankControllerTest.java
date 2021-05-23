@@ -87,7 +87,7 @@ public class TankControllerTest {
 
         given(this.aquariumRepository.findAllByUser_IdIs(userTo.getId())).willReturn(testAquariumEntities);
 
-        // and we need a valid authentication token for oure mocked user
+        // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests his aquarium list

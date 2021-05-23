@@ -10,7 +10,8 @@ import de.bluewhale.sabi.security.PasswordPolicyTest;
 import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
-import de.bluewhale.sabi.services.rest.UserAuthController_REST_API_Test;
+import de.bluewhale.sabi.services.rest.UserAuthControllerTest;
+import de.bluewhale.sabi.services.rest.UserProfileControllerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -25,7 +26,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @RunWith(Suite.class)
 @SuiteClasses({UserRepositoryTest.class,
         UserServiceTest.class,
-        UserAuthController_REST_API_Test.class,
+        UserAuthControllerTest.class,
+        UserProfileControllerTest.class,
         TankTestSuite.class,
         MeasurementTestSuite.class,
         FishServiceTest.class,

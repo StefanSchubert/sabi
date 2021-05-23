@@ -8,6 +8,7 @@
 
 /captcha/src/main/webapp/
 /captcha/target/
+/captcha/logs/
 
 /sabi-boundary/target/
 
@@ -16,6 +17,7 @@
 /sabi-database/target
 
 /sabi-server/target
+/sabi-server/logs
 /sabi-server/src/main/webapp/WEB-INF/classes
 /sabi-server/.DS_Store
 /sabi-server/createDDL_ddlGeneration.jdbc
@@ -26,6 +28,7 @@
 /sabi-server/src/main/webapp/WEB-INF/
 
 /sabi-webclient/target
+/sabi-webclient/logs
 
 /devops/docker/sabi-backend/assets/opt/*.jar
 /devops/docker/captcha/assets/opt/*.jar

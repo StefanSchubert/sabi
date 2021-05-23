@@ -47,7 +47,7 @@ import static org.mockito.Mockito.reset;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class UserAuthController_REST_API_Test {
+public class UserAuthControllerTest {
 
 
     SimpleSmtpServer smtpServer;

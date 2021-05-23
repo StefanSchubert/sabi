@@ -10,6 +10,7 @@ import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 /**
  * Small Util class which provide common test data.
@@ -69,6 +70,12 @@ public class TestDataFactory {
         final NewRegistrationTO userTo = new NewRegistrationTO(eMail, eMail, clearTextPassword);
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
         return userToResultTo.getValue();
+    }
+
+    public UserProfileTo getUserProfileTo(Long userID) {
+        return new UserProfileTo(userID,
+                Locale.ENGLISH.getLanguage(),
+                Locale.UK.getCountry());
     }
 
     /**

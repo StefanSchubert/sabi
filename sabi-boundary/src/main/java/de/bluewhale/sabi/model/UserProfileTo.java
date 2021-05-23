@@ -45,7 +45,7 @@ public class UserProfileTo implements Serializable {
         return this.userId;
     }
 
-    public void setId(Long pUserID) {
+    public void setUserId(Long pUserID) {
         this.userId = pUserID;
     }
 
@@ -56,5 +56,23 @@ public class UserProfileTo implements Serializable {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    /*
+    Do not remove the equal, it's mandatory for being able to create Mockanswers in rest api tests.
+    */
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserProfileTo)) return false;
+
+        final UserProfileTo that = (UserProfileTo) o;
+
+        return this.userId != null ? this.userId.equals(that.userId) : that.userId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.userId != null ? this.userId.hashCode() : 0;
     }
 }
