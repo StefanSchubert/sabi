@@ -20,10 +20,6 @@
 
         <ui:define name="content">
 
-            <p:messages id="msg1" for="troubleMsg" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
-
             <h:form id="measureform">
 
                 <ui:remove>
@@ -71,7 +67,7 @@
                     <p:column>
                         <ui:remove>
                             <!-- inputNumber could not be used like this
-                                 The problemn is on field blur a value 1.500 will be turned into 1,50
+                                 The problem is on field blur a value 1.500 will be turned into 1,50
 
                                <p:inputNumber id="measuredValue"
                                        decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
@@ -97,11 +93,11 @@
 
                     <p:commandButton value="#{msg['common.save.b']}" action="#{measurementListView.save()}"
                                      id="saveAction" icon="pi pi-save"
-                                     ajax="true" update=":listing"
+                                     update=":listing"
                                      title="#{msg['common.save.b']}"/>
 
                     <p:commandButton value="#{msg['common.new_record.b']}" action="#{measurementListView.resetForm()}"
-                                     id="delAction" ajax="true" resetValues="true"
+                                     id="delAction" resetValues="true"
                                      update=":measureform" icon="pi pi-refresh" title="#{msg['common.new_record.b']}"/>
 
                 </p:panelGrid>
@@ -116,13 +112,18 @@
 
             </h:form>
 
-            <p:messages id="msg2" for="submitState" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
-
             <hr/>
 
             <h:form id="listing">
+                <p:messages id="msg1" for="troubleMsg" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+                <p:messages id="msg2" for="submitState" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
+                <p:divider/>
+                <p:spacer height="20px"/>
 
                 <div>
                     <h5><p:outputLabel value="#{msg['measureview.listing.h']}"/></h5>
@@ -149,7 +150,7 @@
                         </p:column>
 
                         <p:column style="width:3rem;text-align: center">
-                            <p:commandButton update="measureform" ajax="true"
+                            <p:commandButton update="measureform"
                                              icon="pi pi-pencil" title="Edit"
                                              action="#{measurementListView.editMeasurement(m)}"/>
                         </p:column>
