@@ -18,12 +18,12 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author Stefan Schubert
  */
-public class GeneratorTest {
+public class QAGeneratorTest {
 
 
     @Test
     public void provideChallengeForDefaultFallbackLanguage() throws Exception {
-        Generator generator = new Generator();
+        QAGenerator generator = new QAGenerator();
         ChallengeTo challengeTo = generator.provideChallengeFor("unknown");
 
         assertNotNull("Generator did not delivered a captcha", challengeTo);
@@ -37,7 +37,7 @@ public class GeneratorTest {
     @Test
     public void testChallengeForRequestedLanguage() throws Exception {
         // Given
-        Generator generator = new Generator();
+        QAGenerator generator = new QAGenerator();
 
         // When
         ChallengeTo challengeTo = generator.provideChallengeFor(Locale.GERMAN.getLanguage());

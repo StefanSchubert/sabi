@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
 alter table sabi.parameter drop foreign key parameter_ibfk_1;
 
 alter table sabi.parameter

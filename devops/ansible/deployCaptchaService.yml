@@ -26,6 +26,12 @@
         state: directory
         owner: captcha
         group: captcha
+    - name: reCreate captchas own log directory
+      file:
+        path: /var/captcha/logs
+        state: directory
+        owner: captcha
+        group: captcha
     - name: Copy systemd service file to server
       copy:
         src: captchaBE.service

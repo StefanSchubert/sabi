@@ -10,6 +10,7 @@ import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 /**
  * Small Util class which provide common test data.
@@ -71,11 +72,15 @@ public class TestDataFactory {
         return userToResultTo.getValue();
     }
 
+    public UserProfileTo getUserProfileTo() {
+        return new UserProfileTo(Locale.ENGLISH.getLanguage(), Locale.UK.getCountry());
+    }
+
     /**
      * Links preexisting testdata for aquarium (user) and unit.
      *
-     * @return
      * @param pTankID
+     * @return
      */
     public MeasurementTo getTestMeasurementTo(Long pTankID) {
         final MeasurementTo measurementTo = new MeasurementTo();

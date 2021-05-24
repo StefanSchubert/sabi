@@ -24,4 +24,19 @@ Content-Type: application/json
   "username": "tester"
 }
 
-###
+### Get authed users tanks
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/tank/list
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYWJpQGJsdWV3aGFsZS5kZSIsImV4cCI6MTYyMTg1NjI1MX0.J9LxzicqrvoIXZHQDnUluqr4Kb0SKo-Z9vq7uogz5uTQaBxTC6GwEBU19S_jd3mOkpnk1oCryiJp2eatN2mdTg
+Accept: application/json
+
+### Update User Profile
+PUT http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/userprofile
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYWJpQGJsdWV3aGFsZS5kZSIsImV4cCI6MTYyMTg1OTYwOX0.eYgwtbUlbfHmqpN3zQw4b0H8-HdHbvbW1gIaymIfDmOLzxioty5GA4VxKllgMYJcHRkXopugINfr1ZwRc-VmwA
+Accept: application/json
+Content-Type: application/json
+
+{
+  "country": "DE",
+  "language": "de"
+}
+

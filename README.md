@@ -3,6 +3,13 @@
 This is a semi-scientific (or open-science) project that aims to gain insights
  from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
 
+## Latest project news:
+| Date | News |
+| ----- | ----- |
+| 16th Mai 2021 | **Sneak Preview** available on http://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
+| *upcoming* | Softlauch announcement. Spreading the word (i.e. above link) in selected forums, to get some Beta-Tester and collect valuable feedback.  |
+
+
 ## Vision I
 
 In seawater forums, wikis, books we got advice on the regular values (max,min) of the important mineral levels and so on.
@@ -71,7 +78,7 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
 * JSF2.3 based WebClient
-** Primefaces 7.x
+** Primefaces 10.x
 * Spring-Boot-Application
 
 Why JSF and not some current modern framework like angular? In fact it took me quite a while to came to a decision here.

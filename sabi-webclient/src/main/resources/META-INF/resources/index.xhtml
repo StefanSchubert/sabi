@@ -27,7 +27,7 @@
 <h:body styleClass="splashscreen">
 
     <h1>#{msg['login.welcome.h']}</h1>
-    <div style="height:52vh"/>
+    <div style="height:45vh"/>
     <p>
         <h:outputText value="#{msg['welcome.t.introduction']}" styleClass="text"/>
     </p>
@@ -36,7 +36,10 @@
         <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
     </h:panelGrid>
     <br/>
-    <p:messages id="messages" for="common" showDetail="true" closable="true">
+    <p:messages id="msg1" for="additionalHint" showDetail="true" closable="true">
+        <p:autoUpdate/>
+    </p:messages>
+    <p:messages id="msg2" for="common" showDetail="true" closable="true">
         <p:autoUpdate/>
     </p:messages>
 </h:body>

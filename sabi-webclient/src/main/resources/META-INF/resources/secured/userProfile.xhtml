@@ -8,7 +8,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -24,9 +25,53 @@
 
         <ui:define name="content">
             <ui:remove>
-                <!--  This is a little hack as using the viewAction from Metadata doesn't seem to work. -->
+                <!--  DO not include calling gravatar here, as this might violate the promise not to pass
+                      any personal data to 3rd parties. -->
             </ui:remove>
-            <p:outputPanel>userProfile</p:outputPanel>
+
+            <p:panel header="#{msg['userprofile.h']} #{userSession.userName}">
+
+                <p:outputPanel>
+                    <h:form id="localeswitcher">
+                        <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
+
+                            <p:outputLabel for="localeselection" value="#{msg['userprofile.localechoice.l']}"/>
+                            <p:selectOneMenu id="localeselection"
+                                             value="#{userProfileView.selectedLocale}"
+                                             widgetVar="n"
+                                             autoWidth="true">
+                                <pe:convertLocale/>
+                                <f:selectItems value="#{userProfileView.supportedLocales}"
+                                               var="n"
+                                               itemValue="#{n.locale}"
+                                               itemLabel="#{n.locale.getDisplayName(userSession.locale)}"
+                                />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <p:commandButton id="updateLocale"
+                                         value="#{msg['common.save.b']}"
+                                         ajax="false"
+                                         action="#{userProfileView.save}" />
+
+                        <p:messages id="msg1" for="profileupdate" showDetail="true" closable="true">
+                            <p:autoUpdate/>
+                        </p:messages>
+
+                    </h:form>
+
+
+                    <p:divider align="center"  />
+                    <p:spacer width="10px"/>
+
+                    <h:form id="pwreset">
+                        <p:button value="#{msg['userprofile.pwchange.l']}" outcome="/pwreset"/>
+                    </h:form>
+
+                </p:outputPanel>
+
+            </p:panel>
+
         </ui:define>
 
     </ui:composition>

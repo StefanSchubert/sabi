@@ -65,4 +65,13 @@ public interface UserService extends Serializable {
      */
     void resetPassword(@NotNull ResetPasswordTo requestData) throws BusinessException;
 
+
+    /**
+     * Update users profile settings.
+     * @param pUserProfile new user profile settings
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @throws BusinessException
+     */
+    void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+
 }

@@ -111,8 +111,15 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             chartData.addChartDataSet(dataSet);
 
             // Add Threshold Lines if threshold data is available
-            ParameterTo parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getSabiBackendToken());
-            if (parameterTo != null) {
+            ParameterTo parameterTo = null;
+            try {
+                parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getSabiBackendToken());
+            } catch (Exception e) {
+                log.error("Could not Reach Backend to access detail parameter infos for unit {}",selectedUnitId);
+                e.printStackTrace();
+            }
+
+             if (parameterTo != null) {
 
                 log.debug("Found Threshold infos for {}. Add them to the chart for {}",
                         parameterTo, getUnitSignForId(selectedUnitId, knownUnits));

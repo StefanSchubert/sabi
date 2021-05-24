@@ -23,7 +23,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     @Autowired
     SabiDoorKeeper sabiAuthenticationManager;
 
@@ -36,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/javax.faces.resource/**").permitAll()
                 // Allow Pages that don't require an auth context.
                  .antMatchers("/", "/index.xhtml", "/register.xhtml", "/pwreset.xhtml",
-                        "/preregistration.xhtml", "/logout.xhtml", "/credits.xhtml").permitAll()
+                        "/preregistration.xhtml", "/logout.xhtml", "/credits.xhtml","/static/**").permitAll()
                 // Allow Monitoring Endpoint
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 // all others require authentication

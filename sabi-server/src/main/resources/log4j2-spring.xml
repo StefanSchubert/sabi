@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
+        </Console>
+
+        <RollingFile name="RollingFile"
+                     fileName="./logs/sabi-service.log"
+                     filePattern="./logs/$${date:yyyy-MM}/sabi-service-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover daily and when the file reaches
+                    10 MegaBytes -->
+                <SizeBasedTriggeringPolicy
+                        size="30MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <!-- keep only last 14 files -->
+            <DefaultRolloverStrategy max="14" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile" />
+        </Root>
+
+        <Logger name="de.bluewhale.sabi" level="INFO"/>
+    </Loggers>
+
+</Configuration>

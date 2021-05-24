@@ -41,4 +41,17 @@ public class RestHelper {
         return headers;
     }
 
+    /**
+     * Contains Mediatype Application Json, User Agent and Auth-Informations
+     * @param JWTBackendAuthtoken valid Auth-Token for the Backend-Session
+     * @param contentTypeHeader sets the header 'Content-Type'
+     * @return http header required to mak calls against secured API
+     */
+    public static HttpHeaders prepareAuthedHttpHeader(String JWTBackendAuthtoken, MediaType contentTypeHeader) {
+        HttpHeaders headers = buildHttpHeader();
+        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        headers.setContentType(contentTypeHeader);
+        return headers;
+    }
+
 }

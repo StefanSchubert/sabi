@@ -59,7 +59,8 @@
                                            itemValue="#{m.id}"
                                            itemLabel="#{m.unitSign}"
                             />
-                            <p:ajax event="itemSelect" update=":measureform:unitDescription :measureform:thresholdInfo"/>
+                            <p:ajax event="itemSelect"
+                                    update=":measureform:unitDescription :measureform:thresholdInfo"/>
                         </p:selectOneMenu>
                         <br/>
                         <h:outputText id="unitDescription"
@@ -68,11 +69,22 @@
 
                     <p:outputLabel for="measuredValue" value="#{msg['measureview.value.l']}"/>
                     <p:column>
-                        <p:inputNumber id="measuredValue"
+                        <ui:remove>
+                            <!-- inputNumber could not be used like this
+                                 The problemn is on field blur a value 1.500 will be turned into 1,50
+
+                               <p:inputNumber id="measuredValue"
                                        decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
                                        thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
                                        value="#{measurementListView.measurement.measuredValue}"
                         />
+                            -->
+                        </ui:remove>
+                        <p:inputText id="measuredValue"
+                                     value="#{measurementListView.measurement.measuredValue}">
+                            <f:convertNumber locale="#{measurementListView.userSession.locale}"
+                                             minFractionDigits="2"/>
+                        </p:inputText>
                         <br/>
                         <h:outputText id="thresholdInfo"
                                       value="#{measurementListView.getGetThresholdInfoFor(measurementListView.measurement.unitId)}"/>

@@ -39,7 +39,7 @@ public class MessageUtil {
      * @param msg      the message to be displayed
      */
     public static void info(@Null String clientId, @NotNull String msg) {
-        FacesContext.getCurrentInstance().addMessage(clientId, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", msg));
+        FacesContext.getCurrentInstance().addMessage(clientId, new FacesMessage(FacesMessage.SEVERITY_INFO, "", msg));
     }
 
     /**
@@ -51,7 +51,7 @@ public class MessageUtil {
      */
     public static void info(@Null String clientId, @NotNull String messagePropertyKey, @NotNull Locale locale) {
         String localizedMessage = getFromMessageProperties(messagePropertyKey, locale);
-        FacesContext.getCurrentInstance().addMessage(clientId, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", localizedMessage));
+        FacesContext.getCurrentInstance().addMessage(clientId, new FacesMessage(FacesMessage.SEVERITY_INFO, "", localizedMessage));
     }
 
     /**

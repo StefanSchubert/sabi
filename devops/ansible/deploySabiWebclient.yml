@@ -27,6 +27,12 @@
         state: directory
         owner: sabi
         group: sabi
+    - name: reCreate sabis own log directory
+      file:
+        path: /var/sabi/logs
+        state: directory
+        owner: sabi
+        group: sabi
     - name: Copy new jar file
       copy:
         src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/target/sabi-webclient.jar

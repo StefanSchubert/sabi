@@ -1,27 +1,17 @@
 ## Connection parameter to the captcha service
 captcha:
   backend:
-    url: http://localhost:8081/captcha/api
+    url: http://blackpearl:8081/captcha/api
 
 
 # JSF/Primefaces Config
 # possible props see: https://docs.joinfaces.org/current/reference/#properties
+# primefaces 10 possible themes are saga, arya, vela
 joinfaces:
   jsf:
     project-stage: development
   primefaces:
-    theme: flick
-
-# Logback Configuration
-logging:
-  level:
-    de:
-      bluewhale:
-        sabi: DEBUG
-    org:
-      springframework: ERROR
-  pattern:
-    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n'
+    theme: saga
 
 # Health check for cloud deployment
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-enabling-endpoints
@@ -46,9 +36,14 @@ name: sabi-webclient
 # sabi backend can be found (here without /api on purpose)
 sabi:
   backend:
-    url: http://localhost:8080/sabi
+    url: http://blackpearl:8080/sabi
 server:
   port: 8088
+  session:
+    timeout: 600
+  error:
+    whitelabel:
+      enabled: false
   servlet:
     context-path: /
 servlet:

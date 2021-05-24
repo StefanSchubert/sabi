@@ -8,27 +8,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
-
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
 </h:head>
 
 <h:body>
+
     <ui:composition template="/template/masterLayout.xhtml">
-
-        <ui:define name="metadata">
-            <!-- will be added to f:metadata section of the master template -->
-            <f:viewAction action="#{applicationInfo.fetchMotd}"/>
-        </ui:define>
-
         <ui:define name="content">
-            <ui:remove>
-                <!--  This is a little hack as using the viewAction from Metadata doesn't seem to work. -->
-            </ui:remove>
-            <p:outputPanel>projectStats....comming soon</p:outputPanel>
-        </ui:define>
 
+            <p:panelGrid columns="2">
+                <img src="#{resource['images:pathfinder.jpg']}" alt="Roadmap sign underwater with Stefan"/>
+                <p:column>
+                    <h:outputText value="#{msg['impressum.role.t']}" /><br/>
+                    <div style="height:3vh"/>
+                    Stefan Schubert <br/>
+                    Rotdornweg 22<br/>
+                    53919 Weilerswist<br/>
+                    eMail: stefan@bluewhale.de
+                </p:column>
+
+            </p:panelGrid>
+
+        </ui:define>
     </ui:composition>
+
 </h:body>
 </html>

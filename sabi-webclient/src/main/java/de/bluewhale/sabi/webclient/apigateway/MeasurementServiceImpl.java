@@ -225,7 +225,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             try {
                 responseEntity = restTemplate.postForEntity(saveMeasurmentURI, requestEntity, String.class);
             } catch (RestClientException e) {
-                log.error(String.format("Couldn't reach %s", saveMeasurmentURI), e.getLocalizedMessage());
+                log.error("Couldn't backend {} to add a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
                 throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
             }
             if (!responseEntity.getStatusCode().is2xxSuccessful()) {
@@ -242,7 +242,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             try {
                 responseEntity = restTemplate.exchange(saveMeasurmentURI, HttpMethod.PUT, requestEntity, String.class);
             } catch (RestClientException e) {
-                log.error(String.format("Couldn't reach %s", saveMeasurmentURI), e.getLocalizedMessage());
+                log.error("Couldn't backend {} to update a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
                 throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
             }
             if (!responseEntity.getStatusCode().is2xxSuccessful()) {

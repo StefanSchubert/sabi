@@ -60,8 +60,10 @@ public class ApplicationInfo implements Serializable {
 
     public void fetchCookieAnnouncement() {
         final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-        String msg = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
-        MessageUtil.info("common", msg);
+        String cookieHint = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
+        String additionalHint = MessageUtil.getFromMessageProperties("common.additional.info.t", locale);
+        MessageUtil.info("additionalHint", additionalHint);
+        MessageUtil.info("common", cookieHint);
     }
 
     /**
@@ -79,7 +81,7 @@ public class ApplicationInfo implements Serializable {
             };
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            log.error("Participant-Stats Restcall failure. {}",e);
+            log.error("Participant-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfParticipants;
     }
@@ -99,7 +101,7 @@ public class ApplicationInfo implements Serializable {
             };
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            log.error("Tank-Stats Restcall failure. {}",e);
+            log.error("Tank-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfTanks;
     }
@@ -126,7 +128,7 @@ public class ApplicationInfo implements Serializable {
             }
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            log.error("MOTD Restcall failure. {}",e);
+            log.error("MOTD Restcall failure. {}",e.getMessage());
         }
     }
 
