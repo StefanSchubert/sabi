@@ -99,7 +99,7 @@ public interface UserService {
      * @throws BusinessException with
       {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem - you may retry later.
       {@link AuthExceptionCodes#AUTHENTICATION_FAILED} in case of a missmatched principal
-      {@link CommonExceptionCodes#DATA_INCOMPLETE} in case of a missmatched principal
+      {@link CommonExceptionCodes#DATA_INCOMPLETE} in case of insufficient data
      */
     @Transactional
     ResultTo<UserProfileTo> updateProfile(UserProfileTo userProfileTo, String principalName) throws BusinessException;

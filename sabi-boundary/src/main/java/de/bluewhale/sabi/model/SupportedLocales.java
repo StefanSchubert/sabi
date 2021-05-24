@@ -15,9 +15,8 @@ import java.util.Locale;
  * @author Stefan Schubert
  */
 public enum SupportedLocales {
-    German(Locale.GERMANY),
+    German(Locale.GERMAN),
     English(Locale.ENGLISH);
-
 
     private Locale locale;
 

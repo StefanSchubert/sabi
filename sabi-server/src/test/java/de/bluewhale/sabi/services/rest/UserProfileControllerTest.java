@@ -42,6 +42,8 @@ public class UserProfileControllerTest {
     @MockBean
     UserService userService;
 
+
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -64,7 +66,7 @@ public class UserProfileControllerTest {
     public void testUnauthUserProfileUpdate() throws Exception {
 
         // given a successful update answer
-        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo(4711L);
+        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo();
         Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
         given(this.userService.updateProfile(userProfileTo,"junit@maven.here")).willReturn(userProfileResultTo);
@@ -88,7 +90,7 @@ public class UserProfileControllerTest {
     public void testUserProfileUpdate() throws Exception {
 
         // given a successful update answer
-        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo(4711L);
+        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo();
         Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
         given(this.userService.updateProfile(userProfileTo,TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);

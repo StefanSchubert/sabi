@@ -72,17 +72,15 @@ public class TestDataFactory {
         return userToResultTo.getValue();
     }
 
-    public UserProfileTo getUserProfileTo(Long userID) {
-        return new UserProfileTo(userID,
-                Locale.ENGLISH.getLanguage(),
-                Locale.UK.getCountry());
+    public UserProfileTo getUserProfileTo() {
+        return new UserProfileTo(Locale.ENGLISH.getLanguage(), Locale.UK.getCountry());
     }
 
     /**
      * Links preexisting testdata for aquarium (user) and unit.
      *
-     * @return
      * @param pTankID
+     * @return
      */
     public MeasurementTo getTestMeasurementTo(Long pTankID) {
         final MeasurementTo measurementTo = new MeasurementTo();

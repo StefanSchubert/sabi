@@ -13,7 +13,6 @@ import de.bluewhale.sabi.model.*;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Locale;
 
 
 /**
@@ -68,12 +67,11 @@ public interface UserService extends Serializable {
 
 
     /**
-     * Update users locale settings.
-     * @param pNewLocale new Locale to set.
+     * Update users profile settings.
+     * @param pUserProfile new user profile settings
      * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
-    @NotNull
-    void switchUsersLocale(@NotNull Locale pNewLocale, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+    void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String JWTBackendAuthtoken) throws BusinessException;
 
 }

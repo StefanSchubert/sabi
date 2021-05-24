@@ -39,6 +39,8 @@ sabi:
     url: http://blackpearl:8080/sabi
 server:
   port: 8088
+  session:
+    timeout: 600
   error:
     whitelabel:
       enabled: false

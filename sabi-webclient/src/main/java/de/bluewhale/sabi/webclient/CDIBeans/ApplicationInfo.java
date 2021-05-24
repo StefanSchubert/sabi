@@ -81,7 +81,7 @@ public class ApplicationInfo implements Serializable {
             };
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            log.error("Participant-Stats Restcall failure. {}",e);
+            log.error("Participant-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfParticipants;
     }
@@ -101,7 +101,7 @@ public class ApplicationInfo implements Serializable {
             };
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            log.error("Tank-Stats Restcall failure. {}",e);
+            log.error("Tank-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfTanks;
     }
@@ -128,7 +128,7 @@ public class ApplicationInfo implements Serializable {
             }
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.
-            log.error("MOTD Restcall failure. {}",e);
+            log.error("MOTD Restcall failure. {}",e.getMessage());
         }
     }
 

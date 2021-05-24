@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.SupportedLocales;
+import de.bluewhale.sabi.model.UserProfileTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.UserService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
@@ -59,13 +60,14 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         if (selectedLocale != null) {
             // Already stored
             try {
-                userService.switchUsersLocale(selectedLocale, userSession.getSabiBackendToken());
+                UserProfileTo userProfileTo = new UserProfileTo(selectedLocale.getLanguage(), selectedLocale.getCountry());
+                userService.updateUsersProfile(userProfileTo, userSession.getSabiBackendToken());
                 userSession.setLocale(selectedLocale);
                 userSession.setLanguage(selectedLocale.getLanguage());
-                MessageUtil.info("messages","userprofile.updateconfirmation.t",userSession.getLocale());
+                MessageUtil.info("profileupdate","userprofile.updateconfirmation.t",userSession.getLocale());
             } catch (BusinessException e) {
-                e.printStackTrace();
-                MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
+                log.error("Could not update users Profile. {}",e.getMessage());
+                MessageUtil.warn("profileupdate","common.error.internal_server_problem.t",userSession.getLocale());
             }
         }
         return USER_PROFILE_VIEW_PAGE;

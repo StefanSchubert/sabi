@@ -44,8 +44,10 @@ public class UserProfileController {
     @ResponseBody
     public ResponseEntity<UserProfileTo> updateUserProfile(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
                                                            @RequestBody UserProfileTo userProfileTo, Principal principal) {
+
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
+
         ResultTo<UserProfileTo> userProfileResultTo = null;
         ResponseEntity<UserProfileTo> responseEntity;
 

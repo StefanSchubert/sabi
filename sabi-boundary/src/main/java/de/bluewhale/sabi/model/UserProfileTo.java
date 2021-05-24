@@ -15,7 +15,6 @@ import java.io.Serializable;
 public class UserProfileTo implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    private Long userId;
     private String language ="en"; // default
     private String country = "US"; // default
 
@@ -24,8 +23,7 @@ public class UserProfileTo implements Serializable {
     public UserProfileTo() {
     }
 
-    public UserProfileTo(Long pUserID, String pLanguage, String pCountry) {
-        this.userId = pUserID;
+    public UserProfileTo(String pLanguage, String pCountry) {
         this.language = pLanguage;
         this.country = pCountry;
     }
@@ -39,14 +37,6 @@ public class UserProfileTo implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public Long getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(Long pUserID) {
-        this.userId = pUserID;
     }
 
     @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
@@ -68,11 +58,14 @@ public class UserProfileTo implements Serializable {
 
         final UserProfileTo that = (UserProfileTo) o;
 
-        return this.userId != null ? this.userId.equals(that.userId) : that.userId == null;
+        if (!this.language.equals(that.language)) return false;
+        return this.country != null ? this.country.equals(that.country) : that.country == null;
     }
 
     @Override
     public int hashCode() {
-        return this.userId != null ? this.userId.hashCode() : 0;
+        int result = this.language.hashCode();
+        result = 31 * result + (this.country != null ? this.country.hashCode() : 0);
+        return result;
     }
 }

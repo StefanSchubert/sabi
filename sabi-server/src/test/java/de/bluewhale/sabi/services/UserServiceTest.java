@@ -110,7 +110,7 @@ public class UserServiceTest {
         final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
-        UserProfileTo userProfileTo = new UserProfileTo(firstUserResultTo.getValue().getId(),
+        UserProfileTo userProfileTo = new UserProfileTo(
                 Locale.ENGLISH.getLanguage(),
                 Locale.ENGLISH.getCountry());
 
@@ -120,10 +120,10 @@ public class UserServiceTest {
         // Then
         final Message message = userProfileResultTo.getMessage();
         assertNotNull(message);
-        assertEquals(message.getCode(),CommonMessageCodes.UPDATE_SUCCEEDED);
+        assertEquals(message.getCode(), CommonMessageCodes.UPDATE_SUCCEEDED);
 
-        assertEquals(userEntity.getLanguage(),Locale.ENGLISH.getLanguage());
-        assertEquals(userEntity.getCountry(),Locale.ENGLISH.getCountry());
+        assertEquals(userEntity.getLanguage(), Locale.ENGLISH.getLanguage());
+        assertEquals(userEntity.getCountry(), Locale.ENGLISH.getCountry());
     }
 
     @Test(expected = BusinessException.class)
@@ -136,7 +136,7 @@ public class UserServiceTest {
         final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
         // When
-        UserProfileTo userProfileTo = new UserProfileTo(firstUserResultTo.getValue().getId(),
+        UserProfileTo userProfileTo = new UserProfileTo(
                 Locale.ENGLISH.getLanguage(),
                 Locale.ENGLISH.getCountry());
 

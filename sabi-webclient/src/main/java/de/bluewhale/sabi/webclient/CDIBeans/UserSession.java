@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
@@ -25,7 +27,6 @@ import java.util.Locale;
 @SessionScope
 @Slf4j
 public class UserSession implements Serializable {
-// ------------------------------ FIELDS ------------------------------
 
     private String sabiBackendToken = "N/A";
 
@@ -38,8 +39,6 @@ public class UserSession implements Serializable {
 
     @Autowired
     private I18nUtil i18nUtil;
-
-// --------------------- GETTER / SETTER METHODS ---------------------
 
     /**
      * Users locale
@@ -103,8 +102,6 @@ public class UserSession implements Serializable {
         this.userName = userName;
     }
 
-// -------------------------- OTHER METHODS --------------------------
-
     /**
      * Choosed Language of the User derived by browsers settings, if not explicit set before.
      *
@@ -162,4 +159,15 @@ public class UserSession implements Serializable {
         FacesContext.getCurrentInstance().getViewRoot().setLocale(requestedUserLocale);
         locale = requestedUserLocale;
     }
+
+    @PostConstruct
+    public void lazyinit(){
+        log.info("New Session created.");
+    }
+
+    @PreDestroy
+    public void killSession(){
+        log.info("Session termination reached.");
+    }
+
 }

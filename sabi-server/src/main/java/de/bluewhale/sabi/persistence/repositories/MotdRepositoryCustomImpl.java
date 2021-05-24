@@ -31,7 +31,7 @@ public class MotdRepositoryCustomImpl implements MotdRepositoryCustom {
         try {
             modt = (MotdEntity) query.getSingleResult();
         } catch (Exception e) {
-            log.error("Please check motd records or query impl. {}",e);
+            log.error("Please check motd records or query impl. {}",e.getMessage());
             // we handle this as no motd to be resilient.
         }
 

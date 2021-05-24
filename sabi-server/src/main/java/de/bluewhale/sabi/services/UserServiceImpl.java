@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw BusinessException.with(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE);
         }
-        if (existingUser != null && existingUser.getId().equals(userProfileTo.getUserId())) {
+        if (existingUser != null) {
             existingUser.setLanguage(userProfileTo.getLanguage());
             existingUser.setCountry(userProfileTo.getCountry());
         } else {
@@ -125,7 +125,6 @@ public class UserServiceImpl implements UserService {
     private boolean incompleteUserProfile(UserProfileTo userProfileTo) {
         boolean result = false;
         if (userProfileTo == null ||
-                userProfileTo.getUserId() == null ||
                 userProfileTo.getCountry() == null ||
                 userProfileTo.getLanguage() == null) {
             result = true;
