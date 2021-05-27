@@ -6,8 +6,8 @@ This is a semi-scientific (or open-science) project that aims to gain insights
 ## Latest project news:
 | Date | News |
 | ----- | ----- |
-| 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the insecure warning of the browsers. |
-| 16th Mai 2021 | **Sneak Preview** available on http://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
+| 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning. |
+| 16th Mai 2021 | **Sneak Preview** available on https://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
 | *upcoming* | Softlauch announcement. Spreading the word (i.e. above link) in selected forums, to get some Beta-Tester and collect valuable feedback.  |
 
 ## Vision I

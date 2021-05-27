@@ -7,7 +7,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui"
 >
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
@@ -17,7 +17,15 @@
 
     <ui:composition template="/template/masterLayout.xhtml">
         <ui:define name="content">
-            TODO - Feedback Form here
+
+            <p:panel header="#{msg['feedback.features.h']}">
+                #{msg['feedback.features.t']}
+            </p:panel>
+
+            <p:panel header="#{msg['feedback.common.h']}">
+                #{msg['feedback.common.t']}
+            </p:panel>
+
         </ui:define>
     </ui:composition>
 
