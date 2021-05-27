@@ -62,7 +62,10 @@ public class ApplicationInfo implements Serializable {
         final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
         String cookieHint = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
         String additionalHint = MessageUtil.getFromMessageProperties("common.additional.info.t", locale);
-        MessageUtil.info("additionalHint", additionalHint);
+
+        // TLS hint obsolete, as we managed to use let's encrypt now.
+        // MessageUtil.info("additionalHint", additionalHint);
+
         MessageUtil.info("common", cookieHint);
     }
 
