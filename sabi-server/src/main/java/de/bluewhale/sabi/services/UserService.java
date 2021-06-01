@@ -50,13 +50,14 @@ public interface UserService {
     /**
      * Use this to signin the user
      *
-     * @param pEmail             his email address which is being used to login
+     * @param pEmailOrUsername   users login. can be email adress or username
      * @param pClearTextPassword his password
      * @return ResultTo with Authentication result. You need to check the message within the resultTo.
+     *         In addition the result-To contains the users email address on success.
      * The Message must contain the following message code {@link AuthMessageCodes#SIGNIN_SUCCEEDED} otherwise the login failed.
      */
     @NotNull
-    ResultTo<String> signIn(@NotNull String pEmail, @NotNull String pClearTextPassword);
+    ResultTo<String> signIn(@NotNull String pEmailOrUsername, @NotNull String pClearTextPassword);
 
     /**
      * Will check if user email is registered and sends user an email with a onetime pass to reset his or hers password

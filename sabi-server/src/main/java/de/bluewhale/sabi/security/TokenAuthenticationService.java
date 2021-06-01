@@ -73,7 +73,7 @@ public class TokenAuthenticationService {
     /**
      * provides the user encoded with the token
      * @param token
-     * @return users identified by his email or null in casse the token was not valid.
+     * @return users identified by his email or null in case the token was not valid.
      */
     public static String extractUserFromToken(String token) {
         String user = Jwts.parser()

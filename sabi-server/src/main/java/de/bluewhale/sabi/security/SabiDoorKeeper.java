@@ -40,10 +40,12 @@ public class SabiDoorKeeper implements AuthenticationProvider {
 
         if (resultTo.getMessage().getCode().equals(AuthMessageCodes.SIGNIN_SUCCEEDED)) {
 
+            String usersEmailAsID = resultTo.getValue();
+
             // This constructor set the authenticated property to true
             // (The API allows to set the property only through the constructor)
             UsernamePasswordAuthenticationToken confirmedAuthentication =
-                    new UsernamePasswordAuthenticationToken(unconfirmedAuthentication.getPrincipal(),
+                    new UsernamePasswordAuthenticationToken(new SabiPrincipal(usersEmailAsID),
                             unconfirmedAuthentication.getCredentials(), Collections.emptyList());
 
             return confirmedAuthentication;

@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.Locale;
 
 import static de.bluewhale.sabi.TestDataFactory.*;
@@ -241,7 +242,7 @@ public class UserServiceTest {
         userService.validateUser(TESTUSER_EMAIL1, resultTo.getValue().getValidationToken());
 
         // When
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, clearTextPassword);
+        @NotNull ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, clearTextPassword);
 
         // Then
         assertNotNull("Contract Broken? Expected Session Token", signInResult.getValue());
@@ -260,7 +261,7 @@ public class UserServiceTest {
         // Nothing
 
         // When
-        ResultTo<String> signInResult = userService.signIn("I Don't care@anything", "abc");
+        @NotNull ResultTo<String> signInResult = userService.signIn("I Don't care@anything", "abc");
 
         // Then
         assertNotNull(signInResult);
@@ -285,7 +286,7 @@ public class UserServiceTest {
 
 
         // When
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, "abc");
+        @NotNull ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, "abc");
 
         // Then
         assertNotNull(signInResult);
@@ -311,7 +312,7 @@ public class UserServiceTest {
         userService.registerNewUser(userTo);
 
         // When
-        ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, "abc");
+        @NotNull ResultTo<String> signInResult = userService.signIn(TESTUSER_EMAIL1, "abc");
 
         // Then
         assertNotNull(signInResult);

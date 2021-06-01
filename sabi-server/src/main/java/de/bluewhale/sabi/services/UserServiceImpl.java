@@ -167,25 +167,31 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResultTo<String> signIn(@NotNull final String pEmail, @NotNull final String pClearTextPassword) {
+    public ResultTo<String> signIn(@NotNull final String pEmailOrUsername, @NotNull final String pClearTextPassword) {
 
-        UserEntity userEntity = userRepository.getByEmail(pEmail);
+        UserEntity userEntity;
+
+        // we allow to login with email or username
+        userEntity = userRepository.getByEmail(pEmailOrUsername);
+        if (userEntity == null) {
+            userEntity = userRepository.getByUsername(pEmailOrUsername);
+        }
 
         if (userEntity != null) {
 
             if (!userEntity.isValidated()) {
-                final Message errorMsg = Message.info(AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS, pEmail);
-                return new ResultTo<String>("Email address validation missing.", errorMsg);
+                final Message errorMsg = Message.info(AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS, pEmailOrUsername);
+                return new ResultTo<String>("Mailvalidation not finished yet.", errorMsg);
             } else if (passwordEncoder.matches(pClearTextPassword, userEntity.getPassword())) {
-                final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmail);
-                return new ResultTo<String>("Happy", successMessage);
+                final Message successMessage = Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED, pEmailOrUsername);
+                return new ResultTo<String>(userEntity.getEmail(), successMessage);
             } else {
-                final Message errorMsg = Message.error(AuthMessageCodes.WRONG_PASSWORD, pEmail);
-                return new ResultTo<String>("Sad", errorMsg);
+                final Message errorMsg = Message.error(AuthMessageCodes.WRONG_PASSWORD, pEmailOrUsername);
+                return new ResultTo<String>("Sorry - no way.", errorMsg);
             }
         } else {
-            final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmail);
-            return new ResultTo<String>("Fraud?", errorMsg);
+            final Message errorMsg = Message.error(AuthMessageCodes.UNKNOWN_USERNAME, pEmailOrUsername);
+            return new ResultTo<String>("Sorry - Unknown Account", errorMsg);
         }
     }
 
