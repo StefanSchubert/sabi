@@ -11,7 +11,7 @@ import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
-import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.exception.CommonMessageCodes;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
@@ -225,8 +225,12 @@ public class MeasurementServiceImpl implements MeasurementService {
             try {
                 responseEntity = restTemplate.postForEntity(saveMeasurmentURI, requestEntity, String.class);
             } catch (RestClientException e) {
-                log.error("Couldn't backend {} to add a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
-                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+                log.error("Couldn't reach backend {} to add a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
+                throw BusinessException.with(CommonMessageCodes.NETWORK_PROBLEM);
+            } catch (Exception e) {
+                log.error("Couln'd save measurment. Reason: {}",e);
+                e.printStackTrace();
+                throw BusinessException.with(CommonMessageCodes.BACKEND_API_PROBLEM);
             }
             if (!responseEntity.getStatusCode().is2xxSuccessful()) {
                 if (responseEntity.getStatusCodeValue() == 409) {
@@ -234,7 +238,7 @@ public class MeasurementServiceImpl implements MeasurementService {
                 }
                 if (responseEntity.getStatusCodeValue() == 401) {
                     log.warn("Invalid Token when trying to create measurement: {}", measurement.getId());
-                    throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
+                    throw BusinessException.with(AuthMessageCodes.TOKEN_EXPIRED);
                 }
             }
         } else {
@@ -243,16 +247,16 @@ public class MeasurementServiceImpl implements MeasurementService {
                 responseEntity = restTemplate.exchange(saveMeasurmentURI, HttpMethod.PUT, requestEntity, String.class);
             } catch (RestClientException e) {
                 log.error("Couldn't backend {} to update a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
-                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+                throw BusinessException.with(CommonMessageCodes.NETWORK_PROBLEM);
             }
             if (!responseEntity.getStatusCode().is2xxSuccessful()) {
                 if (responseEntity.getStatusCodeValue() == 409) {
                     log.warn("Tried to update non existing measurement or internal error. Measurement ID: {}", measurement.getId());
-                    throw new BusinessException(Message.error(MeasurementMessageCodes.NO_SUCH_MEAUREMENT));
+                    throw BusinessException.with(MeasurementMessageCodes.NO_SUCH_MEAUREMENT);
                 }
                 if (responseEntity.getStatusCodeValue() == 401) {
                     log.warn("Invalid Token when trying to update measurement: {}", measurement.getId());
-                    throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
+                    throw BusinessException.with(AuthMessageCodes.TOKEN_EXPIRED);
                 }
             }
         }

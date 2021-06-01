@@ -19,11 +19,11 @@
         <ui:define name="content">
 
             <p:panel header="#{msg['feedback.features.h']}">
-                #{msg['feedback.features.t']}
+                <h:outputText escape="false" value="#{msg['feedback.features.t']}"/>
             </p:panel>
 
             <p:panel header="#{msg['feedback.common.h']}">
-                #{msg['feedback.common.t']}
+                <h:outputText escape="false" value="#{msg['feedback.common.t']}"/>
             </p:panel>
 
         </ui:define>
