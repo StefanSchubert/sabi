@@ -49,6 +49,8 @@ public class SabiDoorKeeper implements AuthenticationProvider {
             }
         } catch (Exception e) {
             log.warn("AuthService failed! {}", e);
+            // Won't do. Faces Context does not exists yet.
+            // MessageUtil.warn("login", e.getLocalizedMessage());
             throw new BadCredentialsException(e.getLocalizedMessage());
         }
 

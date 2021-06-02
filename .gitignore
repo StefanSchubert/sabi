@@ -5,6 +5,8 @@
 *.jar
 /dropDDL_ddlGeneration.jdbc
 /createDDL_ddlGeneration.jdbc
+logs/
+Assets/Thumbs.db
 
 /captcha/src/main/webapp/
 /captcha/target/

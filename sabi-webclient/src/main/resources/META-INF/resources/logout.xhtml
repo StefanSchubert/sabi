@@ -32,7 +32,7 @@
     </p>
     <p>
         <h:form>
-            <h:outputText value="#{msg['logout.message.t']}" style="width: 50px;"/>
+            <h:outputText value="#{msg['logout.message.t']}" escape="false" style="width: 50px;"/>
             <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         </h:form>
     </p>
