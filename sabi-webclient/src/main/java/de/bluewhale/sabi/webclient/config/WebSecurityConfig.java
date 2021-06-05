@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/javax.faces.resource/**").permitAll()
                 // Allow Pages that don't require an auth context.
-                 .antMatchers("/", "/index.xhtml", "/register.xhtml", "/pwreset.xhtml",
+                 .antMatchers("/", "/robots.txt","/sitemap.xml","/index.xhtml", "/register.xhtml", "/pwreset.xhtml",
                         "/preregistration.xhtml", "/logout.xhtml", "/credits.xhtml","/static/**").permitAll()
                 // Allow Monitoring Endpoint
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
