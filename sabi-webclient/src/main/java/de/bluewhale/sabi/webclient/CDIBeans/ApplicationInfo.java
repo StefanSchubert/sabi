@@ -63,10 +63,9 @@ public class ApplicationInfo implements Serializable {
         String cookieHint = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
         String additionalHint = MessageUtil.getFromMessageProperties("common.additional.info.t", locale);
 
-        // TLS hint obsolete, as we managed to use let's encrypt now.
-        // MessageUtil.info("additionalHint", additionalHint);
-
         MessageUtil.info("common", cookieHint);
+        MessageUtil.info("additionalHint", additionalHint);
+
     }
 
     /**

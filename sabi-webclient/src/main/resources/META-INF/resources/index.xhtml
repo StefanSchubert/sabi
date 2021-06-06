@@ -29,7 +29,7 @@
     <h1>#{msg['login.welcome.h']}</h1>
     <div style="height:45vh"/>
     <p>
-        <h:outputText value="#{msg['welcome.t.introduction']}" styleClass="text"/>
+        <h:outputText escape="false" value="#{msg['welcome.t.introduction']}" styleClass="text"/>
     </p>
     <h:panelGrid columns="2" cellpadding="20">
         <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
