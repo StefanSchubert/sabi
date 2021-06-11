@@ -104,4 +104,16 @@ public interface UserService {
      */
     @Transactional
     ResultTo<UserProfileTo> updateProfile(UserProfileTo userProfileTo, String principalName) throws BusinessException;
+
+    /**
+     * Use this to query a users profile data.
+     * @param principalName provided by Spring Security and currently equal to users email address.
+     * @return resultTo containing the user profile. Profile may by null in case of errors
+     *         The Message in the resultTO must contain the following message code of type info
+     *         {@link de.bluewhale.sabi.exception.CommonMessageCodes#OK} otherwise the request failed.
+     * @throws BusinessException with
+    {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem - you may retry later.
+    {@link AuthExceptionCodes#AUTHENTICATION_FAILED} in case of a missmatched principal
+     */
+    @NotNull ResultTo<UserProfileTo> getUserProfile(String principalName) throws BusinessException;
 }

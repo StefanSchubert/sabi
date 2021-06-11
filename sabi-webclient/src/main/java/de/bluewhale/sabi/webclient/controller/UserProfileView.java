@@ -14,6 +14,7 @@ import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.annotation.PostConstruct;
@@ -64,6 +65,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
                 userService.updateUsersProfile(userProfileTo, userSession.getSabiBackendToken());
                 userSession.setLocale(selectedLocale);
                 userSession.setLanguage(selectedLocale.getLanguage());
+                LocaleContextHolder.setLocale(selectedLocale);
                 MessageUtil.info("profileupdate","userprofile.updateconfirmation.t",userSession.getLocale());
             } catch (BusinessException e) {
                 log.error("Could not update users Profile. {}",e.getMessage());

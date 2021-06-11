@@ -78,7 +78,7 @@
                         </ui:remove>
                         <p:inputText id="measuredValue"
                                      value="#{measurementListView.measurement.measuredValue}">
-                            <f:convertNumber locale="#{measurementListView.userSession.locale}"
+                            <f:convertNumber locale="#{userSession.locale}"
                                              minFractionDigits="2"/>
                         </p:inputText>
                         <br/>
@@ -141,7 +141,7 @@
 
                         <p:column headerText="#{msg['measureview.value.l']}">
                             <h:outputText value="#{m.measuredValue}">
-                                <f:convertNumber type="number" locale="#{reportView.userSession.locale}"/>
+                                <f:convertNumber type="number" locale="#{userSession.locale}"/>
                             </h:outputText>
                         </p:column>
 

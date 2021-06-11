@@ -69,4 +69,46 @@ public class UserProfileController {
 
         return responseEntity;
     }
+
+    @ApiOperation(value = "Get belonging userProfile", notes = "User ID will be derived from JWT Backend Token. " +
+            "Because of the Token we can be sure that we have an auth context and return users profile.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK - Check response body for users profile.",
+                    response = UserProfileTo.class),
+            @ApiResponse(code = 409, message = "Something wrong - DB Backend does not respond or something like that."),
+            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
+    })
+    @RequestMapping(value = {""}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<UserProfileTo> getUserProfile(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                        Principal principal) {
+
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+
+        ResultTo<UserProfileTo> userProfileResultTo = null;
+        ResponseEntity<UserProfileTo> responseEntity;
+
+        try {
+            userProfileResultTo = userService.getUserProfile(principal.getName());
+            final Message resultMessage = userProfileResultTo.getMessage();
+            if (Message.CATEGORY.INFO.equals(resultMessage.getType())) {
+                UserProfileTo existingUserProfileTo = userProfileResultTo.getValue();
+                responseEntity = new ResponseEntity<>(existingUserProfileTo, HttpStatus.OK);
+            } else {
+                log.error("Unexpected problem during accessing the userprofile occured.");
+                responseEntity = new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            }
+        } catch (BusinessException e) {
+            log.error("Userprofilaccess failed. {}", e.getMessage());
+            e.printStackTrace();
+            responseEntity = new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }
+
+        return responseEntity;
+    }
+
+
+
 }

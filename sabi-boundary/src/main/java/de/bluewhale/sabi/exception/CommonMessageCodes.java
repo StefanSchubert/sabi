@@ -13,6 +13,7 @@ package de.bluewhale.sabi.exception;
 public enum CommonMessageCodes implements MessageCode {
     INSUFFICIENT_DATA(CommonExceptionCodes.DATA_INCOMPLETE),
     UPDATE_SUCCEEDED,
+    OK,
     BACKEND_API_PROBLEM(CommonExceptionCodes.INTERNAL_ERROR),
     NETWORK_PROBLEM(CommonExceptionCodes.NETWORK_ERROR);
 

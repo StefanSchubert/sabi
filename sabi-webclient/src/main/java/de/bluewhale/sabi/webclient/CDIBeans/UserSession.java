@@ -52,13 +52,16 @@ public class UserSession implements Serializable {
             Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
             locale = supportedLocale;
 
-            log.debug("Session is using «{}» as locale",locale);
+            log.debug("Session locale wasn't set. Determined «{}» as locale",locale);
+        } else {
+            log.debug("View requests locale from SessionBean and got «{}» ",locale);
         }
 
         return locale;
     }
 
     public void setLocale(final Locale locale) {
+        log.debug("Locale Setter in UserSession called with «{}»",locale);
         this.locale = locale;
     }
 
