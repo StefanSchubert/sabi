@@ -76,11 +76,18 @@ public class TokenAuthenticationService {
      * @return users identified by his email or null in case the token was not valid.
      */
     public static String extractUserFromToken(String token) {
-        String user = Jwts.parser()
-                .setSigningKey(SECRET)
-                .parseClaimsJws(token.replace(HttpHeader.TOKEN_PREFIX, ""))
-                .getBody()
-                .getSubject();
+        String user = null;
+        try {
+            user = Jwts.parser()
+                    .setSigningKey(SECRET)
+                    .parseClaimsJws(token.replace(HttpHeader.TOKEN_PREFIX, ""))
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            System.out.println("Sabi.Service: TokenAuthenticationService could not parse JWT Token!");
+            System.out.println("Token was: "+token);
+            e.printStackTrace();
+        }
         return user;
     }
 

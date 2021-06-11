@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>0.8.5-SNAPSHOT</version>
+    <version>0.8.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -77,12 +77,25 @@
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>primefaces-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- favor log4j2 over logback -->
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring boot actuator to expose metrics endpoint -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Micrometer core dependency  -->
         <dependency>
@@ -135,6 +148,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- favor log4j2 over logback -->
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Sharing of TOs with the Backend -->

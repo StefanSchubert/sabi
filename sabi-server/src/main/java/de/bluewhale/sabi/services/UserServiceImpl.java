@@ -96,6 +96,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResultTo<UserProfileTo> getUserProfile(String principalName) throws BusinessException {
+
+        UserProfileTo userProfileTo = null;
+        UserEntity userEntity;
+
+        try {
+            userEntity = userRepository.getByEmail(principalName);
+        } catch (Exception e) {
+            throw BusinessException.with(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE);
+        }
+
+        if (userEntity == null ) {
+            throw BusinessException.with(AuthMessageCodes.INVALID_EMAIL_ADDRESS);
+        }
+
+        Message info = Message.info(CommonMessageCodes.OK);
+        userProfileTo = new UserProfileTo(userEntity.getLanguage(),userEntity.getCountry());
+        final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
+        return userProfileResultTo;
+    }
+
+    @Override
     public ResultTo<UserProfileTo> updateProfile(UserProfileTo userProfileTo, String principalName) throws BusinessException {
 
         UserEntity existingUser;

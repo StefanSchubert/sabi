@@ -133,7 +133,7 @@
 
                         <p:column headerText="#{msg['measureview.value.l']}">
                             <h:outputText value="#{m.measuredValue}">
-                                <f:convertNumber type="number" locale="#{reportView.userSession.locale}"/>
+                                <f:convertNumber type="number" locale="#{userSession.locale}"/>
                             </h:outputText>
                         </p:column>
 

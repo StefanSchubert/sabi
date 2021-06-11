@@ -32,7 +32,7 @@
             <AppenderRef ref="RollingFile" />
         </Root>
 
-        <Logger name="de.bluewhale.sabi" level="INFO"/>
+        <Logger name="de.bluewhale.sabi" level="DEBUG"/>
     </Loggers>
 
 </Configuration>
