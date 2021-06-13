@@ -12,6 +12,7 @@
 
 <f:metadata>
     <f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
     <f:viewAction action="#{applicationInfo.fetchCookieAnnouncement}"/>
 </f:metadata>
 
@@ -29,7 +30,7 @@
     <h1>#{msg['login.welcome.h']}</h1>
     <div style="height:45vh"/>
     <p>
-        <h:outputText value="#{msg['welcome.t.introduction']}" styleClass="text"/>
+        <h:outputText escape="false" value="#{msg['welcome.t.introduction']}" styleClass="text"/>
     </p>
     <h:panelGrid columns="2" cellpadding="20">
         <p:button outcome="login" value="#{msg['welcome.but.login']}"/>

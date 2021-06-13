@@ -14,6 +14,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Locale;
@@ -40,6 +41,9 @@ public class UserSession implements Serializable {
     @Autowired
     private I18nUtil i18nUtil;
 
+    @Inject
+    FacesContext facesContext;
+
     /**
      * Users locale
      *
@@ -48,17 +52,21 @@ public class UserSession implements Serializable {
     public Locale getLocale() {
 
         if (locale == null) {
-            Locale browsersLocale = LocaleContextHolder.getLocale();
+            Locale browsersLocale = LocaleContextHolder.getLocale(); // used by spring
             Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
             locale = supportedLocale;
 
-            log.debug("Session is using «{}» as locale",locale);
+            log.debug("Session locale wasn't set. Determined «{}» as locale",locale);
+        } else {
+            log.debug("View requests locale from SessionBean and got «{}» ",locale);
         }
 
         return locale;
     }
 
     public void setLocale(final Locale locale) {
+        log.debug("Locale Setter in UserSession called with «{}»",locale);
+        LocaleContextHolder.setLocale(locale);
         this.locale = locale;
     }
 
@@ -156,7 +164,7 @@ public class UserSession implements Serializable {
     public void setLanguage(String language) {
         Locale requestedUserLocale;
         requestedUserLocale = i18nUtil.getEnsuredSupportedLocale(language);
-        FacesContext.getCurrentInstance().getViewRoot().setLocale(requestedUserLocale);
+        facesContext.getCurrentInstance().getViewRoot().setLocale(requestedUserLocale);
         locale = requestedUserLocale;
     }
 

@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+Disallow: /secured
+Sitemap: https://sabi-project.net/sitemap.xml

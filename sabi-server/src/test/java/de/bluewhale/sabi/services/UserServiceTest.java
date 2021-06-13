@@ -127,6 +127,31 @@ public class UserServiceTest {
         assertEquals(userEntity.getCountry(), Locale.ENGLISH.getCountry());
     }
 
+    @Test
+    @Transactional
+    public void testGetUserProfile() throws Exception {
+        // Given
+        NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", VALID_PASSWORD);
+        userTo1.setLanguage(Locale.GERMAN.getLanguage());
+        userTo1.setCountry(Locale.GERMAN.getCountry());
+        final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
+
+        // When
+        ResultTo<UserProfileTo> userProfileToResultTo = userService.getUserProfile(TESTUSER_EMAIL1);
+
+        // Then
+        final Message message = userProfileToResultTo.getMessage();
+        assertNotNull(userProfileToResultTo);
+        assertNotNull(message);
+        assertEquals(message.getCode(), CommonMessageCodes.OK);
+
+        UserProfileTo userProfileTo = userProfileToResultTo.getValue();
+        assertNotNull(userProfileTo);
+        assertEquals(userProfileTo.getLanguage(),userTo1.getLanguage());
+        assertEquals(userProfileTo.getCountry(),userTo1.getCountry());
+
+    }
+
     @Test(expected = BusinessException.class)
     @Transactional
     public void testFraudUserProfileUpdate() throws Exception {
@@ -323,6 +348,7 @@ public class UserServiceTest {
                 AuthExceptionCodes.AUTHENTICATION_FAILED);
         assertEquals(message.getCode(), AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS);
     }
+
 
 
 }

@@ -108,4 +108,31 @@ public class UserProfileControllerTest {
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
+    /**
+     * Tests userprofile Rest API:  retrieve Users Profile
+     *
+     * @throws Exception
+     */
+    @Test // REST-API
+    public void testGetUsersProfile() throws Exception {
+
+        // given a successful retrieval answer
+        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo();
+        Message info = Message.info(CommonMessageCodes.OK);
+        final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
+        given(this.userService.getUserProfile(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        // when - sending an retrieval request
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.GET, requestEntity, String.class);
+
+        // then we should get a 200 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+    }
+
+
 }

@@ -12,12 +12,12 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Locale;
@@ -59,14 +59,12 @@ public class ApplicationInfo implements Serializable {
     }
 
     public void fetchCookieAnnouncement() {
-        final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
-        String cookieHint = MessageUtil.getFromMessageProperties("common.cookie.t", locale);
-        String additionalHint = MessageUtil.getFromMessageProperties("common.additional.info.t", locale);
-
-        // TLS hint obsolete, as we managed to use let's encrypt now.
-        // MessageUtil.info("additionalHint", additionalHint);
+        String cookieHint = MessageUtil.getFromMessageProperties("common.cookie.t", LocaleContextHolder.getLocale());
+        String additionalHint = MessageUtil.getFromMessageProperties("common.additional.info.t", LocaleContextHolder.getLocale());
 
         MessageUtil.info("common", cookieHint);
+        MessageUtil.info("additionalHint", additionalHint);
+
     }
 
     /**
@@ -116,7 +114,7 @@ public class ApplicationInfo implements Serializable {
      */
     public void fetchMotd() {
 
-        final Locale locale = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale();
+        final Locale locale = LocaleContextHolder.getLocale();
         String language = locale.getLanguage();
         String motdURI = sabiBackendUrl + "/api/app/motd/" + language;
         MotdTo motdTo;

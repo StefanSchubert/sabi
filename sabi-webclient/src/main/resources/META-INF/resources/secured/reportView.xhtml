@@ -11,6 +11,10 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+<f:metadata>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
 </h:head>
@@ -133,7 +137,7 @@
 
                         <p:column headerText="#{msg['measureview.value.l']}">
                             <h:outputText value="#{m.measuredValue}">
-                                <f:convertNumber type="number" locale="#{reportView.userSession.locale}"/>
+                                <f:convertNumber type="number" locale="#{userSession.locale}"/>
                             </h:outputText>
                         </p:column>
 

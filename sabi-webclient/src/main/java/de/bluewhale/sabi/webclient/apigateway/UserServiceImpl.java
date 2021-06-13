@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.api.HttpHeader;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
@@ -27,6 +28,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
 
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
@@ -52,6 +55,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private I18nUtil i18nUtil;
+
+    @Inject
+    FacesContext facesContext;
 
     /* Does not work this way currently with joinfaces
        Tried to use ist, to get browsers locale, but reefactored the code to use springs context instead via LocaleContextHolder()
@@ -89,7 +95,6 @@ public class UserServiceImpl implements UserService {
         ResponseEntity<String> responseEntity = null;
         HttpHeaders responseHeaders = null;
         try {
-
             responseEntity = restTemplate.exchange(sabiBackendUrl + Endpoint.LOGIN, HttpMethod.POST, entity, String.class);
             String result = responseEntity.getBody();
             responseHeaders = responseEntity.getHeaders();
@@ -108,14 +113,20 @@ public class UserServiceImpl implements UserService {
             String jwtSabiBackendToken = responseHeaders.getFirst(HttpHeader.AUTH_TOKEN);
             userSession.setSabiBackendToken(jwtSabiBackendToken);
 
-            // TODO STS (29.12.19): Should be done only, if he or she hasn't set it explicitly.
-            // In addition we determine users locale here.
-            Locale browsersLocale = LocaleContextHolder.getLocale();
-            Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
-            LocaleContextHolder.setLocale(supportedLocale);
-            userSession.setLocale(supportedLocale);
+            UserProfileTo userProfileTo = requestUserProfile(jwtSabiBackendToken);
 
-            // TODO STS (29.12.19): Refactor this to contain the chosen username instead of the email.
+            Locale supportedLocale;
+            if (userProfileTo != null && !Strings.isNullOrEmpty(userProfileTo.getLanguage())) {
+                /* Locale from stored user profile */
+                supportedLocale = i18nUtil.getEnsuredSupportedLocale(userProfileTo.getLanguage());
+            } else {
+                /* Locale derived from browser */
+                Locale browsersLocale = LocaleContextHolder.getLocale(); // used by spring
+                supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
+            }
+
+            LocaleContextHolder.setLocale(supportedLocale); // Used by spring
+            userSession.setLocale(supportedLocale);
             userSession.setUserName(loginData.getUsername());
 
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED));
@@ -123,6 +134,32 @@ public class UserServiceImpl implements UserService {
             // catchall - won't happen, as the 401 will we thrown as exception catched above.
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.UNKNOWN_USERNAME));
         }
+    }
+
+    /**
+     * Used to query users profile
+     *
+     * @param sabiBackendToken
+     * @return userProfile if everything went fine, null in case of any problems
+     */
+    private UserProfileTo requestUserProfile(String sabiBackendToken) {
+
+        String userProfileURL = sabiBackendUrl + Endpoint.USER_PROFILE.getPath();
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(sabiBackendToken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> responseEntity;
+        UserProfileTo userProfileTo = null;
+
+        try {
+            responseEntity = restTemplate.exchange(userProfileURL, HttpMethod.GET, requestEntity, String.class);
+            userProfileTo = objectMapper.readValue(responseEntity.getBody(), UserProfileTo.class);
+
+        } catch (Exception e) {
+            log.error("Could not access Users Profile, Reason {}",e.getMessage());
+            e.printStackTrace();
+        }
+
+        return userProfileTo;
     }
 
     @Override
@@ -142,7 +179,7 @@ public class UserServiceImpl implements UserService {
         try {
             HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken, MediaType.APPLICATION_JSON);
             String requestJson = objectMapper.writeValueAsString(pUserProfile);
-            HttpEntity<String> requestEntity = new HttpEntity<>(requestJson,headers);
+            HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
 
             ResponseEntity<String> responseEntity;
 
@@ -150,7 +187,7 @@ public class UserServiceImpl implements UserService {
             responseEntity = restTemplate.exchange(updateUserProfileURL, HttpMethod.PUT, requestEntity, String.class);
 
         } catch (RestClientException e) {
-            log.error("Couldn't reach {} reason {}", updateUserProfileURL,e.getMessage());
+            log.error("Couldn't reach {} reason {}", updateUserProfileURL, e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
         } catch (Exception e) {
