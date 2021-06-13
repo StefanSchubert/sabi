@@ -15,6 +15,7 @@
 <f:metadata>
     <f:viewAction action="#{registrationView.fetchNewCaptchaChallenge}"/>
     <f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
 </f:metadata>
 
 <h:body>

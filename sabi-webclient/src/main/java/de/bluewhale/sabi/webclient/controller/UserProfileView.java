@@ -65,7 +65,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
                 userService.updateUsersProfile(userProfileTo, userSession.getSabiBackendToken());
                 userSession.setLocale(selectedLocale);
                 userSession.setLanguage(selectedLocale.getLanguage());
-                LocaleContextHolder.setLocale(selectedLocale);
+                LocaleContextHolder.setLocale(selectedLocale); // used by spring
                 MessageUtil.info("profileupdate","userprofile.updateconfirmation.t",userSession.getLocale());
             } catch (BusinessException e) {
                 log.error("Could not update users Profile. {}",e.getMessage());

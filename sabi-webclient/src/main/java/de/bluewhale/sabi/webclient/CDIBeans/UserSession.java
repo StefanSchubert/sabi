@@ -52,7 +52,7 @@ public class UserSession implements Serializable {
     public Locale getLocale() {
 
         if (locale == null) {
-            Locale browsersLocale = LocaleContextHolder.getLocale();
+            Locale browsersLocale = LocaleContextHolder.getLocale(); // used by spring
             Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
             locale = supportedLocale;
 
@@ -66,6 +66,7 @@ public class UserSession implements Serializable {
 
     public void setLocale(final Locale locale) {
         log.debug("Locale Setter in UserSession called with «{}»",locale);
+        LocaleContextHolder.setLocale(locale);
         this.locale = locale;
     }
 

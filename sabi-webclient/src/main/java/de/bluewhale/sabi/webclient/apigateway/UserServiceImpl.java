@@ -121,11 +121,11 @@ public class UserServiceImpl implements UserService {
                 supportedLocale = i18nUtil.getEnsuredSupportedLocale(userProfileTo.getLanguage());
             } else {
                 /* Locale derived from browser */
-                Locale browsersLocale = LocaleContextHolder.getLocale();
+                Locale browsersLocale = LocaleContextHolder.getLocale(); // used by spring
                 supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
             }
 
-            LocaleContextHolder.setLocale(supportedLocale);
+            LocaleContextHolder.setLocale(supportedLocale); // Used by spring
             userSession.setLocale(supportedLocale);
             userSession.setUserName(loginData.getUsername());
 
