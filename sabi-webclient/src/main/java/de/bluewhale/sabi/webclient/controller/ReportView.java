@@ -31,6 +31,8 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -45,8 +47,9 @@ import java.util.List;
 @Setter
 public class ReportView extends AbstractControllerTools implements Serializable {
 
+    // Limit drawn graph to avoid steady visual narrowing of target range by global minimum or maximum measurements
+    final static int MAX_GRAPH_RECORDS = 14;
     private static final String REPORT_VIEW_PAGE = "reportView";
-
     @Autowired
     TankService tankService;
 
@@ -78,6 +81,9 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 return REPORT_VIEW_PAGE;
             }
 
+            Comparator<MeasurementTo> measuredOnComperator = Comparator.comparing(MeasurementTo::getMeasuredOn);
+            Collections.sort(measurementTos, measuredOnComperator);
+
             // reinitialize lineModel, old Data free for GC
             lineModel = new LineChartModel();
 
@@ -95,9 +101,17 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             List<Object> values = new ArrayList<>();
             List<String> labels = new ArrayList<>();
 
+            int size = measurementTos.size();
             for (MeasurementTo measurement : measurementTos) {
-                values.add(measurement.getMeasuredValue());
-                labels.add(measurement.getMeasuredOn().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                // we want to display only the lastest MAX_GRAPH_RECORDS of the list
+                if (size == 0) {
+                    break;
+                }
+                if (size <= MAX_GRAPH_RECORDS) {
+                    values.add(measurement.getMeasuredValue());
+                    labels.add(measurement.getMeasuredOn().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+                }
+                size--;
             }
 
             dataSet.setData(values);
@@ -115,11 +129,11 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             try {
                 parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getSabiBackendToken());
             } catch (Exception e) {
-                log.error("Could not Reach Backend to access detail parameter infos for unit {}",selectedUnitId);
+                log.error("Could not Reach Backend to access detail parameter infos for unit {}", selectedUnitId);
                 e.printStackTrace();
             }
 
-             if (parameterTo != null) {
+            if (parameterTo != null) {
 
                 log.debug("Found Threshold infos for {}. Add them to the chart for {}",
                         parameterTo, getUnitSignForId(selectedUnitId, knownUnits));
@@ -139,7 +153,7 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 List<Object> min_values = new ArrayList<>();
                 List<Object> max_values = new ArrayList<>();
 
-                for (int i = 0; i < measurementTos.size(); i++) {
+                for (int i = 0; i < MAX_GRAPH_RECORDS; i++) {
                     min_values.add(parameterTo.getMinThreshold());
                     max_values.add(parameterTo.getMaxThreshold());
                 }
