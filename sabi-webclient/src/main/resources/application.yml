@@ -6,7 +6,7 @@ captcha:
 
 # JSF/Primefaces Config
 # possible props see: https://docs.joinfaces.org/current/reference/#properties
-# primefaces 10 possible themes are saga, arya, vela
+# primefaces 10 possible (free) themes are saga, arya, vela
 joinfaces:
   jsf:
     project-stage: development

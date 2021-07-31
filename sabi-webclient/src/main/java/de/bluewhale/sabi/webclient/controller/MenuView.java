@@ -21,7 +21,7 @@ import javax.inject.Named;
 @Slf4j
 public class MenuView {
 
-    static String LOGOUT_PAGE = "/logout";
+    static String LOGOUT_PAGE = "/logout?faces-redirect=true";
 
     public String logout() {
         log.info(" #### User logged out. ####");
