@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon"
+          type="image/png"
+          href="#{resource['images:icons8-crab-64.png']}"/>
+</h:head>
+
+<h:outputStylesheet library="css" name="sabistyle.css"/>
+<h:body styleClass="splashscreen">
+
+    <h1>#{msg['sessionExpired.header.h']}</h1>
+    <p>
+        <img src="#{resource['images:ByeBye.png']}" alt="Clibanarius picture from Stefans reef."/>
+    </p>
+    <p>
+        <h:form>
+            <h:outputText value="#{msg['sessionExpired.message.t']}" escape="false" style="width: 50px;"/>
+            <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
+        </h:form>
+    </p>
+
+</h:body>
+</html>

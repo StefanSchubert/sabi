@@ -3,7 +3,6 @@ captcha:
   backend:
     url: http://localhost:8081/captcha/api
 
-
 # JSF/Primefaces Config
 # possible props see: https://docs.joinfaces.org/current/reference/#properties
 # primefaces 10 possible (free) themes are saga, arya, vela
@@ -39,16 +38,18 @@ sabi:
     url: http://localhost:8080/sabi
 server:
   port: 8088
-  session:
-    timeout: 600
   error:
     whitelabel:
       enabled: false
   servlet:
+    session:
+      # dev. setting for sessionExpired
+      timeout: 3m
     context-path: /
-servlet:
-  container:
-    maxThreads: 513
+  tomcat:
+    threads:
+      max: 100
+    connection-timeout: 10s
 spring:
   # INTERNATIONALIZATION
   messages:
