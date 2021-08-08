@@ -35,14 +35,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/javax.faces.resource/**").permitAll()
                 // Allow Pages that don't require an auth context.
                  .antMatchers("/", "/robots.txt","/sitemap.xml","/index.xhtml", "/register.xhtml", "/pwreset.xhtml",
-                        "/preregistration.xhtml", "/logout.xhtml", "/credits.xhtml","/static/**").permitAll()
+                        "/preregistration.xhtml", "/logout.xhtml","/sessionExpired.xhtml", "/credits.xhtml","/static/**").permitAll()
                 // Allow Monitoring Endpoint
                 .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 // all others require authentication
                 .anyRequest().authenticated()
 
                 .and()
-                
+
+                // In Case of a session timeout don't go directly to the login page,
+                // use this page instead, for beeing able to notify the user what has happened.
+                .sessionManagement().invalidSessionUrl("/sessionExpired.xhtml")
+
+                .and()
+
                 // login - using this the browser redirect to this page if login is required and you are not logged in.
                 .formLogin().loginPage("/login.xhtml").permitAll()
                 .failureUrl("/login.xhtml?error=true").successForwardUrl("/secured/userportal.xhtml")
