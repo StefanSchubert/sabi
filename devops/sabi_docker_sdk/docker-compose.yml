@@ -56,6 +56,25 @@ services:
     ports:
       - "2525:2525"
       - "5080:5080"
+# Monitoring Sample with Prometheus Grafana
+  grafana:
+    image: grafana/grafana:8.1.2
+    ports:
+      - "3000:3000"
+    networks:
+      - sabinet
+    depends_on:
+      - prometheus
+  prometheus:
+    image: prom/prometheus:v2.29.2
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"
+    networks:
+      - sabinet
+    ports:
+      - 9090:9090
+
 networks:
   sabinet:
     driver: bridge
