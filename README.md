@@ -30,18 +30,18 @@ In the first stage of the project (see Vision I) we enabled the community to col
 We then added BI concepts on top for being able to explore the data, mining for new
 insights driven by human curiosity. 
 
-The next step adds KI concepts to sabi. Imagine the following scenario: 
+The next step adds AI concepts to sabi. Imagine the following scenario: 
 You have a cyano bacterium plague in your tank and you are planning to add a new fish
 or fiddling around with increasing the carbonate level. Sabis KI might advise you that your
  plan will probably prolong the plague.
   
-For being able to do so, sabis KI will compare your tank parameters and recent history 
+For being able to do so, sabis AI will compare your tank parameters and recent history 
 with the data of other users tanks who have done something similar to anticipate the outcome.
  
-The KI challenge here is, that if the human provided data on a given problem context is bad for
+The AI challenge here is, that if the human provided data on a given problem context is bad for
  some reasons (e.g. missing of relevant parameters, inaccurate timelines and so on), then
- the KI starts to provide advises that will lead to false treatments. So if users starts to reports
- that advices were not successful the KI must revise the original training set and do some
+ the AI starts to provide advises that will lead to false treatments. So if users starts to reports
+ that advices were not successful the AI must revise the original training set and do some
   recalibration by its own.
 
 
