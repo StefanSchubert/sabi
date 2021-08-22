@@ -15,6 +15,7 @@ import de.bluewhale.sabi.exception.CommonMessageCodes;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
+import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.rest.exceptions.MeasurementMessageCodes;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,9 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Autowired
     private ObjectMapper objectMapper;  // json mapper
 
+    @Autowired
+    private UserSession userSession;
+
     @Override
     public @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException {
 
@@ -68,6 +72,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             try {
                 // Notice the that the controller defines a list, the resttemplate will get it as array.
                 responseEntity = restTemplate.exchange(listMeasurementUnitsUri, HttpMethod.GET, requestEntity, String.class);
+                renewBackendToken(responseEntity);
             } catch (RestClientException e) {
                 log.error(String.format("Couldn't reach %s", listMeasurementUnitsUri), e.getLocalizedMessage());
                 e.printStackTrace();
@@ -106,6 +111,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             try {
                 // Notice the that the controller defines a list, the resttemplate will get it as array.
                 responseEntity = restTemplate.exchange(listUnitsParameterUri, HttpMethod.GET, requestEntity, String.class);
+                renewBackendToken(responseEntity);
             } catch (RestClientException e) {
                 log.error(String.format("Couldn't reach %s", listUnitsParameterUri), e.getLocalizedMessage());
                 e.printStackTrace();
@@ -142,6 +148,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         try {
             // Notice the that the controller defines a list, the resttemplate will get it as array.
             responseEntity = restTemplate.exchange(listOfUsersMeasurements, HttpMethod.GET, requestEntity, String.class);
+            renewBackendToken(responseEntity);
         } catch (RestClientException e) {
             log.error(String.format("Couldn't reach %s", listOfUsersMeasurements), e.getLocalizedMessage());
             e.printStackTrace();
@@ -180,6 +187,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         try {
             // Notice the that the controller defines a list, the resttemplate will get it as array.
             responseEntity = restTemplate.exchange(apiURL, HttpMethod.GET, requestEntity, String.class);
+            renewBackendToken(responseEntity);
         } catch (RestClientException e) {
             log.error("Couldn't reach {} Reason: {}", apiURL, e.getLocalizedMessage());
             e.printStackTrace();
@@ -224,6 +232,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             // initial creation (POST)
             try {
                 responseEntity = restTemplate.postForEntity(saveMeasurmentURI, requestEntity, String.class);
+                renewBackendToken(responseEntity);
             } catch (RestClientException e) {
                 log.error("Couldn't reach backend {} to add a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
                 throw BusinessException.with(CommonMessageCodes.NETWORK_PROBLEM);
@@ -245,6 +254,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             // update case (PUT)
             try {
                 responseEntity = restTemplate.exchange(saveMeasurmentURI, HttpMethod.PUT, requestEntity, String.class);
+                renewBackendToken(responseEntity);
             } catch (RestClientException e) {
                 log.error("Couldn't backend {} to update a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
                 throw BusinessException.with(CommonMessageCodes.NETWORK_PROBLEM);
@@ -261,4 +271,11 @@ public class MeasurementServiceImpl implements MeasurementService {
             }
         }
     }
+
+    private void renewBackendToken(ResponseEntity<String> responseEntity) {
+        if( responseEntity.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) ) {
+            userSession.setSabiBackendToken(responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+        }
+    }
+
 }

@@ -76,9 +76,9 @@ public class TokenAuthenticationService {
      * @return users identified by his email or null in case the token was not valid.
      */
     public static String extractUserFromToken(String token) {
-        String user = null;
+        String userID = null;
         try {
-            user = Jwts.parser()
+            userID = Jwts.parser()
                     .setSigningKey(SECRET)
                     .parseClaimsJws(token.replace(HttpHeader.TOKEN_PREFIX, ""))
                     .getBody()
@@ -88,7 +88,7 @@ public class TokenAuthenticationService {
             System.out.println("Token was: "+token);
             e.printStackTrace();
         }
-        return user;
+        return userID;
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------

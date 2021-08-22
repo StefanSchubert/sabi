@@ -52,6 +52,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         if (authentication != null) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            // NOTICE we also generate a new Token to renew tokens TTL.
+            // This is necessary to extend the "backend-session" if users-client session continues.
+            // it's in the responsibility of the client to continue with the renewed token (the old token will be still
+            // valid until its TTL expired - for the cases where the client missed the cycle due to network problems.)
+             String userID = (String) authentication.getPrincipal();
+             TokenAuthenticationService.addAuthentication(res,userID);
             chain.doFilter(req, res);
         } else {
             // don't continue the chain
