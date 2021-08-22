@@ -374,5 +374,4 @@ public class MeasurementControllerTest {
         assertThat("Value not updated?", returnedMeasurement.getMeasuredValue() == updatedMeasurementEntity.getMeasuredValue());
     }
 
-
 }

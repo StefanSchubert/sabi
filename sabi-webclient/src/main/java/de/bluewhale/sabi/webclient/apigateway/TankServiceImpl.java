@@ -12,6 +12,7 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.rest.exceptions.TankMessageCodes;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,8 @@ public class TankServiceImpl implements TankService {
     @Autowired
     private ObjectMapper objectMapper;  // json mapper
 
+    @Autowired
+    private UserSession userSession;
 
     @Override
     public @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTBackendAuthtoken) throws BusinessException {
@@ -62,6 +65,7 @@ public class TankServiceImpl implements TankService {
 
         try {
             responseEntity = restTemplate.exchange(listTankUri, HttpMethod.GET, requestEntity, String.class);
+            renewBackendToken(responseEntity);
         } catch (RestClientException e) {
             log.error(String.format("Couldn't reach %s",listTankUri),e.getLocalizedMessage());
             e.printStackTrace();
@@ -76,10 +80,9 @@ public class TankServiceImpl implements TankService {
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
-
         return tankList;
-
     }
+
 
     @Override
     public void deleteTankById(@NotNull Long tankId, @NotNull String JWTBackendAuthtoken) throws BusinessException {
@@ -93,6 +96,7 @@ public class TankServiceImpl implements TankService {
 
         try {
             responseEntity = restTemplate.exchange(tankUri, HttpMethod.DELETE, requestEntity, String.class);
+            renewBackendToken(responseEntity);
         } catch (RestClientException e) {
             log.error(String.format("Couldn't reach %s",tankUri),e.getLocalizedMessage());
             throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
@@ -135,6 +139,7 @@ public class TankServiceImpl implements TankService {
             // Save case
             try {
                 responseEntity = restTemplate.postForEntity(createTankURI, requestEntity, String.class);
+                renewBackendToken(responseEntity);
             } catch (RestClientException e) {
                 log.error(String.format("Couldn't reach %s",createTankURI),e.getLocalizedMessage());
                 throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
@@ -153,6 +158,7 @@ public class TankServiceImpl implements TankService {
             // update case
             try {
                 responseEntity = restTemplate.exchange(updateTankURI, HttpMethod.PUT, requestEntity, String.class);
+                renewBackendToken(responseEntity);
             } catch (RestClientException e) {
                 log.error(String.format("Couldn't reach %s",updateTankURI),e.getLocalizedMessage());
                 throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
@@ -169,6 +175,12 @@ public class TankServiceImpl implements TankService {
                 }
             }
 
+        }
+    }
+
+    private void renewBackendToken(ResponseEntity<String> responseEntity) {
+        if( responseEntity.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) ) {
+            userSession.setSabiBackendToken(responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
         }
     }
 }

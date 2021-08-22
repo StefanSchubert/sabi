@@ -82,6 +82,7 @@ spring:
   # for local development I recommend to use fakeSMTP (under linux) or smtp4dev (under windows)
   mail:
     host: localhost
+    username: sabi@bluewhale.de
     password: YouWillNeverKnow
     port: 2525
     properties:
@@ -90,4 +91,3 @@ spring:
           auth: true
           starttls:
             enable: true
-    username: no-reply@sabi-project.net

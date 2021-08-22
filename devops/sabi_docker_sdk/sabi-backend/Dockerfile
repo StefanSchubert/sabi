@@ -15,11 +15,13 @@ RUN chmod 600 /opt/config/application.properties
 
 # http port
 EXPOSE 8080
-# JVM debug port
+
+# Enable JVM debug port
 EXPOSE 8880
+ENV JAVA_TOOL_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8880
 
 WORKDIR /opt
 
-# Start with debugging support
-ENTRYPOINT ["/bin/java", "-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,address=8880,suspend=n", "-jar", "/opt/sabi-service-1.0-SNAPSHOT.jar"]
+# Start our app
+ENTRYPOINT ["/bin/java", "-jar", "/opt/sabi-service-1.0-SNAPSHOT.jar"]
 

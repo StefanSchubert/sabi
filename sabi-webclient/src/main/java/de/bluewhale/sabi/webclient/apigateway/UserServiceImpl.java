@@ -152,6 +152,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             responseEntity = restTemplate.exchange(userProfileURL, HttpMethod.GET, requestEntity, String.class);
+            renewBackendToken(responseEntity);
             userProfileTo = objectMapper.readValue(responseEntity.getBody(), UserProfileTo.class);
 
         } catch (Exception e) {
@@ -185,6 +186,7 @@ public class UserServiceImpl implements UserService {
 
             RestTemplate restTemplate = new RestTemplate();
             responseEntity = restTemplate.exchange(updateUserProfileURL, HttpMethod.PUT, requestEntity, String.class);
+            renewBackendToken(responseEntity);
 
         } catch (RestClientException e) {
             log.error("Couldn't reach {} reason {}", updateUserProfileURL, e.getMessage());
@@ -198,4 +200,11 @@ public class UserServiceImpl implements UserService {
 
 
     }
+
+    private void renewBackendToken(ResponseEntity<String> responseEntity) {
+        if( responseEntity.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) ) {
+            userSession.setSabiBackendToken(responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+        }
+    }
+
 }

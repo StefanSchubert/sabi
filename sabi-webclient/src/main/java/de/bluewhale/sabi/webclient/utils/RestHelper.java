@@ -37,7 +37,7 @@ public class RestHelper {
      */
     public static HttpHeaders prepareAuthedHttpHeader(String JWTBackendAuthtoken) {
         HttpHeaders headers = buildHttpHeader();
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        headers.add(AUTH_TOKEN, JWTBackendAuthtoken);
         return headers;
     }
 
