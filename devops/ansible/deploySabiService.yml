@@ -9,7 +9,7 @@
         append: yes
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-server/target/sabi-service-1.0-SNAPSHOT.jar
+        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-server/target/sabi-service-1.1-SNAPSHOT.jar
         dest: /var/sabi/sabi-service.jar
         owner: sabi
         group: sabi

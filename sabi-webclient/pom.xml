@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>0.8.8-SNAPSHOT</version>
+    <version>0.8.9-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -132,11 +132,62 @@
             </exclusions>
         </dependency>
 
+        <!-- Replaced due to log4j security exploit
         <dependency>
-            <!-- as log configuration we have a log4j-spring.xml on production server beneath the application.yml  -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
+        -->
+            <!-- as log configuration we have a log4j-spring.xml on production server beneath the application.yml  -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.15.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.15.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jul</artifactId>
+            <version>2.15.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>1.7.32</version>
+        </dependency>
+        <!-- End of explicit log4j patch -->
+
 
         <!-- For spring-security in combination with JWT -->
         <dependency>
