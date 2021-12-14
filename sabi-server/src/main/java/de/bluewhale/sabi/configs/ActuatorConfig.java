@@ -6,8 +6,6 @@
 package de.bluewhale.sabi.configs;
 
 import de.bluewhale.sabi.device.pi.PisCPUTemperatureProbe;
-import io.micrometer.core.instrument.MeterRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -23,8 +21,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActuatorConfig {
 
+/*
     @Autowired
     MeterRegistry meterRegistry;
+*/
 
     @Bean
     PisCPUTemperatureProbe pisCPUTemperatureProbe() {

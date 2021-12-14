@@ -12,13 +12,13 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.3</version>
+        <version>2.4.13</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-server</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration
     </description>
@@ -45,6 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
+        <log4j.version>2.15.0</log4j.version>
         <swagger.version>2.9.2</swagger.version>
         <!--
                 Caution API change with version 3, you need to change more than just the dep version.
@@ -52,25 +53,19 @@
                 <swagger.version>3.0.0</swagger.version>
         -->
 
-        <eclipselink.version>2.7.8</eclipselink.version>
+        <eclipselink.version>2.7.9</eclipselink.version>
         <!--        <eclipselink.version>3.0.0</eclipselink.version>
                 Caution 3.0.0 breaks the deps - because Impl of PersistenceProvider seems
                 to have been extracted from the jar or migrated and won't be found
                 through current springboot 2.4.3 deps.
         -->
-        <micrometer.prometheus.version>1.6.4</micrometer.prometheus.version>
-        <spring.instrument.version>5.3.4</spring.instrument.version>
+        <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>
+        <spring.instrument.version>5.3.13</spring.instrument.version>
         <surefire.version>3.0.0-M5</surefire.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-
-            <dependency>
-                <groupId>com.fasterxml</groupId>
-                <artifactId>classmate</artifactId>
-                <version>1.5.1</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.apache.maven.surefire</groupId>
@@ -127,7 +122,7 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.15.0</version>
+            <version>${log4j.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
@@ -142,7 +137,7 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.15.0</version>
+            <version>${log4j.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
@@ -153,12 +148,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.15.0</version>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jul</artifactId>
-            <version>2.15.0</version>
+            <version>${log4j.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
@@ -222,7 +217,7 @@
         <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
-            <version>1.6.0</version>
+            <version>1.6.1</version>
         </dependency>
 
         <!-- used JPA Configuration / Implementation -->
@@ -358,7 +353,7 @@
     </dependencies>
 
     <build>
-        <finalName>sabi-service-${project.version}</finalName>
+        <finalName>sabi-service</finalName>
 
         <pluginManagement>
             <plugins>
@@ -424,7 +419,21 @@
                     <executable>true</executable>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <!-- Used for vulnerability checks
+                 The examples below can be executed using mvn verify or in the reporting example mvn site.
+                 -->
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>6.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
