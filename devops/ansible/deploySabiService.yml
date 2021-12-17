@@ -21,6 +21,12 @@
         owner: sabi
         group: sabi
         mode: '0444'
+    - name: ensure config dir exsists
+      file:
+        path: /var/sabi/config
+        state: directory
+        owner: sabi
+        group: sabi
     - name: Drop old tmp folder
       file:
         state: absent
