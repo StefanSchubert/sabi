@@ -81,8 +81,10 @@ As you desire, the server API will be open, so that everyone might develop their
 ** Primefaces 10.x
 * Spring-Boot-Application
 
-Why JSF and not some current modern framework like angular? In fact it took me quite a while to came to a decision here.
+Why JSF and not some current modern framework like angular or VUE? In fact it took me quite a while to came to a decision here.
 The two main reasons are:
+
+(Please read also: https://github.com/StefanSchubert/sabi/wiki/09.-Design-Decisions#92-frontend-technology - as I changed my mind a bit on this in between)
 
 * I don't believe that the traffic will be that big, that the server (though a rasperryPi at the beginnig) can't handle it, so that I need to shift the resources (session, logic) rather to the client side.
 * Though since 2014-2017 it became rather quite around the mature JSF technology (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I decided to improve my skills in JSF again.
