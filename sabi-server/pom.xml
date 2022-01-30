@@ -62,6 +62,15 @@
         <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>
         <spring.instrument.version>5.3.14</spring.instrument.version>
         <surefire.version>3.0.0-M5</surefire.version>
+        <lombok.version>1.18.22</lombok.version>
+        <owasp.plugin.version>6.5.3</owasp.plugin.version>
+        <maven.versions.plugin.version>2.9.0</maven.versions.plugin.version>
+        <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
+        <passay.version>1.6.1</passay.version>
+        <mariadb.java.client.version>3.0.3</mariadb.java.client.version>
+        <h2.version>2.1.210</h2.version>
+        <dumbster.version>1.6</dumbster.version>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -131,7 +140,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <version>${jsonwebtoken.version}</version>
         </dependency>
 
         <!-- Spring Framework Caching Support (using hazelcast as distributed IMDG) -->
@@ -165,7 +174,7 @@
         <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
-            <version>1.6.1</version>
+            <version>${passay.version}</version>
         </dependency>
 
         <!-- used JPA Configuration / Implementation -->
@@ -178,7 +187,7 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>2.7.3</version>
+            <version>${mariadb.java.client.version}</version>
         </dependency>
 
 
@@ -186,7 +195,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
         </dependency>
 
         <!-- Monitoring
@@ -265,8 +274,7 @@
                  -->
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.1.210</version>
-            <!--            <version>1.4.196</version>-->
+            <version>${h2.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -276,7 +284,7 @@
         <dependency>
             <groupId>dumbster</groupId>
             <artifactId>dumbster</artifactId>
-            <version>1.6</version>
+            <version>${dumbster.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -293,7 +301,7 @@
             <!-- In case you want to switch from junit4.x make sure to adopt the surefire provider as well. -->
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -303,31 +311,11 @@
     <build>
         <finalName>sabi-service</finalName>
 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${surefire.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.9.0</version>
-                </plugin>
-                <plugin>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <groupId>org.owasp</groupId>
-                    <version>6.5.3</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
@@ -336,6 +324,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.springframework</groupId>
@@ -344,7 +333,7 @@
                     </dependency>
                     <dependency>
                         <!-- Surefire seemed to have difficulties to determine the test provider junit4
-                        in our case, so we configured the provider manualy here.-->
+                        in our case, so we configured the provider manually here.-->
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-junit47</artifactId>
                         <version>${surefire.version}</version>
@@ -383,6 +372,7 @@
                  -->
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
+                <version>${owasp.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>verify</phase>
@@ -397,6 +387,7 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
