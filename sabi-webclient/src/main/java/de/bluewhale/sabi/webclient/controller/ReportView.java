@@ -118,7 +118,7 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             dataSet.setFill(false);
             dataSet.setLabel(getUnitSignForId(selectedUnitId, knownUnits));
             dataSet.setBorderColor("rgb(75, 192, 192)");
-            dataSet.setLineTension(0.1);
+            dataSet.setTension(0.1);
 
             ChartData chartData = new ChartData();
             chartData.setLabels(labels);
@@ -141,13 +141,13 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 LineChartDataSet minThresholdDataSet = new LineChartDataSet();
                 minThresholdDataSet.setLabel("min.");
                 minThresholdDataSet.setBorderColor("rgb(0, 192, 0)");
-                minThresholdDataSet.setLineTension(0.2);
+                minThresholdDataSet.setTension(0.2);
                 minThresholdDataSet.setShowLine(true);
 
                 LineChartDataSet maxThresholdDataSet = new LineChartDataSet();
                 maxThresholdDataSet.setLabel("max.");
                 maxThresholdDataSet.setBorderColor("rgb(192, 0, 0)");
-                maxThresholdDataSet.setLineTension(0.2);
+                maxThresholdDataSet.setTension(0.2);
                 maxThresholdDataSet.setShowLine(true);
 
                 List<Object> min_values = new ArrayList<>();

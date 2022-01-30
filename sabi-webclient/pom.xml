@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>0.8.11</version>
+    <version>0.8.12</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -43,7 +43,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.13</version>
+        <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -51,13 +51,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <log4j2.version>2.17.0</log4j2.version>
-        <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>
-<!-- PF10.0 -->
-        <joinfaces.version>4.6.1</joinfaces.version>
-<!--    PF8.0
-<joinfaces.version>4.4.3</joinfaces.version>-->
+        <log4j2.version>2.17.1</log4j2.version>
+        <micrometer.prometheus.version>1.8.2</micrometer.prometheus.version>
+        <joinfaces.version>4.7.0-m1</joinfaces.version>
+
         <sabi.boundary.version>1.0</sabi.boundary.version>
+        <passay.version>1.6.1</passay.version>
+        <owasp.plugin.version>6.5.3</owasp.plugin.version>
+        <maven.versions.plugin.version>2.9.0</maven.versions.plugin.version>
+        <lombok.version>1.18.22</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -79,6 +81,7 @@
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>primefaces-spring-boot-starter</artifactId>
+            <version>${joinfaces.version}</version>
             <exclusions>
                 <exclusion>
                     <!-- favor log4j2 over logback -->
@@ -112,14 +115,12 @@
             <version>${micrometer.prometheus.version}</version>
         </dependency>
 
-
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>2.0.SP1</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
         </dependency>
 
-        <!-- Required to be enable of page redirects, as we no longer have the web.xml
+        <!-- Required to enable of page redirects, as we no longer have the web.xml
              see https://codenotfound.com/jsf-primefaces-welcome-page-redirect-example.html
              but and because of Spring5 we need the WebMvcConfigurer so we add the following dep:
          -->
@@ -182,7 +183,7 @@
         <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
-            <version>1.6.0</version>
+            <version>${passay.version}</version>
         </dependency>
 
         <!-- Test Context -->
@@ -195,7 +196,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
+            <version>${lombok.version}</version>
         </dependency>
 
     </dependencies>
@@ -223,7 +224,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
@@ -266,15 +267,33 @@
 
             <plugin>
                 <!-- Used for vulnerability checks
-                The examples below can be executed using mvn verify or in the reporting example mvn site.
-                -->
+                 The examples below can be executed using mvn verify.
+                 -->
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.5.0</version>
+                <version>${owasp.plugin.version}</version>
                 <executions>
                     <execution>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- This will check for newer version on dependencies which are
+                     controlled by version property variables -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${maven.versions.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <!--                            <goal>display-dependency-updates</goal>-->
+                            <!--                            <goal>display-plugin-updates</goal>-->
+                            <goal>display-property-updates</goal>
                         </goals>
                     </execution>
                 </executions>
