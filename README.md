@@ -148,6 +148,12 @@ After that you can access the current's frontend stage at:
 
   http://localhost:8088/index.xhtml
 
+You may login with the following test user:
+
+    sabi@bluewhale.de/clibanarius
+
+or register a new one. 
+
 ### Dev-Environment for a backend engineer to work on sabi-server.
 
 #### Preparations

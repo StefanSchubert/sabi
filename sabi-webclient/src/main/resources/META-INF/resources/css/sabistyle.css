@@ -3,11 +3,51 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-html { font-size: calc(1em + 0.8vw) }
-button { font-size: inherit }
-input { font-size: inherit }
-h1 { font-size: calc(1em + 2.5vw) }
-h2 { font-size: calc(1em + 1vw) }
+/* Default, if no specialized media query fits */
+
+body {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 100%;
+    font-size: 1.2em;
+    line-height: 1.3em;
+    word-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1em;
+    font-weight: 700;
+}
+
+p {
+    line-height: 1.3em;
+    font-weight: 300;
+    font-size: 1.2em;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.8em;
+}
+
+h3 {
+    font-size: 1.6em;
+}
+
+h4 {
+    font-size: 1.4em;
+}
+
+h5 {
+    font-size: 1.2em;
+}
+
+h6 {
+    font-size: 1em;
+}
+
 /*
 Sample and explanation taken from: https://bits.theorem.co/css-pro-tips-responsive-font-sizes-and-when-to-use-which-units/
 
@@ -30,6 +70,7 @@ it pretty responsive—huge text on huge screens, tiny text on tiny screens."
     color: yellow;
     padding: 15px;
 }
+
 /*
 a.splashscreen:link {color: white;}
 a.splashscreen:visited {color: beige;}
@@ -37,17 +78,54 @@ a.splashscreen:hover {color: antiquewhite;}
 a.splashscreen:active {color: aqua;}
 */
 
-.mobilescreen {
+.baselayout {
     padding: 15px;
     /*width: 600px;*/
 }
 
-.popupdialog {
-    background-color: darkseagreen;
-    width: 400px;
+/* sabi-60 ---- Rework css to be more responsive with media queries ----
+   to add a certain device you may fetch the base values from here:
+   https://css-tricks.com/snippets/css/media-queries-for-standard-devices/
+
+   to discover the base media query settings for a specific device you may also
+   probe them via online tools like: https://screenresolutiontest.com
+*/
+
+@media screen and (min-width: 400px) {
+    body {
+        font-size: 1.4em;
+    }
+    .ui-widget {
+        font-size: 1.44em;
+    }
 }
 
-.text {
-    font-size: calc(1em + 0.8vw);
-    font-family: Arial, Helvetica, sans-serif;
+@media screen and (min-width: 680px) {
+    body {
+        font-size: 1.4em;
+    }
+    .ui-widget {
+        font-size: 1.68em;
+    }
 }
+
+@media screen and (min-width: 1224px) {
+    body {
+        font-size: 1.6em;
+    }
+    .ui-widget {
+        font-size: 1.22em;
+    }
+
+}
+
+@media screen and (min-width: 1400px) {
+    body {
+        font-size: 1.8em;
+    }
+    .ui-widget {
+        font-size: 1.14em;
+    }
+
+}
+
