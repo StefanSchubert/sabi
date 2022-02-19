@@ -22,12 +22,13 @@
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="icon"
           type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
 
-<h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
     <ui:remove>
     <!--
@@ -38,11 +39,11 @@
     wired through Springs WebSecurity-Mechanisms. Have a look into the class WebSecurityConfig.
     -->
     </ui:remove>
-    <div style="height:60vh"/>
+    <div style="height:50vh"/>
     <h:form id="login-form" prependId="false">
 
         <p:panel header="#{msg['login.welcome.h']} (#{applicationInfo.version})">
-            <h2>#{msg['login.panel.h']}</h2>
+            <h3>#{msg['login.panel.h']}</h3>
             <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
 
                 <p:outputLabel value="#{msg['login.username.l']}" for="username"/>

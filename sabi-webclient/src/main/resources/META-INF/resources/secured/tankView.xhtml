@@ -33,19 +33,19 @@
 
                     <p:panelGrid columns="2" layout="grid" style="border:2;">
                         <p:outputLabel value="#{msg['tankview.description.l']}"/>
-                        <h:outputText value="#{tank.description}"
+                        <p:outputLabel value="#{tank.description}"
                                       size="14"/>
 
                         <p:outputLabel value="#{msg['tankview.volume.l']}"/>
-                        <h:outputText value="#{tank.size} #{tank.sizeUnit.unitSign}"
+                        <p:outputLabel value="#{tank.size} #{tank.sizeUnit.unitSign}"
                                       size="10"/>
 
                         <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
-                        <h:outputText value="#{tank.inceptionDate}"
+                        <p:outputLabel value="#{tank.inceptionDate}"
                                       size="10">
                             <!-- FIXME proper Timezone handling when we have the user profile -->
                             <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
-                        </h:outputText>
+                        </p:outputLabel>
 
                         <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.edit(tank)}"
                                          id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>

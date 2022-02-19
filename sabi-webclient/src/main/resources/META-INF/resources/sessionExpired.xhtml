@@ -18,21 +18,22 @@
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="icon"
           type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
 
-<h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
 
-    <h1>#{msg['sessionExpired.header.h']}</h1>
+    <h2>#{msg['sessionExpired.header.h']}</h2>
     <p>
         <img src="#{resource['images:ByeBye.png']}" alt="Clibanarius picture from Stefans reef."/>
     </p>
     <p>
         <h:form>
-            <h:outputText value="#{msg['sessionExpired.message.t']}" escape="false" style="width: 50px;"/>
+            <p:outputLabel value="#{msg['sessionExpired.message.t']}" escape="false"/>
             <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         </h:form>
     </p>

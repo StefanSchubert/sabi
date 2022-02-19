@@ -63,7 +63,7 @@
                                     update=":measureform:unitDescription :measureform:thresholdInfo"/>
                         </p:selectOneMenu>
                         <br/>
-                        <h:outputText id="unitDescription"
+                        <p:outputLabel id="unitDescription"
                                       value="#{measurementListView.getGetDescriptionFor(measurementListView.measurement.unitId)}"/>
                     </p:column>
 
@@ -86,7 +86,7 @@
                                              minFractionDigits="2"/>
                         </p:inputText>
                         <br/>
-                        <h:outputText id="thresholdInfo"
+                        <p:outputLabel id="thresholdInfo"
                                       value="#{measurementListView.getGetThresholdInfoFor(measurementListView.measurement.unitId)}"/>
                     </p:column>
 
@@ -134,23 +134,23 @@
                     <p:dataTable id="measuresDT" var="m" value="#{measurementListView.measurementsTakenByUser}">
 
                         <p:column headerText="#{msg['measureview.date.l']}">
-                            <h:outputText value="#{m.measuredOn}">
+                            <p:outputLabel value="#{m.measuredOn}">
                                 <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
-                            </h:outputText>
+                            </p:outputLabel>
                         </p:column>
 
                         <p:column headerText="#{msg['common.unitchoise.l']}">
-                            <h:outputText value="#{measurementListView.getUnitSignForId(m.unitId)}"/>
+                            <p:outputLabel value="#{measurementListView.getUnitSignForId(m.unitId)}"/>
                         </p:column>
 
                         <p:column headerText="#{msg['measureview.value.l']}">
-                            <h:outputText value="#{m.measuredValue}">
+                            <p:outputLabel value="#{m.measuredValue}">
                                 <f:convertNumber type="number" locale="#{userSession.locale}"/>
-                            </h:outputText>
+                            </p:outputLabel>
                         </p:column>
 
                         <p:column headerText="#{msg['common.tankchoice.l']}">
-                            <h:outputText value="#{measurementListView.getTankNameForId(m.aquariumId)}"/>
+                            <p:outputLabel value="#{measurementListView.getTankNameForId(m.aquariumId)}"/>
                         </p:column>
 
                         <p:column style="width:3rem;text-align: center">

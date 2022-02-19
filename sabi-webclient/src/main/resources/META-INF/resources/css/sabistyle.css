@@ -1,14 +1,4 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
-html { font-size: calc(1em + 0.8vw) }
-button { font-size: inherit }
-input { font-size: inherit }
-h1 { font-size: calc(1em + 2.5vw) }
-h2 { font-size: calc(1em + 1vw) }
-/*
 Sample and explanation taken from: https://bits.theorem.co/css-pro-tips-responsive-font-sizes-and-when-to-use-which-units/
 
 "The em part: You can think of the em value as being the size the text bottoms out at.
@@ -30,6 +20,7 @@ it pretty responsive—huge text on huge screens, tiny text on tiny screens."
     color: yellow;
     padding: 15px;
 }
+
 /*
 a.splashscreen:link {color: white;}
 a.splashscreen:visited {color: beige;}
@@ -37,17 +28,131 @@ a.splashscreen:hover {color: antiquewhite;}
 a.splashscreen:active {color: aqua;}
 */
 
-.mobilescreen {
+.baselayout {
     padding: 15px;
     /*width: 600px;*/
 }
 
-.popupdialog {
-    background-color: darkseagreen;
-    width: 400px;
+/* sabi-60 ---- Rework css to be more responsive with media queries ----
+   to add a certain device you may fetch the base values from here:
+   https://css-tricks.com/snippets/css/media-queries-for-standard-devices/
+
+   to discover the base media query settings for a specific device you may also
+   probe them via online tools like: https://screenresolutiontest.com
+*/
+
+@media screen and (min-width: 400px) {
+    body {
+        font-size: 1em !important;
+    }
+
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
+    }
+
+    h1 {
+        font-size: 1.45em !important;
+    }
+
+    h2 {
+        font-size: 1.3em !important;
+    }
+
+    h3 {
+        font-size: 1.15em !important;
+    }
 }
 
-.text {
-    font-size: calc(1em + 0.8vw);
-    font-family: Arial, Helvetica, sans-serif;
+/* Retina Phones like iphone XR */
+@media screen and (min-width: 710px) {
+    body {
+        font-size: 1em !important;
+    }
+
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
+    }
+
+    h1 {
+        font-size: 1.5em !important;
+    }
+
+    h2 {
+        font-size: 1.35em !important;
+    }
+
+    h3 {
+        font-size: 1.2em !important;
+    }
 }
+
+@media screen and (min-width: 1224px) {
+    body {
+        font-size: 1em !important;
+    }
+
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
+    }
+
+    h1 {
+        font-size: 1.45em !important;
+    }
+
+    h2 {
+        font-size: 1.3em !important;
+    }
+
+    h3 {
+        font-size: 1.15em !important;
+    }
+
+}
+
+/* Retina Laptops like MacBook */
+@media screen and (min-width: 1400px) {
+    body {
+        font-size: 1em !important;
+    }
+
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
+    }
+
+    h1 {
+        font-size: 1.65em !important;
+    }
+
+    h2 {
+        font-size: 1.5em !important;
+    }
+
+    h3 {
+        font-size: 1.35em !important;
+    }
+
+}
+
+/*
+@media screen and (min-width: 1900px) {
+    body {
+        font-size: 2.1em !important;
+    }
+
+    .ui-widget, ui-outputlabel {
+        font-size: 2.1em !important;
+    }
+
+    h1 {
+        font-size: 2.8em !important;
+    }
+
+    h2 {
+        font-size: 2.5em !important;
+    }
+
+    h3 {
+        font-size: 2.2em !important;
+    }
+}
+*/

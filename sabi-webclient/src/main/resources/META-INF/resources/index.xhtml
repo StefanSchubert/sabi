@@ -19,19 +19,21 @@
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="icon"
           type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
 
-<h:outputStylesheet library="css" name="sabistyle.css"/>
 <h:body styleClass="splashscreen">
 
-    <h1>#{msg['login.welcome.h']}</h1>
-    <div style="height:45vh"/>
+    <h2>#{msg['login.welcome.h']}</h2>
+    <div style="height:15vh"/>
     <p>
-        <h:outputText escape="false" value="#{msg['welcome.t.introduction']}" styleClass="text"/>
+        <p:outputLabel escape="false" value="#{msg['welcome.t.introduction']}"/>
     </p>
+
     <h:panelGrid columns="2" cellpadding="20">
         <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
