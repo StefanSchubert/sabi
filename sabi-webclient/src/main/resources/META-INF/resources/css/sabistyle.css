@@ -1,54 +1,4 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
-/* Default, if no specialized media query fits */
-
-body {
-    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 100%;
-    font-size: 1.2em;
-    line-height: 1.3em;
-    word-wrap: break-word;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    line-height: 1em;
-    font-weight: 700;
-}
-
-p {
-    line-height: 1.3em;
-    font-weight: 300;
-    font-size: 1.2em;
-}
-
-h1 {
-    font-size: 2em;
-}
-
-h2 {
-    font-size: 1.8em;
-}
-
-h3 {
-    font-size: 1.6em;
-}
-
-h4 {
-    font-size: 1.4em;
-}
-
-h5 {
-    font-size: 1.2em;
-}
-
-h6 {
-    font-size: 1em;
-}
-
-/*
 Sample and explanation taken from: https://bits.theorem.co/css-pro-tips-responsive-font-sizes-and-when-to-use-which-units/
 
 "The em part: You can think of the em value as being the size the text bottoms out at.
@@ -93,113 +43,116 @@ a.splashscreen:active {color: aqua;}
 
 @media screen and (min-width: 400px) {
     body {
-        font-size: 1.4em;
+        font-size: 1em !important;
     }
 
-    .ui-widget {
-        font-size: 1.44em;
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
     }
 
     h1 {
-        font-size: 1.8em;
+        font-size: 1.45em !important;
     }
 
     h2 {
-        font-size: 1.6em;
+        font-size: 1.3em !important;
     }
 
     h3 {
-        font-size: 1.5em;
+        font-size: 1.15em !important;
     }
 }
 
-@media screen and (min-width: 680px) {
+/* Retina Phones like iphone XR */
+@media screen and (min-width: 710px) {
     body {
-        font-size: 1.4em;
+        font-size: 1em !important;
     }
 
-    .ui-widget {
-        font-size: 1.68em;
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
     }
 
     h1 {
-        font-size: 2em;
+        font-size: 1.5em !important;
     }
 
     h2 {
-        font-size: 1.7em;
+        font-size: 1.35em !important;
     }
 
     h3 {
-        font-size: 1.5em;
+        font-size: 1.2em !important;
     }
 }
 
 @media screen and (min-width: 1224px) {
     body {
-        font-size: 1.6em;
+        font-size: 1em !important;
     }
 
-    .ui-widget {
-        font-size: 1.68em;
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
     }
 
     h1 {
-        font-size: 2.1em;
+        font-size: 1.45em !important;
     }
 
     h2 {
-        font-size: 1.9em;
+        font-size: 1.3em !important;
     }
 
     h3 {
-        font-size: 1.75em;
+        font-size: 1.15em !important;
     }
 
 }
 
+/* Retina Laptops like MacBook */
 @media screen and (min-width: 1400px) {
     body {
-        font-size: 1.8em;
+        font-size: 1em !important;
     }
 
-    .ui-widget {
-        font-size: 1.84em;
+    .ui-widget, .ui-outputlabel {
+        font-size: 1em !important;
     }
 
     h1 {
-        font-size: 2.5em;
+        font-size: 1.65em !important;
     }
 
     h2 {
-        font-size: 2em;
+        font-size: 1.5em !important;
     }
 
     h3 {
-        font-size: 1.85em;
+        font-size: 1.35em !important;
     }
 
 }
 
+/*
 @media screen and (min-width: 1900px) {
     body {
-        font-size: 2.1em;
+        font-size: 2.1em !important;
     }
 
-    .ui-widget {
-        font-size: 2.1em;
+    .ui-widget, ui-outputlabel {
+        font-size: 2.1em !important;
     }
 
     h1 {
-        font-size: 2.8em;
+        font-size: 2.8em !important;
     }
 
     h2 {
-        font-size: 2.5em;
+        font-size: 2.5em !important;
     }
 
     h3 {
-        font-size: 2.2em;
+        font-size: 2.2em !important;
     }
-
 }
+*/
