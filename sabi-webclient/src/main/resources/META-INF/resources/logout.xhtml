@@ -26,13 +26,13 @@
 
 <h:body styleClass="splashscreen">
 
-    <h1>#{msg['logout.header.h']}</h1>
+    <h2>#{msg['logout.header.h']}</h2>
     <p>
         <img src="#{resource['images:ByeBye.png']}" alt="Clibanarius picture from Stefans reef."/>
     </p>
     <p>
         <h:form>
-            <h:outputText value="#{msg['logout.message.t']}" escape="false" style="width: 50px;"/>
+            <p:outputLabel value="#{msg['logout.message.t']}" escape="false"/>
             <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         </h:form>
     </p>

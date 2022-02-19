@@ -27,11 +27,12 @@
 
 <h:body styleClass="splashscreen">
 
-    <h1>#{msg['login.welcome.h']}</h1>
-    <div style="height:45vh"/>
+    <h3>#{msg['login.welcome.h']}</h3>
+    <div style="height:10vh"/>
     <p>
-        <h:outputText escape="false" value="#{msg['welcome.t.introduction']}" styleClass="text"/>
+        <p:outputLabel escape="false" value="#{msg['welcome.t.introduction']}"/>
     </p>
+
     <h:panelGrid columns="2" cellpadding="20">
         <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
         <p:button outcome="register" value="#{msg['welcome.but.register']}"/>

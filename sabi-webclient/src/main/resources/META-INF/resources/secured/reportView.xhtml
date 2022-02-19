@@ -122,23 +122,23 @@
                                  paginator="true" rows="10" styleClass="p-mt-2">
 
                         <p:column headerText="#{msg['measureview.date.l']}">
-                            <h:outputText value="#{m.measuredOn}">
+                            <p:outputLabel value="#{m.measuredOn}">
                                 <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
-                            </h:outputText>
+                            </p:outputLabel>
                         </p:column>
 
                         <p:column headerText="#{msg['menu.tankView.l']}">
-                            <h:outputText value="#{reportView.getTankNameForId(m.aquariumId,reportView.tanks)}"/>
+                            <p:outputLabel value="#{reportView.getTankNameForId(m.aquariumId,reportView.tanks)}"/>
                         </p:column>
 
                         <p:column headerText="#{msg['common.unitchoise.l']}">
-                            <h:outputText value="#{reportView.getUnitSignForId(m.unitId,reportView.knownUnits)}"/>
+                            <p:outputLabel value="#{reportView.getUnitSignForId(m.unitId,reportView.knownUnits)}"/>
                         </p:column>
 
                         <p:column headerText="#{msg['measureview.value.l']}">
-                            <h:outputText value="#{m.measuredValue}">
+                            <p:outputLabel value="#{m.measuredValue}">
                                 <f:convertNumber type="number" locale="#{userSession.locale}"/>
-                            </h:outputText>
+                            </p:outputLabel>
                         </p:column>
 
                     </p:dataTable>
