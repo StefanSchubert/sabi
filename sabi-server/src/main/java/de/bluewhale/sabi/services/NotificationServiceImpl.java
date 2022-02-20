@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * @author Stefan Schubert
@@ -34,19 +36,24 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendValidationMail(UserTo createdUser) throws MessagingException {
         MimeMessage message = mailer.createMimeMessage();
 
+        Locale usersLocale = (createdUser.getLanguage()==null?Locale.ENGLISH: new Locale(createdUser.getLanguage()));
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/RegistrationMessages", usersLocale);
+        String headline = bundle.getString("email.verify.token.request.headline");
+        String text = bundle.getString("email.verify.token.request.txt");
+
+        String verifyLink = mailValidationURL + "email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken();
+
         // use the true flag to indicate you need a multipart message
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(createdUser.getEmail());
         helper.setSubject("sabi Account Validation");
         helper.setFrom(senderAddress);
 
-        // todo i18n Textbausteine (userTO) extract sabi target URL from application properties
-        helper.setText("<html><body>" +
-                "<h1>Welcome to sabi</h1>" +
-                "<p>To activate your account and make use of sabi we require to verify your email-address." +
-                "To do so, please click on the following link or copy paste it into your browser:</p>" +
-                mailValidationURL + "email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken() + "<br/ >" +
-                "</body></html>", true);
+        helper.setText(String.format(usersLocale, "<html><body>" +
+                "<h1>%s</h1>" +
+                "<p>%s</p>" +
+                "%s <br/ >" +
+                "</body></html>",headline,text,verifyLink), true);
 
         mailer.send(message);
     }
