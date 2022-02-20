@@ -35,5 +35,5 @@ Assets/Thumbs.db
 /devops/docker/sabi-backend/assets/opt/*.jar
 /devops/docker/captcha/assets/opt/*.jar
 /devops/GenericPiMetricsEndpoint/target/
-/devops/sabi_docker_sdk/grafanaData/
+/devops/sabi_docker_sdk/grafanaData
 

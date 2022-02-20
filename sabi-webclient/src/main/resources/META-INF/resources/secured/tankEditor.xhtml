@@ -27,8 +27,8 @@
                 <p:autoUpdate/>
             </p:messages>
 
-            <h:form>
-                <p:panelGrid columns="2" layout="grid" size="400" style="border:2;">
+            <h:form id="tankform">
+                <p:panelGrid columns="2" style="border:2;">
                     <p:outputLabel for="description" value="#{msg['tankview.description.l']}"/>
                     <p:inputText id="description"
                                  value="#{tankListView.selectedTank.description}"

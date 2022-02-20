@@ -182,6 +182,10 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             // users session, it does not make sense that we to this in measureview and in report view again.
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
+            if (tanks.size() == 1) {
+                // default selection if user has only one tank
+                this.selectedTankId= (tanks.get(0).getId());
+            }
         } catch (BusinessException e) {
             tanks = new ArrayList<>();
             log.error(e.getLocalizedMessage());
