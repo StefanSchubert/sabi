@@ -23,5 +23,5 @@ ENV JAVA_TOOL_OPTIONS -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspen
 WORKDIR /opt
 
 # Start our app
-ENTRYPOINT ["/usr/bin/java", "-jar", "/opt/sabi-service-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["/usr/bin/java", "-jar", "/opt/sabi-service.jar"]
 

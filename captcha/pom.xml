@@ -11,14 +11,14 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.13</version>
+        <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>captcha-light</artifactId>
-    <version>1.2</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
     <description>A RESTfull microservice service for CAPTCHA running as spring boot application</description>
 
@@ -42,11 +42,14 @@
 
     <properties>
         <java.version>11</java.version>
-        <log4j2.version>2.17.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <swagger.version>2.9.2</swagger.version>
-        <micrometer.prometheus.version>1.5.4</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>
+        <junit.version>4.13.2</junit.version>
+        <maven.versions.plugin.version>2.9.0</maven.versions.plugin.version>
+        <owasp.plugin.version>6.5.3</owasp.plugin.version>
     </properties>
 
 
@@ -165,7 +168,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -190,7 +193,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
@@ -234,11 +237,26 @@
                  -->
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.5.0</version>
+                <version>${owasp.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- This will check for newer version on dependencies which are
+                     controlled by version property variables -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${maven.versions.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>display-property-updates</goal>
                         </goals>
                     </execution>
                 </executions>

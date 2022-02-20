@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 // If you seek an example, see
 // http://websystique.com/springmvc/spring-mvc-4-restful-web-services-crud-example-resttemplate/
@@ -52,7 +54,7 @@ public class AuthenticationController {
     @Autowired
     CaptchaAdapter captchaAdapter;
 
-    @ApiOperation(value="Login a user.", notes="Creates an authorization token for subsequent requests.")
+    @ApiOperation(value = "Login a user.", notes = "Creates an authorization token for subsequent requests.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - extract user authorization token from header for further requests.", response = HttpStatus.class),
             @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
@@ -69,7 +71,7 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation(value="Reset users password", notes="Legitimation and new password are transmitted via json body.")
+    @ApiOperation(value = "Reset users password", notes = "Legitimation and new password are transmitted via json body.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - password has been reset.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
@@ -99,7 +101,7 @@ public class AuthenticationController {
 
     }
 
-    @ApiOperation(value="Request to reset users password", notes="User will retrieve an email with instructions.")
+    @ApiOperation(value = "Request to reset users password", notes = "User will retrieve an email with instructions.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - email with reset token has been sent to user.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
@@ -130,7 +132,7 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation(value="Used to validate a users email", notes="User sends in a token which has been deliverd via email.")
+    @ApiOperation(value = "Used to validate a users email", notes = "User sends in a token which has been deliverd via email.")
     @ApiResponses({
             @ApiResponse(code = 202, message = "Accepted - User can proceed using this service by login now.", response = HttpStatus.class),
             @ApiResponse(code = 406, message = "Not Acceptable - validation code or user unknown.", response = HttpStatus.class)
@@ -144,27 +146,50 @@ public class AuthenticationController {
                                                @ApiParam(name = "email", value = "recipient of the link in validation email.") String email) {
 
         ResponseEntity<String> responseEntity;
+        String responseHeadline;
+        String responseText;
 
         boolean validated = userService.validateUser(email, validationToken);
+        Locale usersLocale = fetchUsersLocale(email);
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/RegistrationMessages", usersLocale);
 
-        // TODO STS (26.09.17): i18n of response
         if (validated) {
-            responseEntity = new ResponseEntity<>("<html><body><h1>Welcome to sabi!</h1><p>Your email has been " +
-                    "successfully validated. You can now login with your account. Have fun using sabi.</p></body></html>", HttpStatus.ACCEPTED);
+
+            responseHeadline = bundle.getString("email.verify.successful.response.headline");
+            responseText = bundle.getString("email.verify.successful.response.txt");
+
+            responseEntity = new ResponseEntity<>(String.format(usersLocale, "<html><body><h1>%s</h1><p>%s</p></body></html>",
+                    responseHeadline, responseText), HttpStatus.ACCEPTED);
             try {
                 notificationService.sendWelcomeMail(email);
             } catch (MessagingException e) {
                 log.error("Validation users email confirmation via token could not be send to the user. {}", e);
             }
         } else {
-            responseEntity = new ResponseEntity<>("<html><body><h1>Account validation failed!</h1><p>Your account is still locked." +
-                    " Did copied the full validation link into your webbrowser? Please try again.</p></body></html>", HttpStatus.NOT_ACCEPTABLE);
+            responseHeadline = bundle.getString("email.verify.failed.response.headline");
+            responseText = bundle.getString("email.verify.failed.response.txt");
+
+            responseEntity = new ResponseEntity<>(String.format(Locale.ENGLISH, "<html><body><h1>%s</h1><p>%s</p></body></html>",
+                    responseHeadline, responseText), HttpStatus.NOT_ACCEPTABLE);
         }
 
         return responseEntity;
     }
 
-    @ApiOperation(value="Register a new User", notes="User object needs to be transmitted via json body.")
+    private Locale fetchUsersLocale(String email) {
+        Locale usersLocale;
+        try {
+            // fetch users locale to i18n response messages
+            ResultTo<UserProfileTo> userProfile = userService.getUserProfile(email);
+            usersLocale = (userProfile.getValue().getLanguage() == null ? Locale.ENGLISH : new Locale(userProfile.getValue().getLanguage()));
+        } catch (BusinessException e) {
+            log.error("Couldn't fetch validated user profile");
+            usersLocale = Locale.ENGLISH;
+        }
+        return usersLocale;
+    }
+
+    @ApiOperation(value = "Register a new User", notes = "User object needs to be transmitted via json body.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserRegConfirmationTo.class),
             @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),

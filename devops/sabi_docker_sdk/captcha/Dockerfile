@@ -1,5 +1,5 @@
 # Base container with amazon corretto
-FROM amazoncorretto:11.0.10
+FROM amazoncorretto:17.0.2-alpine3.15
 
 # Copy Captcha executable jar. You need to replace the jar from the assets dir after a new build
 # copyjars.sh will do it for you
@@ -9,4 +9,4 @@ COPY assets/ /
 EXPOSE 8081
 
 # Captcha starten
-ENTRYPOINT ["/bin/java", "-jar", "/opt/captcha-service.jar"]
+ENTRYPOINT ["/usr/bin/java", "-jar", "/opt/captcha-service.jar"]
