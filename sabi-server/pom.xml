@@ -71,6 +71,7 @@
         <h2.version>2.1.210</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
+        <archunit.version>0.23.0</archunit.version>
     </properties>
 
     <dependencyManagement>
@@ -305,6 +306,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Supports checking on architectural integrity -->
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit</artifactId>
+            <version>${archunit.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
