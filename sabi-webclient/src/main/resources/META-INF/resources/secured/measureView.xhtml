@@ -93,7 +93,7 @@
                     <p:outputLabel value="#{msg['measureview.date.l']}"/>
                     <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
                                   pattern="dd.MM.yyyy" showTime="true" locale="#{userSession.locale}"
-                                  showOtherMonths="true" yearNavigator="true"/>
+                                  showOtherMonths="true" yearNavigator="true" />
 
                     <p:commandButton value="#{msg['common.save.b']}" action="#{measurementListView.save()}"
                                      id="saveAction" icon="pi pi-save"

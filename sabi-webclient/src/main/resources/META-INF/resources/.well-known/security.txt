@@ -1,7 +1,6 @@
 # Security Infos according to https://securitytxt.org
 
-# My security address
+Expires: 2024-02-24T11:00:00.000Z
+Preferred-Languages: de,en
 Contact: mailto:stefan@bluewhale.de
-
-# My OpenPGP key
 Encryption: https://www.bluewhale.de/pgp-key.txt
