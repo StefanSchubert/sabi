@@ -1,0 +1,4 @@
+# Security Infos according to https://securitytxt.org
+
+# My security address
+Contact: mailto:stefan@bluewhale.de
