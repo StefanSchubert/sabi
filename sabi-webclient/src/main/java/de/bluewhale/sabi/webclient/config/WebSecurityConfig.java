@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 // In Case of a session timeout don't go directly to the login page,
-                // use this page instead, for beeing able to notify the user what has happened.
+                // use this page instead, for being able to notify the user what has happened.
                 .sessionManagement().invalidSessionUrl("/sessionExpired.xhtml")
 
                 .and()

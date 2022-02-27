@@ -168,6 +168,12 @@ public class UserSession implements Serializable {
         locale = requestedUserLocale;
     }
 
+    /** Invalidates Frontend Session in case of logout. */
+    public void endSession(){
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.getExternalContext().invalidateSession();
+    }
+
     @PostConstruct
     public void lazyinit(){
         log.info("New Session created.");

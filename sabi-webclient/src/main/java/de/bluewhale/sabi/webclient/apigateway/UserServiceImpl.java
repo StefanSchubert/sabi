@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     FacesContext facesContext;
 
     /* Does not work this way currently with joinfaces
-       Tried to use ist, to get browsers locale, but reefactored the code to use springs context instead via LocaleContextHolder()
+       Tried to use it, to get browsers locale, but refactored the code to use springs context instead via LocaleContextHolder()
     @Inject
     private FacesContext facesContext;
     */
