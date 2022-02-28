@@ -107,4 +107,10 @@ public interface MeasurementService {
      * @return ParameterTo with details or null if they do not exists.
      */
     ParameterTo fetchParameterInfoFor(Integer pUnitID);
+
+    /**
+     * Used to display some project stats.
+     * @return Number of overall Measurements taken.
+     */
+    String fetchAmountOfMeasurements();
 }

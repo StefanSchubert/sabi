@@ -81,7 +81,7 @@ public class ApplicationInfo implements Serializable {
                 log.debug("Called Number of participants stats");
             };
         } catch (RestClientException e) {
-            // Treat as non existing MOTD to be resilient here.
+            // Default value will be displayed - which is ok. Stay resilient.
             log.error("Participant-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfParticipants;
@@ -101,11 +101,31 @@ public class ApplicationInfo implements Serializable {
                 log.debug("Called Number of tanks stats");
             };
         } catch (RestClientException e) {
-            // Treat as non existing MOTD to be resilient here.
+            // Default value will be displayed - which is ok. Stay resilient.
             log.error("Tank-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfTanks;
     }
+
+    /**
+     * Retrieves the Number of overall measurements
+     * @return Number as String
+     */
+    public String getNumberOfMeasurements() {
+        String numberOfMeasurements = "N/A";
+        String infoURL = sabiBackendUrl + "/api/stats/measurements";
+        try {
+            // todo only update max. every hour
+            numberOfMeasurements = restTemplate.getForObject(infoURL, String.class);
+            if (log.isDebugEnabled()){
+                log.debug("Called Number of measurement stats");
+            };
+        } catch (RestClientException e) {
+            // Default value will be displayed - which is ok. Stay resilient.
+            log.error("Measurement-Stats Restcall failure. {}",e.getMessage());
+        }
+        return numberOfMeasurements;
+    }    
 
     /**
      * Retrieve the current message of today if there is any.

@@ -71,8 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
                 // Open statistics
                 .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()
-                .antMatchers(HttpMethod.GET, Endpoint.PARTICIPANTS.getPath()).permitAll()
-                .antMatchers(HttpMethod.GET, Endpoint.TANKS.getPath()).permitAll()
+                .antMatchers(HttpMethod.GET, Endpoint.PARTICIPANT_STATS.getPath()).permitAll()
+                .antMatchers(HttpMethod.GET, Endpoint.TANK_STATS.getPath()).permitAll()
+                .antMatchers(HttpMethod.GET, Endpoint.MEASUREMENT_STATS.getPath()).permitAll()
                 // Motd can be requested before login
                 .antMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                 // all others require JWT authentication

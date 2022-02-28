@@ -225,4 +225,9 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         return parameterTo;
     }
+
+    @Override
+    public String fetchAmountOfMeasurements() {
+        return String.valueOf(measurementRepository.count());
+    }
 }

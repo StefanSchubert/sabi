@@ -10,6 +10,7 @@ import de.bluewhale.sabi.security.PasswordPolicyTest;
 import de.bluewhale.sabi.services.CoralServiceTest;
 import de.bluewhale.sabi.services.FishServiceTest;
 import de.bluewhale.sabi.services.UserServiceTest;
+import de.bluewhale.sabi.services.rest.StatsControllerTest;
 import de.bluewhale.sabi.services.rest.UserAuthControllerTest;
 import de.bluewhale.sabi.services.rest.UserProfileControllerTest;
 import org.junit.runner.RunWith;
@@ -32,7 +33,8 @@ import org.springframework.boot.test.context.SpringBootTest;
         MeasurementTestSuite.class,
         FishServiceTest.class,
         CoralServiceTest.class,
-        PasswordPolicyTest.class
+        PasswordPolicyTest.class,
+        StatsControllerTest.class
 })
 public class MasterTestSuite {
 

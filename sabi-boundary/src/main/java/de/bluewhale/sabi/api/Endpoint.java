@@ -16,8 +16,9 @@ public enum Endpoint {
     REGISTER("/api/auth/register"),
     PW_RESET_REQUEST("/api/auth/req_pwd_reset"),
     PW_RESET("/api/auth/pwd_reset"),
-    PARTICIPANTS("/api/stats/participants"),
-    TANKS("/api/stats/tanks"),
+    PARTICIPANT_STATS("/api/stats/participants"),
+    TANK_STATS("/api/stats/tanks"),
+    MEASUREMENT_STATS("/api/stats/measurements"),
     UNITS("/api/units"),
     USER_PROFILE("/api/userprofile")
     ;
