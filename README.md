@@ -72,7 +72,7 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 ### Common
 
 * Java 11
-* openAPI (Swagger)
+* openAPI3 (Swagger) via springdoc
 
 ### Client site
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a

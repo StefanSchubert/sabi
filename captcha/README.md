@@ -7,7 +7,7 @@ include within your product environment and you may adopt to your needs if requi
 ## Chosen approach
 
 Most of the CAPTCHA services out there rely on pattern recognition to tear humans from machines apart.
-Some other rely on mathematics skills. However they all might be difficult for some machines, but to 
+Some other relies on mathematics skills. However they all might be difficult for some machines, but to 
 be honest, the all look like the TV winnings games for the dumb audience. I liked the idea of challenging not
 only the machine, but us humans a little as well. So to answer the challenge questions you may need to know some
 context, a machine might not be able to combine the right context with the question. It's might be that you missing the context to answer 
@@ -45,8 +45,8 @@ So when talking about simple CAPTCHA service, I'm referring to setting it up and
 
 ### Stack: Server Side
 
-* JDK 1.8
-* openAPI (Swagger)
+* JDK 11
+* openAPI3 
 * Spring-Boot-Application
 * REST
 * jUnit
