@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
@@ -30,7 +30,7 @@ public class UserProfileTo implements Serializable {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
+    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
     public String getCountry() {
         return this.country;
     }
@@ -39,7 +39,7 @@ public class UserProfileTo implements Serializable {
         this.country = country;
     }
 
-    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
+    @Schema(name="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
     public String getLanguage() {
         return this.language;
     }

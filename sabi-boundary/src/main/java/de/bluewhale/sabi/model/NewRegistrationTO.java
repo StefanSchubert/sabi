@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
@@ -17,24 +17,24 @@ import java.io.Serializable;
 public class NewRegistrationTO implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
-    @ApiModelProperty(notes = "Users Emailaddress.", required = true)
+    @Schema(name = "Users Emailaddress.", required = true)
     private String email;
 
-    @ApiModelProperty(notes = "Loginname. Uniquely identifies the user account.", required = true)
+    @Schema(name = "Loginname. Uniquely identifies the user account.", required = true)
     private String username;
 
-    @ApiModelProperty(notes = "Users secret", required = true)
+    @Schema(name = "Users secret", required = true)
     private String password;
 
-    @ApiModelProperty(notes = "Needs to be a valid code otherwise you won't be registered - this helps avoiding " +
+    @Schema(name = "Needs to be a valid code otherwise you won't be registered - this helps avoiding " +
             "simple DOS-attacks in future", required = true)
     private String captchaCode;
 
-    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. " +
+    @Schema(name="ISO-639-1 language code - used for i18n in communication. " +
             "Must be set together with country. SmallCAPS / Defaults to 'en'",required = true)
     private String language ="en"; // default
 
-    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. " +
+    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. " +
             "Default 'US'", required = true)
     private String country = "US"; // default
 

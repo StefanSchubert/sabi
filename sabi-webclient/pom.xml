@@ -55,9 +55,9 @@
         <micrometer.prometheus.version>1.8.2</micrometer.prometheus.version>
         <joinfaces.version>4.7.0-m1</joinfaces.version>
 
-        <sabi.boundary.version>1.0.1</sabi.boundary.version>
+        <sabi.boundary.version>1.0.2</sabi.boundary.version>
         <passay.version>1.6.1</passay.version>
-        <owasp.plugin.version>6.5.3</owasp.plugin.version>
+        <owasp.plugin.version>7.0.0</owasp.plugin.version>
         <maven.versions.plugin.version>2.9.0</maven.versions.plugin.version>
         <lombok.version>1.18.22</lombok.version>
     </properties>

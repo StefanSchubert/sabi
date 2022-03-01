@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Transport Objekt which references the fish with a catalogue, to support
@@ -24,7 +24,7 @@ public class FishCatalogueTo {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "Short description of the fish (or localized name?), the detailed description relies in public wikis.", required = false)
+    @Schema(name = "Short description of the fish (or localized name?), the detailed description relies in public wikis.", required = false)
     public String getDescription() {
         return this.description;
     }
@@ -41,7 +41,7 @@ public class FishCatalogueTo {
         this.id = id;
     }
 
-    @ApiModelProperty(notes = "Link to a public wiki which describes the fish in detail.", required = false)
+    @Schema(name = "Link to a public wiki which describes the fish in detail.", required = false)
     public String getMeerwasserwikiUrl() {
         return this.meerwasserwikiUrl;
     }
@@ -50,7 +50,7 @@ public class FishCatalogueTo {
         this.meerwasserwikiUrl = meerwasserwikiUrl;
     }
 
-    @ApiModelProperty(notes = "Scienetific name of the fish, which might ease the fish lookup from the catalogue.", required = true)
+    @Schema(name = "Scienetific name of the fish, which might ease the fish lookup from the catalogue.", required = true)
     public String getScientificName() {
         return this.scientificName;
     }

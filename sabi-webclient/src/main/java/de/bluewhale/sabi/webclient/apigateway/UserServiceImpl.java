@@ -7,7 +7,6 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.api.HttpHeader;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
@@ -19,6 +18,7 @@ import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
             UserProfileTo userProfileTo = requestUserProfile(jwtSabiBackendToken);
 
             Locale supportedLocale;
-            if (userProfileTo != null && !Strings.isNullOrEmpty(userProfileTo.getLanguage())) {
+            if (userProfileTo != null && Strings.isNotEmpty(userProfileTo.getLanguage())) {
                 /* Locale from stored user profile */
                 supportedLocale = i18nUtil.getEnsuredSupportedLocale(userProfileTo.getLanguage());
             } else {

@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Represents the User credentials as provided by the login.
@@ -24,7 +24,7 @@ public class RequestNewPasswordTo {
         return this.captchaToken;
     }
 
-    @ApiModelProperty(notes = "Answer token of the captcha challenge.", example="kSzu6", required = true)
+    @Schema(name = "Answer token of the captcha challenge.", example="kSzu6", required = true)
     public void setCaptchaToken(String captchaToken) {
         this.captchaToken = captchaToken;
     }
@@ -33,7 +33,7 @@ public class RequestNewPasswordTo {
         return this.emailAddress;
     }
 
-    @ApiModelProperty(notes = "Users email address.", example="john.doe@bluewhale.de", required = true)
+    @Schema(name = "Users email address.", example="john.doe@bluewhale.de", required = true)
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }

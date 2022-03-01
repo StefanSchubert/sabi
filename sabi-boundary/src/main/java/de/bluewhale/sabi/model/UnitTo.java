@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Instead of static enums I prefer to be able to add a new unit without the need of a redeployment.
@@ -24,7 +24,7 @@ public class UnitTo  {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "Short description of the unit might contain threshold information.", required = true)
+    @Schema(name = "Short description of the unit might contain threshold information.", required = true)
     public String getDescription() {
         return description;
     }
@@ -33,7 +33,7 @@ public class UnitTo  {
         this.description = pDescription;
     }
 
-    @ApiModelProperty(notes = "References the unique unit in which a measurement has been taken.", required = true)
+    @Schema(name = "References the unique unit in which a measurement has been taken.", required = true)
     public Integer getId() {
         return id;
     }
@@ -42,7 +42,7 @@ public class UnitTo  {
         this.id = id;
     }
 
-    @ApiModelProperty(notes = "Sign (Abbreviation) of measurements unit like 'PO4'", required = true)
+    @Schema(name = "Sign (Abbreviation) of measurements unit like 'PO4'", required = true)
     public String getUnitSign() {
         return unitSign;
     }

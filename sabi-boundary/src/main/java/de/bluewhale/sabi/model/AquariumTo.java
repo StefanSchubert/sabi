@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -32,7 +32,7 @@ public class AquariumTo implements Serializable {
     private Date inceptionDate;
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    @ApiModelProperty(notes = "Date since when this tank is up and running.", required = false)
+    @Schema(name = "Date since when this tank is up and running.", required = false)
     public Date getInceptionDate() {
         return this.inceptionDate;
     }
@@ -42,7 +42,7 @@ public class AquariumTo implements Serializable {
     }
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    @ApiModelProperty(notes = "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
+    @Schema(name = "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
     public Boolean getActive() {
         return active;
     }
@@ -52,17 +52,18 @@ public class AquariumTo implements Serializable {
     }
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    @ApiModelProperty(notes = "Description or Name of the tank, so the user can distinguish them.", required = true)
+    @Schema(name = "Description or Name of the tank, so the user can distinguish them.", required = true)
     public String getDescription() {
         return description;
     }
 
-    @SuppressWarnings("UnqualifiedFieldAccess")    public void setDescription(final String pDescription) {
+    @SuppressWarnings("UnqualifiedFieldAccess")
+    public void setDescription(final String pDescription) {
         description = pDescription;
     }
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    @ApiModelProperty(notes = "ID this object for further reference.")
+    @Schema(name = "ID this object for further reference.")
     public Long getId() {
         return id;
     }
@@ -72,7 +73,7 @@ public class AquariumTo implements Serializable {
     }
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    @ApiModelProperty(notes = "Tanks volume", required = true)
+    @Schema(name = "Tanks volume", required = true)
     public Integer getSize() {
         return size;
     }
@@ -82,7 +83,7 @@ public class AquariumTo implements Serializable {
     }
 
 
-    @ApiModelProperty(notes = "Unit of tanks volume size.", required = true)
+    @Schema(name = "Unit of tanks volume size.", required = true)
     public SizeUnit getSizeUnit() {
         return sizeUnit;
     }
@@ -92,7 +93,7 @@ public class AquariumTo implements Serializable {
     }
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    @ApiModelProperty(notes = "UserID - will be ignored. Set through processing.", required = false)
+    @Schema(name = "UserID - will be ignored. Set through processing.", required = false)
     public Long getUserId() {
         return userId;
     }

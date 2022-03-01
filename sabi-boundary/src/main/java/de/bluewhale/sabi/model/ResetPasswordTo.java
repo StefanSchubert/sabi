@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Represents the User credentials as provided by the login.
@@ -25,7 +25,7 @@ public class ResetPasswordTo {
         return this.resetToken;
     }
 
-    @ApiModelProperty(notes = "Reset token as provided via password reset request confirmation mail.", example="kSzu6", required = true)
+    @Schema(name = "Reset token as provided via password reset request confirmation mail.", example="kSzu6", required = true)
     public void setResetToken(String resetToken) {
         this.resetToken = resetToken;
     }
@@ -34,7 +34,7 @@ public class ResetPasswordTo {
         return this.emailAddress;
     }
 
-    @ApiModelProperty(notes = "Users email address.", example="john.doe@bluewhale.de", required = true)
+    @Schema(name = "Users email address.", example="john.doe@bluewhale.de", required = true)
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
@@ -43,7 +43,7 @@ public class ResetPasswordTo {
         return this.newPassword;
     }
 
-    @ApiModelProperty(notes = "Users new password.", example="You_Never_Know_:-)", required = true)
+    @Schema(name = "Users new password.", example="You_Never_Know_:-)", required = true)
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }

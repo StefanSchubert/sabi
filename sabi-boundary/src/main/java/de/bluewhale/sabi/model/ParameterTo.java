@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * ParameterTo contains additional detail information about measurement units such as threshold values.
@@ -19,7 +19,7 @@ public class ParameterTo {
     private Float maxThreshold;
     private String description;
 
-    @ApiModelProperty(notes = "References the belonging measurement Unit.", required = true)
+    @Schema(name = "References the belonging measurement Unit.", required = true)
     public Integer getBelongingUnitId() {
         return this.belongingUnitId;
     }
@@ -28,7 +28,7 @@ public class ParameterTo {
         this.belongingUnitId = belongingUnitId;
     }
 
-    @ApiModelProperty(notes = "Recommendation according natural seawater composition. Measurement value should not fall below this threshold.", required = true)
+    @Schema(name = "Recommendation according natural seawater composition. Measurement value should not fall below this threshold.", required = true)
     public Float getMinThreshold() {
         return this.minThreshold;
     }
@@ -37,7 +37,7 @@ public class ParameterTo {
         this.minThreshold = minThreshold;
     }
 
-    @ApiModelProperty(notes = "Recommendation according natural seawater composition. Measurement value should not be higher than this threshold.", required = true)
+    @Schema(name = "Recommendation according natural seawater composition. Measurement value should not be higher than this threshold.", required = true)
     public Float getMaxThreshold() {
         return this.maxThreshold;
     }
@@ -46,7 +46,7 @@ public class ParameterTo {
         this.maxThreshold = maxThreshold;
     }
 
-    @ApiModelProperty(notes = "Short description of the unit.", required = true)
+    @Schema(name = "Short description of the unit.", required = true)
     public String getDescription() {
         return description;
     }
@@ -55,7 +55,7 @@ public class ParameterTo {
         this.description = pDescription;
     }
 
-    @ApiModelProperty(notes = "References the unique unit in which a measurement has been taken.", required = true)
+    @Schema(name = "References the unique unit in which a measurement has been taken.", required = true)
     public Integer getId() {
         return id;
     }

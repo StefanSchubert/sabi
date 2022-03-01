@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -40,7 +40,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <swagger.version>2.9.2</swagger.version>
+        <springdoc.version>1.6.6</springdoc.version>
     </properties>
 
     <dependencyManagement>
@@ -78,17 +78,11 @@
 
 
     <dependencies>
-        <!-- required by using SWAGGER -->
+        <!-- REST API-Doc using Springdoc https://springdoc.org -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <scope>compile</scope>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>
@@ -96,60 +90,6 @@
             <artifactId>classmate</artifactId>
         </dependency>
     </dependencies>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.8</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.0</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <targetJdk>${java.version}</targetJdk>
-                    <format>xml</format>
-                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-                    <minimumTokens>100</minimumTokens>
-                    <excludes>
-                        <exclude>**/generated/*.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.13</version>
-                <configuration>
-                    <configLocation>config/maven_checks.xml</configLocation>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <excludes>**/generated/*.java</excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <tags>
-                        <tag>fixme</tag>
-                        <tag>FixMe</tag>
-                        <tag>FIXME</tag>
-                        <tag>@todo</tag>
-                        <tag>todo</tag>
-                        <tag>TODO</tag>
-                        <tag>xxx</tag>
-                        <tag>@deprecated</tag>
-                    </tags>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <build>
 
