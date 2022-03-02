@@ -5,9 +5,9 @@
 
 package de.bluewhale.captcha.rest;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.*;
 public class StatsController {
 
 
-    @ApiOperation("/healthcheck")
+    @Operation(method = "/healthcheck")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Service is responsive...I'm alive.", response = HttpStatus.class) })
+            @ApiResponse(responseCode = "200", description = "Service is responsive...I'm alive.") })
     @RequestMapping(value = {"/healthcheck"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

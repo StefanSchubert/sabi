@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 
@@ -27,7 +27,7 @@ public class FishTo {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "Telling when the fish was added to the tank.", required = true)
+    @Schema(name = "Telling when the fish was added to the tank.", required = true)
     public LocalDate getAddedOn() {
         return this.addedOn;
     }
@@ -44,7 +44,7 @@ public class FishTo {
         this.aquariumId = aquariumId;
     }
 
-    @ApiModelProperty(notes = "Telling when the fish died. By what reason ever.", required = false)
+    @Schema(name = "Telling when the fish died. By what reason ever.", required = false)
     public LocalDate getExodusOn() {
         return this.exodusOn;
     }
@@ -53,7 +53,7 @@ public class FishTo {
         this.exodusOn = exodusOn;
     }
 
-    @ApiModelProperty(notes = "Loose coupled reference to the fish catalogue which identifies the inhabitant within the community.", required = true)
+    @Schema(name = "Loose coupled reference to the fish catalogue which identifies the inhabitant within the community.", required = true)
     public Long getFishCatalogueId() {
         return this.fishCatalogueId;
     }
@@ -70,7 +70,7 @@ public class FishTo {
         this.id = id;
     }
 
-    @ApiModelProperty(notes = "For owners sake. Especially thought for being able to distinguish them when you have more of a kind.", required = true)
+    @Schema(name = "For owners sake. Especially thought for being able to distinguish them when you have more of a kind.", required = true)
     public String getNickname() {
         return this.nickname;
     }
@@ -79,7 +79,7 @@ public class FishTo {
         this.nickname = nickname;
     }
 
-    @ApiModelProperty(notes = "Might be used by the owner to describe the observed behavior, so he or she might comapre it against public descriptions.", required = false)
+    @Schema(name = "Might be used by the owner to describe the observed behavior, so he or she might comapre it against public descriptions.", required = false)
     public String getObservedBehavior() {
         return this.observedBehavior;
     }

@@ -13,10 +13,10 @@ import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.services.NotificationService;
 import de.bluewhale.sabi.services.UserService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+;
 
 // If you seek an example, see
 // http://websystique.com/springmvc/spring-mvc-4-restful-web-services-crud-example-resttemplate/
@@ -54,10 +56,10 @@ public class AuthenticationController {
     @Autowired
     CaptchaAdapter captchaAdapter;
 
-    @ApiOperation(value = "Login a user.", notes = "Creates an authorization token for subsequent requests.")
+    @Operation(method = "Login a user. Creates an authorization token for subsequent requests.")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - extract user authorization token from header for further requests.", response = HttpStatus.class),
-            @ApiResponse(code = 401, message = "Unauthorized - response won't contain a valid user token.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "202", description =  "Accepted - extract user authorization token from header for further requests."),
+            @ApiResponse(responseCode = "401", description =  "Unauthorized - response won't contain a valid user token.")
     })
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -71,12 +73,12 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation(value = "Reset users password", notes = "Legitimation and new password are transmitted via json body.")
+    @Operation(method = "Reset users password. Legitimation and new password are transmitted via json body.")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - password has been reset.", response = HttpStatus.class),
-            @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
-            @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class),
-            @ApiResponse(code = 424, message = "Failed Dependency - Invalid reset token. Please use token issued by email on reset request.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "202", description =  "Accepted - password has been reset."),
+            @ApiResponse(responseCode = "406", description =  "Not Acceptable - email is not registered."),
+            @ApiResponse(responseCode = "503", description =  "Service temporarily unavailable  - Please retry later."),
+            @ApiResponse(responseCode = "424", description =  "Failed Dependency - Invalid reset token. Please use token issued by email on reset request.")
     })
     @RequestMapping(value = {"/pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_HTML_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -101,12 +103,12 @@ public class AuthenticationController {
 
     }
 
-    @ApiOperation(value = "Request to reset users password", notes = "User will retrieve an email with instructions.")
+    @Operation(method = "Request to reset users password. User will retrieve an email with instructions.")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - email with reset token has been sent to user.", response = HttpStatus.class),
-            @ApiResponse(code = 406, message = "Not Acceptable - email is not registered.", response = HttpStatus.class),
-            @ApiResponse(code = 424, message = "Failed Dependency - Captcha failed. Please retry with another captcha.", response = HttpStatus.class),
-            @ApiResponse(code = 503, message = "Service temporarily unavailable  - Please retry later.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "202", description =  "Accepted - email with reset token has been sent to user."),
+            @ApiResponse(responseCode = "406", description =  "Not Acceptable - email is not registered."),
+            @ApiResponse(responseCode = "424", description =  "Failed Dependency - Captcha failed. Please retry with another captcha."),
+            @ApiResponse(responseCode = "503", description =  "Service temporarily unavailable  - Please retry later.")
     })
     @RequestMapping(value = {"/req_pwd_reset"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -132,18 +134,18 @@ public class AuthenticationController {
     }
 
 
-    @ApiOperation(value = "Used to validate a users email", notes = "User sends in a token which has been deliverd via email.")
+    @Operation(method = "Used to validate a users email. User sends in a token which has been deliverd via email.")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Accepted - User can proceed using this service by login now.", response = HttpStatus.class),
-            @ApiResponse(code = 406, message = "Not Acceptable - validation code or user unknown.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "202", description =  "Accepted - User can proceed using this service by login now."),
+            @ApiResponse(responseCode = "406", description =  "Not Acceptable - validation code or user unknown.")
     })
     @RequestMapping(value = {"/email/{email}/validation/{token}"}, method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> validateUser(@PathVariable(value = "token", required = true)
-                                               @ApiParam(name = "token", value = "part of the link in validation email.") String validationToken,
+                                               @Parameter(name = "token", description = "part of the link in validation email.") String validationToken,
                                                @PathVariable(value = "email", required = true)
-                                               @ApiParam(name = "email", value = "recipient of the link in validation email.") String email) {
+                                               @Parameter(name = "email", description = "recipient of the link in validation email.") String email) {
 
         ResponseEntity<String> responseEntity;
         String responseHeadline;
@@ -189,14 +191,14 @@ public class AuthenticationController {
         return usersLocale;
     }
 
-    @ApiOperation(value = "Register a new User", notes = "User object needs to be transmitted via json body.")
+    @Operation(method = "Register a new User. User object needs to be transmitted via json body.")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Created - extract user Token from header for further requests.", response = UserRegConfirmationTo.class),
-            @ApiResponse(code = 412, message = "Captcha Validation code was invalid. Registration failed.", response = HttpStatus.class),
-            @ApiResponse(code = 503, message = "Backend-Service not available, please try again later.", response = HttpStatus.class),
-            @ApiResponse(code = 415, message = "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?", response = HttpStatus.class),
-            @ApiResponse(code = 409, message = "Conflict - username and/or email-address already exists, or password too weak.", response = NewRegistrationTO.class),
-            @ApiResponse(code = 400, message = "JSON Syntax invalid. Please check your paylod.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "201", description =  "Created - extract user Token from header for further requests."),
+            @ApiResponse(responseCode = "412", description =  "Captcha Validation code was invalid. Registration failed."),
+            @ApiResponse(responseCode = "503", description =  "Backend-Service not available, please try again later."),
+            @ApiResponse(responseCode = "415", description =  "Wrong media type - Did you used a http header with MediaType=APPLICATION_JSON_VALUE ?"),
+            @ApiResponse(responseCode = "409", description =  "Conflict - username and/or email-address already exists, or password too weak."),
+            @ApiResponse(responseCode = "400", description =  "JSON Syntax invalid. Please check your paylod.")
     })
     @RequestMapping(value = {"/register"}, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

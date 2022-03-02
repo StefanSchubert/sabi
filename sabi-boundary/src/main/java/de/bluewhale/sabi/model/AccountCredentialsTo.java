@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
@@ -26,12 +26,12 @@ public class AccountCredentialsTo implements Serializable {
         return this.password;
     }
 
-    @ApiModelProperty(notes = "Users password.", example="kSzu65#@!$§g642", required = true)
+    @Schema(name = "Users password.", example="kSzu65#@!$§g642", required = true)
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @ApiModelProperty(notes = "We use users email address as unique username.", example="sabi@bluewhale.de", required = true)
+    @Schema(name = "We use users email address as unique username.", example="sabi@bluewhale.de", required = true)
     public String getUsername() {
         return this.username;
     }

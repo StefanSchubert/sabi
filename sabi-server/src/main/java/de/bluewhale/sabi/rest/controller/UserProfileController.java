@@ -10,9 +10,9 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserProfileTo;
 import de.bluewhale.sabi.services.UserService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,8 @@ import java.security.Principal;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 
+;
+
 @RestController
 @RequestMapping(value = "api/userprofile")
 @Slf4j
@@ -32,12 +34,11 @@ public class UserProfileController {
     @Autowired
     UserService userService;
 
-    @ApiOperation(value = "Update an existing userProfile", notes = "Needs to be provided via json body.")
+    @Operation(method = "Update an existing userProfile. Needs to be provided via json body.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK - Profile has been updated",
-                    response = UserProfileTo.class),
-            @ApiResponse(code = 409, message = "Something wrong - UserID does not exists or something like that."),
-            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "200", description = "OK - Profile has been updated"),
+            @ApiResponse(responseCode = "409", description = "Something wrong - UserID does not exists or something like that."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {""}, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -70,13 +71,12 @@ public class UserProfileController {
         return responseEntity;
     }
 
-    @ApiOperation(value = "Get belonging userProfile", notes = "User ID will be derived from JWT Backend Token. " +
+    @Operation(method = "Get belonging userProfile. User ID will be derived from JWT Backend Token. " +
             "Because of the Token we can be sure that we have an auth context and return users profile.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK - Check response body for users profile.",
-                    response = UserProfileTo.class),
-            @ApiResponse(code = 409, message = "Something wrong - DB Backend does not respond or something like that."),
-            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "200", description = "OK - Check response body for users profile."),
+            @ApiResponse(responseCode = "409", description = "Something wrong - DB Backend does not respond or something like that."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {""}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -108,7 +108,5 @@ public class UserProfileController {
 
         return responseEntity;
     }
-
-
 
 }

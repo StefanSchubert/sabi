@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public class MeasurementTo implements Serializable {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "References the Aquarium this measurement belongs to.", required = true)
+    @Schema(name = "References the Aquarium this measurement belongs to.", required = true)
     public Long getAquariumId() {
         return aquariumId;
     }
@@ -47,7 +47,7 @@ public class MeasurementTo implements Serializable {
         this.id = id;
     }
 
-    @ApiModelProperty(notes = "Point in time when the description has been taken.", required = true)
+    @Schema(name = "Point in time when the description has been taken.", required = true)
     public LocalDateTime getMeasuredOn() {
         return measuredOn;
     }
@@ -56,7 +56,7 @@ public class MeasurementTo implements Serializable {
         this.measuredOn = measuredOn;
     }
 
-    @ApiModelProperty(notes = "Decimal value of the measurement.", required = true)
+    @Schema(name = "Decimal value of the measurement.", required = true)
     public float getMeasuredValue() {
         return measuredValue;
     }
@@ -65,7 +65,7 @@ public class MeasurementTo implements Serializable {
         this.measuredValue = measuredValue;
     }
 
-    @ApiModelProperty(notes = "References the used unit this measurement belongs to.", required = true)
+    @Schema(name = "References the used unit this measurement belongs to.", required = true)
     public int getUnitId() {
         return unitId;
     }

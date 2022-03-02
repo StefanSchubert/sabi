@@ -10,10 +10,10 @@ import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +21,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.HttpURLConnection;
 import java.security.Principal;
 import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
+
+;
 
 /**
  * Author: Stefan Schubert
@@ -46,13 +47,11 @@ public class TankController {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @ApiOperation(value = "List all tanks belonging to calling user.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @Operation(method = "List all tanks belonging to calling user. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
-            @ApiResponse(code = HttpURLConnection.HTTP_ACCEPTED,
-                    message = "Success tanks returned.",
-                    response = AquariumTo.class, responseContainer = "List"),
-            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
-                    response = String.class)
+            @ApiResponse(responseCode = "202",
+                    description = "Success tanks returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -65,19 +64,17 @@ public class TankController {
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }
 
-    @ApiOperation(value = "Read details of a specific tank.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @Operation(method = "Read details of a specific tank. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
-            @ApiResponse(code = HttpURLConnection.HTTP_OK,
-                    message = "Success tank returned.", response = AquariumTo.class),
-            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
-                    response = String.class)
+            @ApiResponse(responseCode = "200", description = "Success tank returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AquariumTo> listUsersTanks(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
                                                            @PathVariable(value = "id", required = true)
-                                                           @ApiParam(name = "id", value = "id of your aquarium..") String id,
+                                                           @Parameter(name = "id", description = "id of your aquarium..") String id,
                                                            Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
@@ -85,21 +82,20 @@ public class TankController {
         return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Delete a tank from users profile.", notes = "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @Operation(method = "Delete a tank from users profile. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
-            @ApiResponse(code = HttpURLConnection.HTTP_OK,
-                    message = "Tank deleted", response = HttpStatus.class),
-            @ApiResponse(code = HttpURLConnection.HTTP_CONFLICT,
-                    message = "Tank does not exists or does not belong to requesting user.", response = HttpStatus.class),
-            @ApiResponse(code = HttpURLConnection.HTTP_UNAUTHORIZED, message = "Unauthorized - request did not contained a valid user token.",
-                    response = String.class)
+            @ApiResponse(responseCode = "200",
+                    description = "Tank deleted"),
+            @ApiResponse(responseCode = "409",
+                    description = "Tank does not exists or does not belong to requesting user."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> removeTank(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
                                                      @PathVariable(value = "id", required = true)
-                                                     @ApiParam(name = "id", value = "id of your aquarium..") String id,
+                                                     @Parameter(name = "id", description = "id of your aquarium..") String id,
                                                      Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
@@ -116,12 +112,11 @@ public class TankController {
         return responseEntity;
     }
 
-    @ApiOperation(value="Add a new tank to users profile.")
+    @Operation(method="Add a new tank to users profile.")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "Created - Remember Id of returned tank if you want to update it afterwards or retrieve it via list operation.",
-                    response = AquariumTo.class),
-            @ApiResponse(code = 409, message = "AlreadyCreated - A tank with this Id has already been created. Create double called?."),
-            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "201", description = "Created - Remember Id of returned tank if you want to update it afterwards or retrieve it via list operation."),
+            @ApiResponse(responseCode = "409", description = "AlreadyCreated - A tank with this Id has already been created. Create double called?."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -145,11 +140,11 @@ public class TankController {
         return responseEntity;
     }
 
-    @ApiOperation(value="Update a specific tank.",notes="Tank data needs to be provides via json body.")
+    @Operation(method="Update a specific tank. Tank data needs to be provides via json body.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK - Aquarium has been updated",response = AquariumTo.class),
-            @ApiResponse(code = 409, message = "Something wrong - Tank ID does not exists or something like that."),
-            @ApiResponse(code = 401, message = "Unauthorized - request did not contained a valid user token.", response = HttpStatus.class)
+            @ApiResponse(responseCode = "200", description = "OK - Aquarium has been updated"),
+            @ApiResponse(responseCode = "409", description = "Something wrong - Tank ID does not exists or something like that."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {""}, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

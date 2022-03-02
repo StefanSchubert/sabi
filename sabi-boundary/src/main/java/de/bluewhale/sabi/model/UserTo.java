@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
@@ -55,7 +55,7 @@ public class UserTo implements Serializable {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
+    @Schema(name = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
     public String getCaptchaCode() {
         return captchaCode;
     }
@@ -64,7 +64,7 @@ public class UserTo implements Serializable {
         captchaCode = pCaptchaCode;
     }
 
-    @ApiModelProperty(notes = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
+    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
     public String getCountry() {
         return this.country;
     }
@@ -73,7 +73,7 @@ public class UserTo implements Serializable {
         this.country = country;
     }
 
-    @ApiModelProperty(notes = "Users Emailaddress", required = true)
+    @Schema(name = "Users Emailaddress", required = true)
     public String getEmail() {
         return email;
     }
@@ -90,7 +90,7 @@ public class UserTo implements Serializable {
         this.id = pId;
     }
 
-    @ApiModelProperty(notes="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
+    @Schema(name="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
     public String getLanguage() {
         return this.language;
     }
@@ -99,7 +99,7 @@ public class UserTo implements Serializable {
         this.language = language;
     }
 
-    @ApiModelProperty(notes = "Users secret", required = true)
+    @Schema(name = "Users secret", required = true)
     public String getPassword() {
         return password;
     }
@@ -108,7 +108,7 @@ public class UserTo implements Serializable {
         this.password = password;
     }
 
-    @ApiModelProperty(notes = "Userlogin", required = true)
+    @Schema(name = "Userlogin", required = true)
     public String getUsername() {
         return this.username;
     }
@@ -117,7 +117,7 @@ public class UserTo implements Serializable {
         this.username = username;
     }
 
-    @ApiModelProperty(notes = "Will be used only during registration process, when the user validates his email address.", required = false)
+    @Schema(name = "Will be used only during registration process, when the user validates his email address.", required = false)
     public String getValidationToken() {
         return validationToken;
     }

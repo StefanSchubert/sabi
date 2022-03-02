@@ -9,10 +9,10 @@ import de.bluewhale.captcha.model.ChallengeTo;
 import de.bluewhale.captcha.service.ChallengeRequestThrottle;
 import de.bluewhale.captcha.service.Checker;
 import de.bluewhale.captcha.service.QAGenerator;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,18 +34,17 @@ public class CaptchaController {
     @Autowired
     QAGenerator generator;
 
-    @ApiOperation("/challenge/{language}")
+    @Operation(method = "/challenge/{language}")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "CAPTCHA Probe activated - you may continue with check call.",
-                    response = ChallengeTo.class),
-            @ApiResponse(code = 429, message = "Max. requests per minute reached, please retry in 60 secs..")
+            @ApiResponse(responseCode =  "200", description = "CAPTCHA Probe activated - you may continue with check call."),
+            @ApiResponse(responseCode = "429", description = "Max. requests per minute reached, please retry in 60 secs..")
     })
     @RequestMapping(value = "/challenge/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ChallengeTo> getNewCaptchaChallenge(
             @PathVariable(value = "language", required = true)
-            @ApiParam(name = "language", value = "ISO-639-1 language code - used for i18n in communication.") String language) {
+            @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication.") String language) {
 
         ResponseEntity<ChallengeTo> response;
 
@@ -70,16 +69,16 @@ public class CaptchaController {
      * <li>{@link HttpStatus#NOT_ACCEPTABLE} if the code was either already consumed or just wrong.
      * </ul>
      */
-    @ApiOperation("/check/{code}")
+    @Operation(method ="/check/{code}")
     @ApiResponses({
-            @ApiResponse(code = 202, message = "Answer accepted, continue with registration process."),
-            @ApiResponse(code = 406, message = "Wrong Answer. Wrong or expired code. Retry with a new captcha request.")
+            @ApiResponse(responseCode = "202", description = "Answer accepted, continue with registration process."),
+            @ApiResponse(responseCode = "406", description = "Wrong Answer. Wrong or expired code. Retry with a new captcha request.")
     })
     @RequestMapping(value = "/check/{code}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<String> checkAnswer(@PathVariable(value = "code", required = true)
-                                              @ApiParam(name = "code", value = "Code of a correct answer to a challenge question.") String captchaChoice) {
+                                              @Parameter(name = "code", description = "Code of a correct answer to a challenge question.") String captchaChoice) {
 
         boolean validCode = checker.probeCode(captchaChoice);
         if (validCode == true) {

@@ -58,7 +58,7 @@ services:
       - "5080:5080"
 # Monitoring Sample with Prometheus Grafana
   grafana:
-    image: grafana/grafana:8.3.6
+    image: grafana/grafana:8.4.2
     volumes:
      - ./grafanaData:/var/lib/grafana
     ports:
@@ -68,7 +68,7 @@ services:
     depends_on:
       - prometheus
   prometheus:
-    image: prom/prometheus:v2.33.3
+    image: prom/prometheus:v2.33.4
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"

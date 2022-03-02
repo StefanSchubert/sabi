@@ -8,14 +8,16 @@ package de.bluewhale.sabi.rest.controller;
 import de.bluewhale.sabi.services.MeasurementService;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+;
 
 // If you seek an example, see
 // http://websystique.com/springmvc/spring-mvc-4-restful-web-services-crud-example-resttemplate/
@@ -40,9 +42,9 @@ public class StatsController {
     @Autowired
     MeasurementService measurementService;
 
-    @ApiOperation(value = "Lifeness-Probe", notes = "Might be used e.g. by kubernetes to decide if the service is still up and running.")
+    @Operation(method = "Lifeness-Probe. Might be used e.g. by kubernetes to decide if the service is still up and running.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Service is responsive...I'm alive.", response = HttpStatus.class)})
+            @ApiResponse(responseCode = "200", description = "Service is responsive...I'm alive.")})
     @RequestMapping(value = {"/healthcheck"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -53,9 +55,9 @@ public class StatsController {
         return new ResponseEntity<>("I'm alive :-)", HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Provides the amount of registered tanks.", notes = "Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
+    @Operation(method = "Provides the amount of registered tanks. Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "XY (Number of registered Participants)", response = HttpStatus.class)})
+            @ApiResponse(responseCode = "200", description = "XY (Number of registered Participants)")})
     @RequestMapping(value = {"/participants"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -64,9 +66,9 @@ public class StatsController {
         return new ResponseEntity<>(amountOfParticipants, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Provides the amount of registered tanks.", notes = "Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
+    @Operation(method = "Provides the amount of registered tanks. Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "XY (Number of tanks)", response = HttpStatus.class)})
+            @ApiResponse(responseCode = "200", description = "XY (Number of tanks)")})
     @RequestMapping(value = {"/tanks"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -75,9 +77,9 @@ public class StatsController {
         return new ResponseEntity<>(amountOfTanks, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Provides the amount of overall stores measurements.", notes = "Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
+    @Operation(method = "Provides the amount of overall stores measurements. Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "XY (Number of measurements)", response = HttpStatus.class)})
+            @ApiResponse(responseCode = "200", description = "XY (Number of measurements)")})
     @RequestMapping(value = {"/measurements"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

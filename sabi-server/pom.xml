@@ -41,17 +41,12 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.0.1</sabi.boundary.version>
+        <sabi.boundary.version>1.0.2</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <log4j2.version>2.17.1</log4j2.version>
-        <swagger.version>2.9.2</swagger.version>
-        <!--
-                Caution API change with version 3, you need to change more than just the dep version.
-                Haven't figured it out with spring yet
-                <swagger.version>3.0.0</swagger.version>
-        -->
+        <springdoc.version>1.6.6</springdoc.version>
 
         <eclipselink.version>2.7.9</eclipselink.version>
         <!--        <eclipselink.version>3.0.0</eclipselink.version>
@@ -63,7 +58,7 @@
         <spring.instrument.version>5.3.14</spring.instrument.version>
         <surefire.version>3.0.0-M5</surefire.version>
         <lombok.version>1.18.22</lombok.version>
-        <owasp.plugin.version>6.5.3</owasp.plugin.version>
+        <owasp.plugin.version>7.0.0</owasp.plugin.version>
         <maven.versions.plugin.version>2.9.0</maven.versions.plugin.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <passay.version>1.6.1</passay.version>
@@ -71,7 +66,7 @@
         <h2.version>2.1.210</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
-        <archunit.version>0.23.0</archunit.version>
+        <archunit.version>0.23.1</archunit.version>
     </properties>
 
     <dependencyManagement>
@@ -217,42 +212,22 @@
             <version>${micrometer.prometheus.version}</version>
         </dependency>
 
-        <!-- REST API-Doc using SWAGGER -->
+        <!-- REST API-Doc using Springdoc https://springdoc.org -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-            <scope>compile</scope>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
+<!--
+        May be helpful if you choose to work with @AuthenticationPrincipal on RestControllers instead
+        of defining Rules on WebSecurityConfig class.
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-beans</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-context</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-aop</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jackson-annotations</artifactId>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
+-->
 
         <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
         <dependency>

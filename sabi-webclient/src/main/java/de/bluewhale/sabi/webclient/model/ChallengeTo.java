@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
 
@@ -30,7 +30,7 @@ public class ChallengeTo {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @ApiModelProperty(notes = "List of keys and belonging answers. Only one key is valid and will be accepted.")
+    @Schema(description = "List of keys and belonging answers. Only one key is valid and will be accepted.")
     public Map<String, String> getAnswers() {
         return this.answers;
     }
@@ -39,7 +39,7 @@ public class ChallengeTo {
         this.answers = pAnswers;
     }
 
-    @ApiModelProperty(notes = "Served language. If the requested on is not avialable, you will retrieve english as default.")
+    @Schema(description = "Served language. If the requested on is not avialable, you will retrieve english as default.")
     public String getLanguage() {
         return this.language;
     }
@@ -48,7 +48,7 @@ public class ChallengeTo {
         this.language = pLanguage;
     }
 
-    @ApiModelProperty(notes = "Question which is supposed to sort out robotes.", required = true)
+    @Schema(description = "Question which is supposed to sort out robotes.", required = true)
     public String getQuestion() {
         return this.question;
     }

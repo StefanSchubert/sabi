@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
@@ -29,7 +29,7 @@ public class MotdTo implements Serializable {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @ApiModelProperty(notes = "Message of today which may contain maintenance announcements.", required = true)
+    @Schema(name = "Message of today which may contain maintenance announcements.", required = true)
     public String getMotd() {
         return modt;
     }
