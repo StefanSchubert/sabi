@@ -59,10 +59,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/", "/index.html").permitAll()
                 // Allow Monitoring Endpoint
                 .antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
-                // Allow Swagger api-doc access
-                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources",
-                        "/configuration/security", "/swagger-ui.html#/**", "/swagger-ui.html", "/webjars/**",
-                        "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security").permitAll()
+                // Allow OAS3 api-doc access
+                .antMatchers("/v3/api-docs/**",  "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // Registration and Login are accessible without JWT based authentication
                 .antMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
                 .antMatchers(HttpMethod.POST, Endpoint.REGISTER.getPath()).permitAll()

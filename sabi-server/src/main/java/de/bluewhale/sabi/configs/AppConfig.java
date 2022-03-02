@@ -34,7 +34,7 @@ public class AppConfig {
 
     @Bean
     public TokenAuthenticationService encryptionService() {
-        // @Value for constructor params is to late, so these needed to be handled here.
+        // @Value for constructor params is too late, so these needed to be handled here.
         return new TokenAuthenticationService(env.getProperty("accessToken.SECRET"), env.getProperty("accessToken.TTL"));
     }
 

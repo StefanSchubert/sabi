@@ -23,8 +23,16 @@ public class ApiDocumentationConfiguration {
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group("sabi-backend")
+                .group("sabi-public")
                 .pathsToMatch("/api/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi statsApi() {
+        return GroupedOpenApi.builder()
+                .group("sabi-stats-only")
+                .pathsToMatch("/api/stats/**")
                 .build();
     }
 

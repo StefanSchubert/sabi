@@ -219,6 +219,16 @@
             <version>${springdoc.version}</version>
         </dependency>
 
+<!--
+        May be helpful if you choose to work with @AuthenticationPrincipal on RestControllers instead
+        of defining Rules on WebSecurityConfig class.
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+-->
+
         <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
         <dependency>
             <groupId>org.springframework</groupId>
