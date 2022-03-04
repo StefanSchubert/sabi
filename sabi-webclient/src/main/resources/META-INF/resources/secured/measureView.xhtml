@@ -91,8 +91,18 @@
                     </p:column>
 
                     <p:outputLabel value="#{msg['measureview.date.l']}"/>
+                    <ui:remove>
+                        <!--
+                           I liked the idea to set the local measure time too,
+                           but decided against it. Reason, the window does not close
+                           with selection of a value, as the widget could not know,
+                           when you are finished. So you need to tap beneath the popup
+                           to close it. On mobiles this is not obvious to the user and
+                           may confuse him - as the popup would be too big.
+                        -->
+                    </ui:remove>
                     <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
-                                  pattern="dd.MM.yyyy" showTime="true" locale="#{userSession.locale}"
+                                  pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
                                   showOtherMonths="true" yearNavigator="true" />
 
                     <p:commandButton value="#{msg['common.save.b']}" action="#{measurementListView.save()}"
@@ -134,8 +144,21 @@
                     <p:dataTable id="measuresDT" var="m" value="#{measurementListView.measurementsTakenByUser}">
 
                         <p:column headerText="#{msg['measureview.date.l']}">
+                            <ui:remove>
+                                <!--
+                                   I liked the idea to set the local measure time too,
+                                   but decided against it. Reason, the window does not close
+                                   with selection of a value, as the widget could not know,
+                                   when you are finished. So you need to tap beneath the popup
+                                   to close it. On mobiles this is not obvious to the user and
+                                   may confuse him - as the popup would be too big.
+
+                               type="localDateTime"
+
+                                -->
+                            </ui:remove>
                             <p:outputLabel value="#{m.measuredOn}">
-                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
                             </p:outputLabel>
                         </p:column>
 
