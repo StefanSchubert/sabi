@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="#{userSession.language}">
+
+<f:metadata>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
+    <ui:insert name="metadata"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon"
+          type="image/png"
+          href="#{resource['images:icons8-crab-64.png']}"/>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
+</h:head>
+
+<h:body styleClass="baselayout">
+
+    <div id="content"><ui:insert name="content">Sorry content is missing. Report to site owner.</ui:insert></div>
+    <div id="footer"><ui:include src="/template/footer.xhtml"/></div>
+
+</h:body>
+</html>
