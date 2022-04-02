@@ -36,7 +36,7 @@ public class CaptchaController {
 
     @Operation(method = "/challenge/{language}")
     @ApiResponses({
-            @ApiResponse(responseCode =  "200", description = "CAPTCHA Probe activated - you may continue with check call."),
+            @ApiResponse(responseCode = "200", description = "CAPTCHA Probe activated - you may continue with check call."),
             @ApiResponse(responseCode = "429", description = "Max. requests per minute reached, please retry in 60 secs..")
     })
     @RequestMapping(value = "/challenge/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,7 +69,7 @@ public class CaptchaController {
      * <li>{@link HttpStatus#NOT_ACCEPTABLE} if the code was either already consumed or just wrong.
      * </ul>
      */
-    @Operation(method ="/check/{code}")
+    @Operation(method = "/check/{code}")
     @ApiResponses({
             @ApiResponse(responseCode = "202", description = "Answer accepted, continue with registration process."),
             @ApiResponse(responseCode = "406", description = "Wrong Answer. Wrong or expired code. Retry with a new captcha request.")
@@ -86,6 +86,6 @@ public class CaptchaController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(), HttpStatus.NOT_ACCEPTABLE);
         }
-
     }
+
 }

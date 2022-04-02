@@ -16,11 +16,10 @@
             <Policies>
                 <!-- rollover daily and when the file reaches
                     10 MegaBytes -->
-                <SizeBasedTriggeringPolicy
-                        size="30MB" />
-                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10MB" />
+                <TimeBasedTriggeringPolicy interval="1" />
             </Policies>
-            <!-- keep only last 14 files -->
+            <!-- keep only last 14 files if rollover happends more frequently -->
             <DefaultRolloverStrategy max="14" />
         </RollingFile>
     </Appenders>
