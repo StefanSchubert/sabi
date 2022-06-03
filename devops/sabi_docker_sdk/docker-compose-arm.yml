@@ -1,0 +1,108 @@
+version: '3.7'
+# Before running docker compose make sure that you have build the captcha and sabi project, otherwise
+# the container won't have access to the current jars.
+services:
+  captcha:
+    # available by http://localhost:8081/captcha/swagger-ui.html
+    container_name: captcha-as
+    build:
+      context: ./captcha
+      dockerfile: Dockerfile_ARM
+    platform: linux/arm64
+    networks:
+      - sabinet
+    ports:
+      - "8081:8081"
+  sabi-backend:
+    # available by http://localhost:8080/sabi/swagger-ui.html
+    container_name: sabi-as
+    build:
+      context: ./sabi-backend
+      dockerfile: Dockerfile_ARM
+    platform: linux/arm64
+    environment:
+      - TZ=Europe/Berlin
+    networks:
+      - sabinet
+    ports:
+      - "8080:8080"
+      - "8880:8880"
+    depends_on:
+      - db
+  flyway:
+    image: flyway/flyway:8.5
+    platform: linux/arm64
+    command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
+    volumes:
+      - ../../sabi-database/src/main/resources:/flyway/sql
+    networks:
+      - sabinet
+    depends_on:
+      - db
+  db:
+    image: mariadb:10.8.3
+    platform: linux/arm64
+    environment:
+      - MYSQL_ROOT_PASSWORD=SuperDooper
+      - MYSQL_DATABASE=sabi
+      - MYSQL_USER=sabiapp
+      - MYSQL_PASSWORD=sabi123
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - sabinet
+    ports:
+      - "3306:3306"
+# PROBLEM: NO ARM Support yet (6/22) we need a different one here
+#  fakeSMTP:
+#    image: gessnerfl/fake-smtp-server:1.8.7
+#    platform: linux/arm64/v8
+#    environment:
+#      - server.port=5080
+#      - fakesmtp.port=2525
+#      - fakesmtp.authentication.username=sabi@bluewhale.de
+#      - fakesmtp.authentication.password=YouWillNeverKnow
+#    networks:
+#      - sabinet
+#    ports:
+#      - "2525:2525"
+#      - "5080:5080"
+  smtp4dev:
+    image: rnwood/smtp4dev:prerelease
+    platform: linux/arm64
+    networks:
+      - sabinet
+    environment:
+      - ServerOptions__Port=2525
+    ports:
+      - "2525:2525"
+
+# Monitoring Sample with Prometheus Grafana
+  grafana:
+    image: grafana/grafana:8.5.4
+    platform: linux/arm64
+    volumes:
+     - ./grafanaData:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - sabinet
+    depends_on:
+      - prometheus
+  prometheus:
+    image: prom/prometheus:v2.36.0
+    platform: linux/arm64
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"
+    networks:
+      - sabinet
+    ports:
+      - 9090:9090
+
+networks:
+  sabinet:
+    driver: bridge
+
+# TODO: application.properties files contains "localhost" this does not matches the hosts,
+# db, fakeSMTP etc.. so the application.properties need to be externalized as in production
+# through the assets.
