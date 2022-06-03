@@ -6,6 +6,7 @@ services:
     # available by http://localhost:8081/captcha/swagger-ui.html
     container_name: captcha-as
     build: ./captcha
+    platform: linux/amd64
     networks:
       - sabinet
     ports:
@@ -14,6 +15,7 @@ services:
     # available by http://localhost:8080/sabi/swagger-ui.html
     container_name: sabi-as
     build: ./sabi-backend
+    platform: linux/amd64
     environment:
       - TZ=Europe/Berlin
     networks:
@@ -25,6 +27,7 @@ services:
       - db
   flyway:
     image: flyway/flyway:7.8
+    platform: linux/amd64
     command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 clean baseline migrate
     volumes:
       - ../../sabi-database/src/main/resources:/flyway/sql
@@ -33,7 +36,8 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:10.5.9
+    image: mariadb:10.8.3
+    platform: linux/amd64
     environment:
       - MYSQL_ROOT_PASSWORD=SuperDooper
       - MYSQL_DATABASE=sabi
@@ -45,7 +49,8 @@ services:
     ports:
       - "3306:3306"
   fakeSMTP:
-    image: gessnerfl/fake-smtp-server:1.7.1
+    image: gessnerfl/fake-smtp-server:1.8.7
+    platform: linux/amd64
     environment:
       - server.port=5080
       - fakesmtp.port=2525
@@ -58,7 +63,8 @@ services:
       - "5080:5080"
 # Monitoring Sample with Prometheus Grafana
   grafana:
-    image: grafana/grafana:8.4.2
+    image: grafana/grafana:8.5.4
+    platform: linux/amd64
     volumes:
      - ./grafanaData:/var/lib/grafana
     ports:
@@ -68,7 +74,8 @@ services:
     depends_on:
       - prometheus
   prometheus:
-    image: prom/prometheus:v2.33.4
+    image: prom/prometheus:v2.36.0
+    platform: linux/amd64
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"
