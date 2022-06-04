@@ -53,8 +53,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <log4j2.version>2.17.1</log4j2.version>
-        <!--        <micrometer.prometheus.version>1.8.2</micrometer.prometheus.version>-->
-        <micrometer.prometheus.version>1.9.0</micrometer.prometheus.version>
+                <micrometer.prometheus.version>1.8.6</micrometer.prometheus.version>
+<!--                <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>-->
         <!-- requires spring 3.0.x which requires java 17 - now available for raspberry pi -->
 <!--                <joinfaces.version>5.0.0-m2</joinfaces.version>-->
         <joinfaces.version>4.7.0-rc1</joinfaces.version>
@@ -106,6 +106,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+
         <!-- Micrometer core dependency  -->
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -140,10 +146,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
 
         <!-- For spring-security in combination with JWT -->
         <dependency>
