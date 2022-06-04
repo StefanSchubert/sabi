@@ -52,30 +52,20 @@ services:
       - sabinet
     ports:
       - "3306:3306"
-# PROBLEM: NO ARM Support yet (6/22) we need a different one here
-#  fakeSMTP:
-#    image: gessnerfl/fake-smtp-server:1.8.7
-#    platform: linux/arm64/v8
-#    environment:
-#      - server.port=5080
-#      - fakesmtp.port=2525
-#      - fakesmtp.authentication.username=sabi@bluewhale.de
-#      - fakesmtp.authentication.password=YouWillNeverKnow
-#    networks:
-#      - sabinet
-#    ports:
-#      - "2525:2525"
-#      - "5080:5080"
-  smtp4dev:
-    image: rnwood/smtp4dev:prerelease
+# To check what emails will be send and for being able to test the registration workflow
+  fakeSMTP:
+    image: gessnerfl/fake-smtp-server:1.9.0
     platform: linux/arm64
+    environment:
+      - server.port=5080
+      - fakesmtp.port=2525
+      - fakesmtp.authentication.username=sabi@bluewhale.de
+      - fakesmtp.authentication.password=YouWillNeverKnow
     networks:
       - sabinet
-    environment:
-      - ServerOptions__Port=2525
     ports:
       - "2525:2525"
-
+      - "5080:5080"
 # Monitoring Sample with Prometheus Grafana
   grafana:
     image: grafana/grafana:8.5.4

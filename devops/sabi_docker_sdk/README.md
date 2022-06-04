@@ -22,7 +22,7 @@ cat bin/launchColimaDockerEngine.sh
 
     #!/usr/bin/env sh
     colima start --arch x86_64 --cpu 4 --memory 8 --runtime docker --profile x86
-    echo "You my switch context with 'docker context list' and 'docker context use ..'"
+    echo "You may switch context with 'docker context list' and 'docker context use ..'"
     echo "Distingish socket for IntelliJ Docker Run Config: 'colima status x86'"
     echo "End colima VM with: 'colima stop x86'"
 
