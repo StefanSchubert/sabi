@@ -11,15 +11,15 @@ import de.bluewhale.sabi.model.UserProfileTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.UserService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;

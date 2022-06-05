@@ -7,6 +7,9 @@ package de.bluewhale.sabi.webclient.CDIBeans;
 
 import de.bluewhale.sabi.model.MotdTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +19,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Locale;
 

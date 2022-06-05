@@ -63,3 +63,11 @@ spring:
       enabled: true
       # Force the encoding to the configured charset on HTTP requests and responses.
       force: true
+
+# Disabling the /v3/api-docs endpoint
+springdoc:
+  api-docs:
+    enabled: false
+  # Disabling the swagger-ui
+  swagger-ui:
+    enabled: false

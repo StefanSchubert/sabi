@@ -7,9 +7,9 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.UnitTo;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

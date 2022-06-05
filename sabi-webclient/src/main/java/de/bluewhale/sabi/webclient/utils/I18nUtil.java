@@ -6,9 +6,9 @@
 package de.bluewhale.sabi.webclient.utils;
 
 import de.bluewhale.sabi.model.SupportedLocales;
+import jakarta.inject.Named;
+import jakarta.validation.constraints.NotNull;
 
-import javax.inject.Named;
-import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;

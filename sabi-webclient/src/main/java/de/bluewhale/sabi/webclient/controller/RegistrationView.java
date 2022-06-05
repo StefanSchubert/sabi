@@ -15,6 +15,7 @@ import de.bluewhale.sabi.webclient.model.ChallengeTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import de.bluewhale.sabi.webclient.utils.PasswordPolicy;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
 
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

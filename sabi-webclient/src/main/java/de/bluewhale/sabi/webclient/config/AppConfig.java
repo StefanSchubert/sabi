@@ -5,7 +5,6 @@
 
 package de.bluewhale.sabi.webclient.config;
 
-import de.bluewhale.sabi.webclient.security.SabiDoorKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,12 +33,5 @@ public class AppConfig {
     public static PropertySourcesPlaceholderConfigurer properties() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    // Used by Login-Door ;-)
-    @Bean
-    public SabiDoorKeeper sabiAuthenticationManager(){
-        return new SabiDoorKeeper();
-    } ;
-
 
 }

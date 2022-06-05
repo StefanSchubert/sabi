@@ -9,9 +9,9 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.util.List;
 

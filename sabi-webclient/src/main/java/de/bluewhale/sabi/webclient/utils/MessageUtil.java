@@ -5,10 +5,11 @@
 
 package de.bluewhale.sabi.webclient.utils;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 

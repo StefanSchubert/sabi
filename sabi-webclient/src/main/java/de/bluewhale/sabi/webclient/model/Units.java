@@ -6,9 +6,8 @@
 package de.bluewhale.sabi.webclient.model;
 
 import de.bluewhale.sabi.model.SizeUnit;
+import jakarta.inject.Named;
 import org.springframework.web.context.annotation.ApplicationScope;
-
-import javax.inject.Named;
 
 /**
  * Used to access the Enums in select Menues

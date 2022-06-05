@@ -7,69 +7,65 @@ package de.bluewhale.sabi.webclient.config;
 
 import de.bluewhale.sabi.webclient.security.SabiDoorKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Provides the configuration for our JWT Token based Security.
  *
+ * Notice: This class was formerly an implemantation of WebSecurityConfigurerAdapter as of < Spring-boot 2.7.0
+ * With Spring-Boot 3 the security configuration has been reworked,
+ * see: https://www.springcloud.io/post/2022-03/spring-security-without-the-websecurityconfigureradapter/#gsc.tab=0
+ * for details.
+ *
  * @author Stefan Schubert
  */
 @Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     @Autowired
-    SabiDoorKeeper sabiAuthenticationManager;
+    SabiDoorKeeper sabiAuthenticationProvider;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        // require all requests to be authenticated except for the resources
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/javax.faces.resource/**").permitAll()
-                // Allow Pages that don't require an auth context.
-                 .antMatchers("/", "/robots.txt","/sitemap.xml","/index.xhtml", "/register.xhtml",
-                         "/pwreset.xhtml", "/preregistration.xhtml", "/logout.xhtml","/sessionExpired.xhtml",
-                         "/credits.xhtml","/static/**","/.well-known/**").permitAll()
-                // Allow Monitoring Endpoint
-                .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-                // all others require authentication
-                .anyRequest().authenticated()
+            .authorizeRequests()
+            .antMatchers("/jakarta.faces.resource/**").permitAll()
+            // Allow Pages that don't require an auth context.
+            .antMatchers("/", "/robots.txt","/sitemap.xml","/index.xhtml", "/register.xhtml",
+                    "/pwreset.xhtml", "/preregistration.xhtml", "/logout.xhtml","/sessionExpired.xhtml",
+                    "/credits.xhtml","/static/**","/.well-known/**").permitAll()
+            // Allow Monitoring Endpoint
+            .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+            // all others require authentication
+            .anyRequest().authenticated()
 
-                .and()
+            .and()
 
-                // In Case of a session timeout don't go directly to the login page,
-                // use this page instead, for being able to notify the user what has happened.
-                .sessionManagement().invalidSessionUrl("/sessionExpired.xhtml")
+            // In Case of a session timeout don't go directly to the login page,
+            // use this page instead, for being able to notify the user what has happened.
+            .sessionManagement().invalidSessionUrl("/sessionExpired.xhtml")
 
-                .and()
+            .and()
 
-                // login - using this the browser redirect to this page if login is required and you are not logged in.
-                .formLogin().loginPage("/login.xhtml").permitAll()
-                .failureUrl("/login.xhtml?error=true").successForwardUrl("/secured/userportal.xhtml")
+            // login - using this the browser redirect to this page if login is required and you are not logged in.
+            .formLogin().loginPage("/login.xhtml").permitAll()
+            .failureUrl("/login.xhtml?error=true").successForwardUrl("/secured/userportal.xhtml")
 
-                .and()
+            .and()
 
-                // logout - back to login, you may specify a logout confirmation page with delayed redirect.
-                .logout().logoutSuccessUrl("/logout.xhtml")
+            // logout - back to login, you may specify a logout confirmation page with delayed redirect.
+            .logout().logoutSuccessUrl("/logout.xhtml")
+            .and()
+            .authenticationProvider(this.sabiAuthenticationProvider)
 
-                .and()
+            // not needed as JSF 2.2 is implicitly protected against CSRF
+            .csrf().disable();
 
-                // not needed as JSF 2.2 is implicitly protected against CSRF
-                .csrf().disable();
-
-    }
-
-    @Autowired
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(this.sabiAuthenticationManager);
+    return http.build();
     }
 
 }
