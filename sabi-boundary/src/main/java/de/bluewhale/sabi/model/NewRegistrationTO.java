@@ -39,6 +39,10 @@ public class NewRegistrationTO implements Serializable {
             "Default 'US'", required = true)
     private String country = "US"; // default
 
+// --------------------------- CONSTRUCTORS ---------------------------
+
+    public NewRegistrationTO() {
+    }
 
     public NewRegistrationTO(String pEmail, String pUsername, String pPassword) {
         this.email = pEmail;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -144,8 +144,8 @@ public class ApplicationInfo implements Serializable {
             if (log.isDebugEnabled()){
                 log.debug("Called MOTD");
             };
-            if (motdTo != null && Strings.isNotEmpty(motdTo.getMotd())) {
-                MessageUtil.info("motd", motdTo.getMotd());
+            if (motdTo != null && Strings.isNotEmpty(motdTo.getModt())) {
+                MessageUtil.info("motd", motdTo.getModt());
             }
         } catch (RestClientException e) {
             // Treat as non existing MOTD to be resilient here.

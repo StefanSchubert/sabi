@@ -311,6 +311,16 @@
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <!-- Process lombok annotations found in included libraries.
+                             Required e.g. for sabi-boundary.
+                        -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>

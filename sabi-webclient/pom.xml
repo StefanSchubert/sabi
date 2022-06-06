@@ -53,6 +53,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <log4j2.version>2.17.1</log4j2.version>
+        <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
 
         <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>
 
@@ -133,6 +134,7 @@
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>${jakarta.cdi.version}</version>
         </dependency>
 
         <!-- Required to enable of page redirects, as we no longer have the web.xml
@@ -239,6 +241,16 @@
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <!-- Process lombok annotations found in included libraries.
+                             Required e.g. for sabi-boundary.
+                        -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
