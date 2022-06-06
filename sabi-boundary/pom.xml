@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -36,6 +36,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <lombok.version>1.18.24</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
@@ -64,6 +65,13 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

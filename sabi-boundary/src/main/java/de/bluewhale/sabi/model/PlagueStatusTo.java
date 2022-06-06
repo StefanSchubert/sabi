@@ -10,13 +10,13 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * Just a Message of Today (motd)
- */
 @Data
-public class MotdTo implements Serializable {
+public class PlagueStatusTo implements Serializable {
 
-    @Schema(name = "Message of today which may contain maintenance announcements.", required = true)
-    private String modt;
+    @Schema(name = "References the plague status.", required = true)
+    private Integer id;
+
+    @Schema(name = "i18n description  of the plague status", required = true)
+    private String description;
 
 }

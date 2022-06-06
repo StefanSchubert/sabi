@@ -11,24 +11,17 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- *
- * User: Stefan
- * Date: 05.01.16
- */
 @Data
-public class MeasurementTo implements Serializable {
+public class PlagueRecordTo implements Serializable {
 
+    @Schema(name = "Primary Key", required = true)
     private Long id;
 
-    @Schema(name = "Point in time when the measurement has been taken.", required = true)
-    private LocalDateTime measuredOn;
+    @Schema(name = "Point in time when the observation has been taken.", required = true)
+    private LocalDateTime observedOn;
 
-    @Schema(name = "Decimal value of the measurement.", required = true)
-    private float measuredValue;
-
-    @Schema(name = "References the used unit this measurement belongs to.", required = true)
-    private int unitId;
+    @Schema(name = "References the observed plague status.", required = true)
+    private Integer plagueStatusId;
 
     @Schema(name = "References the Aquarium this measurement belongs to.", required = true)
     private Long aquariumId;

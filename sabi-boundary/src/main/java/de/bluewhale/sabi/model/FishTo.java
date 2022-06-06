@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -14,77 +16,20 @@ import java.time.LocalDate;
  *
  * @author Stefan Schubert
  */
-public class FishTo {
-// ------------------------------ FIELDS ------------------------------
+@Data
+public class FishTo implements Serializable  {
 
     private Long id;
     private Long aquariumId;
+    @Schema(name = "Loose coupled reference to the fish catalogue which identifies the inhabitant within the community.", required = true)
     private Long fishCatalogueId;
+    @Schema(name = "Telling when the fish was added to the tank.", required = true)
     private LocalDate addedOn;
+    @Schema(name = "Telling when the fish died. By what reason ever.", required = false)
     private LocalDate exodusOn;
+    @Schema(name = "For owners sake. Especially thought for being able to distinguish them when you have more of a kind.", required = true)
     private String nickname;
+    @Schema(name = "Might be used by the owner to describe the observed behavior, so he or she might comapre it against public descriptions.", required = false)
     private String observedBehavior;
 
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    @Schema(name = "Telling when the fish was added to the tank.", required = true)
-    public LocalDate getAddedOn() {
-        return this.addedOn;
-    }
-
-    public void setAddedOn(LocalDate addedOn) {
-        this.addedOn = addedOn;
-    }
-
-    public Long getAquariumId() {
-        return this.aquariumId;
-    }
-
-    public void setAquariumId(Long aquariumId) {
-        this.aquariumId = aquariumId;
-    }
-
-    @Schema(name = "Telling when the fish died. By what reason ever.", required = false)
-    public LocalDate getExodusOn() {
-        return this.exodusOn;
-    }
-
-    public void setExodusOn(LocalDate exodusOn) {
-        this.exodusOn = exodusOn;
-    }
-
-    @Schema(name = "Loose coupled reference to the fish catalogue which identifies the inhabitant within the community.", required = true)
-    public Long getFishCatalogueId() {
-        return this.fishCatalogueId;
-    }
-
-    public void setFishCatalogueId(Long fishCatalogueId) {
-        this.fishCatalogueId = fishCatalogueId;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Schema(name = "For owners sake. Especially thought for being able to distinguish them when you have more of a kind.", required = true)
-    public String getNickname() {
-        return this.nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    @Schema(name = "Might be used by the owner to describe the observed behavior, so he or she might comapre it against public descriptions.", required = false)
-    public String getObservedBehavior() {
-        return this.observedBehavior;
-    }
-
-    public void setObservedBehavior(String observedBehavior) {
-        this.observedBehavior = observedBehavior;
-    }
 }

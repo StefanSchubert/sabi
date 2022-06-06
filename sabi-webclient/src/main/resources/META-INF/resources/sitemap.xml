@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ See project LICENSE file for the detailed terms and conditions.
+  -->
+
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://sabi-project.net/</loc>
-        <lastmod>2022-02-27</lastmod>
+        <lastmod>2022-06-05</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>

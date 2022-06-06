@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -20,6 +20,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
+        <flyway.version>8.5.12</flyway.version>
+        <mariadb.client.version>3.0.5</mariadb.client.version>
+        <maven.compile.plugin.version>3.10.1</maven.compile.plugin.version>
+        <owasp.plugin.version>7.0.0</owasp.plugin.version>
         <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
         checkin those secrets for stage and production
         <mariadb.schema>sabi</mariadb.schema>
@@ -57,7 +61,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>8.5.12</version>
+                        <version>${flyway.version}</version>
                         <configuration>
                             <url>jdbc:mariadb://${mariadb.server.name}:${mariadb.server.port}/${mariadb.schema}</url>
                             <user>${mariadb.server.app.username}</user>
@@ -91,7 +95,7 @@
                             <dependency>
                                 <groupId>org.mariadb.jdbc</groupId>
                                 <artifactId>mariadb-java-client</artifactId>
-                                <version>3.0.5</version>
+                                <version>${mariadb.client.version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -106,11 +110,27 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>${maven.compile.plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- Used for vulnerability checks
+                 The examples below can be executed using mvn verify.
+                 -->
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${owasp.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

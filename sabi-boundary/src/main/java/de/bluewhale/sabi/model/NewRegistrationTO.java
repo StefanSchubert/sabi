@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -14,8 +15,8 @@ import java.io.Serializable;
  * User: Stefan
  * Date: 08.01.19
  */
+@Data
 public class NewRegistrationTO implements Serializable {
-// ------------------------------ FIELDS ------------------------------
 
     @Schema(name = "Users Emailaddress.", required = true)
     private String email;
@@ -38,10 +39,6 @@ public class NewRegistrationTO implements Serializable {
             "Default 'US'", required = true)
     private String country = "US"; // default
 
-// --------------------------- CONSTRUCTORS ---------------------------
-
-    public NewRegistrationTO() {
-    }
 
     public NewRegistrationTO(String pEmail, String pUsername, String pPassword) {
         this.email = pEmail;
@@ -57,65 +54,4 @@ public class NewRegistrationTO implements Serializable {
         this.country = pCountry;
     }
 
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public String getCaptchaCode() {
-        return captchaCode;
-    }
-
-    public void setCaptchaCode(final String pCaptchaCode) {
-        captchaCode = pCaptchaCode;
-    }
-
-    public String getCountry() {
-        return this.country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getLanguage() {
-        return this.language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Override
-    public String toString() {
-        return "NewRegistrationTO{" +
-                "email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", captchaCode='" + captchaCode + '\'' +
-                ", language='" + language + '\'' +
-                ", country='" + country + '\'' +
-                '}';
-    }
 }

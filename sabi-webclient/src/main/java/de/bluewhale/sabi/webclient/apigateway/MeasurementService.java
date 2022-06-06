@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -11,6 +11,7 @@ import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 public interface MeasurementService extends Serializable {
 
     /**
-     * List Users tanks. Concrete user will be derived by the calling context
+     * List Users overall Measurements. Concrete user will be derived by the calling context
      *
      * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @param maxResultCount      If a user has 100 measurements, It won't make sense to retrieve them all,
@@ -48,6 +49,7 @@ public interface MeasurementService extends Serializable {
      * @return List of units known by the backend.
      * @throws BusinessException in case of backend auth failures.
      */
+    @Cacheable
     @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String JWTBackendAuthtoken) throws BusinessException;
 
     /**

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+
+        <ui:define name="content">
+
+            <h:form id="measureform">
+
+                <ui:remove>
+                    <!-- Request Wheel -->
+                </ui:remove>
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+                          showHeader="false">
+                    <div class="p-text-center">
+                        <i class="pi pi-spinner loading-icon"/>
+                    </div>
+                </p:dialog>
+
+                <p:panelGrid columns="2" style="border:2;">
+
+                    <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
+                    <p:selectOneMenu id="tankselection" value="#{measurementListView.measurement.aquariumId}">
+                        <!-- todo when selectedTank has a value set this instead of the Select Entry -->
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                        <f:selectItems value="#{measurementListView.tanks}"
+                                       var="n"
+                                       itemValue="#{n.id}"
+                                       itemLabel="#{n.description}"
+                        />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="unitselection" value="#{msg['measureview.measurekind.l']}"/>
+                    <p:column>
+                        <p:selectOneMenu id="unitselection" value="#{measurementListView.measurement.unitId}">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                            <f:selectItems value="#{measurementListView.knownUnits}"
+                                           var="m"
+                                           itemValue="#{m.id}"
+                                           itemLabel="#{m.unitSign}"
+                            />
+                            <p:ajax event="itemSelect"
+                                    update=":measureform:unitDescription :measureform:thresholdInfo"/>
+                        </p:selectOneMenu>
+                        <br/>
+                        <p:outputLabel id="unitDescription"
+                                      value="#{measurementListView.getGetDescriptionFor(measurementListView.measurement.unitId)}"/>
+                    </p:column>
+
+                    <p:outputLabel for="measuredValue" value="#{msg['measureview.value.l']}"/>
+                    <p:column>
+                        <ui:remove>
+                            <!-- inputNumber could not be used like this
+                                 The problem is on field blur a value 1.500 will be turned into 1,50
+
+                               <p:inputNumber id="measuredValue"
+                                       decimalSeparator="#{measurementListView.userSession.numberDecimalSeparator}"
+                                       thousandSeparator="#{measurementListView.userSession.numberGroupingSign}"
+                                       value="#{measurementListView.measurement.measuredValue}"
+                        />
+                            -->
+                        </ui:remove>
+                        <p:inputText id="measuredValue"
+                                     value="#{measurementListView.measurement.measuredValue}">
+                            <f:convertNumber locale="#{userSession.locale}"
+                                             minFractionDigits="2"/>
+                        </p:inputText>
+                        <br/>
+                        <p:outputLabel id="thresholdInfo"
+                                      value="#{measurementListView.getGetThresholdInfoFor(measurementListView.measurement.unitId)}"/>
+                    </p:column>
+
+                    <p:outputLabel value="#{msg['measureview.date.l']}"/>
+                    <ui:remove>
+                        <!--
+                           I liked the idea to set the local measure time too,
+                           but decided against it. Reason, the window does not close
+                           with selection of a value, as the widget could not know,
+                           when you are finished. So you need to tap beneath the popup
+                           to close it. On mobiles this is not obvious to the user and
+                           may confuse him - as the popup would be too big.
+                        -->
+                    </ui:remove>
+                    <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
+                                  pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
+                                  showOtherMonths="true" yearNavigator="true" />
+
+                    <p:commandButton value="#{msg['common.save.b']}" action="#{measurementListView.save()}"
+                                     id="saveAction" icon="pi pi-save"
+                                     update=":listing"
+                                     title="#{msg['common.save.b']}"/>
+
+                    <p:commandButton value="#{msg['common.new_record.b']}" action="#{measurementListView.resetForm()}"
+                                     id="delAction" resetValues="true"
+                                     update=":measureform" icon="pi pi-refresh" title="#{msg['common.new_record.b']}"/>
+
+                </p:panelGrid>
+
+                <p:staticMessage severity="warn" summary="INFO"
+                                 detail="#{msg['measureview.mode.editrecord.l']}"
+                                 rendered="#{measurementListView.measurement.id != null}"/>
+
+                <p:staticMessage severity="info" summary="INFO"
+                                 detail="#{msg['measureview.mode.newrecord.l']}"
+                                 rendered="#{measurementListView.measurement.id == null}"/>
+
+            </h:form>
+
+            <hr/>
+
+            <h:form id="listing">
+                <p:messages id="msg1" for="troubleMsg" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+                <p:messages id="msg2" for="submitState" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+
+                <p:divider/>
+                <p:spacer height="20px"/>
+
+                <div>
+                    <h5><p:outputLabel value="#{msg['measureview.listing.h']}"/></h5>
+                    <p:dataTable id="measuresDT" var="m" value="#{measurementListView.measurementsTakenByUser}">
+
+                        <p:column headerText="#{msg['measureview.date.l']}">
+                            <ui:remove>
+                                <!--
+                                   I liked the idea to set the local measure time too,
+                                   but decided against it. Reason, the window does not close
+                                   with selection of a value, as the widget could not know,
+                                   when you are finished. So you need to tap beneath the popup
+                                   to close it. On mobiles this is not obvious to the user and
+                                   may confuse him - as the popup would be too big.
+
+                               type="localDateTime"
+
+                                -->
+                            </ui:remove>
+                            <p:outputLabel value="#{m.measuredOn}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="#{msg['common.unitchoise.l']}">
+                            <p:outputLabel value="#{measurementListView.getUnitSignForId(m.unitId)}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['measureview.value.l']}">
+                            <p:outputLabel value="#{m.measuredValue}">
+                                <f:convertNumber type="number" locale="#{userSession.locale}"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="#{msg['common.tankchoice.l']}">
+                            <p:outputLabel value="#{measurementListView.getTankNameForId(m.aquariumId)}"/>
+                        </p:column>
+
+                        <p:column style="width:3rem;text-align: center">
+                            <p:commandButton update="measureform"
+                                             icon="pi pi-pencil" title="Edit"
+                                             action="#{measurementListView.editMeasurement(m)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</h:body>
+</html>
