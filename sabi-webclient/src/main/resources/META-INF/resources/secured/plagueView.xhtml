@@ -24,7 +24,17 @@
 
         <ui:define name="content">
 
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <p:panel header="#{msg['plague.center.introduction.h']}">
+                <p:outputLabel escape="false" value="#{msg['plague.center.introduction.t']}"/>
+            </p:panel>
+
             <h:form id="plagueform">
+
+                <div class="p-text-center"></div>
 
                 <ui:remove>
                     <!-- Request Wheel -->
