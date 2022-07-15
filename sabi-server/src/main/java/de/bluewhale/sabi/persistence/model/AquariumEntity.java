@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -54,6 +54,9 @@ public class AquariumEntity extends Auditable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium", cascade = CascadeType.ALL)
     private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "aquarium", cascade = CascadeType.ALL)
+    private List<PlagueRecordEntity> plagueRecords = new ArrayList<PlagueRecordEntity>();
 
     @Temporal(TemporalType.DATE)
     @Column(name = "inception_date", nullable = true, insertable = true, updatable = true)

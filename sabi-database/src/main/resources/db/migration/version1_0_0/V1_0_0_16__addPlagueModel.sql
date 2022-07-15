@@ -63,15 +63,18 @@ CREATE TABLE `plague_record`
 (
     `id`                     BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `aquarium_id`            BIGINT(20) UNSIGNED NOT NULL,
+    `user_id`                BIGINT(20) UNSIGNED NOT NULL,
     `observed_on`            TIMESTAMP           NOT NULL,
     `plague_id`              BIGINT(20) UNSIGNED NOT NULL,
     `observed_plague_status` BIGINT(20) UNSIGNED NOT NULL,
     `created_on`             TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `lastmod_on`             TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `optlock`                INT UNSIGNED                 DEFAULT 0,
     PRIMARY KEY (`id`),
     FOREIGN KEY (plague_id) REFERENCES plague (id),
     FOREIGN KEY (observed_plague_status) REFERENCES plague_status (id),
-    FOREIGN KEY (aquarium_id) REFERENCES aquarium (id)
+    FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 100

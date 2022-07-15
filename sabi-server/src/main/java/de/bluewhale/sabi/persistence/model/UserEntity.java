@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -40,6 +40,9 @@ public class UserEntity extends Auditable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<MeasurementEntity> measurements = new ArrayList<MeasurementEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<PlagueRecordEntity> plagueRecords = new ArrayList<PlagueRecordEntity>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<TreatmentEntity> treatments = new ArrayList<TreatmentEntity>();
