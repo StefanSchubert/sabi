@@ -7,6 +7,7 @@ package de.bluewhale.sabi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * DTO of a users profile
  */
 @Data
+@NoArgsConstructor
 public class UserProfileTo implements Serializable {
 
     @Schema(name="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)

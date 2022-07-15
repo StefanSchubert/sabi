@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -56,6 +56,9 @@
 
                 <p:commandButton ajax="false" value="Login"/>
                 <p:link outcome="pwreset" value="#{msg['login.resetPW.b']}"/>
+
+                <p:outputLabel value="#{msg['login.register.l']}" for="reglink"/>
+                <p:link id="reglink" outcome="register" value="#{msg['welcome.but.register']}"/>
 
             </p:panelGrid>
 

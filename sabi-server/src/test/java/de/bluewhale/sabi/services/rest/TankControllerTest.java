@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -70,8 +70,7 @@ public class TankControllerTest {
     public void testListUsersTank() throws Exception {
         // given some Testdata via mocking
 
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
         UserEntity userEntity = new UserEntity();
         Mapper.mapUserTo2Entity(userTo, userEntity);
@@ -128,8 +127,7 @@ public class TankControllerTest {
     public void testGetUsersTank() throws Exception {
         // given some Testdata via mocking
 
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -168,8 +166,7 @@ public class TankControllerTest {
     public void testCreateUsersTank() throws Exception {
         // given some Testdata via mocking
 
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity storedUserEntity = new UserEntity();
@@ -210,8 +207,7 @@ public class TankControllerTest {
     public void testRemoveUsersTank() throws Exception {
         // given some Testdata via mocking
 
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -247,8 +243,7 @@ public class TankControllerTest {
     public void testUpdateUsersTank() throws Exception {
         // given some Testdata via mocking
 
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();

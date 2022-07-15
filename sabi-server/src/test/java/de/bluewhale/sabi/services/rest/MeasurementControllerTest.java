@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -87,8 +87,7 @@ public class MeasurementControllerTest {
     public void testListUsersMeasurements() throws Exception {
         // given some Testdata via mocking
 
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -136,8 +135,7 @@ public class MeasurementControllerTest {
         Long usersTankID = 1l;
 
         // and some mocked data
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -193,8 +191,7 @@ public class MeasurementControllerTest {
         Integer requestedUnitID = 1;
 
         // and some mocked data
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -246,8 +243,7 @@ public class MeasurementControllerTest {
         Long measurementID = 856L;
 
         // and a currently authenticated user
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -275,8 +271,7 @@ public class MeasurementControllerTest {
 
         // Given
         // a currently authenticated user
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -321,8 +316,7 @@ public class MeasurementControllerTest {
     public void testUpdateMeasurement() throws Exception {
         // Given
         // a currently authenticated user
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();

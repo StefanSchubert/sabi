@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -79,8 +79,7 @@ public class UnitControllerTest {
     @Test
     public void testListAvailableUnits() throws Exception {
         // given some Testdata via mocking
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();
@@ -122,8 +121,7 @@ public class UnitControllerTest {
         Long usersTankID = 1l;
 
         // and some mocked data
-        UserTo userTo = new UserTo();
-        userTo.setEmail(MOCKED_USER);
+        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
         UserEntity userEntity = new UserEntity();

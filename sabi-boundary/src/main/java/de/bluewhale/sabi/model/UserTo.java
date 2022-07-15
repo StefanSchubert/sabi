@@ -7,6 +7,7 @@ package de.bluewhale.sabi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * Date: 29.08.15
  */
 @Data
+@NoArgsConstructor
 public class UserTo implements Serializable {
 
     private Long id;

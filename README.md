@@ -71,14 +71,14 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 
 ### Common
 
-* Java 11
+* Java 11 an 17
 * openAPI3 (Swagger) via springdoc
 
 ### Client site
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
 * JSF2.3 based WebClient
-** Primefaces 10.x
+** Primefaces 11.x
 * Spring-Boot-Application
 
 Why JSF and not some current modern framework like angular or VUE? In fact it took me quite a while to came to a decision here.
@@ -226,10 +226,12 @@ Because of eclipselink we are using weaving at runtime which required the follow
 option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/5.3.4/spring-instrument-5.3.4.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.0-M4/spring-instrument-6.0.0-M4.jar
 ```
 
-You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you test runner config. **Please verify** that you use the correct version as denoted in the pom.xml. You may also need to adopt your setting if that version in the pom changes.
+You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
+test runner config. **Please verify** that you use the correct version as denoted in the pom.xml. 
+You may also need to adopt your setting if that version in the pom changes.
 
 ## Architectural Notes
 
