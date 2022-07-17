@@ -20,7 +20,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
-        <flyway.version>8.5.12</flyway.version>
+        <flyway.version>9.0.1</flyway.version>
         <mariadb.client.version>3.0.5</mariadb.client.version>
         <maven.compile.plugin.version>3.10.1</maven.compile.plugin.version>
         <owasp.plugin.version>7.0.0</owasp.plugin.version>

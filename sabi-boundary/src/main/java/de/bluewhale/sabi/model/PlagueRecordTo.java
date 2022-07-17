@@ -20,6 +20,9 @@ public class PlagueRecordTo implements Serializable {
     @Schema(name = "Point in time when the observation has been taken.", required = true)
     private LocalDateTime observedOn;
 
+    @Schema(name = "References the observed plague.", required = true)
+    private Integer plagueId;
+
     @Schema(name = "References the observed plague status.", required = true)
     private Integer plagueStatusId;
 

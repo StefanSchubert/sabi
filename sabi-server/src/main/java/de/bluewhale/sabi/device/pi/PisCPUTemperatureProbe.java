@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -18,8 +18,8 @@ import java.io.InputStreamReader;
  * This is worthily to monitor
  * as if the pi exceeds its operation specification
  * of -40°C to +85°C the cpu will be throttled and
- * yor services will stop from running smooth.
- * If so so need to consider adding a fan to your setup.
+ * your services will stop from running smooth.
+ * If so you need to consider adding a fan to your setup.
  *
  * @author Stefan Schubert
  */

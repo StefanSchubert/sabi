@@ -138,7 +138,7 @@ INSERT INTO localized_plague_status (id, plague_status_id, description, language
 VALUES (10, 5, 'Verschwunden (plague beendet, log schließt)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
 -- Some Testdata
-INSERT INTO plague_record (id, aquarium_id, observed_on, plague_id, observed_plague_status, created_on, lastmod_on)
-VALUES (1, 1, '2022-06-05 22:00:00', 1, 1, '2022-06-05 22:00:00', '2022-06-05 22:00:00');
-INSERT INTO plague_record (id, aquarium_id, observed_on, plague_id, observed_plague_status, created_on, lastmod_on)
-VALUES (2, 1, '2022-07-05 08:00:00', 1, 5, '2022-07-05 08:00:00', '2022-07-08 22:00:00');
+INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status, created_on, lastmod_on)
+VALUES (1, 1, 1, '2022-06-05 22:00:00', 1, 1, '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status, created_on, lastmod_on)
+VALUES (2, 1, 1, '2022-07-05 08:00:00', 1, 5, '2022-07-05 08:00:00', '2022-07-08 22:00:00');
