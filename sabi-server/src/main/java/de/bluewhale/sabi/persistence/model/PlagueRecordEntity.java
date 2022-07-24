@@ -46,7 +46,18 @@ public class PlagueRecordEntity extends Auditable {
 
     @Column(name = "observed_plague_status", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    private Long measuredValue;
+    private Long observedPlagueStatus;
+
+    /**
+     * The plague intervall id groups all records together, that belong to the same
+     * plague occurrence. This eases data queries and investigations.
+     * The number is unique only in combination with the tuple (tankID,plageID)
+     * and is provided programmatically.
+     */
+    @Column(name = "plague_intervall_id", nullable = false, insertable = true, updatable = true)
+    @Basic
+    private Integer plagueIntervallId;
+
 
     /**
      * Owner-side of the relationship.

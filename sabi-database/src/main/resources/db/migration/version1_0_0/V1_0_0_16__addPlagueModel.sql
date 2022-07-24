@@ -67,6 +67,7 @@ CREATE TABLE `plague_record`
     `observed_on`            TIMESTAMP           NOT NULL,
     `plague_id`              BIGINT(20) UNSIGNED NOT NULL,
     `observed_plague_status` BIGINT(20) UNSIGNED NOT NULL,
+    `plague_intervall_id`    INT UNSIGNED        NOT NULL,
     `created_on`             TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `lastmod_on`             TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `optlock`                INT UNSIGNED                 DEFAULT 0,
@@ -138,7 +139,11 @@ INSERT INTO localized_plague_status (id, plague_status_id, description, language
 VALUES (10, 5, 'Verschwunden (plague beendet, log schließt)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
 -- Some Testdata
-INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status, created_on, lastmod_on)
-VALUES (1, 1, 1, '2022-06-05 22:00:00', 1, 1, '2022-06-05 22:00:00', '2022-06-05 22:00:00');
-INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status, created_on, lastmod_on)
-VALUES (2, 1, 1, '2022-07-05 08:00:00', 1, 5, '2022-07-05 08:00:00', '2022-07-08 22:00:00');
+INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status,
+                           plague_intervall_id, created_on,
+                           lastmod_on)
+VALUES (1, 1, 1, '2022-06-05 22:00:00', 1, 1, 1, '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status,
+                           plague_intervall_id, created_on,
+                           lastmod_on)
+VALUES (2, 1, 1, '2022-07-05 08:00:00', 1, 5, 1, '2022-07-05 08:00:00', '2022-07-08 22:00:00');

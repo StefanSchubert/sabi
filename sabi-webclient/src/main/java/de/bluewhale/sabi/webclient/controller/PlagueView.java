@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
@@ -58,6 +59,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     private List<PlagueTo> knownPlagues;
 
     private List<PlagueTo> ongoingUserPlagues;
+    private List<PlagueTo> pastUserPlagues;
 
     @PostConstruct
     public void init() {
@@ -124,6 +126,21 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     public Boolean getAreCurrentPlaguesReported (){
         return (ongoingUserPlagues == null || ongoingUserPlagues.isEmpty() ? true : false);
+    }
+    public Boolean getExistsRecordsOnPastPlagues (){
+        return (pastUserPlagues == null || pastUserPlagues.isEmpty() ? true : false);
+    }
+
+
+    public void fetchAnnouncement() {
+        String plagueInfo = MessageUtil.getFromMessageProperties("plague.center.info.t", LocaleContextHolder.getLocale());
+        MessageUtil.info("plaguemessages", plagueInfo);
+    }
+
+    public String getAnnouncement() {
+        // This is a little hack as using the viewAction from Metadata doesn't seem to work.
+        fetchAnnouncement();
+        return "";
     }
 
 }
