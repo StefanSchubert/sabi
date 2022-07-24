@@ -8,6 +8,9 @@ package de.bluewhale.sabi.webclient.apigateway;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueTo;
+import jakarta.inject.Named;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +20,9 @@ import java.util.List;
  *
  * @author Stefan Schubert
  */
+@Named
+@RequestScope
+@Slf4j
 public class PlagueServiceImpl implements PlagueService {
     @Override
     public List<PlagueTo> getPlagueCatalogue(String JWTBackendAuthtoken) throws BusinessException {

@@ -4,18 +4,19 @@ This is a semi-scientific (or open-science) project that aims to gain insights
  from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
 
 ## Latest project news:
-| Date | News |
-| ----- | ----- |
-| 26th Feb 2022 | Offical Softlaunch Day of the project. Starting with a twitter announcement. Going to spread the word in selected forums in the next days, hoping to get some Beta-Testers, Fellow-Coders and to collect valuable feedback. |
-| 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning. |
+| Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 22nd Jul 2022 | Article about SABI has been published in the journal "KORALLE", Issue Nr. 136. 😊 Available on start of August. Many Thanks goes to Daniel Knop!                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 26th Feb 2022 | Offical Softlaunch Day of the project. Starting with a twitter announcement. Going to spread the word in selected forums in the next days, hoping to get some Beta-Testers, Fellow-Coders and to collect valuable feedback.                                                                                                                                                                                                                                                                                                                                  |
+| 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning.                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 16th Mai 2021 | **Sneak Preview** available on https://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
 
 ## Vision I
 
 In seawater forums, wikis, books we got advice on the regular values (max,min) of the important mineral levels and so on.
 Some things we fully understand, while on others we have just a lot of guesses about the impact, but often it stays a guess, as the complete system is very complex.
-I was wondering, if we will be able to gain some more insights if we start to share our measurement data and placing some business intelligence style reporting on top of it.
-This should enable us to to answer some questions like:
+I was wondering if we will be able to gain some more insights if we start to share our measurement data and placing some business intelligence style reporting on top of it.
+This should enable us to answer some questions like:
 
 * How often do all measure the CaCO3 level when not using the Balling method? Is there a probability of getting a cyano bacteria plague when measuring too less?
 * Is there a thing in common when Alveoproa dies (are there similar PO4 levels)?

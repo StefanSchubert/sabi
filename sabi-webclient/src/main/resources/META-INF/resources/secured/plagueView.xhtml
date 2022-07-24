@@ -32,6 +32,11 @@
                 <p:outputLabel escape="false" value="#{msg['plague.center.introduction.t']}"/>
             </p:panel>
 
+            <p:panel header="#{msg['plague.center.mystatus.h']}">
+                <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported}"
+                               escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
+            </p:panel>
+
             <h:form id="plagueform">
 
                 <div class="p-text-center"></div>

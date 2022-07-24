@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.SessionScope;
@@ -35,6 +36,7 @@ import java.util.List;
 @SessionScope
 @Slf4j
 @Getter
+@Setter
 public class PlagueView extends AbstractControllerTools implements Serializable  {
 
     private static final String PLAGUE_VIEW_PAGE = "plagueView";
@@ -54,6 +56,8 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     private List<AquariumTo> tanks;
     private List<PlagueTo> knownPlagues;
+
+    private List<PlagueTo> ongoingUserPlagues;
 
     @PostConstruct
     public void init() {
@@ -116,6 +120,10 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         if (plagueRecordTo.getPlagueStatusId() == 0) result = false;
         log.debug("allDataProvided = {}, Object was {}",result,plagueRecordTo);
         return result;
+    }
+
+    public Boolean getAreCurrentPlaguesReported (){
+        return (ongoingUserPlagues == null || ongoingUserPlagues.isEmpty() ? true : false);
     }
 
 }
