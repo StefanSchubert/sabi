@@ -32,7 +32,7 @@ or check the unattended update logs
 ## Deployment of a sabi backend release
 
 1) Build the new sabi server release
-2) ansible-playbook deploySabiService.yml
+2) ansible-playbook -i hosts deploySabiService.yml
 
 ## Deployment of a sabi frontend release
 
