@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -26,10 +26,10 @@ import java.io.InputStreamReader;
 @Slf4j
 public class PisCPUTemperatureProbe implements MeterBinder {
 
-    static final String GPU_Temp_CMD = "/opt/vc/bin/vcgencmd measure_temp";
+    static final String GPU_Temp_CMD = "/usr/bin/vcgencmd measure_temp";
     static final String GPU_RESULT_REGEXP = "[=']";
 
-    // result is required to be devided by 1000
+    // result is required to be divided by 1000
     static final String CPU_Temp_CMD = "cat /sys/class/thermal/thermal_zone0/temp";
 
     @Override
