@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -17,6 +17,7 @@ public enum Endpoint {
     PW_RESET_REQUEST("/api/auth/req_pwd_reset"),
     PW_RESET("/api/auth/pwd_reset"),
     PARTICIPANT_STATS("/api/stats/participants"),
+    HEALTH_STATS("/api/stats/healthcheck"),
     TANK_STATS("/api/stats/tanks"),
     MEASUREMENT_STATS("/api/stats/measurements"),
     UNITS("/api/units"),
