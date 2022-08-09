@@ -13,10 +13,10 @@
         state: directory
         owner: sabi
         group: sabi
-    - name: Stop existing webservice service
-      systemd:
-        name: sabi
-        state: stopped
+#    - name: Stop existing webservice service
+#      systemd:
+#        name: sabi
+#        state: stopped
     - name: Drop old tmp folder
       file:
         state: absent
