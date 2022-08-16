@@ -23,7 +23,6 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static de.bluewhale.sabi.util.Mapper.mapAquariumEntity2To;
 import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
@@ -209,11 +208,11 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
-    public ResultTo<AquariumTo> generateAndAssignNewTemperatureApiKey(Long persistedTankId) {
+    public ResultTo<AquariumTo> generateAndAssignNewTemperatureApiKey(Long persistedTankId, String pUsersEmail) {
 
-        Optional<AquariumEntity> optionalAquarium = aquariumRepository.findById(persistedTankId);
-        if (optionalAquarium.isPresent()) {
-            AquariumEntity aquariumEntity = optionalAquarium.get();
+        UserEntity user = userRepository.getByEmail(pUsersEmail);
+        AquariumEntity usersTankEntity = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(persistedTankId, user.getId());
+        if (usersTankEntity != null) {
 
             String apiKey = generateNewApiKey();
             // Ensure key is unique - and not already assigned
@@ -221,10 +220,10 @@ public class TankServiceImpl implements TankService {
                 apiKey = generateNewApiKey();
             }
 
-            aquariumEntity.setTemperatureApiKey(apiKey);
+            usersTankEntity.setTemperatureApiKey(apiKey);
 
             AquariumTo aquariumTo = new AquariumTo();
-            Mapper.mapAquariumEntity2To(aquariumEntity,aquariumTo);
+            Mapper.mapAquariumEntity2To(usersTankEntity,aquariumTo);
             return new ResultTo<>(aquariumTo, Message.info(TankMessageCodes.UPDATE_SUCCEEDED));
 
         } else {

@@ -84,7 +84,7 @@ public class AquariumIoTController {
         }
 
         MeasurementTo measurementTo = new MeasurementTo();
-        measurementTo.setUnitId(2); // Temperature
+        measurementTo.setUnitId(2); // Temperature in °C
         measurementTo.setMeasuredValue(ioTmeasurementTo.getMeasuredValueInCelsius());
         measurementTo.setAquariumId(aquariumTo.getId());
         measurementTo.setMeasuredOn(LocalDateTime.now());

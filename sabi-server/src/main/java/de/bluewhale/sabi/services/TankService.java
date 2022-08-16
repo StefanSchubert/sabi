@@ -86,7 +86,7 @@ public interface TankService {
     String fetchAmountOfTanks();
 
     /**
-     * Used to determine the Tankk for incoming request of IoT devices to submit temperature values, to users tank
+     * Used to determine the Tank for incoming request of IoT devices to submit temperature values, to users tank
      *
      * @param apiKey
      * @return Aquarium belonging to this API Key
@@ -97,14 +97,16 @@ public interface TankService {
      * Used to generate a new API-Key for the tank
      *
      * @param persistedTankId Tank to request the change for
+     * @param pUsersEmail
      * @return Composed result object containing the updated tank with a message. The tank has been updated successfully
      * only if the message is of {@link Message.CATEGORY#INFO} other possible messages are  {@link Message.CATEGORY#ERROR}
      * Possible reasons:
      * <ul>
      *     <li>{@link TankMessageCodes#NOT_YOUR_TANK}</li>
+     *     <li>{@link TankMessageCodes#UNKNOWN_USER}</li>
      * </ul>
      */
     @Transactional
     @NotNull
-    ResultTo<AquariumTo> generateAndAssignNewTemperatureApiKey(Long persistedTankId);
+    ResultTo<AquariumTo> generateAndAssignNewTemperatureApiKey(Long persistedTankId, String pUsersEmail);
 }

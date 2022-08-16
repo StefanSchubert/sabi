@@ -153,7 +153,7 @@ public class TankServiceTest {
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
 
         // When
-        ResultTo<AquariumTo> resultOfAPIKeyGeneration = tankService.generateAndAssignNewTemperatureApiKey(aquariumToResultTo.getValue().getId());
+        ResultTo<AquariumTo> resultOfAPIKeyGeneration = tankService.generateAndAssignNewTemperatureApiKey(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
         AquariumTo retrievedTankByAPIKey = tankService.getTankForTemperatureApiKey(resultOfAPIKeyGeneration.getValue().getTemperatueApiKey());
 
         // Then
