@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -21,9 +21,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides all required for dealing with measurements here e.g. for use cases around the {@link de.bluewhale.sabi.persistence.model.MeasurementEntity}
@@ -228,6 +230,45 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Override
     public String fetchAmountOfMeasurements() {
+        // FIXME STS (14.08.22): This count's also the sample / test tanks ID 1+2 which
+        // needs be excluded from any analysis and stats
         return String.valueOf(measurementRepository.count());
+    }
+
+    @Override
+    public LocalDateTime getLastTimeOfMeasurementTakenFilteredBy(Long pTankID, Integer pUnitID) {
+
+        MeasurementEntity measurement = measurementRepository.findTopByAquarium_IdAndUnitIdOrderByMeasuredOnDesc(pTankID, pUnitID);
+        if (measurement != null) {
+            return measurement.getMeasuredOn();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ResultTo<MeasurementTo> addIotAuthorizedMeasurement(MeasurementTo pMeasurementTo) {
+
+        Message resultMsg;
+
+        Optional<AquariumEntity> optionalAquarium = aquariumRepository.findById(pMeasurementTo.getAquariumId());
+        if (optionalAquarium.isPresent()) {
+
+            MeasurementEntity measurementEntity = new MeasurementEntity();
+            Mapper.mapMeasurementTo2EntityWithoutAquarium(pMeasurementTo, measurementEntity);
+            measurementEntity.setAquarium(optionalAquarium.get());
+            measurementEntity.setUser(optionalAquarium.get().getUser());
+
+            MeasurementEntity createdMeasurementEntity = measurementRepository.saveAndFlush(measurementEntity);
+            Mapper.mapMeasurementEntity2To(createdMeasurementEntity, pMeasurementTo);
+
+            resultMsg = Message.info(TankMessageCodes.CREATE_SUCCEEDED);
+
+        } else {
+            resultMsg = Message.error(TankMessageCodes.UNKNOWN_OR_INACTIVE_TANK);
+
+        }
+
+        return new ResultTo<>(pMeasurementTo, resultMsg);
     }
 }

@@ -41,7 +41,7 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.0.5</sabi.boundary.version>
+        <sabi.boundary.version>1.0.6</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
@@ -67,7 +67,7 @@
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <passay.version>1.6.2</passay.version>
         <mariadb.java.client.version>3.0.7</mariadb.java.client.version>
-        <h2.version>2.1.210</h2.version>
+        <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
         <archunit.version>0.23.1</archunit.version>

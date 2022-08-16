@@ -31,6 +31,9 @@ public class AquariumTo implements Serializable {
     @Schema(name = "Description or Name of the tank, so the user can distinguish them.", required = true)
     private String description;
 
+    @Schema(name = "API-Key which can be used to submit temperature measurements for this tank by an IoT device.", required = false)
+    private String temperatueApiKey;
+
     @Schema(name = "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
     private Boolean active;
 

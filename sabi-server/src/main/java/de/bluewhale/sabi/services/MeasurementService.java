@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -13,6 +13,7 @@ import de.bluewhale.sabi.model.UnitTo;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -101,6 +102,14 @@ public interface MeasurementService {
     List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID);
 
     /**
+     * Used to see how long the last measurement for a given unit has been past.
+     * @param pTankID the tank to lookup
+     * @param pUnitID the unit of concern
+     * @return DateTime of last recorded item or null if we haven't found one.
+     */
+    LocalDateTime getLastTimeOfMeasurementTakenFilteredBy(Long pTankID, Integer pUnitID);
+
+    /**
      * Provides additional information for requested unit.
      * Required because of the loose coupling.
      * @param pUnitID identifies the unit for which we are interested on additional parameter infos.
@@ -113,4 +122,16 @@ public interface MeasurementService {
      * @return Number of overall Measurements taken.
      */
     String fetchAmountOfMeasurements();
+
+    /**
+     * Creates a new measurement for provided users tank. MUST only be used, if the caller has been authorized beforehand, e.g. via apiKey
+     * to add measurements for provided tank.
+     * @param pMeasurementTo measurement data.
+     * @return Composed result object containing the created measurement with a message. The measurement has been created successfully
+     * only if the message is of {@link Message.CATEGORY#INFO}
+
+     * @param pMeasurementTo
+     * @return
+     */
+    ResultTo<MeasurementTo> addIotAuthorizedMeasurement(MeasurementTo pMeasurementTo);
 }

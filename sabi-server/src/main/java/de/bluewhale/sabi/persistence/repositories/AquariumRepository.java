@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -34,4 +34,12 @@ public interface AquariumRepository extends JpaRepository<AquariumEntity, Long> 
      * @return null if the aquarium does not belong to the user, or does not exists.
      */
      AquariumEntity getAquariumEntityByIdAndUser_IdIs(Long pPersistedTankId, Long pUserId);
+
+
+    /**
+     * Fetches the aquarium with provided temperature APIKey
+     * @param apiKey for temperature submission through IoT devices
+     * @return null if we found no match, or the tank belonging to the api key.
+     */
+     AquariumEntity getAquariumEntityByTemperatureApiKeyEquals(String apiKey);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -13,6 +13,9 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.Mapper;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static de.bluewhale.sabi.util.Mapper.mapAquariumEntity2To;
 import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
@@ -149,7 +153,7 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
-    public AquariumTo getTank(Long aquariumId, String pUsersEmail) {
+    public AquariumTo getTankForTemperatureApiKey(Long aquariumId, String pUsersEmail) {
 
         AquariumTo aquariumTo = null;
 
@@ -192,5 +196,50 @@ public class TankServiceImpl implements TankService {
     @Override
     public String fetchAmountOfTanks() {
         return String.valueOf(aquariumRepository.count());
+    }
+
+    @Override
+    public AquariumTo getTankForTemperatureApiKey(String apiKey) {
+        AquariumTo aquariumTo = null;
+        AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByTemperatureApiKeyEquals(apiKey);
+        if (aquariumEntity != null) {
+            Mapper.mapAquariumEntity2To(aquariumEntity,aquariumTo);
+        }
+        return aquariumTo;
+    }
+
+    @Override
+    public ResultTo<AquariumTo> generateAndAssignNewTemperatureApiKey(Long persistedTankId) {
+
+        Optional<AquariumEntity> optionalAquarium = aquariumRepository.findById(persistedTankId);
+        if (optionalAquarium.isPresent()) {
+            AquariumEntity aquariumEntity = optionalAquarium.get();
+
+            String apiKey = generateNewApiKey();
+            // Ensure key is unique - and not already assigned
+            while (aquariumRepository.getAquariumEntityByTemperatureApiKeyEquals(apiKey) != null) {
+                apiKey = generateNewApiKey();
+            }
+
+            aquariumEntity.setTemperatureApiKey(apiKey);
+
+            AquariumTo aquariumTo = new AquariumTo();
+            Mapper.mapAquariumEntity2To(aquariumEntity,aquariumTo);
+            return new ResultTo<>(aquariumTo, Message.info(TankMessageCodes.UPDATE_SUCCEEDED));
+
+        } else {
+            return new ResultTo<>(null, Message.error(TankMessageCodes.NOT_YOUR_TANK));
+        }
+    }
+
+
+    /**
+     * generate Key - using Passay as it's already in the project
+     * @return 30 digit Key
+     */
+    private static String generateNewApiKey() {
+        CharacterRule digits = new CharacterRule(EnglishCharacterData.Digit);
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+        return passwordGenerator.generatePassword(30, digits);
     }
 }

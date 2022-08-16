@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -74,7 +74,7 @@ public class TankServiceTest {
         // Then
         aquariumToResultTo = tankService.updateTank(aquariumTo, TESTUSER_EMAIL1);
 
-        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
+        aquariumTo = tankService.getTankForTemperatureApiKey(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
 
         // Then
         assertEquals("Tank was not updated", aquariumTo.getDescription(), JABA_DABA_DOOOOO);
@@ -158,7 +158,7 @@ public class TankServiceTest {
         tankService.removeTank(persistedTankId, TESTUSER_EMAIL1);
 
         // When
-        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, TESTUSER_EMAIL1);
+        AquariumTo tankAfterDeletion = tankService.getTankForTemperatureApiKey(persistedTankId, TESTUSER_EMAIL1);
 
         // Then
         assertNull("Users tank was supposed to be removed!", tankAfterDeletion);

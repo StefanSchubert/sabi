@@ -42,6 +42,10 @@ public class AquariumEntity extends Auditable {
     @Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String description;
 
+    @Basic
+    @Column(name = "temperature_api_key", nullable = true, insertable = true, updatable = true, length = 48)
+    private String temperatureApiKey;
+
     @Column(name = "active", nullable = false, insertable = true, updatable = true, length = 3, precision = 0)
     private Boolean active;
 
