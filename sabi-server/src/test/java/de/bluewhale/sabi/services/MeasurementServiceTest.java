@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -23,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -157,6 +158,32 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
     @Test
     @Transactional
+    public void testGetLastetMeasurementEntryDateTime() throws Exception {
+
+        // Given already store test data (tank 1L for user 1L)
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+
+        // Stored Measurement A
+        MeasurementTo testMeasurementATo = testDataFactory.getTestMeasurementTo(1L);
+        testMeasurementATo.setMeasuredOn(LocalDateTime.now().minusYears(2));
+        measurementService.addMeasurement(testMeasurementATo, P_USER1_EMAIL);
+
+        // And Afterwards created Measurement B
+        MeasurementTo testMeasurementBTo = testDataFactory.getTestMeasurementTo(1L);
+        testMeasurementBTo.setId(1962l);
+        testMeasurementBTo.setMeasuredValue(99f);
+        measurementService.addMeasurement(testMeasurementBTo, P_USER1_EMAIL);
+
+        // When
+        LocalDateTime lastRecordedTime = measurementService.getLastTimeOfMeasurementTakenFilteredBy(testMeasurementATo.getAquariumId(), testMeasurementATo.getUnitId());
+
+        // Then
+        assertTrue("Did not retrieved the latest measurement date", lastRecordedTime.getYear() == LocalDateTime.now().getYear() );
+    }
+
+
+    @Test
+    @Transactional
     public void testRemoveMeasurement() throws Exception {
         // Given a stored measurement for a tank and user
         TestDataFactory testDataFactory = TestDataFactory.getInstance();
@@ -205,4 +232,20 @@ public class MeasurementServiceTest extends BasicDataFactory {
     }
 
 
+    @Test
+    @Transactional
+    public void addIotAuthorizedMeasurement() {
+        // Given already store test data (tank 1L for user 1L)
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(1L);
+
+        // When
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addIotAuthorizedMeasurement(testMeasurementTo);
+
+        // Then
+        assertNotNull(measurementToResultTo);
+        assertNotNull(measurementToResultTo.getValue());
+        CATEGORY messageType = measurementToResultTo.getMessage().getType();
+        assertTrue("Creating measurement failed?", messageType.equals(Message.CATEGORY.INFO));
+    }
 }
