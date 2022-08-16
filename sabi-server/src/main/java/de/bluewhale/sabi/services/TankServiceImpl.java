@@ -153,7 +153,7 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
-    public AquariumTo getTankForTemperatureApiKey(Long aquariumId, String pUsersEmail) {
+    public AquariumTo getTank(Long aquariumId, String pUsersEmail) {
 
         AquariumTo aquariumTo = null;
 
@@ -200,7 +200,7 @@ public class TankServiceImpl implements TankService {
 
     @Override
     public AquariumTo getTankForTemperatureApiKey(String apiKey) {
-        AquariumTo aquariumTo = null;
+        AquariumTo aquariumTo = new AquariumTo();
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByTemperatureApiKeyEquals(apiKey);
         if (aquariumEntity != null) {
             Mapper.mapAquariumEntity2To(aquariumEntity,aquariumTo);
@@ -239,7 +239,8 @@ public class TankServiceImpl implements TankService {
      */
     private static String generateNewApiKey() {
         CharacterRule digits = new CharacterRule(EnglishCharacterData.Digit);
+        CharacterRule alphabets = new CharacterRule(EnglishCharacterData.Alphabetical);
         PasswordGenerator passwordGenerator = new PasswordGenerator();
-        return passwordGenerator.generatePassword(30, digits);
+        return passwordGenerator.generatePassword(30, digits, alphabets);
     }
 }

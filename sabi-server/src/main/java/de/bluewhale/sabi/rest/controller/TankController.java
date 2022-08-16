@@ -78,7 +78,7 @@ public class TankController {
                                                            Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        AquariumTo aquariumTo = tankService.getTankForTemperatureApiKey(Long.valueOf(id), principal.getName());
+        AquariumTo aquariumTo = tankService.getTank(Long.valueOf(id), principal.getName());
         return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
     }
 

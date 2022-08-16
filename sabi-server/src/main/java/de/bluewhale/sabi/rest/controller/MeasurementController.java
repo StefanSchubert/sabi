@@ -155,7 +155,7 @@ public class MeasurementController {
         }
 
         // We need to be sure if provided Tank does belong to the user.
-        AquariumTo aquariumTo = tankService.getTankForTemperatureApiKey(pTankID, principal.getName());
+        AquariumTo aquariumTo = tankService.getTank(pTankID, principal.getName());
 
         if (aquariumTo == null) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);
@@ -195,7 +195,7 @@ public class MeasurementController {
         }
 
         // We need to be sure if provided Tank does belong to the user.
-        AquariumTo aquariumTo = tankService.getTankForTemperatureApiKey(pTankID, principal.getName());
+        AquariumTo aquariumTo = tankService.getTank(pTankID, principal.getName());
 
         if (aquariumTo == null) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.UNAUTHORIZED);

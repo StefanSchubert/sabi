@@ -74,7 +74,7 @@ public class TankServiceTest {
         // Then
         aquariumToResultTo = tankService.updateTank(aquariumTo, TESTUSER_EMAIL1);
 
-        aquariumTo = tankService.getTankForTemperatureApiKey(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
+        aquariumTo = tankService.getTank(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
 
         // Then
         assertEquals("Tank was not updated", aquariumTo.getDescription(), JABA_DABA_DOOOOO);
@@ -143,6 +143,32 @@ public class TankServiceTest {
         assertEquals("Wrong message type.", CATEGORY.INFO, aquariumToResultTo.getMessage().getType());
     }
 
+    @Test
+    @Transactional
+    public void testProvideNewTankWithAPIKeyAndRetrieveTankByAPIKey() throws Exception {
+        // Given
+        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
+
+        // When
+        ResultTo<AquariumTo> resultOfAPIKeyGeneration = tankService.generateAndAssignNewTemperatureApiKey(aquariumToResultTo.getValue().getId());
+        AquariumTo retrievedTankByAPIKey = tankService.getTankForTemperatureApiKey(resultOfAPIKeyGeneration.getValue().getTemperatueApiKey());
+
+        // Then
+
+        assertNotNull("ResultObject for generate an API Key must not be empty",resultOfAPIKeyGeneration);
+
+        final AquariumTo aquariumWithJustAddedAPIKey = resultOfAPIKeyGeneration.getValue();
+        assertNotNull("ResultObject for generate an API Key had no Aquarium inside!",aquariumWithJustAddedAPIKey);
+        assertNotNull("API Key has not been stored!",aquariumWithJustAddedAPIKey.getTemperatueApiKey());
+        assertEquals("Wrong message type.", CATEGORY.INFO, resultOfAPIKeyGeneration.getMessage().getType());
+
+        assertNotNull("Did not retrieved a tank by API Key",retrievedTankByAPIKey);
+        assertEquals("Ouch - returned different Tank! This is a MAJOR Bug", aquariumWithJustAddedAPIKey.getId(), retrievedTankByAPIKey.getId());
+    }
+
 
     @Test
     @Transactional
@@ -158,7 +184,7 @@ public class TankServiceTest {
         tankService.removeTank(persistedTankId, TESTUSER_EMAIL1);
 
         // When
-        AquariumTo tankAfterDeletion = tankService.getTankForTemperatureApiKey(persistedTankId, TESTUSER_EMAIL1);
+        AquariumTo tankAfterDeletion = tankService.getTank(persistedTankId, TESTUSER_EMAIL1);
 
         // Then
         assertNull("Users tank was supposed to be removed!", tankAfterDeletion);

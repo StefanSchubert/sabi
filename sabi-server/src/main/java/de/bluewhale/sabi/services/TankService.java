@@ -60,7 +60,7 @@ public interface TankService {
      * @return Null if tank is not within given users tank list.
      */
     @NotNull
-    AquariumTo getTankForTemperatureApiKey(Long aquariumId, String pUsersEmail);
+    AquariumTo getTank(Long aquariumId, String pUsersEmail);
 
     /**
      * Removes a tank from Users List (removes it physically)
