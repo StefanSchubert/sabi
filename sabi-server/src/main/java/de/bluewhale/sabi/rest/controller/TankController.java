@@ -66,7 +66,7 @@ public class TankController {
 
     @Operation(method = "Read details of a specific tank. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Success tank returned."),
+            @ApiResponse(responseCode = "200", description = "Success tank with temperatureAPI-Key returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,6 +79,11 @@ public class TankController {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         AquariumTo aquariumTo = tankService.getTank(Long.valueOf(id), principal.getName());
+
+        if (aquariumTo == null) {
+            return new ResponseEntity<>(new AquariumTo(), HttpStatus.UNAUTHORIZED);
+        }
+
         return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
     }
 

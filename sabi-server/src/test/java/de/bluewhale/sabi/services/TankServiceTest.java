@@ -145,10 +145,9 @@ public class TankServiceTest {
 
     @Test
     @Transactional
-    public void testProvideNewTankWithAPIKeyAndRetrieveTankByAPIKey() throws Exception {
+    public void testCreateTemperatureAPIKeyForTankAndRetrieveTankByAPIKey() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
 
