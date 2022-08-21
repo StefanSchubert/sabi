@@ -54,7 +54,8 @@ public class AquariumIoTController {
             @ApiResponse(responseCode = "201", description = "Created. Measurement has been stored to your tank."
             ),
             @ApiResponse(responseCode = "429", description = "Request ignored, please take care to have at least "+MIN_GAP_IN_HOURS_BETWEEN_SUBSEQUENT_SUBMISSIONS+"h between subsequent requests."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid API-key.")
+            @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid API-key."),
+            @ApiResponse(responseCode = "500", description = "In case of passing an invalid IoTMeasurementTo")
     })
     @RequestMapping(value = {"temp_measurement"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

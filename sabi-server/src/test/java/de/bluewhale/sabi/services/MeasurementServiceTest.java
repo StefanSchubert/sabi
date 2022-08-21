@@ -57,7 +57,8 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
     /**
      * There seems to be a timing problem with H2, that causes, that the basic data is not available
-     * for some test classes, while for others it worked out. Until we know what's going wrong...
+     * for some test classes, while for others it worked out. Or the Annotation is not being processed through
+     * inheritance. Until we know what's going wrong...
      * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
      * The different behaviour can be observed by e.g. calling the master test suite and as comparising
      * the measurement testsuite while this is method is deaktivated.
@@ -65,18 +66,30 @@ public class MeasurementServiceTest extends BasicDataFactory {
     @Before
     public void ensureBasicDataAvailability() {
         List<MeasurementTo> list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
-        if (list.isEmpty()) populateBasicData();
-        List<MeasurementTo> list2 = measurementService.listMeasurements(P_USER1_EMAIL, 0);
-        assertTrue("H2-Basicdata injection did not work!", list2.size() > 0);
+        if (list.isEmpty()) {
+            populateBasicData();
+            list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
+        }
+        assertTrue("H2-Basicdata injection did not work!", list.size() > 0);
+
+        // PROBLEM here: We thought that stores User gets the ID wie set hard, but H2 Dirties context
+        // drops data but not sequence values, which is why repeated user creation leads to a different user ID.
+        // So any test which is relies on a certain user ID might run into trouble.
+        //        UserEntity storedTestUser = userRepository.getByEmail(P_USER1_EMAIL);
+        //        assertNotNull("Precondition stored Test User failed!",storedTestUser);
+        //        assertEquals("Stored Test User got wrong ID!? ", 1l, storedTestUser.getId().longValue());
     }
 
     @Test
     @Transactional
     public void testListMeasurements() throws Exception {
         // Given already stored testdata for measurements
+        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
+        assertNotNull("Prepersisted Testdata is missing", aquariumTo);
+        Long tankID = aquariumTo.getId();
 
         // When
-        List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(1L);
+        List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(tankID);
         List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER1_EMAIL, 0);
 
         // Then
@@ -142,43 +155,52 @@ public class MeasurementServiceTest extends BasicDataFactory {
     @Test
     @Transactional
     public void testAddNewMeasurement() throws Exception {
-        // Given already store test data (tank 1L for user 1L)
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(1L);
+        // Given already store test data
+        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
+        assertNotNull("Prepersisted Testdata is missing", aquariumTo);
+        Long tankID = aquariumTo.getId();
 
-        // When
+        // When adding a new Measurment
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, P_USER1_EMAIL);
 
         // Then
         assertNotNull(measurementToResultTo);
         assertNotNull(measurementToResultTo.getValue());
-        CATEGORY messageType = measurementToResultTo.getMessage().getType();
-        assertTrue("Creating measurement failed?", messageType.equals(Message.CATEGORY.INFO));
+        assertEquals("Creating measurement failed? " + measurementToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementToResultTo.getMessage().getType());
     }
 
     @Test
     @Transactional
     public void testGetLastetMeasurementEntryDateTime() throws Exception {
 
-        // Given already store test data (tank 1L for user 1L)
+        // Given already store test data
         TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
+        assertNotNull("Prepersisted Testdata missing", aquariumTo);
+        Long tankID = aquariumTo.getId();
 
         // Stored Measurement A
-        MeasurementTo testMeasurementATo = testDataFactory.getTestMeasurementTo(1L);
+        MeasurementTo testMeasurementATo = testDataFactory.getTestMeasurementTo(tankID);
         testMeasurementATo.setMeasuredOn(LocalDateTime.now().minusYears(2));
-        measurementService.addMeasurement(testMeasurementATo, P_USER1_EMAIL);
+        ResultTo<MeasurementTo> measurementAToResultTo = measurementService.addMeasurement(testMeasurementATo, P_USER1_EMAIL);
+        assertEquals("Failure storing test data A?: " + measurementAToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementAToResultTo.getMessage().getType());
+
 
         // And Afterwards created Measurement B
-        MeasurementTo testMeasurementBTo = testDataFactory.getTestMeasurementTo(1L);
-        testMeasurementBTo.setId(1962l);
+        MeasurementTo testMeasurementBTo = testDataFactory.getTestMeasurementTo(tankID);
+        testMeasurementBTo.setId(testMeasurementATo.getId() + 1l);
         testMeasurementBTo.setMeasuredValue(99f);
-        measurementService.addMeasurement(testMeasurementBTo, P_USER1_EMAIL);
+        ResultTo<MeasurementTo> measurementBToResultTo = measurementService.addMeasurement(testMeasurementBTo, P_USER1_EMAIL);
+        assertEquals("Failure storing test data B?: " + measurementBToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementBToResultTo.getMessage().getType());
 
         // When
-        LocalDateTime lastRecordedTime = measurementService.getLastTimeOfMeasurementTakenFilteredBy(testMeasurementATo.getAquariumId(), testMeasurementATo.getUnitId());
+        LocalDateTime lastRecordedTime = measurementService.getLastTimeOfMeasurementTakenFilteredBy(measurementAToResultTo.getValue().getAquariumId(), testMeasurementATo.getUnitId());
 
         // Then
-        assertTrue("Did not retrieved the latest measurement date", lastRecordedTime.getYear() == LocalDateTime.now().getYear() );
+        assertNotNull("Looked like stored measurments have not been flushed.", lastRecordedTime);
+        assertEquals("Did not retrieved the latest measurement date", LocalDateTime.now().getYear(), lastRecordedTime.getYear());
     }
 
 
@@ -190,7 +212,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         testDataFactory.withUserService(userService);
         testDataFactory.withTankService(tankService);
         String newTestUserMail = "junit@sabi.de";
-        UserTo persistedTestUserTo = testDataFactory.getPersistedTestUserTo(newTestUserMail);
+        UserTo persistedTestUserTo = testDataFactory.getRegisterNewTestUser(newTestUserMail);
         AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(persistedTestUserTo);
         testAquariumTo.setId(57654L);
         ResultTo<AquariumTo> newTankResultTo = tankService.registerNewTank(testAquariumTo, newTestUserMail);
@@ -234,12 +256,15 @@ public class MeasurementServiceTest extends BasicDataFactory {
 
     @Test
     @Transactional
-    public void addIotAuthorizedMeasurement() {
-        // Given already store test data (tank 1L for user 1L)
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(1L);
+    public void testAddIotAuthorizedMeasurement() {
+        // Given already store test data
+        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
+        assertNotNull("Prepersisted Testdata is missing", aquariumTo);
+        Long tankID = aquariumTo.getId();
 
         // When
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addIotAuthorizedMeasurement(testMeasurementTo);
 
         // Then

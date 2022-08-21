@@ -107,6 +107,7 @@ public interface MeasurementService {
      * @param pUnitID the unit of concern
      * @return DateTime of last recorded item or null if we haven't found one.
      */
+    @Transactional
     LocalDateTime getLastTimeOfMeasurementTakenFilteredBy(Long pTankID, Integer pUnitID);
 
     /**

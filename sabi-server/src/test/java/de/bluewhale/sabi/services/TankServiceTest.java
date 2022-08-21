@@ -62,7 +62,7 @@ public class TankServiceTest {
     public void testAlterTankProperties() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
@@ -85,7 +85,7 @@ public class TankServiceTest {
     public void testListUsersTanks() throws Exception {
         // Given
        TestDataFactory testDataFactory = TestDataFactory.getInstance().withTankService(tankService).withUserService(userService);
-       UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+       UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         AquariumTo aquariumTo1 = new AquariumTo();
         aquariumTo1.setDescription("Small Test Tank");
@@ -127,7 +127,7 @@ public class TankServiceTest {
     public void testRegisterNewTank() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
@@ -146,9 +146,10 @@ public class TankServiceTest {
     @Test
     @Transactional
     public void testCreateTemperatureAPIKeyForTankAndRetrieveTankByAPIKey() throws Exception {
-        // Given
+        // Given - prepersisted Testdata
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
+        UserTo testUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
 
         // When
@@ -175,7 +176,7 @@ public class TankServiceTest {
 
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 
