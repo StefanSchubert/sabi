@@ -20,12 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 @RestController
+@Validated
 @RequestMapping(value = "api/aquarium_iot")
 @Slf4j
 /**
@@ -55,7 +57,7 @@ public class AquariumIoTController {
             ),
             @ApiResponse(responseCode = "429", description = "Request ignored, please take care to have at least "+MIN_GAP_IN_HOURS_BETWEEN_SUBSEQUENT_SUBMISSIONS+"h between subsequent requests."),
             @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid API-key."),
-            @ApiResponse(responseCode = "500", description = "In case of passing an invalid IoTMeasurementTo")
+            @ApiResponse(responseCode = "400", description = "In case of passing an invalid IoTMeasurementTo")
     })
     @RequestMapping(value = {"temp_measurement"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,8 +67,6 @@ public class AquariumIoTController {
         ResponseEntity<IoTMeasurementTo> responseEntity;
         AquariumTo aquariumTo;
 
-        // sensible values have been checked through @Valid annotation. In invalid, you will get an error json back.
-        // todo StS: We have error codes in the api relying suddenly on a json error object doesn't seem consistent here. Though jsr based annotations are convinient, we require to response with a proper status code in this case.
         try {
             aquariumTo = tankService.getTankForTemperatureApiKey(ioTmeasurementTo.getApiKey());
             if (aquariumTo == null || aquariumTo.getActive()==false)  {
@@ -78,8 +78,8 @@ public class AquariumIoTController {
         }
 
         // check time constraint: when was the last measurement taken? Do we have the minimum GAP to be allowed to store another record.
-        LocalDateTime timeOfLastMeasureRecord = measurementService.getLastTimeOfMeasurementTakenFilteredBy(aquariumTo.getId(), 2);// Unit 2 is is Celcius
-        if (timeOfLastMeasureRecord.plusHours(MIN_GAP_IN_HOURS_BETWEEN_SUBSEQUENT_SUBMISSIONS).isAfter(LocalDateTime.now())) {
+        LocalDateTime timeOfLastMeasureRecord = measurementService.getLastTimeOfMeasurementTakenFilteredBy(aquariumTo.getId(), 2);// Unit 2 is Celcius
+        if (timeOfLastMeasureRecord != null && timeOfLastMeasureRecord.plusHours(MIN_GAP_IN_HOURS_BETWEEN_SUBSEQUENT_SUBMISSIONS).isAfter(LocalDateTime.now())) {
             log.info("Received an iot device temp submission too frequently. Hour gap must be {}",MIN_GAP_IN_HOURS_BETWEEN_SUBSEQUENT_SUBMISSIONS);
             return new ResponseEntity<>(ioTmeasurementTo, HttpStatus.TOO_MANY_REQUESTS);
         }
@@ -90,8 +90,7 @@ public class AquariumIoTController {
         measurementTo.setAquariumId(aquariumTo.getId());
         measurementTo.setMeasuredOn(LocalDateTime.now());
 
-        // If we come so far, the JWTAuthenticationFilter has already validated the token,
-        // and we can be sure that spring has injected a valid Principal object.
+        // If we come so far, the API-Key has been validated, we are cleared to add the measurement
         ResultTo<MeasurementTo> measurementResultTo = measurementService.addIotAuthorizedMeasurement(measurementTo);
 
         final Message resultMessage = measurementResultTo.getMessage();

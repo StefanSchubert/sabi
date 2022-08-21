@@ -199,9 +199,10 @@ public class TankServiceImpl implements TankService {
 
     @Override
     public AquariumTo getTankForTemperatureApiKey(String apiKey) {
-        AquariumTo aquariumTo = new AquariumTo();
+        AquariumTo aquariumTo = null;
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByTemperatureApiKeyEquals(apiKey);
         if (aquariumEntity != null) {
+            aquariumTo = new AquariumTo();
             Mapper.mapAquariumEntity2To(aquariumEntity,aquariumTo);
         }
         return aquariumTo;

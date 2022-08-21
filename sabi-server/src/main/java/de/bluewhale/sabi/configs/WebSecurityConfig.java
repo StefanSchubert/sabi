@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -74,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, Endpoint.MEASUREMENT_STATS.getPath()).permitAll()
                 // Motd can be requested before login
                 .antMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
+                // Allow IOT Endpoints, they are checked internally based on specific API-Keys
+                .antMatchers(HttpMethod.POST, Endpoint.IOT_API.getPath()+"/**").permitAll()
                 // all others require JWT authentication
                 .anyRequest().authenticated()
                 .and()

@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -89,9 +90,9 @@ public interface TankService {
      * Used to determine the Tank for incoming request of IoT devices to submit temperature values, to users tank
      *
      * @param apiKey
-     * @return Aquarium belonging to this API Key
+     * @return Aquarium belonging to this API Key or null.
      */
-    AquariumTo getTankForTemperatureApiKey(@NotNull String apiKey);
+    @Nullable AquariumTo getTankForTemperatureApiKey(@NotNull String apiKey);
 
     /**
      * Used to generate a new API-Key for the tank
