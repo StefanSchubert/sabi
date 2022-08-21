@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -62,7 +62,7 @@ public class TankServiceTest {
     public void testAlterTankProperties() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
@@ -85,7 +85,7 @@ public class TankServiceTest {
     public void testListUsersTanks() throws Exception {
         // Given
        TestDataFactory testDataFactory = TestDataFactory.getInstance().withTankService(tankService).withUserService(userService);
-       UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+       UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         AquariumTo aquariumTo1 = new AquariumTo();
         aquariumTo1.setDescription("Small Test Tank");
@@ -127,7 +127,7 @@ public class TankServiceTest {
     public void testRegisterNewTank() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
@@ -143,6 +143,32 @@ public class TankServiceTest {
         assertEquals("Wrong message type.", CATEGORY.INFO, aquariumToResultTo.getMessage().getType());
     }
 
+    @Test
+    @Transactional
+    public void testCreateTemperatureAPIKeyForTankAndRetrieveTankByAPIKey() throws Exception {
+        // Given - prepersisted Testdata
+        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
+        UserTo testUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
+
+        // When
+        ResultTo<AquariumTo> resultOfAPIKeyGeneration = tankService.generateAndAssignNewTemperatureApiKey(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
+        AquariumTo retrievedTankByAPIKey = tankService.getTankForTemperatureApiKey(resultOfAPIKeyGeneration.getValue().getTemperatueApiKey());
+
+        // Then
+
+        assertNotNull("ResultObject for generate an API Key must not be empty",resultOfAPIKeyGeneration);
+
+        final AquariumTo aquariumWithJustAddedAPIKey = resultOfAPIKeyGeneration.getValue();
+        assertNotNull("ResultObject for generate an API Key had no Aquarium inside!",aquariumWithJustAddedAPIKey);
+        assertNotNull("API Key has not been stored!",aquariumWithJustAddedAPIKey.getTemperatueApiKey());
+        assertEquals("Wrong message type.", CATEGORY.INFO, resultOfAPIKeyGeneration.getMessage().getType());
+
+        assertNotNull("Did not retrieved a tank by API Key",retrievedTankByAPIKey);
+        assertEquals("Ouch - returned different Tank! This is a MAJOR Bug", aquariumWithJustAddedAPIKey.getId(), retrievedTankByAPIKey.getId());
+    }
+
 
     @Test
     @Transactional
@@ -150,7 +176,7 @@ public class TankServiceTest {
 
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getPersistedTestUserTo(TESTUSER_EMAIL1);
+        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -76,5 +76,12 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      */
     @NotNull List<MeasurementEntity> findByAquariumAndUnitIdOrderByMeasuredOnAsc(@NotNull AquariumEntity aquariumEntity, @NotNull Integer unitID);
 
+    /**
+     * Retrieves the latest measurement of provided unit for given tank.
+     * @param aquariumId identifies your aquarium.
+     * @param unitID identifies the requested unit.
+     * @return latest Measurement or null if no such one exists.
+     */
+    MeasurementEntity findTopByAquarium_IdAndUnitIdOrderByMeasuredOnDesc(@NotNull Long aquariumId, @NotNull Integer unitID);
 
 }

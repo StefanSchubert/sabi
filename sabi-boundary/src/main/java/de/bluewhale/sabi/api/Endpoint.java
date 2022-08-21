@@ -20,6 +20,7 @@ public enum Endpoint {
     HEALTH_STATS("/api/stats/healthcheck"),
     TANK_STATS("/api/stats/tanks"),
     MEASUREMENT_STATS("/api/stats/measurements"),
+    IOT_API("/api/aquarium_iot"),
     UNITS("/api/units"),
     USER_PROFILE("/api/userprofile")
     ;

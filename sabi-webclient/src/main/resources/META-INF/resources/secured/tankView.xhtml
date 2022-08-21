@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -47,6 +47,13 @@
                             <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
                         </p:outputLabel>
 
+                        <p:outputLabel value="#{msg['tankview.tempApiKey.l']}"/>
+
+                        <p:outputLabel rendered="#{tank.temperatueApiKey != null}" value="#{tank.temperatueApiKey}"/>
+                        <p:commandButton rendered="#{tank.temperatueApiKey == null}" value="#{msg['tankview.tempApiKey.b']}" action="#{tankListView.generateTemperatureApiKey(tank)}"
+                                         id="temKeyAction" icon="pi pi-key"
+                                         update=":master" title="#{msg['tankview.tempApiKey.b']}"/>
+
                         <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.edit(tank)}"
                                          id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>
 
@@ -54,6 +61,8 @@
                                          id="delAction" ajax="true"
                                          update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
                     </p:panelGrid>
+
+                    <p:separator/>
 
                 </p:dataList>
 

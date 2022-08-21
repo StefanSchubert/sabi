@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,10 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.exception.AuthMessageCodes;
-import de.bluewhale.sabi.exception.BusinessException;
-import de.bluewhale.sabi.exception.CommonExceptionCodes;
-import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.rest.exceptions.TankMessageCodes;
@@ -20,10 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.RequestScope;
@@ -112,6 +106,42 @@ public class TankServiceImpl implements TankService {
                 throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
             }
         }
+    }
+
+    @Override
+    public String reCreateTemperatureAPIKey(Long tankID, String JWTBackendAuthtoken) throws BusinessException {
+        String requestTempAPIKeyURI = sabiBackendUrl + "/api/tank/"+tankID+"/tempApiKey";
+
+        RestTemplate restTemplate = new RestTemplate();
+        List<AquariumTo> tankList = Collections.emptyList();
+        ResponseEntity<String> responseEntity;
+
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            responseEntity = restTemplate.exchange(requestTempAPIKeyURI, HttpMethod.GET, requestEntity, String.class);
+            renewBackendToken(responseEntity);
+        } catch (RestClientException e) {
+            log.error(String.format("Couldn't reach %s",requestTempAPIKeyURI),e.getLocalizedMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+
+        if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200)) {
+            log.error(String.format("Couldn't process %s",requestTempAPIKeyURI),responseEntity.getStatusCode());
+            throw new BusinessException(TankExceptionCodes.TANK_NOT_FOUND_OR_DOES_NOT_BELONG_TO_USER);
+        }
+
+        AquariumTo myTankWithAPIKey;
+        try {
+            myTankWithAPIKey = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+        } catch (JsonProcessingException e) {
+            log.error("Couldn't parse servers response",e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+
+        return myTankWithAPIKey.getTemperatueApiKey();
     }
 
     @Override

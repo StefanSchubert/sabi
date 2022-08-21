@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -63,7 +63,7 @@ public class BasicDataFactory {
 
     public void populateBasicData() {
         UserEntity testuser1 = new UserEntity();
-        testuser1.setId(1l);
+        testuser1.setId(1l); // Don't rely on this ID it is replaced through H2 sequence on persistance when cerating a new entity
         testuser1.setEmail(P_USER1_EMAIL);
         testuser1.setPassword("098f6bcd4621d373cade4e832627b4f6");
         testuser1.setUsername("stefan");
@@ -73,7 +73,7 @@ public class BasicDataFactory {
         testuser1.setCountry("DE");
 
         UserEntity testuser2 = new UserEntity();
-        testuser2.setId(2l);
+        testuser2.setId(2l); // Don't rely on this ID it is replaced through H2 sequence on persistance when cerating a new entity
         testuser2.setEmail(P_USER2_EMAIL);
         testuser2.setPassword("098f6bcd4621d373cade4e832627b4f6");
         testuser2.setUsername("steven");

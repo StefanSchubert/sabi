@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -21,5 +21,11 @@ public class HttpHeader {
      * see https://github.com/StefanSchubert/sabi/wiki/06.-Runtime-View
      */
     public static final String AUTH_TOKEN = "Authorization";
+
+    /**
+     * This API-KEY can be used by a user to submit measurements of IoT devices.
+     * By design each tuple of (tank, measurement unit) has a distinct API key
+     */
+    public static final String API_TOKEN = "SABI-API-KEY";
 
 }

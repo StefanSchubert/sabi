@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -66,20 +66,64 @@ public class TankController {
 
     @Operation(method = "Read details of a specific tank. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Success tank returned."),
+            @ApiResponse(responseCode = "200", description = "Success tank with temperatureAPI-Key returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
     @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<AquariumTo> listUsersTanks(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
-                                                           @PathVariable(value = "id", required = true)
+    public ResponseEntity<AquariumTo> fetchUsersTank(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                     @PathVariable(value = "id", required = true)
                                                            @Parameter(name = "id", description = "id of your aquarium..") String id,
-                                                           Principal principal) {
+                                                     Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         AquariumTo aquariumTo = tankService.getTank(Long.valueOf(id), principal.getName());
+
+        if (aquariumTo == null) {
+            return new ResponseEntity<>(new AquariumTo(), HttpStatus.UNAUTHORIZED);
+        }
+
         return new ResponseEntity<>(aquariumTo, HttpStatus.OK);
+    }
+
+    @Operation(method = "Provides an API Key for temperature measurement submission by IoT devices. You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Success APIKey returned."),
+            @ApiResponse(responseCode = "400", description = "Could not parse id - must be an integer"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token, or the tank is not yours.")
+    })
+    @RequestMapping(value = {"/{id}/tempApiKey"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<AquariumTo> getTemperatureAPIKeyForTank(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                     @PathVariable(value = "id", required = true)
+                                                     @Parameter(name = "id", description = "id of your aquarium..") String id,
+                                                     Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+
+        ResponseEntity<AquariumTo> responseEntity;
+        AquariumTo updatedAquarium;
+
+        try {
+            ResultTo<AquariumTo> aquariumToResultTo = tankService.generateAndAssignNewTemperatureApiKey(Long.valueOf(id), principal.getName());
+
+            final Message resultMessage = aquariumToResultTo.getMessage();
+            if (Message.CATEGORY.INFO.equals(resultMessage.getType())) {
+                updatedAquarium = aquariumToResultTo.getValue();
+                responseEntity = new ResponseEntity<>(updatedAquarium, HttpStatus.OK);
+            } else {
+                String msg = "Unauthorized - request did not contained a valid user token, or the tank with id " + Long.valueOf(id) + " is not yours. ";
+                log.warn(msg);
+                responseEntity = new ResponseEntity<>(new AquariumTo(), HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.warn("Could not process generateAndAssignNewTemperatureApiKey for id = {}",id);
+            responseEntity = new ResponseEntity<>(new AquariumTo(), HttpStatus.BAD_REQUEST);
+        }
+
+        return responseEntity;
     }
 
     @Operation(method = "Delete a tank from users profile. You need to set the token issued by login or registration in the request header field 'Authorization'.")

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -45,4 +45,13 @@ public interface TankService extends Serializable {
      * @throws BusinessException
      */
     void save(AquariumTo tank, String JWTBackendAuthtoken) throws BusinessException;
+
+    /**
+     * Retrieves a new temperature API Key.
+     * @param tankID Tank on which the API Key will be registered
+     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return generated and stored API Key for submitting temperature measurements
+     * @throws BusinessException
+     */
+    String reCreateTemperatureAPIKey(@NotNull Long tankID, @NotNull String JWTBackendAuthtoken) throws BusinessException;
 }

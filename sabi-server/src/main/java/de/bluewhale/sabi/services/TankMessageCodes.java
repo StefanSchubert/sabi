@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -23,7 +23,8 @@ public enum TankMessageCodes implements MessageCode {
     MEASURMENT_ALREADY_DELETED(TankExceptionCodes.MEASURMENT_NOT_FOUND),
     UNKNOWN_USER(TankExceptionCodes.FRAUD_DETECTION),
     UPDATE_SUCCEEDED,
-    REMOVAL_SUCCEEDED;
+    REMOVAL_SUCCEEDED,
+    UNKNOWN_OR_INACTIVE_TANK(TankExceptionCodes.FRAUD_DETECTION);
 
 // ------------------------------ FIELDS ------------------------------
 

@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -60,9 +60,9 @@
         <!-- requires spring 3.0.x which requires java 17 - meanwhile available for raspberry pi -->
         <joinfaces.version>5.0.0-m3</joinfaces.version>
 
-        <sabi.boundary.version>1.0.5</sabi.boundary.version>
+        <sabi.boundary.version>1.0.6</sabi.boundary.version>
         <passay.version>1.6.2</passay.version>
-        <owasp.plugin.version>7.1.1</owasp.plugin.version>
+        <owasp.plugin.version>7.1.2</owasp.plugin.version>
         <maven.versions.plugin.version>2.11.0</maven.versions.plugin.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>

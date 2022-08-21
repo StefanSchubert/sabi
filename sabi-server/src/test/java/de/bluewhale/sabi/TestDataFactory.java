@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -65,7 +65,7 @@ public class TestDataFactory {
         return aquariumTo;
     }
 
-    public UserTo getPersistedTestUserTo(String eMail) {
+    public UserTo getRegisterNewTestUser(String eMail) {
         String clearTextPassword = VALID_PASSWORD;
         final NewRegistrationTO userTo = new NewRegistrationTO(eMail, eMail, clearTextPassword);
         final ResultTo<UserTo> userToResultTo = userService.registerNewUser(userTo);
