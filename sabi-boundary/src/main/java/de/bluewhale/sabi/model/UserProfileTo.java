@@ -20,7 +20,7 @@ public class UserProfileTo implements Serializable {
 
     @Schema(name="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
     private String language ="en"; // default
-    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
+    @Schema(description =  "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
     private String country = "US"; // default
 
 

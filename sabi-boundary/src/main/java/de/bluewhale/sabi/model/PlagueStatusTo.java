@@ -13,10 +13,10 @@ import java.io.Serializable;
 @Data
 public class PlagueStatusTo implements Serializable {
 
-    @Schema(name = "References the plague status.", required = true)
+    @Schema(description =  "References the plague status.", required = true)
     private Integer id;
 
-    @Schema(name = "i18n description  of the plague status", required = true)
+    @Schema(description =  "i18n description  of the plague status", required = true)
     private String description;
 
 }

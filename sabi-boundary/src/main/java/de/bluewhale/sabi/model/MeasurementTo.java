@@ -21,16 +21,16 @@ public class MeasurementTo implements Serializable {
 
     private Long id;
 
-    @Schema(name = "Point in time when the measurement has been taken.", required = true)
+    @Schema(description =  "Point in time when the measurement has been taken.", required = true)
     private LocalDateTime measuredOn;
 
-    @Schema(name = "Decimal value of the measurement.", required = true)
+    @Schema(description =  "Decimal value of the measurement.", required = true)
     private float measuredValue;
 
-    @Schema(name = "References the used unit this measurement belongs to.", required = true)
+    @Schema(description =  "References the used unit this measurement belongs to.", required = true)
     private int unitId;
 
-    @Schema(name = "References the Aquarium this measurement belongs to.", required = true)
+    @Schema(description =  "References the Aquarium this measurement belongs to.", required = true)
     private Long aquariumId;
 
 }

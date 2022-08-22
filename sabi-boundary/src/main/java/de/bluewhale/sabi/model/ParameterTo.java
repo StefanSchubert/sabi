@@ -17,15 +17,15 @@ import java.io.Serializable;
 @Data
 public class ParameterTo implements Serializable {
 
-    @Schema(name = "References the unique unit in which a measurement has been taken.", required = true)
+    @Schema(description =  "References the unique unit in which a measurement has been taken.", required = true)
     private Integer id;
-    @Schema(name = "References the belonging measurement Unit.", required = true)
+    @Schema(description =  "References the belonging measurement Unit.", required = true)
     private Integer belongingUnitId;
-    @Schema(name = "Recommendation according natural seawater composition. Measurement value should not fall below this threshold.", required = true)
+    @Schema(description =  "Recommendation according natural seawater composition. Measurement value should not fall below this threshold.", required = true)
     private Float minThreshold;
-    @Schema(name = "Recommendation according natural seawater composition. Measurement value should not be higher than this threshold.", required = true)
+    @Schema(description =  "Recommendation according natural seawater composition. Measurement value should not be higher than this threshold.", required = true)
     private Float maxThreshold;
-    @Schema(name = "Short description of the unit.", required = true)
+    @Schema(description =  "Short description of the unit.", required = true)
     private String description;
 
 }

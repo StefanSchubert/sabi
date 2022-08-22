@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -30,7 +30,7 @@ public class ChallengeTo {
 
 // --------------------- GETTER / SETTER METHODS ---------------------
 
-    @Schema(name = "List of keys and belonging answers. Only one key is valid and will be accepted.")
+    @Schema(description =  "List of keys and belonging answers. Only one key is valid and will be accepted.")
     public Map<String, String> getAnswers() {
         return this.answers;
     }
@@ -39,7 +39,7 @@ public class ChallengeTo {
         this.answers = pAnswers;
     }
 
-    @Schema(name = "Served language. If the requested on is not avialable, you will retrieve english as default.")
+    @Schema(description =  "Served language. If the requested on is not avialable, you will retrieve english as default.")
     public String getLanguage() {
         return this.language;
     }
@@ -48,7 +48,7 @@ public class ChallengeTo {
         this.language = pLanguage;
     }
 
-    @Schema(name = "Question which is supposed to sort out robotes.", required = true)
+    @Schema(description =  "Question which is supposed to sort out robotes.", required = true)
     public String getQuestion() {
         return this.question;
     }

@@ -18,16 +18,16 @@ import java.io.Serializable;
 @Data
 public class UserRegConfirmationTo implements Serializable {
 
-    @Schema(name = "Users Emailaddress", required = true)
+    @Schema(description =  "Users Emailaddress", required = true)
     private String email;
 
-    @Schema(name = "Userlogin", required = true)
+    @Schema(description =  "Userlogin", required = true)
     private String username;
 
     @Schema(name="ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'",required = true)
     private String language ="en"; // default
 
-    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
+    @Schema(description =  "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
     private String country = "US"; // default
 
     private boolean validated;

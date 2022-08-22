@@ -18,8 +18,8 @@ import java.io.Serializable;
 @Data
 public class RequestNewPasswordTo implements Serializable  {
 
-    @Schema(name = "Users email address.", example="john.doe@bluewhale.de", required = true)
+    @Schema(description =  "Users email address.", example="john.doe@bluewhale.de", required = true)
     private String emailAddress;
-    @Schema(name = "Answer token of the captcha challenge.", example="kSzu6", required = true)
+    @Schema(description =  "Answer token of the captcha challenge.", example="kSzu6", required = true)
     private String captchaToken;
 }

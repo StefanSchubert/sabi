@@ -18,13 +18,13 @@ import java.io.Serializable;
 @Data
 public class UnitTo implements Serializable {
 
-    @Schema(name = "References the unique unit in which a measurement has been taken.", required = true)
+    @Schema(description =  "References the unique unit in which a measurement has been taken.", required = true)
     private Integer id;
 
-    @Schema(name = "Sign (Abbreviation) of measurements unit like 'PO4'", required = true)
+    @Schema(description =  "Sign (Abbreviation) of measurements unit like 'PO4'", required = true)
     private String unitSign;
 
-    @Schema(name = "Short description of the unit might contain threshold information.", required = true)
+    @Schema(description =  "Short description of the unit might contain threshold information.", required = true)
     private String description;
 
 

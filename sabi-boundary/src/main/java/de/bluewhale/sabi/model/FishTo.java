@@ -21,15 +21,15 @@ public class FishTo implements Serializable  {
 
     private Long id;
     private Long aquariumId;
-    @Schema(name = "Loose coupled reference to the fish catalogue which identifies the inhabitant within the community.", required = true)
+    @Schema(description =  "Loose coupled reference to the fish catalogue which identifies the inhabitant within the community.", required = true)
     private Long fishCatalogueId;
-    @Schema(name = "Telling when the fish was added to the tank.", required = true)
+    @Schema(description =  "Telling when the fish was added to the tank.", required = true)
     private LocalDate addedOn;
-    @Schema(name = "Telling when the fish died. By what reason ever.", required = false)
+    @Schema(description =  "Telling when the fish died. By what reason ever.", required = false)
     private LocalDate exodusOn;
-    @Schema(name = "For owners sake. Especially thought for being able to distinguish them when you have more of a kind.", required = true)
+    @Schema(description =  "For owners sake. Especially thought for being able to distinguish them when you have more of a kind.", required = true)
     private String nickname;
-    @Schema(name = "Might be used by the owner to describe the observed behavior, so he or she might comapre it against public descriptions.", required = false)
+    @Schema(description =  "Might be used by the owner to describe the observed behavior, so he or she might comapre it against public descriptions.", required = false)
     private String observedBehavior;
 
 }

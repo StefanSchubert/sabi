@@ -21,24 +21,24 @@ import java.io.Serializable;
 public class UserTo implements Serializable {
 
     private Long id;
-    @Schema(name = "Will be used only during registration process, when the user validates his email address.", required = false)
+    @Schema(description =  "Will be used only during registration process, when the user validates his email address.", required = false)
     private String validationToken;
 
-    @Schema(name = "Users Emailaddress", required = true)
+    @Schema(description =  "Users Emailaddress", required = true)
     private String email;
 
-    @Schema(name = "Userlogin", required = true)
+    @Schema(description =  "Userlogin", required = true)
     private String username;
 
     private String password;
 
-    @Schema(name = "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
+    @Schema(description =  "Needs to be a valid code otherwise you won't be registered - this helps avoiding simple DOS-attacks in future", required = false)
     private String captchaCode;
 
-    @Schema(name = "ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'", required = true)
+    @Schema(description =  "ISO-639-1 language code - used for i18n in communication. Must be set togehter with country. Defaults to 'en'", required = true)
     private String language = "en"; // default
 
-    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
+    @Schema(description =  "ISO-3166-1 alpha-2 country code - used for i18n in communication. Default 'US'", required = true)
     private String country = "US"; // default
 
     private boolean validated;

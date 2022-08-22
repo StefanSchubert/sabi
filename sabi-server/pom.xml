@@ -12,7 +12,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
+        <version>2.7.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -41,7 +41,7 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.0.6</sabi.boundary.version>
+        <sabi.boundary.version>1.0.7</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>

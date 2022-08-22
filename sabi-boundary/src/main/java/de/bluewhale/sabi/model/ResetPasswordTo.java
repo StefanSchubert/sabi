@@ -18,13 +18,13 @@ import java.io.Serializable;
 @Data
 public class ResetPasswordTo implements Serializable {
 
-    @Schema(name = "Users email address.", example="john.doe@bluewhale.de", required = true)
+    @Schema(description =  "Users email address.", example="john.doe@bluewhale.de", required = true)
     private String emailAddress;
 
-    @Schema(name = "Reset token as provided via password reset request confirmation mail.", example="kSzu6", required = true)
+    @Schema(description =  "Reset token as provided via password reset request confirmation mail.", example="kSzu6", required = true)
     private String resetToken;
 
-    @Schema(name = "Users new password.", example="You_Never_Know_:-)", required = true)
+    @Schema(description =  "Users new password.", example="You_Never_Know_:-)", required = true)
     private String newPassword;
 
 }

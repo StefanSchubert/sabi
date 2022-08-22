@@ -60,7 +60,7 @@
         <!-- requires spring 3.0.x which requires java 17 - meanwhile available for raspberry pi -->
         <joinfaces.version>5.0.0-m3</joinfaces.version>
 
-        <sabi.boundary.version>1.0.6</sabi.boundary.version>
+        <sabi.boundary.version>1.0.7</sabi.boundary.version>
         <passay.version>1.6.2</passay.version>
         <owasp.plugin.version>7.1.2</owasp.plugin.version>
         <maven.versions.plugin.version>2.11.0</maven.versions.plugin.version>

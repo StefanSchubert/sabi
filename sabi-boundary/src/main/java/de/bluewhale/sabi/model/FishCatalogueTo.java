@@ -21,10 +21,10 @@ import java.io.Serializable;
 public class FishCatalogueTo implements Serializable {
 
     private Long id;
-    @Schema(name = "Scientific name of the fish, which might ease the fish lookup from the catalogue.", required = true)
+    @Schema(description =  "Scientific name of the fish, which might ease the fish lookup from the catalogue.", required = true)
     private String scientificName;
-    @Schema(name = "Short description of the fish (or localized name?), the detailed description relies in public wikis.", required = false)
+    @Schema(description =  "Short description of the fish (or localized name?), the detailed description relies in public wikis.", required = false)
     private String description;
-    @Schema(name = "Link to a public wiki which describes the fish in detail.", required = false)
+    @Schema(description =  "Link to a public wiki which describes the fish in detail.", required = false)
     private String meerwasserwikiUrl;
 }

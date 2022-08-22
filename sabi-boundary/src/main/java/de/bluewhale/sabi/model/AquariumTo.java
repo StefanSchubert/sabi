@@ -19,28 +19,28 @@ import java.util.Date;
 @Data
 public class AquariumTo implements Serializable {
 
-    @Schema(name = "ID this object for further reference.")
+    @Schema(description =  "ID this object for further reference.")
     private Long id;
 
-    @Schema(name = "Tanks volume", required = true)
+    @Schema(description =  "Tanks volume", required = true)
     private Integer size;
 
-    @Schema(name = "Unit of tanks volume size.", required = true)
+    @Schema(description =  "Unit of tanks volume size.", required = true)
     private SizeUnit sizeUnit;
 
-    @Schema(name = "Description or Name of the tank, so the user can distinguish them.", required = true)
+    @Schema(description =  "Description or Name of the tank, so the user can distinguish them.", required = true)
     private String description;
 
-    @Schema(name = "API-Key which can be used to submit temperature measurements for this tank by an IoT device.", required = false)
+    @Schema(description =  "API-Key which can be used to submit temperature measurements for this tank by an IoT device.", required = false)
     private String temperatueApiKey;
 
-    @Schema(name = "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
+    @Schema(description =  "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
     private Boolean active;
 
-    @Schema(name = "UserID - will be ignored. Set through processing.", required = false)
+    @Schema(description =  "UserID - will be ignored. Set through processing.", required = false)
     private Long userId;
 
-    @Schema(name = "Date since when this tank is up and running.", required = false)
+    @Schema(description =  "Date since when this tank is up and running.", required = false)
     private Date inceptionDate;
 
 }

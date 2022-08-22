@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Data
 public class MotdTo implements Serializable {
 
-    @Schema(name = "Message of today which may contain maintenance announcements.", required = true)
+    @Schema(description =  "Message of today which may contain maintenance announcements.", required = true)
     private String modt;
 
     public MotdTo(final String modt) {

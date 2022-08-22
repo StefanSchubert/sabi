@@ -19,15 +19,16 @@ import java.io.Serializable;
  * The measurement type and tank will be derived from the API-Key.
  */
 @Data
+@Schema()
 public class IoTMeasurementTo implements Serializable {
 
-    @Schema(name = "Decimal value of the measurement. Unit is Celsius. Allowed values 18 to 35 °C . This already includes extreme" +
+    @Schema(description= "Decimal value of the measurement. Unit is Celsius. Allowed values 18 to 35 °C . This already includes extreme" +
             "values. All other would'd make any sence.", required = true)
     @Min(18)
     @Max(35)
     private float measuredValueInCelsius;
 
-    @Schema(name = "References the used unit and tank this measurement belongs to. The key can be obtained through SABIs tank menu", required = true)
+    @Schema(description = "References the used unit and tank this measurement belongs to. The key can be obtained through SABIs tank menu", required = true)
     @NotNull
     private String apiKey;
 

@@ -18,9 +18,9 @@ import java.io.Serializable;
 @Data
 public class AccountCredentialsTo implements Serializable {
 
-    @Schema(name = "We use users email address as unique username.", example="sabi@bluewhale.de", required = true)
+    @Schema(description =  "We use users email address as unique username.", example="sabi@bluewhale.de", required = true)
     private String username;
-    @Schema(name = "Users password.", example="kSzu65#@!$§g642", required = true)
+    @Schema(description =  "Users password.", example="kSzu65#@!$§g642", required = true)
     private String password;
 
 }

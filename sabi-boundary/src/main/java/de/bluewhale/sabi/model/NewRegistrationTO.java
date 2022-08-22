@@ -18,16 +18,16 @@ import java.io.Serializable;
 @Data
 public class NewRegistrationTO implements Serializable {
 
-    @Schema(name = "Users Emailaddress.", required = true)
+    @Schema(description =  "Users Emailaddress.", required = true)
     private String email;
 
-    @Schema(name = "Loginname. Uniquely identifies the user account.", required = true)
+    @Schema(description =  "Loginname. Uniquely identifies the user account.", required = true)
     private String username;
 
-    @Schema(name = "Users secret", required = true)
+    @Schema(description =  "Users secret", required = true)
     private String password;
 
-    @Schema(name = "Needs to be a valid code otherwise you won't be registered - this helps avoiding " +
+    @Schema(description =  "Needs to be a valid code otherwise you won't be registered - this helps avoiding " +
             "simple DOS-attacks in future", required = true)
     private String captchaCode;
 
@@ -35,7 +35,7 @@ public class NewRegistrationTO implements Serializable {
             "Must be set together with country. SmallCAPS / Defaults to 'en'",required = true)
     private String language ="en"; // default
 
-    @Schema(name = "ISO-3166-1 alpha-2 country code - used for i18n in communication. " +
+    @Schema(description =  "ISO-3166-1 alpha-2 country code - used for i18n in communication. " +
             "Default 'US'", required = true)
     private String country = "US"; // default
 
