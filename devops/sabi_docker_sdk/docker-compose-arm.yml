@@ -87,7 +87,7 @@ services:
     networks:
       - sabinet
     ports:
-      - 9090:9090
+      - "9090:9090"
 
 networks:
   sabinet:
