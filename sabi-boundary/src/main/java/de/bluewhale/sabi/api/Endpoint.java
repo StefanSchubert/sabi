@@ -22,7 +22,8 @@ public enum Endpoint {
     MEASUREMENT_STATS("/api/stats/measurements"),
     IOT_API("/api/aquarium_iot"),
     UNITS("/api/units"),
-    USER_PROFILE("/api/userprofile")
+    USER_PROFILE("/api/userprofile"),
+    PLAGUE_CENTER_SERVICE("api/plagues");
     ;
 
 // ------------------------------ FIELDS ------------------------------
