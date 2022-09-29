@@ -188,4 +188,12 @@ public class Mapper {
         parameterEntity.setMinThreshold(parameterTo.getMinThreshold());
         parameterEntity.setMaxThreshold(parameterTo.getMaxThreshold());        
     }
+
+    public static void mapPlagueRecordEntity2To(PlagueRecordEntity plagueRecordEntity, PlagueRecordTo plagueRecordTo) {
+        plagueRecordTo.setPlagueId(plagueRecordEntity.getPlagueId());
+        plagueRecordTo.setPlagueStatusId(plagueRecordEntity.getObservedPlagueStatus());
+        plagueRecordTo.setAquariumId(plagueRecordEntity.getAquarium().getId());
+        plagueRecordTo.setId(plagueRecordEntity.getId());
+        plagueRecordTo.setObservedOn(plagueRecordEntity.getObservedOn());
+    }
 }

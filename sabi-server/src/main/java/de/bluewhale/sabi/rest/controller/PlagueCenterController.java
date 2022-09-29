@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
+ */
+
+package de.bluewhale.sabi.rest.controller;
+
+import de.bluewhale.sabi.model.PlagueRecordTo;
+import de.bluewhale.sabi.services.PlagueCenterService;
+import de.bluewhale.sabi.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
+
+import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
+
+
+@RestController
+@RequestMapping(value = "api/plagues")
+@Slf4j
+public class PlagueCenterController {
+
+// ------------------------------ FIELDS ------------------------------
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    PlagueCenterService plagueCenterService;
+
+// -------------------------- OTHER METHODS --------------------------
+
+    @Operation(method = "List all plagues belonging to calling user tanks. You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202",
+                    description = "Success plague records returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
+    })
+    @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<List<PlagueRecordTo>> listUsersTanksPlagues(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        log.debug("Request tank plague list for {}",principal.getName());
+        List<PlagueRecordTo> plagueRecordToList = plagueCenterService.listPlagueRecordsOf(principal.getName(), 0);
+        return new ResponseEntity<>(plagueRecordToList, HttpStatus.ACCEPTED);
+    }
+
+}
