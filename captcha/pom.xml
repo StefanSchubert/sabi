@@ -56,7 +56,7 @@
         <repository>
             <id>repository.spring.milestone</id>
             <name>Spring Milestone Repository</name>
-            <url>http://repo.spring.io/milestone</url>
+            <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
 
@@ -113,6 +113,18 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>snakeyaml</artifactId>
+                    <groupId>org.yaml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- May be removed as soon as openapi-ui patches usage of snakeyaml 1.29 -->
+            <artifactId>snakeyaml</artifactId>
+            <groupId>org.yaml</groupId>
+            <version>1.32</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -121,6 +133,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -6,24 +6,19 @@
 package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.rest.exceptions.TankMessageCodes;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import jakarta.inject.Named;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,37 +29,14 @@ import java.util.List;
 @Named
 @RequestScope
 @Slf4j
-public class TankServiceImpl implements TankService {
-
-    @Value("${sabi.backend.url}")
-    private String sabiBackendUrl;
-
-    @Autowired
-    private ObjectMapper objectMapper;  // json mapper
-
-    @Autowired
-    private UserSession userSession;
+public class TankServiceImpl extends APIServiceImpl implements TankService {
 
     @Override
-    public @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTBackendAuthtoken) throws BusinessException {
+    public @NotNull List<AquariumTo> getUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException {
 
         String listTankUri = sabiBackendUrl + "/api/tank/list";
-
-        RestTemplate restTemplate = new RestTemplate();
-        List<AquariumTo> tankList = Collections.emptyList();
-        ResponseEntity<String> responseEntity;
-
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            responseEntity = restTemplate.exchange(listTankUri, HttpMethod.GET, requestEntity, String.class);
-            renewBackendToken(responseEntity);
-        } catch (RestClientException e) {
-            log.error(String.format("Couldn't reach %s",listTankUri),e.getLocalizedMessage());
-            e.printStackTrace();
-            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
-        }
+        List<AquariumTo> tankList;
+        ResponseEntity<String> responseEntity = getAPIResponseFor(listTankUri, pJWTBackendAuthtoken, HttpMethod.GET);
 
         try {
             AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
@@ -79,13 +51,13 @@ public class TankServiceImpl implements TankService {
 
 
     @Override
-    public void deleteTankById(@NotNull Long tankId, @NotNull String JWTBackendAuthtoken) throws BusinessException {
+    public void deleteTankById(@NotNull Long tankId, @NotNull String pJWTBackendAuthtoken) throws BusinessException {
         String tankUri = sabiBackendUrl + "/api/tank/"+tankId;
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity;
 
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(pJWTBackendAuthtoken);
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         try {
@@ -109,24 +81,10 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
-    public String reCreateTemperatureAPIKey(Long tankID, String JWTBackendAuthtoken) throws BusinessException {
+    public String reCreateTemperatureAPIKey(Long tankID, String pJWTBackendAuthtoken) throws BusinessException {
         String requestTempAPIKeyURI = sabiBackendUrl + "/api/tank/"+tankID+"/tempApiKey";
 
-        RestTemplate restTemplate = new RestTemplate();
-        List<AquariumTo> tankList = Collections.emptyList();
-        ResponseEntity<String> responseEntity;
-
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            responseEntity = restTemplate.exchange(requestTempAPIKeyURI, HttpMethod.GET, requestEntity, String.class);
-            renewBackendToken(responseEntity);
-        } catch (RestClientException e) {
-            log.error(String.format("Couldn't reach %s",requestTempAPIKeyURI),e.getLocalizedMessage());
-            e.printStackTrace();
-            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
-        }
+        ResponseEntity<String> responseEntity = getAPIResponseFor(requestTempAPIKeyURI,pJWTBackendAuthtoken,HttpMethod.GET);
 
         if (responseEntity.getStatusCode() != HttpStatusCode.valueOf(200)) {
             log.error(String.format("Couldn't process %s",requestTempAPIKeyURI),responseEntity.getStatusCode());
@@ -145,7 +103,7 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
-    public void save(AquariumTo tank, String JWTBackendAuthtoken) throws BusinessException {
+    public void save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException {
 
         String updateTankURI = sabiBackendUrl + "/api/tank/"; // PUT here
         String createTankURI = sabiBackendUrl + "/api/tank/create"; // POST here
@@ -162,7 +120,7 @@ public class TankServiceImpl implements TankService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity;
 
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(JWTBackendAuthtoken);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(pJWTBackendAuthtoken);
         HttpEntity<String> requestEntity = new HttpEntity<>(requestJson,headers);
 
         if (tank.getId() == null) {
@@ -208,9 +166,4 @@ public class TankServiceImpl implements TankService {
         }
     }
 
-    private void renewBackendToken(ResponseEntity<String> responseEntity) {
-        if( responseEntity.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) ) {
-            userSession.setSabiBackendToken(responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
-        }
-    }
 }

@@ -43,7 +43,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <!-- requires java 17 - now available on raspberry pi -->
-        <version>3.0.0-M4</version>
+        <version>3.0.0-M2</version>
         <!--                <version>2.6.8</version>-->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
@@ -52,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <log4j2.version>2.17.1</log4j2.version>
+        <log4j2.version>2.19.0</log4j2.version>
         <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
 
         <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>
