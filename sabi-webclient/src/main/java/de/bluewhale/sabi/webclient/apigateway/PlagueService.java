@@ -48,6 +48,15 @@ public interface PlagueService extends Serializable {
     @NotNull List<PlagueRecordTo> getPlagueRecordsForUsersTank(@NotNull String JWTAuthtoken, @NotNull Long tankId) throws BusinessException;
 
     /**
+     * List all active PlagueRecords for all tanks of user. Concrete user will be derived by the calling context
+     *
+     * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return List of active PlagueRecords that belong to current user. List may be empty but never NULL.
+     * @throws BusinessException in case of backend auth failures.
+     */
+    @NotNull List<PlagueRecordTo> getPlagueRecordsForUserTanks(@NotNull String JWTAuthtoken) throws BusinessException;
+
+    /**
      * List Users PlagueRecords for a specific tank and plague unit. Concrete user will be derived by the calling context
      *
      * @param JWTAuthtoken Bearer Auth string, which identifies the user against the backend.
