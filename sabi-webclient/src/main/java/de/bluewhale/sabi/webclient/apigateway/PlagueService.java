@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.PlagueRecordTo;
+import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,10 +39,25 @@ public interface PlagueService extends Serializable {
     @NotNull List<PlagueTo> getPlagueCatalogue(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
+     * To avoid unnecessary Backend calls, the implementation is suggested to
+     * cache the results.
+     * <p>
+     * TODO: JMX Beans such that the cache can be reloaded in case
+     * the backend introduces more units.
+     *
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param language             ISO-639-1 language code for which the translation is being requested.
+     * @return List of translated plagues status, in case the requested translation is not available english will be used as fallback.
+     * @throws BusinessException in case of backend auth failures.
+     */
+    @Cacheable
+    @NotNull List<PlagueStatusTo> getPlagueStatusList(@NotNull String pJWTBackendAuthtoken, @NotNull String language) throws BusinessException;
+
+    /**
      * List Users PlagueRecords for a specific tank. Concrete user will be derived by the calling context
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @param tankId       Id of users tank to which the measures belong.
+     * @param tankId               Id of users tank to which the measures belong.
      * @return List of PlagueRecords that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
@@ -60,8 +76,8 @@ public interface PlagueService extends Serializable {
      * List Users PlagueRecords for a specific tank and plague unit. Concrete user will be derived by the calling context
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @param tankId       Id of users tank to which the plague belong.
-     * @param plagueId     Id which is used to filter the results for a specific plagueId.
+     * @param tankId               Id of users tank to which the plague belong.
+     * @param plagueId             Id which is used to filter the results for a specific plagueId.
      * @return List of PlagueRecords that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
@@ -70,7 +86,7 @@ public interface PlagueService extends Serializable {
     /**
      * Request PlagueRecords deletion in Backend, in case he or she did a typo.
      *
-     * @param plagueRecordId      Identifier of the Measurement to delete
+     * @param plagueRecordId       Identifier of the Measurement to delete
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
@@ -79,7 +95,7 @@ public interface PlagueService extends Serializable {
     /**
      * Update an existing or create a plague record entry for the user/tank.
      *
-     * @param plagueRecord        PlagueRecordTo Entry to patch or to create
+     * @param plagueRecord         PlagueRecordTo Entry to patch or to create
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */

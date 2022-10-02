@@ -9,11 +9,9 @@ import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.persistence.model.LocalizedPlagueStatusEntity;
-import de.bluewhale.sabi.persistence.model.PlagueRecordEntity;
-import de.bluewhale.sabi.persistence.model.PlagueStatusEntity;
-import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.PlagueRecordEntityRepository;
+import de.bluewhale.sabi.persistence.repositories.PlagueRepository;
 import de.bluewhale.sabi.persistence.repositories.PlagueStatusRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.Mapper;
@@ -25,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,19 +42,33 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
     PlagueStatusRepository plagueStatusRepository;
 
     @Autowired
+    PlagueRepository plagueRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Override
     public List<PlagueRecordTo> listPlaguesRecordsOf(Long pTankID) {
         // TODO STS (28.09.22): impl me
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("java.util.List<de.bluewhale.sabi.model.PlagueRecordTo> listPlaguesRecordsOf([pTankID])");
     }
 
     @Override
     public List<PlagueTo> listAllPlagueTypes(String pUsersLanguage) {
-
-        // TODO STS (28.09.22): impl me
-        return Collections.emptyList();
+        List<PlagueTo> plagueTos = new ArrayList<>();
+        List<PlagueEntity> knownPlagues = plagueRepository.findAll();
+        for (PlagueEntity plagueEntity : knownPlagues) {
+            List<LocalizedPlagueEntity> localizedPlagueEntities = plagueEntity.getLocalizedPlagueEntities();
+            Optional<LocalizedPlagueEntity> localizedPlagueEntity = localizedPlagueEntities.stream().filter(item -> pUsersLanguage.equalsIgnoreCase(item.getLanguage())).findFirst();
+            if (localizedPlagueEntity.isPresent()) {
+                PlagueTo plagueTo = new PlagueTo();
+                plagueTo.setId(localizedPlagueEntity.get().getPlague_id());
+                plagueTo.setCommonName(localizedPlagueEntity.get().getCommonName());
+                plagueTo.setScientificName(plagueEntity.getScientificName());
+                plagueTos.add(plagueTo);
+            }
+        }
+        return plagueTos;
     }
 
     @Override
@@ -98,27 +109,25 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
     @Override
     public ResultTo<PlagueRecordTo> removePlagueRecord(Long pPlagueRecordID, String pUserEmail) {
         // TODO STS (28.09.22): impl me
-        return null;
+        throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.PlagueRecordTo> removePlagueRecord([pPlagueRecordID, pUserEmail])");
     }
 
     @Override
     public ResultTo<PlagueRecordTo> addPlagueRecord(PlagueRecordTo pPlagueRecordTo, String pUserEmail) {
         // TODO STS (28.09.22): impl me
-        return null;
+        throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.PlagueRecordTo> addPlagueRecord([pPlagueRecordTo, pUserEmail])");
     }
 
     @Override
     public ResultTo<PlagueRecordTo> updatePlagueRecord(PlagueRecordTo pPlagueRecordTo, String pUserEmail) {
         // TODO STS (28.09.22): impl me
-        return null;
+        throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.PlagueRecordTo> updatePlagueRecord([pPlagueRecordTo, pUserEmail])");
     }
 
     @Override
     public String fetchAmountOfPlagueRecords() {
-        // TODO STS (28.09.22): impl me
-        return "0";
+        return String.valueOf(plagueRecordEntityRepository.count());
     }
-
 
     private List<PlagueRecordTo> mapPlagueRecordEntities2TOs(List<PlagueRecordEntity> plagueRecordEntityList) {
         List<PlagueRecordTo> plagueRecordToList = new ArrayList<PlagueRecordTo>();

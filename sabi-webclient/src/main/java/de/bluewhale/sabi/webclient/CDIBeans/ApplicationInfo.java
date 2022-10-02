@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.model.MotdTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import jakarta.annotation.PostConstruct;
@@ -73,7 +74,7 @@ public class ApplicationInfo implements Serializable {
      */
     public String getNumberOfParticipants() {
         String numberOfParticipants = "N/A";
-        String infoURL = sabiBackendUrl + "/api/stats/participants";
+        String infoURL = sabiBackendUrl + Endpoint.PARTICIPANT_STATS;
         try {
             // todo only update max. every hour
             numberOfParticipants = restTemplate.getForObject(infoURL, String.class);
@@ -93,7 +94,7 @@ public class ApplicationInfo implements Serializable {
      */
     public String getNumberOfTanks() {
         String numberOfTanks = "N/A";
-        String infoURL = sabiBackendUrl + "/api/stats/tanks";
+        String infoURL = sabiBackendUrl + Endpoint.TANK_STATS;
         try {
             // todo only update max. every hour
             numberOfTanks = restTemplate.getForObject(infoURL, String.class);
@@ -113,7 +114,7 @@ public class ApplicationInfo implements Serializable {
      */
     public String getNumberOfMeasurements() {
         String numberOfMeasurements = "N/A";
-        String infoURL = sabiBackendUrl + "/api/stats/measurements";
+        String infoURL = sabiBackendUrl + Endpoint.MEASUREMENT_STATS;
         try {
             // todo only update max. every hour
             numberOfMeasurements = restTemplate.getForObject(infoURL, String.class);
@@ -125,7 +126,27 @@ public class ApplicationInfo implements Serializable {
             log.error("Measurement-Stats Restcall failure. {}",e.getMessage());
         }
         return numberOfMeasurements;
-    }    
+    }
+
+    /**
+     * Retrieves the Number of overall plague Records
+     * @return Number as String
+     */
+    public String getNumberOfPlagueObeservationRecords() {
+        String numberOfPlagueRecords = "N/A";
+        String infoURL = sabiBackendUrl + Endpoint.PLAGUE_STATS;
+        try {
+            // todo only update max. every hour
+            numberOfPlagueRecords = restTemplate.getForObject(infoURL, String.class);
+            if (log.isDebugEnabled()){
+                log.debug("Called Number of plaguerecord stats");
+            };
+        } catch (RestClientException e) {
+            // Default value will be displayed - which is ok. Stay resilient.
+            log.error("Plaguerecord-Stats Restcall failure. {}",e.getMessage());
+        }
+        return numberOfPlagueRecords;
+    }
 
     /**
      * Retrieve the current message of today if there is any.

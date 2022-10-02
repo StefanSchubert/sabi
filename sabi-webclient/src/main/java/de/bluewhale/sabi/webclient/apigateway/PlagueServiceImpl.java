@@ -10,6 +10,7 @@ import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.model.PlagueRecordTo;
+import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,32 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService  
     @Override
     public List<PlagueTo> getPlagueCatalogue(String pJWTBackendAuthtoken) throws BusinessException {
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<PlagueStatusTo> getPlagueStatusList(String pJWTBackendAuthtoken, String language) throws BusinessException {
+
+        List<PlagueStatusTo> plagueStatusToList;
+        String listPlagueUri = sabiBackendUrl + Endpoint.PLAGUE_CENTER_SERVICE+ "/status/list";
+
+        ResponseEntity<String> responseEntity = getAPIResponseFor(listPlagueUri+"/"+language,pJWTBackendAuthtoken,HttpMethod.GET);
+
+        try {
+            PlagueStatusTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueStatusTo[].class);
+            plagueStatusToList = (myObjects == null ? Collections.emptyList() : Arrays.asList(myObjects));
+        } catch (JsonProcessingException e) {
+            log.error(String.format("Didn't understand response from %s got parsing exception %s", listPlagueUri, e.getMessage()), e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+
+        // Fallback to en if requested language was not available
+        if (!language.equalsIgnoreCase("en") && plagueStatusToList.isEmpty()) {
+            plagueStatusToList = getPlagueStatusList(pJWTBackendAuthtoken, "en");
+        }
+
+        return plagueStatusToList;
+
     }
 
     @Override
@@ -67,7 +94,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService  
         
         try {
             PlagueRecordTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueRecordTo[].class);
-            plagueRecordTos = Arrays.asList(myObjects);
+            plagueRecordTos = (myObjects == null ? Collections.emptyList() : Arrays.asList(myObjects));
         } catch (JsonProcessingException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s", listPlagueUri, e.getMessage()), e.getMessage());
             e.printStackTrace();

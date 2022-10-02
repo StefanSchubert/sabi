@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Table which contains known plague status values.
+ * Table which contains trackable plagues of our tanks.
  */
-@Table(name = "plague_status", schema = "sabi")
+@Table(name = "plague", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = "localizedPlagueStatusEntities")
-public class PlagueStatusEntity extends Auditable {
+@EqualsAndHashCode(exclude = "localizedPlagueEntities")
+public class PlagueEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
     @Id
@@ -27,9 +27,13 @@ public class PlagueStatusEntity extends Auditable {
     @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     private Long id;
 
+    @Column(name = "scientific_name", nullable = false, insertable = true, updatable = true, length = 80)
+    @Basic
+    private String scientificName;
+
     // Unidirectional for now - as this contains more static data, we we won't provide a admin gui for it.
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="plague_status_id")
-    private List<LocalizedPlagueStatusEntity> localizedPlagueStatusEntities = new ArrayList<LocalizedPlagueStatusEntity>();
+    @JoinColumn(name="plague_id")
+    private List<LocalizedPlagueEntity> localizedPlagueEntities = new ArrayList<LocalizedPlagueEntity>();
 
 }

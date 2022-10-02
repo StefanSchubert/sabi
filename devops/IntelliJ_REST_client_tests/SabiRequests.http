@@ -36,6 +36,11 @@ GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/status/list/de
 Authorization: {{auth_token}}
 Accept: application/json
 
+### Get known plague types localized for de
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/type/list/de
+Authorization: {{auth_token}}
+Accept: application/json
+
 ### Update User Profile
 PUT http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/userprofile
 Authorization: {{auth_token}}

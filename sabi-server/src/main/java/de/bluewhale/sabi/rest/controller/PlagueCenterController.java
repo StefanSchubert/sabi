@@ -7,6 +7,7 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueStatusTo;
+import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,6 +77,26 @@ public class PlagueCenterController {
         log.debug("Request plague status list for {}",principal.getName());
         List<PlagueStatusTo> plagueStatusTos = plagueCenterService.listAllPlagueStatus(language);
         return new ResponseEntity<>(plagueStatusTos, HttpStatus.ACCEPTED);
+    }
+
+    @Operation(method = "List by sabi trackable plagues types in given language")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Success translated list of trackable plague returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
+    })
+    @RequestMapping(value = "/type/list/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<List<PlagueTo>> listTranslatedPlagues(
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal,
+            @PathVariable(value = "language", required = true)
+            @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication.") String language) {
+
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        log.debug("Request plague list for {}",principal.getName());
+        List<PlagueTo> plagueTos = plagueCenterService.listAllPlagueTypes(language);
+        return new ResponseEntity<>(plagueTos, HttpStatus.ACCEPTED);
     }
 
 }
