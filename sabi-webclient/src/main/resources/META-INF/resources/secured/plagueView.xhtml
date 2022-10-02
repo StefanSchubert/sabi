@@ -51,14 +51,41 @@
             </p:messages>
 
             <ui:remove><!-- LISTING OF ONGOING PLAGUES IN OWN TANK --></ui:remove>
+
             <p:panel header="#{msg['plague.center.mystatus.h']}">
-                <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported}"
+                <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported == false}"
                                escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
 
-                Datatable: Aquarium / Plage / Letzter Status
-                (Wir schauen nach Plagen, deren letzter Record nicht einem Abschluss-Status entspricht)
+                <div>
+                    <p:dataTable id="tbl" var="m" value="#{plagueView.ongoingUserPlagues}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                 paginator="true" rows="10" styleClass="p-mt-2"
+                                 rendered="#{plagueView.areCurrentPlaguesReported}">
+
+                        <p:column headerText="#{msg['plagueview.plague.l']}">
+                            <p:outputLabel value="#{m.plageName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.plaguestatus.l']}">
+                            <p:outputLabel value="#{m.currentStatus}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.date.l']}">
+                            <p:outputLabel value="#{m.observedOn}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.tank.l']}">
+                            <p:outputLabel value="#{m.tankName}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </div>
 
             </p:panel>
+
 
             <p:spacer height="10px"/>
 

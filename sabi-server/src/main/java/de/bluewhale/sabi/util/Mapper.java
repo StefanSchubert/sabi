@@ -195,5 +195,6 @@ public class Mapper {
         plagueRecordTo.setAquariumId(plagueRecordEntity.getAquarium().getId());
         plagueRecordTo.setId(plagueRecordEntity.getId());
         plagueRecordTo.setObservedOn(plagueRecordEntity.getObservedOn());
+        plagueRecordTo.setPlagueIntervallId(plagueRecordEntity.getPlagueIntervallId());
     }
 }

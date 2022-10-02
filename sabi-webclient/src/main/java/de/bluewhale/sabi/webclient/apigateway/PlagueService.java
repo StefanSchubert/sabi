@@ -28,22 +28,21 @@ public interface PlagueService extends Serializable {
      * To avoid unnecessary Backend calls, the implementation is suggested to
      * cache the results.
      * <p>
-     * TODO: JMX Beans such that the cache can be reloaded in case
-     * the backend introduces more units.
+     * TODO: Improvement: JMX Beans such that the cache can be reloaded in case of data maintenance
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param language             ISO-639-1 language code for which the translation is being requested.
      * @return List of plagues known by the backend.
      * @throws BusinessException in case of backend auth failures.
      */
     @Cacheable
-    @NotNull List<PlagueTo> getPlagueCatalogue(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
+    @NotNull List<PlagueTo> getPlagueCatalogue(@NotNull String pJWTBackendAuthtoken, @NotNull String language) throws BusinessException;
 
     /**
      * To avoid unnecessary Backend calls, the implementation is suggested to
      * cache the results.
      * <p>
-     * TODO: JMX Beans such that the cache can be reloaded in case
-     * the backend introduces more units.
+     * TODO: Improvement: JMX Beans such that the cache can be reloaded in case of data maintenance
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @param language             ISO-639-1 language code for which the translation is being requested.

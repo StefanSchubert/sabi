@@ -41,6 +41,12 @@ GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/type/list/de
 Authorization: {{auth_token}}
 Accept: application/json
 
+### Get users plague records
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/record/list
+Authorization: {{auth_token}}
+Accept: application/json
+
+
 ### Update User Profile
 PUT http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/userprofile
 Authorization: {{auth_token}}

@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.controller;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.PlagueRecordTo;
+import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.PlagueService;
@@ -26,9 +27,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +61,8 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     private List<AquariumTo> tanks;
     private List<PlagueTo> knownPlagues;
 
+    private List<PlagueStatusTo> plagueStatusToList;
+
     private List<ActivePlagueTo> ongoingUserPlagues;
 
     private List<PlagueTo> pastUserPlagues;
@@ -82,11 +83,20 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
             MessageUtil.error("troubleMsg", "common.token.expired.t", userSession.getLocale());
         }
 
-        // Fetch Plague Catalogue
+        // Fetch i18n Plague Catalogue
         try {
-            knownPlagues = plagueService.getPlagueCatalogue(userSession.getSabiBackendToken());
+            knownPlagues = plagueService.getPlagueCatalogue(userSession.getSabiBackendToken(), userSession.getLanguage());
         } catch (BusinessException e) {
             knownPlagues = Collections.emptyList();
+            log.error(e.getLocalizedMessage());
+            MessageUtil.error("troubleMsg", "common.token.expired.t", userSession.getLocale());
+        }
+
+        // Fetch 18n Plague Status List
+        try {
+            plagueStatusToList = plagueService.getPlagueStatusList(userSession.getSabiBackendToken(), userSession.getLanguage());
+        } catch (BusinessException e) {
+            plagueStatusToList = Collections.emptyList();
             log.error(e.getLocalizedMessage());
             MessageUtil.error("troubleMsg", "common.token.expired.t", userSession.getLocale());
         }
@@ -131,8 +141,8 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
                     // different intervall, store last entry if state is not a closed one
                     if (lastPlagueRecord.getPlagueStatusId() != PLAGUE_CURED_STATUS_ID) {
                         addOngoingPlague(tank, lastPlagueRecord);
-                        lastPlagueRecord = plagueRecord;
                     }
+                    lastPlagueRecord = plagueRecord;
                 }
             }
             // Handle last Intervall
@@ -144,14 +154,31 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     }
 
     private void addOngoingPlague(AquariumTo pTank, PlagueRecordTo pLastPlagueRecord) {
+
+        if (ongoingUserPlagues == null) {
+            ongoingUserPlagues = new ArrayList<>();
+        }
+
         ActivePlagueTo activePlagueTo = new ActivePlagueTo();
         activePlagueTo.setTankName(pTank.getDescription());
         activePlagueTo.setObservedOn(pLastPlagueRecord.getObservedOn());
-        // FIXME STS (30.09.22): get Localized String for PlagueStatus
-        activePlagueTo.setCurrentStatus("" + pLastPlagueRecord.getPlagueStatusId());
-        // FIXME STS (30.09.22): get Localized String for PlageName
-        activePlagueTo.setPlageName("" + pLastPlagueRecord.getPlagueId());
+        activePlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(pLastPlagueRecord.getPlagueStatusId()));
+        activePlagueTo.setPlageName(getCommonPlagueNameFor(pLastPlagueRecord.getPlagueId()));
         ongoingUserPlagues.add(activePlagueTo);
+    }
+
+    private String getCommonPlagueNameFor(Integer pPlagueId) {
+        String plagueName;
+        Optional<PlagueTo> plagueTo = knownPlagues.stream().filter(item -> item.getId() == pPlagueId).findFirst();
+        plagueName = (plagueTo.isPresent() ? plagueTo.get().getCommonName() : "?");
+        return plagueName;
+    }
+
+    private String getPlagueStatusDescriptionFor(Integer pPlagueStatusId) {
+        String plagueStatus;
+        Optional<PlagueStatusTo> statusTo = plagueStatusToList.stream().filter(item -> item.getId() == pPlagueStatusId).findFirst();
+        plagueStatus = (statusTo.isPresent() ? statusTo.get().getDescription() : "?");
+        return plagueStatus;
     }
 
 
@@ -192,11 +219,11 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     }
 
     public Boolean getAreCurrentPlaguesReported() {
-        return (ongoingUserPlagues == null || ongoingUserPlagues.isEmpty() ? true : false);
+        return (ongoingUserPlagues != null && (ongoingUserPlagues.isEmpty() ? false : true));
     }
 
     public Boolean getExistsRecordsOnPastPlagues() {
-        return (pastUserPlagues == null || pastUserPlagues.isEmpty() ? true : false);
+        return (pastUserPlagues == null || (pastUserPlagues.isEmpty() ? true : false));
     }
 
 
