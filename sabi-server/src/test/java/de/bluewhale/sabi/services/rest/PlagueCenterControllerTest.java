@@ -87,7 +87,7 @@ public class PlagueCenterControllerTest {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/plague/status/list/de", HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/plagues/status/list/de", HttpMethod.GET, requestEntity, String.class);
 
         // then we should get a 202 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));

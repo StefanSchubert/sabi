@@ -23,7 +23,7 @@ public enum Endpoint {
     IOT_API("/api/aquarium_iot"),
     UNITS("/api/units"),
     USER_PROFILE("/api/userprofile"),
-    PLAGUE_CENTER_SERVICE("api/plagues");
+    PLAGUE_CENTER_SERVICE("/api/plagues");
     ;
 
 // ------------------------------ FIELDS ------------------------------
