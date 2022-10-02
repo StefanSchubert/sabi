@@ -60,12 +60,12 @@ public interface PlagueService extends Serializable {
      * List Users PlagueRecords for a specific tank and plague unit. Concrete user will be derived by the calling context
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @param tankId       Id of users tank to which the measures belong.
+     * @param tankId       Id of users tank to which the plague belong.
      * @param plagueId     Id which is used to filter the results for a specific plagueId.
      * @return List of PlagueRecords that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-    @NotNull List<PlagueRecordTo> getPlagueRecordsForUsersTankFilteredByUnit(@NotNull String pJWTBackendAuthtoken, @NotNull Long tankId, @NotNull Integer plagueId) throws BusinessException;
+    @NotNull List<PlagueRecordTo> getPlagueRecordsForUsersTankFilteredByPlague(@NotNull String pJWTBackendAuthtoken, @NotNull Long tankId, @NotNull Integer plagueId) throws BusinessException;
 
     /**
      * Request PlagueRecords deletion in Backend, in case he or she did a typo.

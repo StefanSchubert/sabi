@@ -29,4 +29,10 @@ public class PlagueRecordTo implements Serializable {
     @Schema(description =  "References the Aquarium this measurement belongs to.", required = true)
     private Long aquariumId;
 
+    @Schema(description = "The plague intervall id groups all records together, that belong to the same"+
+     "plague occurrence. This eases data queries and investigations."+
+     "The number is unique only in combination with the tuple (tankID,plageID)"+
+     "and is provided programmatically." , required = true)
+    private Integer plagueIntervallId;
+
 }

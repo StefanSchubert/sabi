@@ -9,9 +9,12 @@ import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.model.ResultTo;
+import de.bluewhale.sabi.persistence.model.LocalizedPlagueStatusEntity;
 import de.bluewhale.sabi.persistence.model.PlagueRecordEntity;
+import de.bluewhale.sabi.persistence.model.PlagueStatusEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.PlagueRecordEntityRepository;
+import de.bluewhale.sabi.persistence.repositories.PlagueStatusRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides all required for dealing with Plague records here e.g. for use cases around the {@link de.bluewhale.sabi.persistence.model.PlagueRecordEntity}
@@ -38,25 +42,39 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
     PlagueRecordEntityRepository plagueRecordEntityRepository;
 
     @Autowired
+    PlagueStatusRepository plagueStatusRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Override
     public List<PlagueRecordTo> listPlaguesRecordsOf(Long pTankID) {
+        // TODO STS (28.09.22): impl me
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<PlagueTo> listAllPlagueTypes(String pUsersLanguage) {
 
         // TODO STS (28.09.22): impl me
         return Collections.emptyList();
     }
 
     @Override
-    public List<PlagueTo> listAllPlagueTypes(String usersLanguage) {
-        // TODO STS (28.09.22): impl me
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<PlagueStatusTo> listAllPlagueStatus(String usersLanguage) {
-        // TODO STS (28.09.22): impl me
-        return Collections.emptyList();
+    public List<PlagueStatusTo> listAllPlagueStatus(String pUsersLanguage) {
+        List<PlagueStatusTo> plagueStatusTos = new ArrayList<>();
+        List<PlagueStatusEntity> knownStatus = plagueStatusRepository.findAll();
+        for (PlagueStatusEntity plagueStatusEntity : knownStatus) {
+            List<LocalizedPlagueStatusEntity> localizedPlagueStatusEntities = plagueStatusEntity.getLocalizedPlagueStatusEntities();
+            Optional<LocalizedPlagueStatusEntity> localizedPlagueStatus = localizedPlagueStatusEntities.stream().filter(item -> pUsersLanguage.equalsIgnoreCase(item.getLanguage())).findFirst();
+            if (localizedPlagueStatus.isPresent()) {
+                PlagueStatusTo plagueStatusTo = new PlagueStatusTo();
+                plagueStatusTo.setId(localizedPlagueStatus.get().getPlague_status_id());
+                plagueStatusTo.setDescription(localizedPlagueStatus.get().getDescription());
+                plagueStatusTos.add(plagueStatusTo);
+            }
+        }
+        return plagueStatusTos;
     }
 
     @Override

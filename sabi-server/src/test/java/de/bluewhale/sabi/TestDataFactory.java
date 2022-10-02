@@ -6,6 +6,7 @@
 package de.bluewhale.sabi;
 
 import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 
@@ -30,6 +31,8 @@ public class TestDataFactory {
 
     private TankService tankService;
     private UserService userService;
+
+    private PlagueCenterService plagueCenterService;
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -99,6 +102,11 @@ public class TestDataFactory {
 
     public TestDataFactory withUserService(UserService service) {
         userService = service;
+        return this;
+    }
+
+    public TestDataFactory withPlagueCenterService(PlagueCenterService service) {
+        plagueCenterService = service;
         return this;
     }
 

@@ -16,7 +16,7 @@ public class PlagueStatusTo implements Serializable {
     @Schema(description =  "References the plague status.", required = true)
     private Integer id;
 
-    @Schema(description =  "i18n description  of the plague status", required = true)
+    @Schema(description =  "i18n description of the plague status", required = true)
     private String description;
 
 }

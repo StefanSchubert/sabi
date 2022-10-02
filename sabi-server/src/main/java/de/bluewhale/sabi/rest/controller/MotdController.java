@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -45,7 +45,7 @@ public class MotdController {
     @RequestMapping(value = "/motd/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<MotdTo> getNewCaptchaChallenge(
+    public ResponseEntity<MotdTo> getTranslatedMotd(
             @PathVariable(value = "language", required = true)
             @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication.") String language) {
 

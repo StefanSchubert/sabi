@@ -43,7 +43,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService  
     }
 
     @Override
-    public List<PlagueRecordTo> getPlagueRecordsForUsersTankFilteredByUnit(String pJWTBackendAuthtoken, Long tankId, Integer plagueId) throws BusinessException {
+    public List<PlagueRecordTo> getPlagueRecordsForUsersTankFilteredByPlague(String pJWTBackendAuthtoken, Long tankId, Integer plagueId) throws BusinessException {
         return Collections.emptyList();
     }
 
@@ -61,7 +61,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService  
     public List<PlagueRecordTo> getPlagueRecordsForUserTanks(String pJWTBackendAuthtoken) throws BusinessException {
 
         List<PlagueRecordTo> plagueRecordTos;
-        String listPlagueUri = sabiBackendUrl + Endpoint.PLAGUE_CENTER_SERVICE+ "/list";
+        String listPlagueUri = sabiBackendUrl + Endpoint.PLAGUE_CENTER_SERVICE+ "/record/list";
 
         ResponseEntity<String> responseEntity = getAPIResponseFor(listPlagueUri,pJWTBackendAuthtoken,HttpMethod.GET);
         
