@@ -13,7 +13,7 @@ import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.PlagueService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
-import de.bluewhale.sabi.webclient.model.ActivePlagueTo;
+import de.bluewhale.sabi.webclient.model.ReportedPlagueTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -63,9 +63,9 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     private List<PlagueStatusTo> plagueStatusToList;
 
-    private List<ActivePlagueTo> ongoingUserPlagues;
+    private List<ReportedPlagueTo> ongoingUserPlagues;
 
-    private List<PlagueTo> pastUserPlagues;
+    private List<ReportedPlagueTo> pastUserPlagues;
 
     @PostConstruct
     public void init() {
@@ -102,22 +102,39 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         }
 
         // Get Plagues reported by user
-        List<PlagueRecordTo> activePlaguesOfUsersTanks = null;
+        List<PlagueRecordTo> plaguesOfUsersTanks = null;
         try {
-            activePlaguesOfUsersTanks = plagueService.getPlagueRecordsForUserTanks(userSession.getSabiBackendToken());
+            plaguesOfUsersTanks = plagueService.getPlagueRecordsForUserTanks(userSession.getSabiBackendToken());
         } catch (BusinessException e) {
             log.error(e.getLocalizedMessage());
             MessageUtil.error("troubleMsg", "common.token.expired.t", userSession.getLocale());
         }
-        if (activePlaguesOfUsersTanks == null) {
-            activePlaguesOfUsersTanks = Collections.emptyList();
+        if (plaguesOfUsersTanks == null) {
+            plaguesOfUsersTanks = Collections.emptyList();
         }
+
+        // Determine solved plagues for user tanks
+        pastUserPlagues = new ArrayList<>();
+        List<PlagueRecordTo> curedPlaguesOfUsersTank = plaguesOfUsersTanks.stream()
+                .filter(item -> item.getPlagueStatusId() == PLAGUE_CURED_STATUS_ID)
+                .sorted(Comparator.comparingLong(PlagueRecordTo::getAquariumId))
+                .collect(Collectors.toList());
+
+        for (PlagueRecordTo recordTo : curedPlaguesOfUsersTank) {
+            ReportedPlagueTo reportedPlagueTo = new ReportedPlagueTo();
+            reportedPlagueTo.setTankName(getTankNameForId(recordTo.getAquariumId()));
+            reportedPlagueTo.setObservedOn(recordTo.getObservedOn());
+            reportedPlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(recordTo.getPlagueStatusId()));
+            reportedPlagueTo.setPlageName(getCommonPlagueNameFor(recordTo.getPlagueId()));
+            pastUserPlagues.add(reportedPlagueTo);
+        }
+
 
         // Determine current active plagues for each tank of the user
         for (AquariumTo tank : tanks) {
 
             // Slice for current tank;plagueInterval
-            List<PlagueRecordTo> sortedActivePlaguesOfUsersTank = activePlaguesOfUsersTanks.stream()
+            List<PlagueRecordTo> sortedActivePlaguesOfUsersTank = plaguesOfUsersTanks.stream()
                     .filter(item -> item.getAquariumId() == tank.getId())
                     .sorted(Comparator.comparingInt(PlagueRecordTo::getPlagueIntervallId))
                     .collect(Collectors.toList());
@@ -159,12 +176,12 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
             ongoingUserPlagues = new ArrayList<>();
         }
 
-        ActivePlagueTo activePlagueTo = new ActivePlagueTo();
-        activePlagueTo.setTankName(pTank.getDescription());
-        activePlagueTo.setObservedOn(pLastPlagueRecord.getObservedOn());
-        activePlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(pLastPlagueRecord.getPlagueStatusId()));
-        activePlagueTo.setPlageName(getCommonPlagueNameFor(pLastPlagueRecord.getPlagueId()));
-        ongoingUserPlagues.add(activePlagueTo);
+        ReportedPlagueTo reportedPlagueTo = new ReportedPlagueTo();
+        reportedPlagueTo.setTankName(pTank.getDescription());
+        reportedPlagueTo.setObservedOn(pLastPlagueRecord.getObservedOn());
+        reportedPlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(pLastPlagueRecord.getPlagueStatusId()));
+        reportedPlagueTo.setPlageName(getCommonPlagueNameFor(pLastPlagueRecord.getPlagueId()));
+        ongoingUserPlagues.add(reportedPlagueTo);
     }
 
     private String getCommonPlagueNameFor(Integer pPlagueId) {
@@ -223,9 +240,8 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     }
 
     public Boolean getExistsRecordsOnPastPlagues() {
-        return (pastUserPlagues == null || (pastUserPlagues.isEmpty() ? true : false));
+        return (pastUserPlagues != null || (pastUserPlagues.isEmpty() ? false : true));
     }
-
 
     public void fetchAnnouncement() {
         String plagueInfo = MessageUtil.getFromMessageProperties("plague.center.info.t", LocaleContextHolder.getLocale());

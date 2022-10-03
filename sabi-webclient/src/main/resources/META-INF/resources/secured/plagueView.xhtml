@@ -52,12 +52,40 @@
 
             <ui:remove><!-- LISTING OF ONGOING PLAGUES IN OWN TANK --></ui:remove>
 
+            <p:panel header="#{msg['plague.center.addrecord.h']}">
+                Nettes Formular erzeugen...
+            </p:panel>
+
+            <p:spacer height="10px"/>
+
             <p:panel header="#{msg['plague.center.mystatus.h']}">
                 <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported == false}"
                                escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
 
+                <ui:remove><!-- ADD NEW PLAGUES OR UPDATE AN EXISTING ONE --></ui:remove>
+                <h:form id="plagueform">
+
+
+                    <ui:remove>
+                        <!-- Request Wheel -->
+                    </ui:remove>
+                    <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+                    <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+                              showHeader="false">
+                        <div class="p-text-center">
+                            <i class="pi pi-spinner loading-icon"/>
+                        </div>
+                    </p:dialog>
+
+                    <p:panelGrid columns="2" style="border:2;">
+                    </p:panelGrid>
+
+                </h:form>
+
+                <p:spacer height="10px"/>
+
                 <div>
-                    <p:dataTable id="tbl" var="m" value="#{plagueView.ongoingUserPlagues}"
+                    <p:dataTable id="tbl_ongoingPlagues" var="m" value="#{plagueView.ongoingUserPlagues}"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                  paginator="true" rows="10" styleClass="p-mt-2"
                                  rendered="#{plagueView.areCurrentPlaguesReported}">
@@ -72,7 +100,40 @@
 
                         <p:column headerText="#{msg['plagueview.date.l']}">
                             <p:outputLabel value="#{m.observedOn}">
-                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.tank.l']}">
+                            <p:outputLabel value="#{m.tankName}"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </div>
+            </p:panel>
+
+            <p:spacer height="10px"/>
+
+            <ui:remove><!-- LISTING OF PAST PLAGUES IN OWN TANKS --></ui:remove>
+            <p:panel header="#{msg['plague.center.history.h']}">
+
+                <div>
+                    <p:dataTable id="tbl_pastplagues" var="m" value="#{plagueView.pastUserPlagues}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                 paginator="true" rows="10" styleClass="p-mt-2"
+                                 rendered="#{plagueView.existsRecordsOnPastPlagues}">
+
+                        <p:column headerText="#{msg['plagueview.plague.l']}">
+                            <p:outputLabel value="#{m.plageName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.plaguestatus.l']}">
+                            <p:outputLabel value="#{m.currentStatus}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.curedate.l']}">
+                            <p:outputLabel value="#{m.observedOn}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
                             </p:outputLabel>
                         </p:column>
 
@@ -83,45 +144,6 @@
                     </p:dataTable>
 
                 </div>
-
-            </p:panel>
-
-
-            <p:spacer height="10px"/>
-
-            <ui:remove><!-- ADD NEW PLAGUES OR UPDATE AN EXISTING ONE --></ui:remove>
-            <h:form id="plagueform">
-
-                <p:panel header="#{msg['plague.center.addrecord.h']}">
-                    Nettes Formular erzeugen...
-                </p:panel>
-
-                <ui:remove>
-                    <!-- Request Wheel -->
-                </ui:remove>
-                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
-                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
-                          showHeader="false">
-                    <div class="p-text-center">
-                        <i class="pi pi-spinner loading-icon"/>
-                    </div>
-                </p:dialog>
-
-                <p:panelGrid columns="2" style="border:2;">
-                </p:panelGrid>
-
-            </h:form>
-
-            <p:spacer height="10px"/>
-
-            <ui:remove><!-- LISTING OF PAST PLAGUES IN OWN TANKS --></ui:remove>
-            <p:panel header="#{msg['plague.center.history.h']}">
-                <p:outputLabel rendered="#{plagueView.existsRecordsOnPastPlagues}"
-                               escape="false" value="#{msg['plague.center.history.norecords.t']}"/>
-
-                Datatable: Aquarium, Plage, Von-Bis, Dauer
-                D.h. wir schauen nach der jüngsten Meldung zu einer Plage und deren Abschluss
-
             </p:panel>
 
         </ui:define>

@@ -10,12 +10,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * Used to display a active in PlagueCenter
+ * Used to display a plage record in PlagueCenter
  *
  * @author Stefan Schubert
  */
 @Data
-public class ActivePlagueTo {
+public class ReportedPlagueTo {
 
     private String tankName;
     private String plageName;
