@@ -3,6 +3,8 @@
 This is a semi-scientific (or open-science) project that aims to gain insights
  from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
 
+[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
+
 ## Latest project news:
 | Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
