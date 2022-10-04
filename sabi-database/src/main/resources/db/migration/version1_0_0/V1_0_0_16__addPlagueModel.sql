@@ -139,7 +139,7 @@ VALUES (3, 3, 'Growing seems to stop', 'en', '2022-06-05 22:00:00', '2022-06-05 
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
 VALUES (4, 4, 'Slowly retreating', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
-VALUES (5, 5, 'Vanished (will close plage log)', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+VALUES (5, 5, 'Vanished (Plague cured)', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
 /*
  * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
@@ -156,7 +156,7 @@ VALUES (8, 3, 'Ausdehnung stagniert', 'de', '2022-06-05 22:00:00', '2022-06-05 2
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
 VALUES (9, 4, 'Langsam rückgänig', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
-VALUES (10, 5, 'Verschwunden (plague beendet, log schließt)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+VALUES (10, 5, 'Verschwunden (Plage beendet)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
 /*
  * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).

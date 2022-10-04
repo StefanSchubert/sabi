@@ -24,7 +24,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.util.*;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @author Stefan Schubert
  */
 @Named
-@SessionScope
+@RequestScope
 @Slf4j
 @Getter
 @Setter
@@ -213,15 +213,20 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     public String save() {
         if (allDataProvided(plagueRecordTo)) {
+
+            /* FIXME STS (04.10.22):  We need to determine if there is a ongoing plague, then we
+                inherit the intervalId. If it was not part of a ongoing one we need to determine a new IntervallID
+            */
+
             try {
                 plagueService.save(plagueRecordTo, userSession.getSabiBackendToken());
-                MessageUtil.info("submitState", "common.save.confirmation.t", userSession.getLocale());
+                MessageUtil.info("plaguemessages", "common.save.confirmation.t", userSession.getLocale());
             } catch (Exception e) {
                 log.error("Couldn't save plague record {} {}", plagueRecordTo, e);
-                MessageUtil.error("submitState", "common.error.internal_server_problem.t", userSession.getLocale());
+                MessageUtil.error("plaguemessages", "common.error.internal_server_problem.t", userSession.getLocale());
             }
         } else {
-            MessageUtil.warn("troubleMsg", "common.incompleted_formdata.t", userSession.getLocale());
+            MessageUtil.warn("plaguemessages", "common.incompleted_formdata.t", userSession.getLocale());
         }
         return PLAGUE_VIEW_PAGE;
     }

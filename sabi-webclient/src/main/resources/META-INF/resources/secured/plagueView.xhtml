@@ -34,6 +34,7 @@
             </ui:remove>
             <p:outputPanel>#{plagueView.announcement}</p:outputPanel>
 
+            <ui:remove><!-- SOME CURRENT ANNOUNCEMENTS on PLAGUE CENTER --></ui:remove>
             <p:messages id="messages" for="common" showDetail="true" closable="true">
                 <p:autoUpdate/>
             </p:messages>
@@ -45,27 +46,10 @@
 
             <p:spacer height="10px"/>
 
-            <ui:remove><!-- SOME CURRENT ANNOUNCEMENTS on PLAGUE CENTER --></ui:remove>
-            <p:messages id="pmsg" for="plaguemessages" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
+            <ui:remove><!-- ADD NEW PLAGUES OR UPDATE AN EXISTING ONE --></ui:remove>
+            <p:panel header="#{msg['plague.center.addrecord.h']}" styleClass="yellowColoredPanel">
 
-            <ui:remove><!-- LISTING OF ONGOING PLAGUES IN OWN TANK --></ui:remove>
-
-            <p:panel header="#{msg['plague.center.addrecord.h']}">
-                Nettes Formular erzeugen...
-            </p:panel>
-
-            <p:spacer height="10px"/>
-
-            <p:panel header="#{msg['plague.center.mystatus.h']}">
-                <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported == false}"
-                               escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
-
-                <ui:remove><!-- ADD NEW PLAGUES OR UPDATE AN EXISTING ONE --></ui:remove>
                 <h:form id="plagueform">
-
-
                     <ui:remove>
                         <!-- Request Wheel -->
                     </ui:remove>
@@ -78,9 +62,62 @@
                     </p:dialog>
 
                     <p:panelGrid columns="2" style="border:2;">
+
+                        <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
+                        <p:selectOneMenu id="tankselection" value="#{plagueView.plagueRecordTo.aquariumId}">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                            <f:selectItems value="#{plagueView.tanks}"
+                                           var="n"
+                                           itemValue="#{n.id}"
+                                           itemLabel="#{n.description}"
+                            />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="plagueselection" value="#{msg['plagueview.plague.l']}"/>
+                        <p:selectOneMenu id="plagueselection" value="#{plagueView.plagueRecordTo.plagueId}">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                            <f:selectItems value="#{plagueView.knownPlagues}"
+                                           var="p"
+                                           itemValue="#{p.id}"
+                                           itemLabel="#{p.commonName}"
+                            />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="plaguestatusselection" value="#{msg['plagueview.status.l']}"/>
+                        <p:selectOneMenu id="plaguestatusselection" value="#{plagueView.plagueRecordTo.plagueStatusId}">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                            <f:selectItems value="#{plagueView.plagueStatusToList}"
+                                           var="s"
+                                           itemValue="#{s.id}"
+                                           itemLabel="#{s.description}"
+                            />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['plagueview.date.l']}"/>
+                        <p:datePicker id="observationDateDate" value="#{plagueView.plagueRecordTo.observedOn}"
+                                      pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
+                                      showOtherMonths="true" yearNavigator="true" />
+
                     </p:panelGrid>
 
+                    <p:commandButton value="#{msg['plagueview.save.b']}" action="#{plagueView.save()}"
+                                     id="saveAction" icon="pi pi-save"
+                                     update=":tbl_ongoingPlagues"
+                                     title="#{msg['plagueview.save.b']}"/>
+
                 </h:form>
+
+            </p:panel>
+            <p:messages id="pmsg" for="plaguemessages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <p:spacer height="10px"/>
+
+            <ui:remove><!-- LISTING OF ONGOING PLAGUES IN OWN TANK --></ui:remove>
+            <p:panel header="#{msg['plague.center.mystatus.h']}" styleClass="redColoredPanel">
+                <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported == false}"
+                               escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
 
                 <p:spacer height="10px"/>
 
@@ -94,7 +131,7 @@
                             <p:outputLabel value="#{m.plageName}"/>
                         </p:column>
 
-                        <p:column headerText="#{msg['plagueview.plaguestatus.l']}">
+                        <p:column headerText="#{msg['plagueview.laststatus.l']}">
                             <p:outputLabel value="#{m.currentStatus}"/>
                         </p:column>
 
@@ -115,19 +152,17 @@
             <p:spacer height="10px"/>
 
             <ui:remove><!-- LISTING OF PAST PLAGUES IN OWN TANKS --></ui:remove>
-            <p:panel header="#{msg['plague.center.history.h']}">
+            <p:panel header="#{msg['plague.center.history.h']}" styleClass="greenColoredPanel">
 
                 <div>
-                    <p:dataTable id="tbl_pastplagues" var="m" value="#{plagueView.pastUserPlagues}"
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                 paginator="true" rows="10" styleClass="p-mt-2"
+                    <p:dataTable id="tbl_pastplagues" var="m" value="#{plagueView.pastUserPlagues}" styleClass="p-mt-2"
                                  rendered="#{plagueView.existsRecordsOnPastPlagues}">
 
                         <p:column headerText="#{msg['plagueview.plague.l']}">
                             <p:outputLabel value="#{m.plageName}"/>
                         </p:column>
 
-                        <p:column headerText="#{msg['plagueview.plaguestatus.l']}">
+                        <p:column headerText="#{msg['plagueview.status.l']}">
                             <p:outputLabel value="#{m.currentStatus}"/>
                         </p:column>
 
