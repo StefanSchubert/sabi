@@ -21,5 +21,6 @@ public class ReportedPlagueTo {
     private String plageName;
     private LocalDateTime observedOn;
     private String currentStatus;
+    private Integer plagueIntervallId;
 
 }

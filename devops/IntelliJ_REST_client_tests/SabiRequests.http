@@ -41,6 +41,21 @@ GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/type/list/de
 Authorization: {{auth_token}}
 Accept: application/json
 
+### Register new Plague Record
+POST http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/record
+Authorization: {{auth_token}}
+Accept: application/json
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "observedOn" : "2022-10-05T21:29:50.719Z",
+  "plagueId" : 4,
+  "plagueStatusId" : 5,
+  "aquariumId" : 1,
+  "plagueIntervallId" : 1
+}
+
 ### Get users plague records
 GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/record/list
 Authorization: {{auth_token}}

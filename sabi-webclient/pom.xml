@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>0.9.3</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -21,6 +21,11 @@
          Thanks to https://codenotfound.com/jsf-primefaces-example.html
          which showed me the way on how to combine jsf with spring boot in a proper way.
     -->
+
+    <scm>
+        <connection>scm:git:https://github.com/StefanSchubert/sabi</connection>
+        <url>https://github.com/StefanSchubert/sabi</url>
+    </scm>
 
     <developers>
         <!-- PLEASE ADD YOURSELF HERE for maven site docu

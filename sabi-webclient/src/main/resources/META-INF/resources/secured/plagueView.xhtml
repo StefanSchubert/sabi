@@ -39,6 +39,10 @@
                 <p:autoUpdate/>
             </p:messages>
 
+            <p:messages id="troubleMsg" for="troubleMsg" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
             <ui:remove><!-- WHAT IS IT ABOUT? --></ui:remove>
             <p:panel header="#{msg['plague.center.introduction.h']}">
                 <p:outputLabel escape="false" value="#{msg['plague.center.introduction.t']}"/>
@@ -108,7 +112,7 @@
                 </h:form>
 
             </p:panel>
-            <p:messages id="pmsg" for="plaguemessages" showDetail="true" closable="true">
+            <p:messages id="plaguemessages" for="plaguemessages" showDetail="true" closable="true">
                 <p:autoUpdate/>
             </p:messages>
 

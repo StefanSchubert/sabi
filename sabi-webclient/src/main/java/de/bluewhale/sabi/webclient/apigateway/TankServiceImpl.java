@@ -133,11 +133,11 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
                 throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
             }
             if (!responseEntity.getStatusCode().is2xxSuccessful()){
-                if (responseEntity.getStatusCodeValue()==409) {
+                if (responseEntity.getStatusCode().equals(HttpStatusCode.valueOf(409))) {
                     log.info("Tried to create the same tank twice. Will be just ignored as we favour idempotent behavior. Tank ID: {}",tank.getId());
                 }
-                if (responseEntity.getStatusCodeValue()==401) {
-                    log.warn("Invalid Token when trying to update tank: {}",tank.getId());
+                if (responseEntity.getStatusCode().equals(HttpStatusCode.valueOf(401))) {
+                    log.warn("Invalid Token when trying to create tank: {}",tank.getId());
                     throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
                 }
             }

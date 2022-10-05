@@ -63,6 +63,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     private List<PlagueStatusTo> plagueStatusToList;
 
+    private List<PlagueRecordTo> plaguesOfUsersTanks;
     private List<ReportedPlagueTo> ongoingUserPlagues;
 
     private List<ReportedPlagueTo> pastUserPlagues;
@@ -102,7 +103,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         }
 
         // Get Plagues reported by user
-        List<PlagueRecordTo> plaguesOfUsersTanks = null;
+        plaguesOfUsersTanks = null;
         try {
             plaguesOfUsersTanks = plagueService.getPlagueRecordsForUserTanks(userSession.getSabiBackendToken());
         } catch (BusinessException e) {
@@ -126,6 +127,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
             reportedPlagueTo.setObservedOn(recordTo.getObservedOn());
             reportedPlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(recordTo.getPlagueStatusId()));
             reportedPlagueTo.setPlageName(getCommonPlagueNameFor(recordTo.getPlagueId()));
+            reportedPlagueTo.setPlagueIntervallId(recordTo.getPlagueIntervallId());
             pastUserPlagues.add(reportedPlagueTo);
         }
 
@@ -181,6 +183,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         reportedPlagueTo.setObservedOn(pLastPlagueRecord.getObservedOn());
         reportedPlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(pLastPlagueRecord.getPlagueStatusId()));
         reportedPlagueTo.setPlageName(getCommonPlagueNameFor(pLastPlagueRecord.getPlagueId()));
+        reportedPlagueTo.setPlagueIntervallId(pLastPlagueRecord.getPlagueIntervallId());
         ongoingUserPlagues.add(reportedPlagueTo);
     }
 
@@ -214,9 +217,26 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     public String save() {
         if (allDataProvided(plagueRecordTo)) {
 
-            /* FIXME STS (04.10.22):  We need to determine if there is a ongoing plague, then we
-                inherit the intervalId. If it was not part of a ongoing one we need to determine a new IntervallID
-            */
+            // Determine IntervallId by looking into ongoing list
+            Integer intervallId;
+            List<ReportedPlagueTo> matchList = ongoingUserPlagues.stream()
+                    .filter(item -> item.getPlageName().equalsIgnoreCase(getCommonPlagueNameFor(plagueRecordTo.getPlagueId())))
+                    .collect(Collectors.toList());
+
+            if (matchList.isEmpty()) {
+                // no match in ongoing list => new plague intervall occurrence, determine new intervallId by looking on all records
+                Optional<PlagueRecordTo> optMaxIntervalId = plaguesOfUsersTanks.stream().max(Comparator.comparingInt(PlagueRecordTo::getPlagueIntervallId));
+                if (optMaxIntervalId.isEmpty()) {
+                    intervallId = 1;
+                } else {
+                    intervallId = optMaxIntervalId.get().getPlagueIntervallId() + 1;
+                }
+            } else {
+                // plage record complements ongoing plague
+                intervallId = matchList.get(0).getPlagueIntervallId();
+            }
+
+            plagueRecordTo.setPlagueIntervallId(intervallId);
 
             try {
                 plagueService.save(plagueRecordTo, userSession.getSabiBackendToken());

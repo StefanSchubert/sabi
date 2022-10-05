@@ -1,5 +1,13 @@
 # History of changes (since 5/2022)
 
+## Release 1.0.0
+
+### New Features
+* SABI-115: added Plague Center
+
+### Technical Maintenance 
+* Patchmanagement
+
 ## Release 0.9.3
 
 ### New Features

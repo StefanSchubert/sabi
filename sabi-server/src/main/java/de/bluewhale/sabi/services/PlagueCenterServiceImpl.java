@@ -5,15 +5,13 @@
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.*;
-import de.bluewhale.sabi.persistence.repositories.PlagueRecordEntityRepository;
-import de.bluewhale.sabi.persistence.repositories.PlagueRepository;
-import de.bluewhale.sabi.persistence.repositories.PlagueStatusRepository;
-import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.persistence.repositories.*;
 import de.bluewhale.sabi.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +41,9 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
 
     @Autowired
     PlagueRepository plagueRepository;
+
+    @Autowired
+    AquariumRepository aquariumRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -114,8 +115,33 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
 
     @Override
     public ResultTo<PlagueRecordTo> addPlagueRecord(PlagueRecordTo pPlagueRecordTo, String pUserEmail) {
-        // TODO STS (28.09.22): impl me
-        throw new UnsupportedOperationException("de.bluewhale.sabi.model.ResultTo<de.bluewhale.sabi.model.PlagueRecordTo> addPlagueRecord([pPlagueRecordTo, pUserEmail])");
+
+        PlagueRecordTo createdPlagueRecordTo;
+        Message message;
+
+        UserEntity requestingUser = userRepository.getByEmail(pUserEmail);
+        if (requestingUser == null) {
+            message = Message.error(PlagueCenterMessageCodes.UNKNOWN_USER, pUserEmail);
+            return new ResultTo<>(pPlagueRecordTo, message);
+        }
+
+        // check if tank belongs to provided user
+        AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(pPlagueRecordTo.getAquariumId(), requestingUser.getId());
+        if (aquariumEntity == null) {
+            message = Message.error(PlagueCenterMessageCodes.NOT_YOUR_RECORD, pUserEmail);
+            return new ResultTo<>(pPlagueRecordTo, message);
+
+        }
+
+        createdPlagueRecordTo = new PlagueRecordTo();
+        PlagueRecordEntity plagueRecordEntity = new PlagueRecordEntity();
+        Mapper.mapPlagueRecordTo2Entity(pPlagueRecordTo,plagueRecordEntity,aquariumEntity, requestingUser);
+        PlagueRecordEntity createdPlagueRecordEntity = plagueRecordEntityRepository.saveAndFlush(plagueRecordEntity);
+        Mapper.mapPlagueRecordEntity2To(createdPlagueRecordEntity,createdPlagueRecordTo);
+        message = Message.info(PlagueCenterMessageCodes.CREATE_SUCCEEDED, createdPlagueRecordTo.getId());
+
+        ResultTo<PlagueRecordTo> plagueRecordToResultTo = new ResultTo<>(createdPlagueRecordTo, message) ;
+        return plagueRecordToResultTo;
     }
 
     @Override

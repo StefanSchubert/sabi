@@ -5,9 +5,11 @@
 
 package de.bluewhale.sabi.rest.controller;
 
+import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
+import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,5 +100,33 @@ public class PlagueCenterController {
         List<PlagueTo> plagueTos = plagueCenterService.listAllPlagueTypes(language);
         return new ResponseEntity<>(plagueTos, HttpStatus.ACCEPTED);
     }
+
+    @Operation(method="Add a new plague record to users tank.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Record saved"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token."),
+            @ApiResponse(responseCode = "500", description = "Something went wrong in backend. You may open an support ticket if this error stays.")
+    })
+    @RequestMapping(value = {"/record"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public ResponseEntity<PlagueRecordTo> registerNewPlagueRecord(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                      @RequestBody PlagueRecordTo plagueRecordTo, Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+        ResultTo<PlagueRecordTo> plagueRecordToResultTo = plagueCenterService.addPlagueRecord(plagueRecordTo, principal.getName());
+
+        ResponseEntity<PlagueRecordTo> responseEntity;
+        final Message resultMessage = plagueRecordToResultTo.getMessage();
+        if (Message.CATEGORY.INFO.equals(resultMessage.getType())) {
+            PlagueRecordTo createdPlagueRecordTo = plagueRecordToResultTo.getValue();
+            responseEntity = new ResponseEntity<>(createdPlagueRecordTo, HttpStatus.CREATED);
+        } else {
+            log.warn("Something went wrong: {}",resultMessage.toString());
+            responseEntity = new ResponseEntity<>(plagueRecordTo, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
+    }
+
 
 }
