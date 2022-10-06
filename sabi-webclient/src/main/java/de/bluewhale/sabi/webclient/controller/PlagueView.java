@@ -165,6 +165,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
                 addOngoingPlague(tank, lastPlagueRecord);
             }
         }
+        if (ongoingUserPlagues != null) ongoingUserPlagues = Collections.emptyList();
 
     }
 
