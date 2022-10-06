@@ -44,7 +44,7 @@
         <sabi.boundary.version>1.0.7</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <log4j2.version>2.19.0</log4j2.version>
         <springdoc.version>1.6.11</springdoc.version>
 
