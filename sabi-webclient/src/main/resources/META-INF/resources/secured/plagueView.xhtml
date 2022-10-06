@@ -29,24 +29,24 @@
 
         <ui:define name="content">
 
+            <ui:remove><!-- WHAT IS IT ABOUT? --></ui:remove>
+            <p:panel header="#{msg['plague.center.introduction.h']}">
+                <p:outputLabel escape="false" value="#{msg['plague.center.introduction.t']}"/>
+            </p:panel>
+
             <ui:remove>
                 <!--  This is a little hack as using the viewAction from Metadata doesn't seem to work. -->
             </ui:remove>
             <p:outputPanel>#{plagueView.announcement}</p:outputPanel>
 
             <ui:remove><!-- SOME CURRENT ANNOUNCEMENTS on PLAGUE CENTER --></ui:remove>
-            <p:messages id="messages" for="common" showDetail="true" closable="true">
+            <p:messages id="msg1" for="common" showDetail="true" closable="true">
                 <p:autoUpdate/>
             </p:messages>
 
-            <p:messages id="troubleMsg" for="troubleMsg" showDetail="true" closable="true">
+            <p:messages id="msg2" for="troubleMsg" showDetail="true" closable="true">
                 <p:autoUpdate/>
             </p:messages>
-
-            <ui:remove><!-- WHAT IS IT ABOUT? --></ui:remove>
-            <p:panel header="#{msg['plague.center.introduction.h']}">
-                <p:outputLabel escape="false" value="#{msg['plague.center.introduction.t']}"/>
-            </p:panel>
 
             <p:spacer height="10px"/>
 
@@ -100,91 +100,95 @@
                         <p:outputLabel value="#{msg['plagueview.date.l']}"/>
                         <p:datePicker id="observationDateDate" value="#{plagueView.plagueRecordTo.observedOn}"
                                       pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
-                                      showOtherMonths="true" yearNavigator="true" />
+                                      showOtherMonths="true" yearNavigator="true"/>
 
                     </p:panelGrid>
 
                     <p:commandButton value="#{msg['plagueview.save.b']}" action="#{plagueView.save()}"
                                      id="saveAction" icon="pi pi-save"
-                                     update=":tbl_ongoingPlagues"
+                                     update=":listing"
                                      title="#{msg['plagueview.save.b']}"/>
-
                 </h:form>
 
             </p:panel>
-            <p:messages id="plaguemessages" for="plaguemessages" showDetail="true" closable="true">
-                <p:autoUpdate/>
-            </p:messages>
 
-            <p:spacer height="10px"/>
+            <h:form id="listing">
 
-            <ui:remove><!-- LISTING OF ONGOING PLAGUES IN OWN TANK --></ui:remove>
-            <p:panel header="#{msg['plague.center.mystatus.h']}" styleClass="redColoredPanel">
-                <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported == false}"
-                               escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
+                <p:messages id="msg3" for="saveresult" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
 
                 <p:spacer height="10px"/>
 
-                <div>
-                    <p:dataTable id="tbl_ongoingPlagues" var="m" value="#{plagueView.ongoingUserPlagues}"
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                 paginator="true" rows="10" styleClass="p-mt-2"
-                                 rendered="#{plagueView.areCurrentPlaguesReported}">
+                <ui:remove><!-- LISTING OF ONGOING PLAGUES IN OWN TANK --></ui:remove>
+                <p:panel header="#{msg['plague.center.mystatus.h']}" styleClass="redColoredPanel">
+                    <p:outputLabel rendered="#{plagueView.areCurrentPlaguesReported == false}"
+                                   escape="false" value="#{msg['plague.center.mystatus.noplague.t']}"/>
 
-                        <p:column headerText="#{msg['plagueview.plague.l']}">
-                            <p:outputLabel value="#{m.plageName}"/>
-                        </p:column>
+                    <p:spacer height="10px"/>
 
-                        <p:column headerText="#{msg['plagueview.laststatus.l']}">
-                            <p:outputLabel value="#{m.currentStatus}"/>
-                        </p:column>
+                    <div>
+                        <p:dataTable id="tbl_ongoingPlagues" var="m" value="#{plagueView.ongoingUserPlagues}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                     paginator="true" rows="10" styleClass="p-mt-2"
+                                     rendered="#{plagueView.areCurrentPlaguesReported}">
 
-                        <p:column headerText="#{msg['plagueview.date.l']}">
-                            <p:outputLabel value="#{m.observedOn}">
-                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
-                            </p:outputLabel>
-                        </p:column>
+                            <p:column headerText="#{msg['plagueview.plague.l']}">
+                                <p:outputLabel value="#{m.plageName}"/>
+                            </p:column>
 
-                        <p:column headerText="#{msg['plagueview.tank.l']}">
-                            <p:outputLabel value="#{m.tankName}"/>
-                        </p:column>
+                            <p:column headerText="#{msg['plagueview.laststatus.l']}">
+                                <p:outputLabel value="#{m.currentStatus}"/>
+                            </p:column>
 
-                    </p:dataTable>
-                </div>
-            </p:panel>
+                            <p:column headerText="#{msg['plagueview.date.l']}">
+                                <p:outputLabel value="#{m.observedOn}">
+                                    <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                                </p:outputLabel>
+                            </p:column>
 
-            <p:spacer height="10px"/>
+                            <p:column headerText="#{msg['plagueview.tank.l']}">
+                                <p:outputLabel value="#{m.tankName}"/>
+                            </p:column>
 
-            <ui:remove><!-- LISTING OF PAST PLAGUES IN OWN TANKS --></ui:remove>
-            <p:panel header="#{msg['plague.center.history.h']}" styleClass="greenColoredPanel">
+                        </p:dataTable>
+                    </div>
+                </p:panel>
 
-                <div>
-                    <p:dataTable id="tbl_pastplagues" var="m" value="#{plagueView.pastUserPlagues}" styleClass="p-mt-2"
-                                 rendered="#{plagueView.existsRecordsOnPastPlagues}">
+                <p:spacer height="10px"/>
 
-                        <p:column headerText="#{msg['plagueview.plague.l']}">
-                            <p:outputLabel value="#{m.plageName}"/>
-                        </p:column>
+                <ui:remove><!-- LISTING OF PAST PLAGUES IN OWN TANKS --></ui:remove>
+                <p:panel header="#{msg['plague.center.history.h']}" styleClass="greenColoredPanel">
 
-                        <p:column headerText="#{msg['plagueview.status.l']}">
-                            <p:outputLabel value="#{m.currentStatus}"/>
-                        </p:column>
+                    <div>
+                        <p:dataTable id="tbl_pastplagues" var="m" value="#{plagueView.pastUserPlagues}"
+                                     styleClass="p-mt-2"
+                                     rendered="#{plagueView.existsRecordsOnPastPlagues}">
 
-                        <p:column headerText="#{msg['plagueview.curedate.l']}">
-                            <p:outputLabel value="#{m.observedOn}">
-                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
-                            </p:outputLabel>
-                        </p:column>
+                            <p:column headerText="#{msg['plagueview.plague.l']}">
+                                <p:outputLabel value="#{m.plageName}"/>
+                            </p:column>
 
-                        <p:column headerText="#{msg['plagueview.tank.l']}">
-                            <p:outputLabel value="#{m.tankName}"/>
-                        </p:column>
+                            <p:column headerText="#{msg['plagueview.status.l']}">
+                                <p:outputLabel value="#{m.currentStatus}"/>
+                            </p:column>
 
-                    </p:dataTable>
+                            <p:column headerText="#{msg['plagueview.curedate.l']}">
+                                <p:outputLabel value="#{m.observedOn}">
+                                    <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                                </p:outputLabel>
+                            </p:column>
 
-                </div>
-            </p:panel>
+                            <p:column headerText="#{msg['plagueview.tank.l']}">
+                                <p:outputLabel value="#{m.tankName}"/>
+                            </p:column>
 
+                        </p:dataTable>
+
+                    </div>
+                </p:panel>
+
+            </h:form>
         </ui:define>
 
     </ui:composition>

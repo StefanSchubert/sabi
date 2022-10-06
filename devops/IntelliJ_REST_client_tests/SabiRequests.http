@@ -49,11 +49,11 @@ Cache-Control: no-cache
 Content-Type: application/json
 
 {
-  "observedOn" : "2022-10-05T21:29:50.719Z",
-  "plagueId" : 4,
-  "plagueStatusId" : 5,
+  "observedOn" : "2022-10-06T21:29:50.719Z",
+  "plagueId" : 3,
+  "plagueStatusId" : 2,
   "aquariumId" : 1,
-  "plagueIntervallId" : 1
+  "plagueIntervallId" : 3
 }
 
 ### Get users plague records

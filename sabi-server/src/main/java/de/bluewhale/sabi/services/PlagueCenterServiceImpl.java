@@ -133,6 +133,17 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
 
         }
 
+        // Sanity check - does the intervall match to already observed plague for (user, tank).
+        List<PlagueRecordEntity> existingRecordsForThisInterval = plagueRecordEntityRepository.findByUserAndPlagueIntervallId(requestingUser, pPlagueRecordTo.getPlagueIntervallId());
+        if ((existingRecordsForThisInterval != null) && !existingRecordsForThisInterval.isEmpty() ) {
+            for (PlagueRecordEntity storedPlagueRecord : existingRecordsForThisInterval) {
+                if (storedPlagueRecord.getPlagueId() != pPlagueRecordTo.getPlagueId()) {
+                    message = Message.error(PlagueCenterMessageCodes.CONFLICTING_DATA, pUserEmail);
+                    return new ResultTo<>(pPlagueRecordTo, message);
+                }
+            }
+        }
+
         createdPlagueRecordTo = new PlagueRecordTo();
         PlagueRecordEntity plagueRecordEntity = new PlagueRecordEntity();
         Mapper.mapPlagueRecordTo2Entity(pPlagueRecordTo,plagueRecordEntity,aquariumEntity, requestingUser);
