@@ -5,9 +5,11 @@ Cache-Control: no-cache
 Content-Type: application/json
 
 {
-  "username": "schubert@bluewhale.de",
-  "password": "test"
+  "username": "sabi@bluewhale.de",
+  "password": "clibanarius"
 }
+
+> {% client.global.set("auth_token", response.headers.valueOf("Authorization")); %}
 
 ### Register new User Request
 POST http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/auth/register
@@ -26,12 +28,43 @@ Content-Type: application/json
 
 ### Get authed users tanks
 GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/tank/list
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYWJpQGJsdWV3aGFsZS5kZSIsImV4cCI6MTYyMTg1NjI1MX0.J9LxzicqrvoIXZHQDnUluqr4Kb0SKo-Z9vq7uogz5uTQaBxTC6GwEBU19S_jd3mOkpnk1oCryiJp2eatN2mdTg
+Authorization: {{auth_token}}
 Accept: application/json
+
+### Get known plague status' localized for de
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/status/list/de
+Authorization: {{auth_token}}
+Accept: application/json
+
+### Get known plague types localized for de
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/type/list/de
+Authorization: {{auth_token}}
+Accept: application/json
+
+### Register new Plague Record
+POST http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/record
+Authorization: {{auth_token}}
+Accept: application/json
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "observedOn" : "2022-10-06T21:29:50.719Z",
+  "plagueId" : 3,
+  "plagueStatusId" : 2,
+  "aquariumId" : 1,
+  "plagueIntervallId" : 3
+}
+
+### Get users plague records
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/plagues/record/list
+Authorization: {{auth_token}}
+Accept: application/json
+
 
 ### Update User Profile
 PUT http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/userprofile
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYWJpQGJsdWV3aGFsZS5kZSIsImV4cCI6MTYyMTg1OTYwOX0.eYgwtbUlbfHmqpN3zQw4b0H8-HdHbvbW1gIaymIfDmOLzxioty5GA4VxKllgMYJcHRkXopugINfr1ZwRc-VmwA
+Authorization: {{auth_token}}
 Accept: application/json
 Content-Type: application/json
 

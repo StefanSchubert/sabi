@@ -35,20 +35,20 @@ public interface PlagueCenterService {
     /**
      * PlagueTypes are not hard coded via enums, they can dynamically add through the database if required.
      * Use this function to retrieve the list of known ones.
-     * @param usersLanguage Locale.getLanguage used to retrieve the localized plague name
+     * @param pUsersLanguage Locale.getLanguage used to retrieve the localized plague name
      * @return List of currently tracked plagues
      */
     @NotNull
-    List<PlagueTo> listAllPlagueTypes(String usersLanguage);
+    List<PlagueTo> listAllPlagueTypes(String pUsersLanguage);
 
     /**
      * PlagueStatus are not hard coded via enums, they can dynamically add through the database if required.
      * Use this function to retrieve the list of known ones.
-     * @param usersLanguage Locale.getLanguage used to retrieve the localized plague status name
+     * @param pUsersLanguage Locale.getLanguage used to retrieve the localized plague status name
      * @return List of plague status range
      */
     @NotNull
-    List<PlagueStatusTo> listAllPlagueStatus(String usersLanguage);
+    List<PlagueStatusTo> listAllPlagueStatus(String pUsersLanguage);
 
     /**
      * Lists all PlagueRecords of a specific user.

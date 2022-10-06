@@ -21,6 +21,7 @@ public enum PlagueCenterMessageCodes implements MessageCode {
     NOT_YOUR_RECORD(PlagueCenterExceptionCodes.FRAUD_DETECTION),
     RECORD_ALREADY_DELETED(PlagueCenterExceptionCodes.RECORD_NOT_FOUND),
     UNKNOWN_USER(PlagueCenterExceptionCodes.FRAUD_DETECTION),
+    CONFLICTING_DATA(PlagueCenterExceptionCodes.CREATION_FAILED),
     UPDATE_SUCCEEDED,
     REMOVAL_SUCCEEDED;
 

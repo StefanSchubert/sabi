@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
+ */
+
+/*
 Sample and explanation taken from: https://bits.theorem.co/css-pro-tips-responsive-font-sizes-and-when-to-use-which-units/
 
 "The em part: You can think of the em value as being the size the text bottoms out at.
@@ -32,6 +37,20 @@ a.splashscreen:active {color: aqua;}
     padding: 15px;
     /*width: 600px;*/
 }
+
+.redColoredPanel .ui-panel-titlebar {
+    color: red;
+    background-color: lightsalmon;
+}
+.yellowColoredPanel .ui-panel-titlebar {
+    color: yellow;
+    background-color: lightyellow;
+}
+.greenColoredPanel .ui-panel-titlebar {
+    color: green;
+    background-color: lightseagreen;
+}
+
 
 /* sabi-60 ---- Rework css to be more responsive with media queries ----
    to add a certain device you may fetch the base values from here:

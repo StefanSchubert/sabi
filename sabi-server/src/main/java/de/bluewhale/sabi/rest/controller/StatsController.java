@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.services.MeasurementService;
+import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.services.TankService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +43,9 @@ public class StatsController {
     @Autowired
     MeasurementService measurementService;
 
+    @Autowired
+    PlagueCenterService plagueCenterService;
+
     @Operation(method = "Lifeness-Probe. Might be used e.g. by kubernetes to decide if the service is still up and running.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Service is responsive...I'm alive.")})
@@ -76,7 +80,7 @@ public class StatsController {
         return new ResponseEntity<>(amountOfTanks, HttpStatus.OK);
     }
 
-    @Operation(method = "Provides the amount of overall stores measurements. Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
+    @Operation(method = "Provides the amount of overall stored measurements. Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "XY (Number of measurements)")})
     @RequestMapping(value = {"/measurements"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -85,6 +89,17 @@ public class StatsController {
     public ResponseEntity<String> fetchNumberOfMeasurements() {
         String amountOfMeasurements = measurementService.fetchAmountOfMeasurements();
         return new ResponseEntity<>(amountOfMeasurements, HttpStatus.OK);
+    }
+
+    @Operation(method = "Provides the amount of overall stored plague records. Might be cached and therefore not actual. Will be refreshed automatically from time to time.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "XY (Number of plague records)")})
+    @RequestMapping(value = {"/plagues"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<String> fetchNumberOfPlagueRecords() {
+        String amountOfPlagueRecords = plagueCenterService.fetchAmountOfPlagueRecords();
+        return new ResponseEntity<>(amountOfPlagueRecords, HttpStatus.OK);
     }
 
 }

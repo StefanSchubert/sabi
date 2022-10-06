@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -69,9 +69,9 @@ public interface UserService extends Serializable {
     /**
      * Update users profile settings.
      * @param pUserProfile new user profile settings
-     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
-    void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+    void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
 }

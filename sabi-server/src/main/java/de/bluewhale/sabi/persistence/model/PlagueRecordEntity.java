@@ -42,11 +42,11 @@ public class PlagueRecordEntity extends Auditable {
 
     @Column(name = "plague_id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    private Long plagueId;
+    private Integer plagueId;
 
     @Column(name = "observed_plague_status", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
     @Basic
-    private Long observedPlagueStatus;
+    private Integer observedPlagueStatus;
 
     /**
      * The plague intervall id groups all records together, that belong to the same

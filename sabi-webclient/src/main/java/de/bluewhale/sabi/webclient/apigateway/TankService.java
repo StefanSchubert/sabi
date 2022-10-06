@@ -24,34 +24,34 @@ public interface TankService extends Serializable {
     /**
      * List Users tanks. Concrete user will be derived by the calling context
      *
-     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @return List of tanks that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-   @NotNull List<AquariumTo> getUsersTanks(@NotNull String JWTBackendAuthtoken) throws BusinessException;
+   @NotNull List<AquariumTo> getUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
      * Request Tank deletion in Backend.
      * @param tankId Identifier of the tank to delete
-     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
-    void deleteTankById(@NotNull Long tankId, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+    void deleteTankById(@NotNull Long tankId, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
      * Update an existing or create a new tank for the user.
      * @param tank Tank to patch or to create
-     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @throws BusinessException
      */
-    void save(AquariumTo tank, String JWTBackendAuthtoken) throws BusinessException;
+    void save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
      * Retrieves a new temperature API Key.
      * @param tankID Tank on which the API Key will be registered
-     * @param JWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @return generated and stored API Key for submitting temperature measurements
      * @throws BusinessException
      */
-    String reCreateTemperatureAPIKey(@NotNull Long tankID, @NotNull String JWTBackendAuthtoken) throws BusinessException;
+    String reCreateTemperatureAPIKey(@NotNull Long tankID, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 }

@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.api.HttpHeader;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
@@ -14,7 +13,6 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
-import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import jakarta.faces.context.FacesContext;
@@ -24,7 +22,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -42,16 +39,7 @@ import java.util.Locale;
 @Named
 @SessionScope
 @Slf4j
-public class UserServiceImpl implements UserService {
-
-    @Value("${sabi.backend.url}")
-    private String sabiBackendUrl;
-
-    @Autowired
-    private ObjectMapper objectMapper;  // json mapper
-
-    @Autowired
-    private UserSession userSession;
+public class UserServiceImpl extends APIServiceImpl implements UserService {
 
     @Autowired
     private I18nUtil i18nUtil;
@@ -145,14 +133,10 @@ public class UserServiceImpl implements UserService {
     private UserProfileTo requestUserProfile(String sabiBackendToken) {
 
         String userProfileURL = sabiBackendUrl + Endpoint.USER_PROFILE.getPath();
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(sabiBackendToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity;
         UserProfileTo userProfileTo = null;
 
         try {
-            responseEntity = restTemplate.exchange(userProfileURL, HttpMethod.GET, requestEntity, String.class);
-            renewBackendToken(responseEntity);
+            ResponseEntity<String> responseEntity = getAPIResponseFor(userProfileURL, sabiBackendToken, HttpMethod.GET);
             userProfileTo = objectMapper.readValue(responseEntity.getBody(), UserProfileTo.class);
 
         } catch (Exception e) {
@@ -199,12 +183,6 @@ public class UserServiceImpl implements UserService {
         }
 
 
-    }
-
-    private void renewBackendToken(ResponseEntity<String> responseEntity) {
-        if( responseEntity.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) ) {
-            userSession.setSabiBackendToken(responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
-        }
     }
 
 }

@@ -72,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, Endpoint.PARTICIPANT_STATS.getPath()).permitAll()
                 .antMatchers(HttpMethod.GET, Endpoint.TANK_STATS.getPath()).permitAll()
                 .antMatchers(HttpMethod.GET, Endpoint.MEASUREMENT_STATS.getPath()).permitAll()
+                .antMatchers(HttpMethod.GET, Endpoint.PLAGUE_STATS.getPath()).permitAll()
                 // Motd can be requested before login
                 .antMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                 // Allow IOT Endpoints, they are checked internally based on specific API-Keys

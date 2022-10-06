@@ -85,18 +85,38 @@ CREATE TABLE `plague_record`
 INSERT INTO plague (id, scientific_name, created_on, lastmod_on)
 VALUES (1, 'Cyanobacteria', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
-INSERT INTO plague (id, scientific_name, created_on, lastmod_on)
-VALUES (2, 'Botryocladia', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
-
 INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
 VALUES (1, 1, 'Cyanobacteria', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
 VALUES (2, 1, 'Cyanobakterien', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
+
+INSERT INTO plague (id, scientific_name, created_on, lastmod_on)
+VALUES (2, 'Botryocladia', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
 INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
 VALUES (3, 2, 'Bubble-Algae', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
 VALUES (4, 2, 'Kugelalgen', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
+
+INSERT INTO plague (id, scientific_name, created_on, lastmod_on)
+VALUES (3, 'Turbellaria', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
+INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
+VALUES (5, 3, 'Flatworms', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
+VALUES (6, 3, 'Strudelwürmer', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
+INSERT INTO plague (id, scientific_name, created_on, lastmod_on)
+VALUES (4, 'Dinoflagellata', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
+INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
+VALUES (7, 4, 'Dinoflagellate', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+INSERT INTO localized_plague (id, plague_id, common_name, language, created_on, lastmod_on)
+VALUES (8, 4, 'Dinoflagellaten', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
+
 
 INSERT INTO plague_status (id, created_on, lastmod_on)
 VALUES (1, '2022-06-05 22:00:00', '2022-06-05 22:00:00');
@@ -119,7 +139,7 @@ VALUES (3, 3, 'Growing seems to stop', 'en', '2022-06-05 22:00:00', '2022-06-05 
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
 VALUES (4, 4, 'Slowly retreating', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
-VALUES (5, 5, 'Vanished (will close plage log)', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+VALUES (5, 5, 'Vanished (Plague cured)', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
 /*
  * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
@@ -136,9 +156,15 @@ VALUES (8, 3, 'Ausdehnung stagniert', 'de', '2022-06-05 22:00:00', '2022-06-05 2
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
 VALUES (9, 4, 'Langsam rückgänig', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
-VALUES (10, 5, 'Verschwunden (plague beendet, log schließt)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+VALUES (10, 5, 'Verschwunden (Plage beendet)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
+
+/*
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
+ */
 
 -- Some Testdata
+-- A closed Plage observation
 INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status,
                            plague_intervall_id, created_on,
                            lastmod_on)
@@ -147,3 +173,13 @@ INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, obs
                            plague_intervall_id, created_on,
                            lastmod_on)
 VALUES (2, 1, 1, '2022-07-05 08:00:00', 1, 5, 1, '2022-07-05 08:00:00', '2022-07-08 22:00:00');
+
+-- Another still active (no state = 5) plague
+INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status,
+                           plague_intervall_id, created_on,
+                           lastmod_on)
+VALUES (3, 1, 1, '2022-10-01 08:00:00', 2, 2, 2, '2022-10-01 08:00:00', '2022-10-01 22:00:00');
+INSERT INTO plague_record (id, aquarium_id, user_id, observed_on, plague_id, observed_plague_status,
+                           plague_intervall_id, created_on,
+                           lastmod_on)
+VALUES (4, 1, 1, '2022-10-02 08:00:00', 2, 3, 2, '2022-10-02 08:00:00', '2022-10-02 22:00:00');

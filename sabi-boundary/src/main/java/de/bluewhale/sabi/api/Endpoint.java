@@ -20,9 +20,11 @@ public enum Endpoint {
     HEALTH_STATS("/api/stats/healthcheck"),
     TANK_STATS("/api/stats/tanks"),
     MEASUREMENT_STATS("/api/stats/measurements"),
+    PLAGUE_STATS("/api/stats/plagues"),
     IOT_API("/api/aquarium_iot"),
     UNITS("/api/units"),
-    USER_PROFILE("/api/userprofile")
+    USER_PROFILE("/api/userprofile"),
+    PLAGUE_CENTER_SERVICE("/api/plagues");
     ;
 
 // ------------------------------ FIELDS ------------------------------
