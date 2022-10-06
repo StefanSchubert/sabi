@@ -1,7 +1,7 @@
 # This dockerfile is used by developers who are not running on a intel, but on an ARM CPU architecture (like MacBook M1)
 
 # Base container with amazon corretto which contains an arm64 build
-FROM arm64v8/amazoncorretto:18.0.2-al2
+FROM arm64v8/amazoncorretto:19.0.0-al2
 
 # Copy Captcha executable jar. You need to replace the jar from the assets dir after a new build
 # copyjars.sh will do it for you
