@@ -165,8 +165,6 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
                 addOngoingPlague(tank, lastPlagueRecord);
             }
         }
-        if (ongoingUserPlagues != null) ongoingUserPlagues = Collections.emptyList();
-
     }
 
     private void addOngoingPlague(AquariumTo pTank, PlagueRecordTo pLastPlagueRecord) {
@@ -219,6 +217,8 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     public String save() {
         if (allDataProvided(plagueRecordTo)) {
+
+            if (ongoingUserPlagues == null) ongoingUserPlagues = new ArrayList<>();
 
             // Determine IntervallId by looking into ongoing list
             Integer intervallId;
