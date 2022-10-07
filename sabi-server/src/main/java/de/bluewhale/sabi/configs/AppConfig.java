@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -24,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @ComponentScan(basePackages = "de.bluewhale.sabi")
 public class AppConfig {
+
+    public static final String TESTUSER_MAIL = "sabi@bluewhale.de";
 
     /*
     Usage example: env.getProperty("testbean.name"), In case you need to inject something

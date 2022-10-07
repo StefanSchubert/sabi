@@ -84,4 +84,11 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      */
     MeasurementEntity findTopByAquarium_IdAndUnitIdOrderByMeasuredOnDesc(@NotNull Long aquariumId, @NotNull Integer unitID);
 
+    /**
+     * Used to count measurements which does not belong to the test user (if you pass the right user ;-) )
+     * @param user to be excluded
+     * @return number of measurements without those of given user
+     */
+    @NotNull Long countAllByUserIsNot(@NotNull UserEntity user);
+
 }

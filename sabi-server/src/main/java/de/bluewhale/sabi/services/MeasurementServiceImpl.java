@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
@@ -64,7 +65,7 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Override
     public List<MeasurementTo> listMeasurementsFilteredBy(Long pTankID, Integer pUnitID) {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
-        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquariumAndUnitIdOrderByMeasuredOnAsc(aquarium,pUnitID);
+        @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquariumAndUnitIdOrderByMeasuredOnAsc(aquarium, pUnitID);
 
         List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
 
@@ -108,7 +109,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         UserEntity user = userRepository.getByEmail(pUserEmail);
         List<MeasurementEntity> measurementsOfUser;
 
-        if (resultLimit == null || resultLimit ==0) {
+        if (resultLimit == null || resultLimit == 0) {
             measurementsOfUser = measurementRepository.findByUserOrderByMeasuredOnDesc(user);
         } else {
             Pageable page = PageRequest.of(0, resultLimit, Sort.by(Sort.Direction.DESC, "measuredOn"));
@@ -218,7 +219,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         ParameterEntity parameterEntity = parameterRepository.findByBelongingUnitIdEquals(pUnitID);
 
         if (parameterEntity == null) {
-            log.warn("Requested parameter info for unitID «{}» is not availabe. Data maintenance recommended.",pUnitID);
+            log.warn("Requested parameter info for unitID «{}» is not availabe. Data maintenance recommended.", pUnitID);
             return null;
         }
 
@@ -230,9 +231,12 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Override
     public String fetchAmountOfMeasurements() {
-        // FIXME STS (14.08.22): This count's also the sample / test tanks ID 1+2 which
-        // needs be excluded from any analysis and stats
-        return String.valueOf(measurementRepository.count());
+        UserEntity testuser = userRepository.getByEmail(AppConfig.TESTUSER_MAIL);
+        if (testuser != null) {
+            return String.valueOf(measurementRepository.countAllByUserIsNot(testuser));
+        } else {
+            return String.valueOf(measurementRepository.count());
+        }
     }
 
     @Override
