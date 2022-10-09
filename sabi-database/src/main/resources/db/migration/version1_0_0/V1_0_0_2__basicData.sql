@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
-/*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
-/*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
 
 INSERT INTO unit (id, name, description) VALUES (1, 'KH', 'Karbonathärte / Alkanität');
 INSERT INTO unit (id, name, description) VALUES (2, '°C', 'Grad Celsius');

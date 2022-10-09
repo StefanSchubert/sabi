@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
 
 -- Just some more testdata copied to the dummy user.
 -- This is helpful for some chart development

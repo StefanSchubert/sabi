@@ -141,10 +141,6 @@ VALUES (4, 4, 'Slowly retreating', 'en', '2022-06-05 22:00:00', '2022-06-05 22:0
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
 VALUES (5, 5, 'Vanished (Plague cured)', 'en', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
-/*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
 
 -- german
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
@@ -158,10 +154,6 @@ VALUES (9, 4, 'Langsam rückgänig', 'de', '2022-06-05 22:00:00', '2022-06-05 22
 INSERT INTO localized_plague_status (id, plague_status_id, description, language, created_on, lastmod_on)
 VALUES (10, 5, 'Verschwunden (Plage beendet)', 'de', '2022-06-05 22:00:00', '2022-06-05 22:00:00');
 
-/*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
 
 -- Some Testdata
 -- A closed Plage observation
