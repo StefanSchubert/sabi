@@ -1,0 +1,14 @@
+[Unit]
+Description=Grafana Server
+After=network.target
+
+[Service]
+Type=simple
+User=grafana
+ExecStart=/var/grafana/bin/grafana-server
+WorkingDirectory=/var/grafana/
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

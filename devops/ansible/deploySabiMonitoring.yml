@@ -1,0 +1,119 @@
+- hosts: sabiMonitoring
+  vars_files:
+    - ./group_vars/sabiBackend.yml
+  tasks:
+    - name: Create prometheus User
+      user:
+        name: prometheus
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "prometheus Service Account, no login possible."
+        expires: -1
+    - name: Create prometheus directory
+      file:
+        path: /var/prometheus
+        state: directory
+        owner: prometheus
+        group: prometheus
+    - name: Fetch prometheus version 2.36.1
+      command: wget https://github.com/prometheus/prometheus/releases/download/v2.36.1/prometheus-2.36.1.linux-armv7.tar.gz
+      args:
+        chdir: /var/prometheus
+    - name: Unpack prometheus version
+      command: tar -xzf prometheus-2.36.1.linux-armv7.tar.gz
+      args:
+        chdir: /var/prometheus
+    - name: Move Files
+      command: mv prometheus-2.36.1.linux-armv7/* .
+      args:
+        chdir: /var/prometheus
+    - name: Copy last secured configuration
+      copy:
+        src: /Users/schubert/Documents/privat/SABI_Config_Safe/prometheus/prometheus.yml
+        dest: /var/prometheus
+        owner: prometheus
+        group: prometheus
+        mode: '0640'
+    - name: fix ownerchip of all files in /var/prometheus
+      command: chown -R prometheus:prometheus prometheus
+      args:
+        chdir: /var
+    - name: Copy systemd service file to server
+      copy:
+        src: prometheus.service
+        dest: /etc/systemd/system/prometheus.service
+        owner: root
+        group: root
+    - name: enforce deamon config reload
+      command: systemctl daemon-reload
+    - name: Enable service prometheus and ensure it is not masked
+      systemd:
+        name: prometheus
+        enabled: yes
+        masked: no
+      async: 120
+    - name: Start prometheus service
+      systemd:
+        name: prometheus
+        state: restarted
+    - name: Create grafana User
+      user:
+        name: grafana
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "grafana Service Account, no login possible."
+        expires: -1
+    - name: Create grafana directory
+      file:
+        path: /var/grafana
+        state: directory
+        owner: grafana
+        group: grafana
+    - name: Fetch grafana version 9.0.6
+      command: wget https://dl.grafana.com/oss/release/grafana-9.0.6.linux-arm64.tar.gz
+      args:
+        chdir: /var/grafana
+    - name: Unpack grafana version
+      command: tar -xzf grafana-9.0.6.linux-arm64.tar.gz
+      args:
+        chdir: /var/grafana
+    - name: Move Files
+      command: mv grafana-9.0.6.linux-arm64.tar.gz/* .
+      args:
+        chdir: /var/grafana
+    - name: Copy last secured configuration
+      copy:
+        src: /Users/schubert/Documents/privat/SABI_Config_Safe/grafana/custom.ini
+        dest: /var/grafana/conf
+        owner: grafana
+        group: grafana
+        mode: '0640'
+    - name: Copy last database backup
+      copy:
+        src: /Users/schubert/Documents/privat/SABI_Config_Safe/grafana/grafana.db
+        dest: /var/grafana/data
+        owner: grafana
+        group: grafana
+        mode: '0640'
+    - name: fix ownerchip of all files in /var/grafana
+      command: chown -R grafana:grafana grafana
+      args:
+        chdir: /var
+    - name: Copy systemd service file to server
+      copy:
+        src: grafana.service
+        dest: /etc/systemd/system/grafana.service
+        owner: root
+        group: root
+    - name: enforce deamon config reload
+      command: systemctl daemon-reload
+    - name: Enable service grafana and ensure it is not masked
+      systemd:
+        name: grafana
+        enabled: yes
+        masked: no
+      async: 120
+    - name: Start grafana service
+      systemd:
+        name: grafana
+        state: restarted
