@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.AuthExceptionCodes;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
+import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +101,7 @@ public interface UserService {
      * @throws BusinessException with
       {@link AuthExceptionCodes#SERVICE_UNAVAILABLE} in case of a communication problem - you may retry later.
       {@link AuthExceptionCodes#AUTHENTICATION_FAILED} in case of a missmatched principal
-      {@link CommonExceptionCodes#DATA_INCOMPLETE} in case of insufficient data
+      {@link CommonExceptionCodes#} in case of insufficient data
      */
     @Transactional
     ResultTo<UserProfileTo> updateProfile(UserProfileTo userProfileTo, String principalName) throws BusinessException;
