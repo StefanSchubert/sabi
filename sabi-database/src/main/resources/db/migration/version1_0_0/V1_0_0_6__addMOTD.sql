@@ -30,12 +30,6 @@ CREATE TABLE `localized_motd`
     DEFAULT CHARSET = utf8;
 
 
-
-/*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
 -- Some Test and Basic Data:
 INSERT INTO motd (id, publish_date, vanish_date, created_on, lastmod_on)
 VALUES (100, '2020-01-01 11:31:12', '2020-01-03 11:31:12', '2020-01-04 11:31:12', '2020-01-04 11:31:12');
