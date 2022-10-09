@@ -46,14 +46,16 @@ public class StatsController {
     @Autowired
     PlagueCenterService plagueCenterService;
 
-    @Operation(method = "Lifeness-Probe. Might be used e.g. by kubernetes to decide if the service is still up and running.")
+    @Operation(method = "Lifeness-Probe. Might be used e.g. by kubernetes to decide if the service is still up and running. "+
+    "Deprecated as we are using Spring actuator. Take /actuator/health as healthcheck endpoint instead.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Service is responsive...I'm alive.")})
+            @ApiResponse(responseCode = "200", description = "Service is responsive...I'm alive.")
+    })
     @RequestMapping(value = {"/healthcheck"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
+    @Deprecated
     public ResponseEntity<String> helloAgain() {
-
         // Just received a ping request - NOP
         return new ResponseEntity<>("I'm alive :-)", HttpStatus.OK);
     }
