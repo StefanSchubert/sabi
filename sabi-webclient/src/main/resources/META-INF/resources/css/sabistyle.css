@@ -37,18 +37,17 @@ a.splashscreen:active {color: aqua;}
     padding: 15px;
     /*width: 600px;*/
 }
-
-.redColoredPanel .ui-panel-titlebar {
-    color: red;
-    background-color: lightsalmon;
+.ui-panel.ui-widget.ui-widget-content.ui-corner-all.redColoredPanel .ui-panel-titlebar {
+    color: darkslategrey;
+    background-color: lightpink;
 }
-.yellowColoredPanel .ui-panel-titlebar {
-    color: yellow;
+.ui-panel.ui-widget.ui-widget-content.ui-corner-all.yellowColoredPanel .ui-panel-titlebar {
+    color: darkslategrey;
     background-color: lightyellow;
 }
-.greenColoredPanel .ui-panel-titlebar {
-    color: green;
-    background-color: lightseagreen;
+.ui-panel.ui-widget.ui-widget-content.ui-corner-all.greenColoredPanel .ui-panel-titlebar {
+    color: darkslategrey;
+    background-color: lightgreen;
 }
 
 
