@@ -2,6 +2,60 @@
   vars_files:
     - ./group_vars/sabiBackend.yml
   tasks:
+    - name: Create NodeExporter User
+      user:
+        name: nodeexporter
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "nodeexporter Service Account, no login possible."
+        expires: -1
+    - name: Create nodeexporter directory
+      file:
+        path: /var/nodeexporter
+        state: directory
+        owner: nodeexporter
+        group: nodeexporter
+    - name: Fetch nodeexporter version 1.4.0
+      # 64 Bit Version
+      command: wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-arm64.tar.gz
+      # 32 Bit Version
+      # command: wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-armv7.tar.gz
+      args:
+        chdir: /var/nodeexporter
+    - name: Unpack nodeexporter version
+      # 64 Bit Version
+      command: tar -xzf node_exporter-1.4.0.linux-arm64.tar.gz --strip-components=1
+      # 32 Bit Version
+      # command: tar -xzf node_exporter-1.4.0.linux-armv7.tar.gz --strip-components=1
+      args:
+        chdir: /var/nodeexporter
+    - name: Cleanup old files
+      # 64 Bit Version
+      file: path=/var/nodeexporter/node_exporter-1.4.0.linux-arm64.tar.gz state=absent
+      # 32 Bit Version
+      # file: path=/var/nodeexporter/node_exporter-1.4.0.linux-armv7.tar.gz state=absent
+    - name: fix ownership of all files in /var/nodeexporter
+      command: chown -R nodeexporter:nodeexporter nodeexporter
+      args:
+        chdir: /var
+    - name: Copy systemd service file to server
+      copy:
+        src: nodeexporter.service
+        dest: /etc/systemd/system/nodeexporter.service
+        owner: root
+        group: root
+    - name: enforce deamon config reload
+      command: systemctl daemon-reload
+    - name: Enable service nodeexporter and ensure it is not masked
+      systemd:
+        name: nodeexporter
+        enabled: yes
+        masked: no
+      async: 120
+    - name: Start nodeexporter service
+      systemd:
+        name: nodeexporter
+        state: restarted
     - name: Create prometheus User
       user:
         name: prometheus
@@ -15,18 +69,16 @@
         state: directory
         owner: prometheus
         group: prometheus
-    - name: Fetch prometheus version 2.36.1
-      command: wget https://github.com/prometheus/prometheus/releases/download/v2.36.1/prometheus-2.36.1.linux-armv7.tar.gz
+    - name: Fetch prometheus version 2.39.1
+      command: wget https://github.com/prometheus/prometheus/releases/download/v2.39.1/prometheus-2.39.1.linux-arm64.tar.gz
       args:
         chdir: /var/prometheus
     - name: Unpack prometheus version
-      command: tar -xzf prometheus-2.36.1.linux-armv7.tar.gz
+      command: tar -xzf prometheus-2.39.1.linux-arm64.tar.gz --strip-components=1
       args:
         chdir: /var/prometheus
-    - name: Move Files
-      command: mv prometheus-2.36.1.linux-armv7/* .
-      args:
-        chdir: /var/prometheus
+    - name: Cleanup old files
+      file: path=/var/prometheus/prometheus-2.39.1.linux-arm64.tar.gz state=absent
     - name: Copy last secured configuration
       copy:
         src: /Users/schubert/Documents/privat/SABI_Config_Safe/prometheus/prometheus.yml
@@ -69,18 +121,16 @@
         state: directory
         owner: grafana
         group: grafana
-    - name: Fetch grafana version 9.0.6
-      command: wget https://dl.grafana.com/oss/release/grafana-9.0.6.linux-arm64.tar.gz
+    - name: Fetch grafana version 9.2.0
+      command: wget https://dl.grafana.com/oss/release/grafana-9.2.0.linux-arm64.tar.gz
       args:
         chdir: /var/grafana
     - name: Unpack grafana version
-      command: tar -xzf grafana-9.0.6.linux-arm64.tar.gz
+      command: tar -xzf grafana-9.2.0.linux-arm64.tar.gz --strip-components=1
       args:
         chdir: /var/grafana
-    - name: Move Files
-      command: mv grafana-9.0.6.linux-arm64.tar.gz/* .
-      args:
-        chdir: /var/grafana
+    - name: Cleanup old files
+      file: path=/var/grafana/grafana-9.2.0.linux-arm64.tar.gz state=absent
     - name: Copy last secured configuration
       copy:
         src: /Users/schubert/Documents/privat/SABI_Config_Safe/grafana/custom.ini
