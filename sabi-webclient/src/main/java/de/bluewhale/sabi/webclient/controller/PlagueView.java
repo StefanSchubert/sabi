@@ -13,6 +13,7 @@ import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.PlagueService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
+import de.bluewhale.sabi.webclient.model.PastPlagueTo;
 import de.bluewhale.sabi.webclient.model.ReportedPlagueTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import jakarta.annotation.PostConstruct;
@@ -27,6 +28,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,7 +68,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     private List<PlagueRecordTo> plaguesOfUsersTanks;
     private List<ReportedPlagueTo> ongoingUserPlagues;
 
-    private List<ReportedPlagueTo> pastUserPlagues;
+    private List<PastPlagueTo> pastUserPlagues;
 
     @PostConstruct
     public void init() {
@@ -123,10 +125,11 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
                 .collect(Collectors.toList());
 
         for (PlagueRecordTo recordTo : curedPlaguesOfUsersTank) {
-            ReportedPlagueTo reportedPlagueTo = convertToReportedPlagueTo(recordTo, getTankNameForId(recordTo.getAquariumId()));
-            pastUserPlagues.add(reportedPlagueTo);
+            PastPlagueTo pastPlagueTo = convertToPastPlagueTo(recordTo, getTankNameForId(recordTo.getAquariumId()));
+            Duration duration = calcPlaguesDuration(pastPlagueTo,plaguesOfUsersTanks);
+            pastPlagueTo.setDuration(duration.toDays());
+            pastUserPlagues.add(pastPlagueTo);
         }
-
 
         // Determine current active plagues for each tank of the user
         for (AquariumTo tank : tanks) {
@@ -167,6 +170,14 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         }
     }
 
+    private Duration calcPlaguesDuration(PastPlagueTo closingPlagueIntevalTo, List<PlagueRecordTo> allPlaguesOfUsersTanks) {
+        // pastPlagueTo contains already the end observation, so the close date of the interval
+        // we require to find the first observation of the interval to calc duration between both
+        PlagueRecordTo firstObservedPlagueRecordTo = allPlaguesOfUsersTanks.stream().filter(plage -> plage.getPlagueIntervallId().equals(closingPlagueIntevalTo.getPlagueIntervallId())).min(Comparator.comparing(PlagueRecordTo::getObservedOn)).get();
+        Duration duration = Duration.between(firstObservedPlagueRecordTo.getObservedOn(), closingPlagueIntevalTo.getObservedOn());
+        return duration;
+    }
+
     private void addOngoingPlague(AquariumTo pTank, PlagueRecordTo pLastPlagueRecord) {
 
         if (ongoingUserPlagues == null) {
@@ -187,6 +198,17 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         reportedPlagueTo.setPlagueIntervallId(pLastPlagueRecord.getPlagueIntervallId());
         return reportedPlagueTo;
     }
+
+    private PastPlagueTo convertToPastPlagueTo(PlagueRecordTo pLastPlagueRecord, String tankName) {
+        PastPlagueTo pastPlagueTo = new PastPlagueTo();
+        pastPlagueTo.setTankName(tankName);
+        pastPlagueTo.setObservedOn(pLastPlagueRecord.getObservedOn());
+        pastPlagueTo.setCurrentStatus(getPlagueStatusDescriptionFor(pLastPlagueRecord.getPlagueStatusId()));
+        pastPlagueTo.setPlageName(getCommonPlagueNameFor(pLastPlagueRecord.getPlagueId()));
+        pastPlagueTo.setPlagueIntervallId(pLastPlagueRecord.getPlagueIntervallId());
+        return pastPlagueTo;
+    }
+
 
     private String getCommonPlagueNameFor(Integer pPlagueId) {
         String plagueName;
@@ -248,7 +270,10 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
                 plaguesOfUsersTanks.add(plagueRecordTo);
                 String tankName = getTankNameForId(plagueRecordTo.getAquariumId());
                 if (plagueRecordTo.getPlagueStatusId() == PLAGUE_CURED_STATUS_ID) {
-                    pastUserPlagues.add(convertToReportedPlagueTo(plagueRecordTo, tankName));
+                    PastPlagueTo pastPlagueTo = convertToPastPlagueTo(plagueRecordTo, tankName);
+                    Duration duration = calcPlaguesDuration(pastPlagueTo,plaguesOfUsersTanks);
+                    pastPlagueTo.setDuration(duration.toDays());
+                    pastUserPlagues.add(pastPlagueTo);
                     // and remove occurrences of the intervall in ongoing list, if any
                     List<ReportedPlagueTo> removeCandidates = ongoingUserPlagues.stream().filter(item -> item.getPlageName().equalsIgnoreCase(getCommonPlagueNameFor(plagueRecordTo.getPlagueId())) &&
                             item.getPlagueIntervallId() == plagueRecordTo.getPlagueIntervallId()).collect(Collectors.toList());
