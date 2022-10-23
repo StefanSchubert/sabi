@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ See project LICENSE file for the detailed terms and conditions.
+  -->
+
 <Configuration>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -19,7 +24,7 @@
                 <SizeBasedTriggeringPolicy size="10MB" />
                 <TimeBasedTriggeringPolicy interval="1" />
             </Policies>
-            <!-- keep only last 14 files if rollover happends more frequently -->
+            <!-- keep only last 14 files if rollover happens more frequently -->
             <DefaultRolloverStrategy max="14" />
         </RollingFile>
     </Appenders>

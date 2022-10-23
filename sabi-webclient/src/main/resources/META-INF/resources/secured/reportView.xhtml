@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -46,7 +46,7 @@
                 <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
                           showHeader="false">
                     <div class="p-text-center">
-                        <i class="pi pi-spinner loading-icon" />
+                        <i class="pi pi-spinner loading-icon"/>
                     </div>
                 </p:dialog>
 
@@ -81,11 +81,36 @@
             </h:form>
 
             <h:form id="datasection">
-                <div class="card">
-                    <p:lineChart model="#{reportView.lineModel}"
-                                 style="width: 100%; height: 250px;"
-                                 rendered="#{reportView.lineModel != null}"/>
-                </div>
+
+                <p:spacer height="20px"/>
+
+                <p:panel header="#{msg['reportview.14mp.chart.h']}" toggleable="true">
+                    <div class="card">
+                        <p:lineChart model="#{reportView.lineModel_recent_measuredPoints}"
+                                     style="width: 100%; height: 250px;"
+                                     rendered="#{reportView.lineModel_recent_measuredPoints != null}"/>
+                    </div>
+                </p:panel>
+
+                <p:spacer height="10px" rendered="#{reportView.lineModel90d != null}"/>
+
+                <p:panel header="#{msg['reportview.90d.chart.h']}" toggleable="true">
+                    <div class="card">
+                        <p:lineChart model="#{reportView.lineModel90d}"
+                                     style="width: 100%; height: 250px;"
+                                     rendered="#{reportView.lineModel90d != null}"/>
+                    </div>
+                </p:panel>
+
+                <p:spacer height="10px" rendered="#{reportView.lineModel365d != null}"/>
+
+                <p:panel header="#{msg['reportview.365d.chart.h']}" toggleable="true">
+                    <div class="card">
+                        <p:lineChart model="#{reportView.lineModel365d}"
+                                     style="width: 100%; height: 250px;"
+                                     rendered="#{reportView.lineModel365d != null}"/>
+                    </div>
+                </p:panel>
 
                 <div>
                     <h3>Data Export Options</h3>
@@ -117,7 +142,7 @@
                 </div>
 
                 <div>
-                    <p:dataTable id="tbl" var="m" value="#{reportView.measurementTos}"
+                    <p:dataTable id="tbl" var="m" value="#{reportView.descSortedMeasurementTos}"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                  paginator="true" rows="10" styleClass="p-mt-2">
 

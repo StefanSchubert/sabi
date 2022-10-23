@@ -29,5 +29,5 @@ INSERT INTO sabi.measurement (id, measured_on, measured_value, unit_id, aquarium
 VALUES (100, '2018-01-17 19:05:29', 27, 2, 1, CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO sabi.measurement (id, measured_on, measured_value, unit_id, aquarium_id, created_on, lastmod_on)
-VALUES (101, '2018-01-17 19:06:51', 15.5, 1, 1, CURRENT_DATE, CURRENT_DATE);
+VALUES (101, '2018-01-17 19:06:51', 1.512, 1, 1, CURRENT_DATE, CURRENT_DATE);
 
