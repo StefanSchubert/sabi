@@ -161,8 +161,8 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 LocalDate date = LocalDate.now().minusDays(dayOffset);
                 int dayOfMonth = date.getDayOfMonth();
 
-                // Lable middle of each month
-                if (dayOfMonth == 15) {
+                // Lable start of each month
+                if (dayOfMonth == 1) {
                     String monthi18nDisplayName = date.getMonth().getDisplayName(TextStyle.FULL, userSession.getLocale());
                     labels_last90days.add(monthi18nDisplayName);
                 } else {
