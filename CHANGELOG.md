@@ -1,5 +1,24 @@
 # History of changes (since 5/2022)
 
+## Release 1.0.2
+
+### New Features
+* SABI-116: Added more (time-view) measurment report charts 
+* SABI-130: PastPlagues table includes the duration of observed plage
+
+### Technical Maintenance
+* Patchmanagement
+
+## Release 1.0.1
+
+### New Features
+* CSS Tuning of Plague Center
+* SABI-117: Fixed problem with flyway maven plugin since migration to v9.x
+* SABI-124: Healtheck includes backend components also. Unfortunately Uptrends freeplan supports only one endpoint.
+
+### Technical Maintenance
+* Infrastrucure: QAed Monitoring solution which has been integrated in ansible deplyoments
+
 ## Release 1.0.0
 
 ### New Features
