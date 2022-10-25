@@ -190,8 +190,11 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 LocalDate date = LocalDate.now().minusDays(dayOffset);
                 int dayOfMonth = date.getDayOfMonth();
 
-                // Lable middle of each month
-                if (dayOfMonth == 15) {
+                // Lable start of each month
+                // because of https://github.com/primefaces/primefaces/issues/9339
+                // I choosed to use the lable on two subsequent datapoints to make
+                // sure that the smart chartJS render algorithm prints at least one of them in this case
+                if (dayOfMonth < 8) {
                     String monthi18nDisplayName = date.getMonth().getDisplayName(TextStyle.FULL, userSession.getLocale());
                     String shortYear = " '"+Integer.toString(date.getYear() - 2000);
                     labels_last365days.add(monthi18nDisplayName+shortYear);
