@@ -155,14 +155,17 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             // Graph Modell for last 90 days, lines not connected if we have null value gaps
             // =============================================================================
 
-            // LocalDate startAYearBack = LocalDate.now().minusDays(365l);
+            // Lable start of each month
+            // As of https://github.com/primefaces/primefaces/issues/9339
+            // I chose to use the lable on several subsequent datapoints to make
+            // sure that the smart chartJS render algorithm prints at least one of them in this case
             for (int dayOffset = 90; dayOffset > 0; dayOffset--) {
 
                 LocalDate date = LocalDate.now().minusDays(dayOffset);
                 int dayOfMonth = date.getDayOfMonth();
 
                 // Lable start of each month
-                if (dayOfMonth == 1) {
+                if (dayOfMonth < 3) {
                     String monthi18nDisplayName = date.getMonth().getDisplayName(TextStyle.FULL, userSession.getLocale());
                     labels_last90days.add(monthi18nDisplayName);
                 } else {
@@ -184,15 +187,14 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             // Graph Modell for last 365 days, lines not connected if we have null value gaps
             // =============================================================================
 
-            // LocalDate startAYearBack = LocalDate.now().minusDays(365l);
             for (int dayOffset = 365; dayOffset > 0; dayOffset--) {
 
                 LocalDate date = LocalDate.now().minusDays(dayOffset);
                 int dayOfMonth = date.getDayOfMonth();
 
                 // Lable start of each month
-                // because of https://github.com/primefaces/primefaces/issues/9339
-                // I choosed to use the lable on two subsequent datapoints to make
+                // As of https://github.com/primefaces/primefaces/issues/9339
+                // I chose to use the lable on several subsequent datapoints to make
                 // sure that the smart chartJS render algorithm prints at least one of them in this case
                 if (dayOfMonth < 8) {
                     String monthi18nDisplayName = date.getMonth().getDisplayName(TextStyle.FULL, userSession.getLocale());
