@@ -12,7 +12,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.0-M3</version>
+        <version>3.0.0-M2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -400,7 +400,7 @@
                 <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
+                        <phase>verify</phase>
                         <goals>
 <!--                            <goal>display-dependency-updates</goal>-->
 <!--                            <goal>display-plugin-updates</goal>-->

@@ -5,7 +5,6 @@
 
 package de.bluewhale.sabi.configs;
 
-import de.bluewhale.sabi.security.SabiDoorKeeper;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,12 +44,6 @@ public class AppConfig {
     public static PropertySourcesPlaceholderConfigurer properties() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    // Used by Login-Door ;-)
-    @Bean
-    public SabiDoorKeeper sabiAuthenticationManager(){
-        return new SabiDoorKeeper();
-    } ;
 
     // Using BCrypt for better password security.
     @Bean

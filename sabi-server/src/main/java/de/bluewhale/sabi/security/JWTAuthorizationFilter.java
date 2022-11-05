@@ -28,8 +28,8 @@ import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
  */
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
-        super(authManager);
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
     }
 
     @Override

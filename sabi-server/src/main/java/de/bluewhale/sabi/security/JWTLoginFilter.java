@@ -30,9 +30,9 @@ import java.io.IOException;
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public JWTLoginFilter(String url, AuthenticationManager authManager) {
+    public JWTLoginFilter(String url,AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(url));
-        setAuthenticationManager(authManager);
+        setAuthenticationManager(authenticationManager);
         // setAuthenticationFailureHandler();
     }
 
