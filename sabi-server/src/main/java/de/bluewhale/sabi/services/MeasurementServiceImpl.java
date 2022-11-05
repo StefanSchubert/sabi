@@ -3,6 +3,7 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
+
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
@@ -14,6 +15,7 @@ import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
 import de.bluewhale.sabi.util.Mapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;

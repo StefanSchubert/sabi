@@ -8,10 +8,10 @@ package de.bluewhale.sabi.persistence.repositories;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

@@ -1,13 +1,12 @@
 /*
- * Copyright (c) 2020 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.UserTo;
-
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 /**
  * Provides services around user notifications.

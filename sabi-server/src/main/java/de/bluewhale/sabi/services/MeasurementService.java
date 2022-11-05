@@ -10,9 +10,9 @@ import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UnitTo;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 

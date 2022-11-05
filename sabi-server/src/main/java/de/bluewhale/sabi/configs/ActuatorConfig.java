@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.configs;
 
 import de.bluewhale.sabi.device.pi.PisCPUTemperatureProbe;
+import de.bluewhale.sabi.services.StatsMeter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
- * Used for adding Custom Actuator metrics.
- * Here for including cpuTemperature values.
+ * Used for adding Custom Actuator (micrometer) metrics.
  *
  * @author Stefan Schubert
  */
@@ -30,6 +30,9 @@ public class ActuatorConfig {
     PisCPUTemperatureProbe pisCPUTemperatureProbe() {
         return new PisCPUTemperatureProbe();
     }
+
+    @Bean
+    StatsMeter statsMeter() { return new StatsMeter(); }
 
 }
 
