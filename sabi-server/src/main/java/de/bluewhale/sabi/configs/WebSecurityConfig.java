@@ -10,30 +10,33 @@ import de.bluewhale.sabi.security.JWTAuthorizationFilter;
 import de.bluewhale.sabi.security.JWTLoginFilter;
 import de.bluewhale.sabi.security.SabiDoorKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Provides the configuration for our JWT Token based Security.
  *
+ * Notice: This class was formerly an implemantation of WebSecurityConfigurerAdapter as of < Spring-boot 2.7.0
+ * With Spring-Boot 3 the security configuration has been reworked,
+ * see: https://www.springcloud.io/post/2022-03/spring-security-without-the-websecurityconfigureradapter/#gsc.tab=0
+ * for details.
+ *
  * @author Stefan Schubert
  */
 @Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
 
     @Autowired
-    SabiDoorKeeper sabiAuthenticationManager;
+    SabiDoorKeeper sabiAuthenticationProvider;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // GitHub CodeQL complains here: Possible CSRF Risk.
                 // However though springs csrf mechanism is disabled does not mean this app has nor CSRF protection.
@@ -80,19 +83,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // all others require JWT authentication
                 .anyRequest().authenticated()
                 .and()
+
             // JWT based authentication by POST of {"username":"<name>","password":"<password>"} which sets the
             // token header upon authentication
             .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), authenticationManager()),
                         UsernamePasswordAuthenticationFilter.class)
             // And filter other requests to check the presence of a valid JWT in header
-           .addFilter(new JWTAuthorizationFilter(authenticationManager()));
+             .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .and()
+                .authenticationProvider(sabiAuthenticationProvider);
 
-    }
-
-    @Autowired
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(this.sabiAuthenticationManager);
+        return http.build();
     }
 
 }
