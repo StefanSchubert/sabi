@@ -43,6 +43,8 @@
 
                     <p:outputLabel>#{msg['userportal.welcome.l']} #{userSession.userName}!</p:outputLabel>
 
+                    <p:spacer height="15px"/>
+
                     <p:panel header="#{msg['userportal.meassurement.reminder.h']}">
                         <p:outputLabel rendered="#{userProfileView.hasMeasurementReminders == false}" escape="false" value="#{msg['userportal.meassurement.nosetting.t']}"/>
                     </p:panel>
