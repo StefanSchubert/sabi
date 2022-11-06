@@ -33,7 +33,7 @@
             </ui:remove>
             <p:outputPanel>#{applicationInfo.motd}</p:outputPanel>
 
-            <p:panel header="#{msg['userportal.greeting.l']} #{userSession.userName}">
+            <p:panel header="#{msg['userportal.greeting.l']} #{msg['userportal.projectstate.l']} #{msg['userportal.currentprojectstate.l']}">
 
                 <p:messages id="messages" showDetail="true" closable="true">
                     <p:autoUpdate/>
@@ -43,10 +43,12 @@
 
                     <p:outputLabel>#{msg['userportal.welcome.l']} #{userSession.userName}!</p:outputLabel>
 
-                    <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
-                        <p:outputLabel value="#{msg['userportal.projectstate.l']}"/>
-                        <p:outputLabel value="#{msg['userportal.currentprojectstate.l']}"/>
-                    </p:panelGrid>
+                    <p:panel header="#{msg['userportal.meassurement.reminder.h']}">
+                        <p:outputLabel rendered="#{userProfileView.hasMeasurementReminders == false}" escape="false" value="#{msg['userportal.meassurement.nosetting.t']}"/>
+                    </p:panel>
+
+                    <!-- TODO Table of Reminders -->
+
                 </p:outputPanel>
 
             </p:panel>
