@@ -42,4 +42,9 @@ public interface AquariumRepository extends JpaRepository<AquariumEntity, Long> 
      * @return null if we found no match, or the tank belonging to the api key.
      */
      AquariumEntity getAquariumEntityByTemperatureApiKeyEquals(String apiKey);
+
+    /**
+     * @return Amount of tanks for which the User has activated the API Key Feature.
+     */
+    Long countAquariumEntitiesByTemperatureApiKeyNotNull();
 }

@@ -198,6 +198,11 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
+    public String fetchAmountOfTanksWithAPIKeyUsage() {
+        return String.valueOf(aquariumRepository.countAquariumEntitiesByTemperatureApiKeyNotNull());
+    }
+
+    @Override
     public AquariumTo getTankForTemperatureApiKey(String apiKey) {
         AquariumTo aquariumTo = null;
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByTemperatureApiKeyEquals(apiKey);

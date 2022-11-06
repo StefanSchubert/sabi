@@ -78,7 +78,7 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 
 ### Common
 
-* Java 11 and 18
+* Java 17
 * openAPI3 (Swagger) via springdoc
 * ARM-Platform (raspberryPis)
 * IPv6 DynDNS (at least for the start)
@@ -113,7 +113,7 @@ With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki
 
 ### Preconditions
 
-* You have a JDK11 and current Maven installed
+* You have a JDK17 and current Maven installed
 * You have docker installed on your machine, and you know docker usage fairly well.
 
 #### Prepare your local docker environment
@@ -127,7 +127,7 @@ Next you run this script:
 
   devops/sabi_docker_sdk/copyjars.sh
 
-Which makes sure, that the docker container, gets the necessary app modules. 
+Which makes sure that the docker container gets the required jar module assets. 
 
 ### DEV-Environment for a frontend engineer working on sabi-webclient module
 
@@ -169,7 +169,8 @@ or register a new one.
 
 Do all the steps above which are required as frontend-engineer.
 
-Understand when working on sabi-boundary than you need to do a maven install so that maven builds of sabi-server and sabi-webclient can fetch your changes. 
+Understand when working on sabi-boundary than you need to do a maven install 
+so that maven builds of sabi-server and sabi-webclient can fetch your changes. 
 
 #### Database-Evolution
 
@@ -178,7 +179,7 @@ Meaning pre-existing scripts in
 
 `sabi-database/src/main/resources/db/migration/version*`
 
-are inmutable to you, you require to add a new one for any changes.
+are immutable to you, you require to add a new one for any changes.
 
 ##### Add the following profile to your maven settings.xml
 
@@ -231,16 +232,16 @@ As we are using eclipselink you must add a specific javaagent, when running your
 
 ##### Preparing your productive and IDE environment
 
-Because of eclipselink we are using weaving at runtime which required the following vm 
-option:
+Because of eclipselink we are using weaving at runtime which requires the following vm option:
 
 ```
 -javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.0-M4/spring-instrument-6.0.0-M4.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
-test runner config. **Please verify** that you use the correct version as denoted in the pom.xml. 
-You may also need to adopt your setting if that version in the pom changes.
+test runner config. **Please verify** that you use the correct version as derived from pom.xml dependency tree, as you may require
+to apdopt the javaagent string above to suite to your version.
+You may also need to adopt your setting if that version in the pom changes because of patch management.
 
 ## Architectural Notes
 
