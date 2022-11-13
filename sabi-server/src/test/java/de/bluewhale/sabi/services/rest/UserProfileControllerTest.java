@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -12,6 +12,7 @@ import de.bluewhale.sabi.exception.CommonMessageCodes;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserProfileTo;
+import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.UserService;
 import de.bluewhale.sabi.util.RestHelper;
@@ -42,8 +43,6 @@ public class UserProfileControllerTest {
     @MockBean
     UserService userService;
 
-
-
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -66,10 +65,10 @@ public class UserProfileControllerTest {
     public void testUnauthUserProfileUpdate() throws Exception {
 
         // given a successful update answer
-        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo();
+        UserProfileTo userProfileTo = testDataFactory.getBasicUserProfileTo();
         Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
-        given(this.userService.updateProfile(userProfileTo,"junit@maven.here")).willReturn(userProfileResultTo);
+        given(this.userService.updateProfile(userProfileTo, "junit@maven.here")).willReturn(userProfileResultTo);
 
         // when - sending an update request
         HttpHeaders headers = RestHelper.buildHttpHeader();
@@ -90,10 +89,10 @@ public class UserProfileControllerTest {
     public void testUserProfileUpdate() throws Exception {
 
         // given a successful update answer
-        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo();
+        UserProfileTo userProfileTo = testDataFactory.getBasicUserProfileTo();
         Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
-        given(this.userService.updateProfile(userProfileTo,TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
+        given(this.userService.updateProfile(userProfileTo, TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
@@ -101,11 +100,40 @@ public class UserProfileControllerTest {
 
         // when - sending an update request
         String requestJson = objectMapper.writeValueAsString(userProfileTo);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson,headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.PUT, requestEntity, String.class);
 
         // then we should get a 200 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+    }
+
+    @Test // REST-API
+    public void testUserProfileUpdateWithNewMeasurementReminder() throws Exception {
+
+        // given a successful update answer
+        UserTo testuser = new UserTo(TestDataFactory.TESTUSER_EMAIL1, "testuser", "123");
+        testuser.setId(1L);
+        UserProfileTo updatedUserProfileTo = testDataFactory.getUserProfileToWithMeasurementReminderFor(testuser);
+
+        Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
+        final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(updatedUserProfileTo, info);
+        given(this.userService.updateProfile(updatedUserProfileTo, TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
+
+        // and we need a valid authentication token for our mocked user
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        // when - sending an update request
+        String requestJson = objectMapper.writeValueAsString(updatedUserProfileTo);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.PUT, requestEntity, String.class);
+
+        // then we should get a 200 as result.
+        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+        UserProfileTo retrievedUserProfileTo = objectMapper.readValue(responseEntity.getBody(), UserProfileTo.class);
+
+        assertThat("Missing reminder entry",
+                retrievedUserProfileTo.getMeasurementReminderTos().containsAll(updatedUserProfileTo.getMeasurementReminderTos()));
     }
 
     /**
@@ -117,7 +145,7 @@ public class UserProfileControllerTest {
     public void testGetUsersProfile() throws Exception {
 
         // given a successful retrieval answer
-        UserProfileTo userProfileTo = testDataFactory.getUserProfileTo();
+        UserProfileTo userProfileTo = testDataFactory.getBasicUserProfileTo();
         Message info = Message.info(CommonMessageCodes.OK);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
         given(this.userService.getUserProfile(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
@@ -126,13 +154,11 @@ public class UserProfileControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
         HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        // when - sending an retrieval request
+        // when - sending a retrieval request
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.GET, requestEntity, String.class);
 
         // then we should get a 200 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
     }
-
-
 }

@@ -6,10 +6,7 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.model.MeasurementTo;
-import de.bluewhale.sabi.model.ParameterTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UnitTo;
+import de.bluewhale.sabi.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -135,4 +132,13 @@ public interface MeasurementService {
      * @return
      */
     ResultTo<MeasurementTo> addIotAuthorizedMeasurement(MeasurementTo pMeasurementTo);
+
+    /**
+     * The answer combines users profile setting about measurement reminders with the last recently measurement
+     * on each reminder setting, with the purpose of calculation of the next required measurement.
+     * @param pUserEmail preAuthed UserID
+     * @return List of measurement reminders, might be empty.
+     */
+    @NotNull List<MeasurementReminderTo> fetchUsersNextMeasurements(@NotNull String pUserEmail);
+
 }

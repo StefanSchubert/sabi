@@ -47,6 +47,9 @@ public class UserEntity extends Auditable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<TreatmentEntity> treatments = new ArrayList<TreatmentEntity>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserMeasurementReminderEntity> userMeasurementReminders = new ArrayList<UserMeasurementReminderEntity>();
+
     @Basic
     @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
     private String email;

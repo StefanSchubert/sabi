@@ -7,6 +7,7 @@ CREATE TABLE `user_measurement_reminder`
     `active`     BIT                          DEFAULT 1,
     `created_on` TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `lastmod_on` TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `optlock`         INT UNSIGNED        NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `UNQ_USER_UNIT` (`user_id`, `unit_id`),
     FOREIGN KEY (unit_id) REFERENCES unit (id),

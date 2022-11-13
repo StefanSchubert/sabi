@@ -7,10 +7,7 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.model.MeasurementTo;
-import de.bluewhale.sabi.model.ParameterTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UnitTo;
+import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
 import de.bluewhale.sabi.util.Mapper;
@@ -274,5 +271,46 @@ public class MeasurementServiceImpl implements MeasurementService {
         }
 
         return new ResultTo<>(pMeasurementTo, resultMsg);
+    }
+
+    @Override
+    public List<MeasurementReminderTo> fetchUsersNextMeasurements(String pUserEmail) {
+        List<MeasurementReminderTo> measurementReminderTos = new ArrayList<>();
+
+        List<UnitTo> allMeasurementUnits = listAllMeasurementUnits();
+        UserEntity user = userRepository.getByUsername(pUserEmail);
+        List<UserMeasurementReminderEntity> userMeasurementReminders = user.getUserMeasurementReminders();
+
+        if (userMeasurementReminders != null) {
+
+            for (UserMeasurementReminderEntity reminderEntity : userMeasurementReminders) {
+                MeasurementReminderTo reminderTo = new MeasurementReminderTo();
+                reminderTo.setUserId(user.getId());
+                reminderTo.setUnitId(reminderEntity.getUnitId());
+                reminderTo.setPastDays(reminderTo.getPastDays());
+                reminderTo.setActive(reminderEntity.isActive());
+
+                Optional<UnitTo> optionalUnitTo = allMeasurementUnits.stream().filter(item -> item.getId().equals(reminderEntity.getUnitId())).findFirst();
+                if (optionalUnitTo.isPresent()) {
+                    reminderTo.setUnitName(optionalUnitTo.get().getUnitSign());
+                } else {
+                    reminderTo.setUnitName("N/A?");
+                }
+
+                MeasurementEntity lastRecentMeasurement = measurementRepository.findByUserAndUnitIdAndMeasuredOnMax(user, reminderEntity.getUnitId());
+                if (lastRecentMeasurement != null) {
+                    LocalDateTime nextMeasureDate = lastRecentMeasurement.getMeasuredOn().plusDays(reminderEntity.getPastdays());
+                    reminderTo.setNextMeasureDate(nextMeasureDate);
+                } else {
+                    reminderTo.setNextMeasureDate(LocalDateTime.now());
+                }
+
+                measurementReminderTos.add(reminderTo);
+
+            }
+
+        }
+
+        return measurementReminderTos;
     }
 }

@@ -50,6 +50,33 @@
                     </p:panel>
 
                     <!-- TODO Table of Reminders -->
+                    <p:dataTable id="tbl_measurestasks" var="m" value="#{plagueView.pastUserPlagues}"
+                                 styleClass="p-mt-2"
+                                 rendered="#{plagueView.existsRecordsOnPastPlagues}">
+
+                        <p:column headerText="#{msg['plagueview.plague.l']}">
+                            <p:outputLabel value="#{m.plageName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.status.l']}">
+                            <p:outputLabel value="#{m.currentStatus}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.curedate.l']}">
+                            <p:outputLabel value="#{m.observedOn}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </p:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.duration.l']}">
+                            <p:outputLabel value="#{m.duration}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['plagueview.tank.l']}">
+                            <p:outputLabel value="#{m.tankName}"/>
+                        </p:column>
+
+                    </p:dataTable>
 
                 </p:outputPanel>
 

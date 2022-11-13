@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -42,8 +42,7 @@
                             <p:outputLabel for="localeselection" value="#{msg['userprofile.localechoice.l']}"/>
                             <p:selectOneMenu id="localeselection"
                                              value="#{userProfileView.selectedLocale}"
-                                             widgetVar="n"
-                                             autoWidth="true">
+                                             widgetVar="n">
                                 <pe:convertLocale/>
                                 <f:selectItems value="#{userProfileView.supportedLocales}"
                                                var="n"
@@ -64,6 +63,33 @@
 
                     </h:form>
 
+
+                    <p:divider align="center"  />
+                    <p:spacer width="10px"/>
+
+                   <h:form id="reminderTable">
+
+                       <p:panel header="#{msg['userprofile.reminderinfo.h']}">
+                           <p:outputLabel escape="false" value="#{msg['userprofile.reminderinfo.t']}"/>
+                       </p:panel>
+
+                       <p:selectOneMenu id="addreminderSelection" value="#{userProfileView.selectedUnitId}">
+                           <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                           <f:selectItems value="#{userProfileView.knownMeasurementUnits}"
+                                          var="m"
+                                          itemValue="#{m.id}"
+                                          itemLabel="#{m.unitSign}"
+                           />
+                       </p:selectOneMenu>
+
+                       WERT | Gewünschtes Messintervall in Tagen | Active YN
+
+
+                       (Algorithmik: Anzeige aus User Profile. Beim Speichern Aktualisieren der Collection, Null Handling berücksichtigen)
+
+                       (SAVE)
+
+                   </h:form>
 
                     <p:divider align="center"  />
                     <p:spacer width="10px"/>

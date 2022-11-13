@@ -13,6 +13,7 @@ import de.bluewhale.sabi.model.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -74,4 +75,5 @@ public interface UserService extends Serializable {
      */
     void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
+    List<MeasurementReminderTo> loadMeasurementReminderList(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
 }
