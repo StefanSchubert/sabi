@@ -14,6 +14,7 @@ import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * SpringDataRepository
@@ -81,9 +82,9 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      * Retrieves last recent measurement of a specific measurement unit for given user
      * @param unitID identifies your unit.
      * @param userEntity search will be limited to
-     * @return measurement or null, if no measurement exists yet.
+     * @return measurementReminder.
      */
-    @Nullable MeasurementEntity findByUserAndUnitIdAndMeasuredOnMax(@NotNull UserEntity userEntity, @NotNull Integer unitID);
+    Optional<MeasurementEntity> findTopByUserAndUnitIdOrderByMeasuredOnDesc(@NotNull UserEntity userEntity, @NotNull Integer unitID);
 
     /**
      * Retrieves the latest measurement of provided unit for given tank.

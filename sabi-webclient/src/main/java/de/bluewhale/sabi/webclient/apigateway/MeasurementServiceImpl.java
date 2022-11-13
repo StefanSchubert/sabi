@@ -11,6 +11,7 @@ import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.exception.CommonMessageCodes;
+import de.bluewhale.sabi.model.MeasurementReminderTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
@@ -42,7 +43,23 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
     static List<UnitTo> cachedAvailableMeasurementUnits = Collections.emptyList();
     // TODO STS (04.05.21): Revisit and check after i18n of ParameterTo...
     static Map<Integer, ParameterTo> cachedUnitParameterMap = new HashMap<>();
-    
+
+    @Override
+    public List<MeasurementReminderTo> getMeasurementRemindersForUser(String pJWTBackendAuthtoken) throws BusinessException {
+
+        String listMeasurementReminderUri = sabiBackendUrl + Endpoint.MEASUREMENTS + "/reminder/list";
+        ResponseEntity<String> responseEntity = getAPIResponseFor(listMeasurementReminderUri, pJWTBackendAuthtoken, HttpMethod.GET);
+        MeasurementReminderTo[] measurementReminderTos;
+        try {
+            measurementReminderTos = objectMapper.readValue(responseEntity.getBody(), MeasurementReminderTo[].class);
+        } catch (JsonProcessingException e) {
+            log.error(String.format("Didn't understand response from %s got parsing exception %s", listMeasurementReminderUri, e.getMessage()), e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+        return Arrays.asList(measurementReminderTos);
+    }
+
     @Override
     public @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String pJWTBackendAuthtoken) throws BusinessException {
 

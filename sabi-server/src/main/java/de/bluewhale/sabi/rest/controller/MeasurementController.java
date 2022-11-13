@@ -7,6 +7,7 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.MeasurementReminderTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.MeasurementService;
@@ -204,6 +205,29 @@ public class MeasurementController {
         List<MeasurementTo> MeasurementToList = measurementService.listMeasurementsFilteredBy(pTankID, pUnitID);
         return new ResponseEntity<>(MeasurementToList, HttpStatus.ACCEPTED);
     }
+
+    @Operation(method = "List measurement reminder build upon users profile settings an last measurements. " +
+            "You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",
+                    description= "Success - list of measurement reminders for authed user returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
+    })
+    @RequestMapping(value = {"/reminder/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<MeasurementReminderTo>> listUsersMeasurementReminders(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                                               Principal principal) {
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+
+        // list may be empty but not null
+        List<MeasurementReminderTo> measurementReminderTos = measurementService.fetchUsersNextMeasurements(principal.getName());
+
+        return new ResponseEntity<>(measurementReminderTos, HttpStatus.ACCEPTED);
+    }
+
+
 
     @Operation(method = "Drop a specific measurement. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({

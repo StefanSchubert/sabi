@@ -33,7 +33,8 @@
             </ui:remove>
             <p:outputPanel>#{applicationInfo.motd}</p:outputPanel>
 
-            <p:panel header="#{msg['userportal.greeting.l']} #{msg['userportal.projectstate.l']} #{msg['userportal.currentprojectstate.l']}">
+            <p:panel
+                    header="#{msg['userportal.greeting.l']} #{msg['userportal.projectstate.l']} #{msg['userportal.currentprojectstate.l']}">
 
                 <p:messages id="messages" showDetail="true" closable="true">
                     <p:autoUpdate/>
@@ -46,38 +47,29 @@
                     <p:spacer height="15px"/>
 
                     <p:panel header="#{msg['userportal.meassurement.reminder.h']}">
-                        <p:outputLabel rendered="#{userProfileView.hasMeasurementReminders == false}" escape="false" value="#{msg['userportal.meassurement.nosetting.t']}"/>
+                        <p:outputLabel rendered="#{userProfileView.hasMeasurementReminders == false}" escape="false"
+                                       value="#{msg['userportal.meassurement.nosetting.t']}"/>
+
+                        <p:dataTable id="tbl_measurestasks" var="m" value="#{userProfileView.measurementReminderTos}"
+                                     styleClass="p-mt-2"
+                                     rendered="#{userProfileView.hasMeasurementReminders}">
+
+                            <p:column headerText="#{msg['userportal.meassurement.unit.l']}">
+                                <p:outputLabel value="#{m.unitName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{msg['userportal.meassurement.dayinterval.l']}">
+                                <p:outputLabel value="#{m.pastDays}"/>
+                            </p:column>
+
+                            <p:column headerText="#{msg['userportal.meassurement.duedate.l']}">
+                                <p:outputLabel value="#{m.nextMeasureDate}">
+                                    <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                                </p:outputLabel>
+                            </p:column>
+
+                        </p:dataTable>
                     </p:panel>
-
-                    <!-- TODO Table of Reminders -->
-                    <p:dataTable id="tbl_measurestasks" var="m" value="#{plagueView.pastUserPlagues}"
-                                 styleClass="p-mt-2"
-                                 rendered="#{plagueView.existsRecordsOnPastPlagues}">
-
-                        <p:column headerText="#{msg['plagueview.plague.l']}">
-                            <p:outputLabel value="#{m.plageName}"/>
-                        </p:column>
-
-                        <p:column headerText="#{msg['plagueview.status.l']}">
-                            <p:outputLabel value="#{m.currentStatus}"/>
-                        </p:column>
-
-                        <p:column headerText="#{msg['plagueview.curedate.l']}">
-                            <p:outputLabel value="#{m.observedOn}">
-                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
-                            </p:outputLabel>
-                        </p:column>
-
-                        <p:column headerText="#{msg['plagueview.duration.l']}">
-                            <p:outputLabel value="#{m.duration}"/>
-                        </p:column>
-
-                        <p:column headerText="#{msg['plagueview.tank.l']}">
-                            <p:outputLabel value="#{m.tankName}"/>
-                        </p:column>
-
-                    </p:dataTable>
-
                 </p:outputPanel>
 
             </p:panel>

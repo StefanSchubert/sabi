@@ -29,8 +29,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.annotation.SessionScope;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -185,18 +183,6 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
         }
 
 
-    }
-
-    @Override
-    public List<MeasurementReminderTo> loadMeasurementReminderList(String pJWTBackendAuthtoken) throws BusinessException {
-    /* FIXME STS (12.11.22): Consume real service Endpoint as soon as it exists */
-        MeasurementReminderTo m = new MeasurementReminderTo();
-        m.setUnitId(1);
-        m.setPastDays(7);
-        m.setUserId(1);
-        List<MeasurementReminderTo> reminderTos = new ArrayList<>();
-        reminderTos.add(m);
-        return reminderTos;
     }
 
 }

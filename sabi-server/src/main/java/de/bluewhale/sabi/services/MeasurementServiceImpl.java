@@ -284,7 +284,9 @@ public class MeasurementServiceImpl implements MeasurementService {
         if (userMeasurementReminders != null) {
 
             for (UserMeasurementReminderEntity reminderEntity : userMeasurementReminders) {
+
                 MeasurementReminderTo reminderTo = new MeasurementReminderTo();
+
                 reminderTo.setUserId(user.getId());
                 reminderTo.setUnitId(reminderEntity.getUnitId());
                 reminderTo.setPastDays(reminderTo.getPastDays());
@@ -297,20 +299,17 @@ public class MeasurementServiceImpl implements MeasurementService {
                     reminderTo.setUnitName("N/A?");
                 }
 
-                MeasurementEntity lastRecentMeasurement = measurementRepository.findByUserAndUnitIdAndMeasuredOnMax(user, reminderEntity.getUnitId());
-                if (lastRecentMeasurement != null) {
-                    LocalDateTime nextMeasureDate = lastRecentMeasurement.getMeasuredOn().plusDays(reminderEntity.getPastdays());
+                Optional<MeasurementEntity> lastRecentMeasurement = measurementRepository.findTopByUserAndUnitIdOrderByMeasuredOnDesc(user, reminderEntity.getUnitId());
+                if (lastRecentMeasurement.isPresent()) {
+                    LocalDateTime nextMeasureDate = lastRecentMeasurement.get().getMeasuredOn().plusDays(reminderEntity.getPastdays());
                     reminderTo.setNextMeasureDate(nextMeasureDate);
                 } else {
                     reminderTo.setNextMeasureDate(LocalDateTime.now());
                 }
 
                 measurementReminderTos.add(reminderTo);
-
             }
-
         }
-
         return measurementReminderTos;
     }
 }

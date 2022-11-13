@@ -53,7 +53,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
 
     public List<SupportedLocales> supportedLocales;
 
-    public List<MeasurementReminderTo> overdueMeasurementTos;
+    public List<MeasurementReminderTo> measurementReminderTos;
 
     public List<UnitTo> knownMeasurementUnits;
 
@@ -67,19 +67,18 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         selectedLocale = userSession.getLocale();
 
         try {
-            overdueMeasurementTos = userService.loadMeasurementReminderList(userSession.getSabiBackendToken());
+            measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken());
             knownMeasurementUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
         } catch (BusinessException e) {
-            overdueMeasurementTos = new ArrayList<>();
+            measurementReminderTos = new ArrayList<>();
             knownMeasurementUnits = new ArrayList<>();
             log.error("Could not fetch users Profile. {}", e.getMessage());
             MessageUtil.warn("profileupdate", "common.error.internal_server_problem.t", userSession.getLocale());
         }
     }
 
-
     public Boolean getHasMeasurementReminders() {
-        return !overdueMeasurementTos.isEmpty();
+        return !measurementReminderTos.isEmpty();
     }
 
     public String save() {
