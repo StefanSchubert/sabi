@@ -1,0 +1,87 @@
+@startuml VPC
+'Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+'SPDX-License-Identifier: MIT (For details, see https://github.com/awslabs/aws-icons-for-plantuml/blob/master/LICENSE)
+
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/dist
+!include AWSPuml/AWSCommon.puml
+!include AWSPuml/AWSSimplified.puml
+!include AWSPuml/Compute/EC2.puml
+!include AWSPuml/Compute/EC2Instance.puml
+!include AWSPuml/Compute/Lambda.puml
+!include AWSPuml/Database/Aurora.puml
+!include AWSPuml/Database/DynamoDB.puml
+!include AWSPuml/Groups/AWSCloud.puml
+!include AWSPuml/Groups/VPC.puml
+!include AWSPuml/Groups/AvailabilityZone.puml
+!include AWSPuml/Groups/PublicSubnet.puml
+!include AWSPuml/Groups/PrivateSubnet.puml
+!include AWSPuml/Groups/Region.puml
+!include AWSPuml/NetworkingContentDelivery/ElasticLoadBalancing.puml
+!include AWSPuml/NetworkingContentDelivery/VPCNATGateway.puml
+!include AWSPuml/NetworkingContentDelivery/VPCInternetGateway.puml
+
+hide stereotype
+skinparam linetype ortho
+
+AWSCloudGroup(cloud) {
+
+  RegionGroup(rg) {
+    ElasticLoadBalancing(lb, "LoadBalancing", "")
+    DynamoDB(dynamodb, "CaptchaCache", "")
+    Lambda(captcha_lamda, "Captcha\nREST Service", "")
+
+      VPCGroup(vpc) {
+
+        VPCInternetGateway(internet_gateway, "Internet gateway", "")
+
+        lb .> captcha_lamda
+        captcha_lamda .d.> dynamodb
+
+        AvailabilityZoneGroup(az_1, "\tAvailability Zone 1\t") {
+          PublicSubnetGroup(az_1_public, "Public subnet") {
+            VPCNATGateway(az_1_nat_gateway, "NAT gateway", "") #Transparent
+            EC2Instance(az_1_ec2_fe, "FrontEnd", "") #Transparent
+          }
+          PrivateSubnetGroup(az_1_private, "Private subnet") {
+            EC2Instance(az_1_ec2_be, "Backend", "") #Transparent
+            Aurora(az_1_db_sabi, "SabiDB", "") #Transparent
+          }
+
+
+          internet_gateway .>az_1_public
+          internet_gateway .>lb
+          lb .>az_1_public
+          az_1_ec2_fe .> az_1_nat_gateway
+          az_1_ec2_fe .> az_1_ec2_be
+          az_1_ec2_be .> captcha_lamda
+          az_1_ec2_be .> az_1_db_sabi
+        }
+
+        AvailabilityZoneGroup(az_2, "\tAvailability Zone 2\t") {
+          PublicSubnetGroup(az_2_public, "Public subnet") {
+            VPCNATGateway(az_2_nat_gateway, "NAT gateway", "") #Transparent
+            EC2Instance(az_2_ec2_fe, "FrontEnd", "") #Transparent
+          }
+          PrivateSubnetGroup(az_2_private, "Private subnet") {
+            EC2Instance(az_2_ec2_be, "Backend", "") #Transparent
+            Aurora(az_2_db_sabi, "SabiDB\nReplica", "") #Transparent
+          }
+
+          internet_gateway .> az_2_public
+          lb .> az_2_public
+          az_2_ec2_fe .> az_2_nat_gateway
+          az_2_ec2_fe .> az_2_ec2_be
+          az_2_ec2_be .> az_1_db_sabi
+          az_2_ec2_be .> captcha_lamda
+          az_1_db_sabi .d.> az_2_db_sabi
+
+        az_1_public .[hidden]r.> az_2_public
+        az_1_public .[hidden]d.> az_1_private
+        az_2_public .[hidden]d.> az_2_private
+        az_1_private .[hidden]d.> rg
+        az_2_nat_gateway .[hidden]u.> internet_gateway
+        az_1_nat_gateway .[hidden]u.> internet_gateway
+      }
+  }
+}
+@enduml
