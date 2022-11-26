@@ -289,7 +289,7 @@ public class MeasurementServiceImpl implements MeasurementService {
 
                 reminderTo.setUserId(user.getId());
                 reminderTo.setUnitId(reminderEntity.getUnitId());
-                reminderTo.setPastDays(reminderTo.getPastDays());
+                reminderTo.setPastDays(reminderEntity.getPastdays());
                 reminderTo.setActive(reminderEntity.isActive());
 
                 Optional<UnitTo> optionalUnitTo = allMeasurementUnits.stream().filter(item -> item.getId().equals(reminderEntity.getUnitId())).findFirst();

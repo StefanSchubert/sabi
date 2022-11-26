@@ -227,8 +227,6 @@ public class MeasurementController {
         return new ResponseEntity<>(measurementReminderTos, HttpStatus.ACCEPTED);
     }
 
-
-
     @Operation(method = "Drop a specific measurement. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(responseCode = "200",

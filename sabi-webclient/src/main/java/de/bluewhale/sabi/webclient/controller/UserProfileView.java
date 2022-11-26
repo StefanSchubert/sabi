@@ -24,10 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Controller for the Report View as shown in reportView.xhtml
@@ -41,6 +38,7 @@ import java.util.Locale;
 public class UserProfileView extends AbstractControllerTools implements Serializable {
 
     private static final String USER_PROFILE_VIEW_PAGE = "userProfile";
+    private static final int DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS = 14;
 
     @Inject
     UserSession userSession;
@@ -98,6 +96,27 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         }
         return USER_PROFILE_VIEW_PAGE;
     }
+
+    public String addUnit() {
+        if (selectedUnitId != null) {
+
+            MeasurementReminderTo measurementReminderTo = new MeasurementReminderTo();
+            measurementReminderTo.setUnitId(selectedUnitId);
+            Optional<UnitTo> optionalUnitTo = knownMeasurementUnits.stream().filter(item -> item.getId().equals(selectedUnitId)).findFirst();
+            if (optionalUnitTo.isPresent()) {
+                measurementReminderTo.setUnitName(optionalUnitTo.get().getUnitSign());
+            } else {
+                measurementReminderTo.setUnitName("N/A?");
+            }
+            measurementReminderTo.setPastDays(DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS);
+
+            /* TODO STS (13.11.22): Save new reminder as request scope might cause to drop the setting again */
+            this.measurementReminderTos.add(measurementReminderTo);
+
+        }
+        return USER_PROFILE_VIEW_PAGE;
+    }
+
 
     public Integer getSelectedUnitId() {
         return selectedUnitId;

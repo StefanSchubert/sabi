@@ -36,41 +36,38 @@
             <p:panel
                     header="#{msg['userportal.greeting.l']} #{msg['userportal.projectstate.l']} #{msg['userportal.currentprojectstate.l']}">
 
+                <p:outputLabel>#{msg['userportal.welcome.l']} #{userSession.userName}!</p:outputLabel>
+
                 <p:messages id="messages" showDetail="true" closable="true">
                     <p:autoUpdate/>
                 </p:messages>
 
-                <p:outputPanel style="color: cornflowerblue">
+                <p:spacer height="15px"/>
 
-                    <p:outputLabel>#{msg['userportal.welcome.l']} #{userSession.userName}!</p:outputLabel>
+                <p:panel header="#{msg['userportal.meassurement.reminder.h']}">
+                    <p:outputLabel rendered="#{userProfileView.hasMeasurementReminders == false}" escape="false"
+                                   value="#{msg['userportal.meassurement.nosetting.t']}"/>
 
-                    <p:spacer height="15px"/>
+                    <p:dataTable id="tbl_measurestasks" var="m" value="#{userProfileView.measurementReminderTos}"
+                                 styleClass="p-mt-2"
+                                 rendered="#{userProfileView.hasMeasurementReminders}">
 
-                    <p:panel header="#{msg['userportal.meassurement.reminder.h']}">
-                        <p:outputLabel rendered="#{userProfileView.hasMeasurementReminders == false}" escape="false"
-                                       value="#{msg['userportal.meassurement.nosetting.t']}"/>
+                        <p:column headerText="#{msg['userportal.meassurement.unit.l']}">
+                            <p:outputLabel value="#{m.unitName}"/>
+                        </p:column>
 
-                        <p:dataTable id="tbl_measurestasks" var="m" value="#{userProfileView.measurementReminderTos}"
-                                     styleClass="p-mt-2"
-                                     rendered="#{userProfileView.hasMeasurementReminders}">
+                        <p:column headerText="#{msg['userportal.meassurement.dayinterval.l']}">
+                            <p:outputLabel value="#{m.pastDays}"/>
+                        </p:column>
 
-                            <p:column headerText="#{msg['userportal.meassurement.unit.l']}">
-                                <p:outputLabel value="#{m.unitName}"/>
-                            </p:column>
+                        <p:column headerText="#{msg['userportal.meassurement.duedate.l']}">
+                            <p:outputLabel value="#{m.nextMeasureDate}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </p:outputLabel>
+                        </p:column>
 
-                            <p:column headerText="#{msg['userportal.meassurement.dayinterval.l']}">
-                                <p:outputLabel value="#{m.pastDays}"/>
-                            </p:column>
-
-                            <p:column headerText="#{msg['userportal.meassurement.duedate.l']}">
-                                <p:outputLabel value="#{m.nextMeasureDate}">
-                                    <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
-                                </p:outputLabel>
-                            </p:column>
-
-                        </p:dataTable>
-                    </p:panel>
-                </p:outputPanel>
+                    </p:dataTable>
+                </p:panel>
 
             </p:panel>
         </ui:define>

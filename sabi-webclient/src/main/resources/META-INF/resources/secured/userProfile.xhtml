@@ -37,7 +37,7 @@
 
                 <p:outputPanel>
                     <h:form id="localeswitcher">
-                        <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
+                        <p:panelGrid columns="3" styleClass="ui-fluid center ui-noborder">
 
                             <p:outputLabel for="localeselection" value="#{msg['userprofile.localechoice.l']}"/>
                             <p:selectOneMenu id="localeselection"
@@ -50,12 +50,13 @@
                                                itemLabel="#{n.locale.getDisplayName(userSession.locale)}"
                                 />
                             </p:selectOneMenu>
-                        </p:panelGrid>
 
-                        <p:commandButton id="updateLocale"
-                                         value="#{msg['common.save.b']}"
-                                         ajax="false"
-                                         action="#{userProfileView.save}" />
+                            <p:commandButton id="updateLocale"
+                                             value="#{msg['common.save.b']}"
+                                             ajax="false"
+                                             action="#{userProfileView.save}"/>
+
+                        </p:panelGrid>
 
                         <p:messages id="msg1" for="profileupdate" showDetail="true" closable="true">
                             <p:autoUpdate/>
@@ -64,34 +65,64 @@
                     </h:form>
 
 
-                    <p:divider align="center"  />
+                    <p:divider align="center"/>
                     <p:spacer width="10px"/>
 
-                   <h:form id="reminderTable">
+                    <p:panel header="#{msg['userprofile.reminderinfo.h']}">
 
-                       <p:panel header="#{msg['userprofile.reminderinfo.h']}">
-                           <p:outputLabel escape="false" value="#{msg['userprofile.reminderinfo.t']}"/>
-                       </p:panel>
+                        <p:outputLabel escape="false" value="#{msg['userprofile.reminderinfo.t']}"/>
 
-                       <p:selectOneMenu id="addreminderSelection" value="#{userProfileView.selectedUnitId}">
-                           <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
-                           <f:selectItems value="#{userProfileView.knownMeasurementUnits}"
-                                          var="m"
-                                          itemValue="#{m.id}"
-                                          itemLabel="#{m.unitSign}"
-                           />
-                       </p:selectOneMenu>
+                        <h:form id="reminderSelector">
 
-                       WERT | Gewünschtes Messintervall in Tagen | Active YN
+                            <p:panelGrid columns="3" layout="grid" style="border:2;">
+
+                                <p:outputLabel for="addreminderSelection"
+                                               value="#{msg['userprofile.meassurement.addreminder.l']}"/>
+                                <p:selectOneMenu id="addreminderSelection" value="#{userProfileView.selectedUnitId}">
+                                    <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                                    <f:selectItems value="#{userProfileView.knownMeasurementUnits}"
+                                                   var="m"
+                                                   itemValue="#{m.id}"
+                                                   itemLabel="#{m.unitSign}"
+                                    />
+                                </p:selectOneMenu>
+
+                                <p:commandButton value="#{msg['common.add.b']}" action="#{userProfileView.addUnit}"
+                                                 ajax="true"/>
+
+                            </p:panelGrid>
+
+                        </h:form>
 
 
-                       (Algorithmik: Anzeige aus User Profile. Beim Speichern Aktualisieren der Collection, Null Handling berücksichtigen)
+                        <h:form id="reminderTable">
+                            <p:dataTable id="tbl_measurementtasks" var="m"
+                                         value="#{userProfileView.measurementReminderTos}"
+                                         styleClass="p-mt-2">
 
-                       (SAVE)
+                                <p:column headerText="#{msg['userprofile.meassurement.unit.l']}">
+                                    <p:outputLabel value="#{m.unitName}"/>
+                                </p:column>
 
-                   </h:form>
+                                <p:column headerText="#{msg['userprofile.meassurement.dayinterval.l']}">
+                                    <p:inputNumber value="#{m.pastDays}" size="4" maxlength="4"/>
+                                </p:column>
 
-                    <p:divider align="center"  />
+                                <p:column headerText="#{msg['userprofile.meassurement.active.l']}">
+                                    <p:selectBooleanCheckbox value="#{m.active}"/>
+                                </p:column>
+
+                            </p:dataTable>
+
+                            (Algorithmik: Anzeige aus User Profile. Beim Speichern Aktualisieren der Collection, Null Handling berücksichtigen)
+
+                            (SAVE)
+
+                        </h:form>
+
+                    </p:panel>
+
+                    <p:divider align="center"/>
                     <p:spacer width="10px"/>
 
                     <h:form id="pwreset">
