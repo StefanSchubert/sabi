@@ -56,10 +56,10 @@
                 to have been extracted from the jar or migrated and won't be found
                 through current springboot 2.4.3 deps.
         -->
-        <micrometer.prometheus.version>1.10.0-RC1</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
 <!--        <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>-->
 <!--        <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>-->
-        <spring.instrument.version>5.3.22</spring.instrument.version>
+        <spring.instrument.version>6.0.2</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.24</lombok.version>
         <owasp.plugin.version>7.3.0</owasp.plugin.version>
@@ -84,14 +84,6 @@
 
         </dependencies>
     </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>repository.spring.milestone</id>
-            <name>Spring Milestone Repository</name>
-            <url>http://repo.spring.io/milestone</url>
-        </repository>
-    </repositories>
 
     <dependencies>
 
