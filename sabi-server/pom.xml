@@ -59,7 +59,7 @@
         <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
 <!--        <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>-->
 <!--        <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>-->
-        <spring.instrument.version>6.0.0-M6</spring.instrument.version>
+        <spring.instrument.version>6.0.2</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.24</lombok.version>
         <owasp.plugin.version>7.2.1</owasp.plugin.version>
