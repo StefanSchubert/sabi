@@ -78,4 +78,4 @@ jobs:
       run: cd devops/GenericPiMetricsEndpoint; mvn -B compile --file pom.xml
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v2
