@@ -6,10 +6,10 @@
 package de.bluewhale.sabi.persistence.model;
 
 import de.bluewhale.sabi.model.SizeUnit;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

@@ -1,14 +1,13 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence.repositories;
 
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * SpringDataRepository

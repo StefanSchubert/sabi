@@ -5,9 +5,8 @@
 
 package de.bluewhale.sabi.persistence.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 
 /**
  * Table which contains the translated plague names.

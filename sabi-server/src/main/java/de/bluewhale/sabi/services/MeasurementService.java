@@ -9,7 +9,7 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 

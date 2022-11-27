@@ -12,7 +12,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.3</version>
+        <version>3.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -46,11 +46,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <log4j2.version>2.19.0</log4j2.version>
-        <springdoc.version>1.6.11</springdoc.version>
+        <springdoc.version>1.6.12</springdoc.version>
 
-        <eclipselink.version>2.7.9</eclipselink.version>
-<!--                <eclipselink.version>3.1.0-M1</eclipselink.version>-->
-<!--                <eclipselink.version>4.0.0-M3</eclipselink.version>-->
+<!--        <eclipselink.version>2.7.9</eclipselink.version>-->
+                <eclipselink.version>4.0.0</eclipselink.version>
         <!--
                 Caution since 3.x we have some API changes - because Impl of PersistenceProvider seems
                 to have been extracted from the jar or migrated and won't be found
@@ -63,7 +62,7 @@
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.24</lombok.version>
         <owasp.plugin.version>7.3.0</owasp.plugin.version>
-        <maven.versions.plugin.version>2.12.0</maven.versions.plugin.version>
+        <maven.versions.plugin.version>2.13.0</maven.versions.plugin.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <passay.version>1.6.2</passay.version>
         <mariadb.java.client.version>3.0.8</mariadb.java.client.version>
@@ -393,7 +392,7 @@
                 <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>compile</phase>
+                        <phase>verify</phase>
                         <goals>
 <!--                            <goal>display-dependency-updates</goal>-->
 <!--                            <goal>display-plugin-updates</goal>-->

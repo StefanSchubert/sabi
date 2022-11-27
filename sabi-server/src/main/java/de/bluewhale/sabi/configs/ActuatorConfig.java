@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
- * Used for adding Custom Actuator metrics.
+ * Used for adding Custom Actuator (micrometer) metrics.
  *
  * @author Stefan Schubert
  */
@@ -33,7 +33,6 @@ public class ActuatorConfig {
 
     @Bean
     StatsMeter statsMeter() { return new StatsMeter(); }
-
 
 }
 

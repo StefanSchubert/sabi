@@ -7,8 +7,8 @@ package de.bluewhale.sabi.util;
 
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
+import jakarta.validation.constraints.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 /**
