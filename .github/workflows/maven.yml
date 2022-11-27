@@ -12,7 +12,7 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: macOS-12
 
     steps:
     - uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
       run: cd devops/GenericPiMetricsEndpoint; mvn -B compile --file pom.xml
   test:
 
-    runs-on: macos-latest
+    runs-on: macOS-12
 
     steps:
       - uses: actions/checkout@v3
