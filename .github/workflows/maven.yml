@@ -8,7 +8,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+    
 jobs:
   build:
 
@@ -20,7 +20,14 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '19'
-        distribution: 'corretto'
+        distribution: 'corretto'    
+    # maven repo cache save and restore
+    - uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-        
     - name: CAPTCHA App
       run: cd captcha; mvn -B compile --file pom.xml
     - name: SABI-Boundary install locally for dependend builds
@@ -42,6 +49,13 @@ jobs:
         with:
           java-version: '19'
           distribution: 'corretto'
+      # maven repo cache save and restore
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-           
       - name: CAPTCHA App
         run: cd captcha; mvn -B package --file pom.xml
       - name: SABI-Boundary install locally for dependend builds
