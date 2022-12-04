@@ -39,7 +39,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // GitHub CodeQL complains here: Possible CSRF Risk.
-                // However though springs csrf mechanism is disabled does not mean this app has nor CSRF protection.
+                // However, though springs csrf mechanism is disabled does not mean this app has nor CSRF protection.
                 // CSRF attacks are based on the "trust that a site has in a user's browser" (cited from
                 // https://en.wikipedia.org/wiki/Cross-site_request_forgery).
                 // See also demo attack on https://www.baeldung.com/spring-security-csrf
@@ -57,33 +57,33 @@ public class WebSecurityConfig {
                 //         as without session it won't keep Information there.
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                // Allow Welcome Page
-                .antMatchers(HttpMethod.GET, "/", "/index.html").permitAll()
-                // Allow Monitoring Endpoint
-                .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-                // Allow OAS3 api-doc access
-                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                // Registration and Login are accessible without JWT based authentication
-                .antMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
-                .antMatchers(HttpMethod.POST, Endpoint.REGISTER.getPath()).permitAll()
-                .antMatchers(HttpMethod.POST, Endpoint.PW_RESET_REQUEST.getPath()).permitAll()
-                .antMatchers(HttpMethod.POST, Endpoint.PW_RESET.getPath()).permitAll()
-                .antMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
-                // Open statistics
-                .antMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()
-                .antMatchers(HttpMethod.GET, Endpoint.PARTICIPANT_STATS.getPath()).permitAll()
-                .antMatchers(HttpMethod.GET, Endpoint.TANK_STATS.getPath()).permitAll()
-                .antMatchers(HttpMethod.GET, Endpoint.MEASUREMENT_STATS.getPath()).permitAll()
-                .antMatchers(HttpMethod.GET, Endpoint.PLAGUE_STATS.getPath()).permitAll()
-                // Motd can be requested before login
-                .antMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
-                // Allow IOT Endpoints, they are checked internally based on specific API-Keys
-                .antMatchers(HttpMethod.POST, Endpoint.IOT_API.getPath() + "/**").permitAll()
-                // all others require JWT authentication
-                .anyRequest().authenticated()
-                .and()
+                .authorizeHttpRequests(authorize -> authorize
+                        // Allow Welcome Page
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html").permitAll()
+                        // Allow Monitoring Endpoint
+                        .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
 
+                        // Allow OAS3 api-doc access
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        // Registration and Login are accessible without JWT based authentication
+                        .requestMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.POST, Endpoint.REGISTER.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.POST, Endpoint.PW_RESET_REQUEST.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.POST, Endpoint.PW_RESET.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
+                        // Open statistics
+                        .requestMatchers(HttpMethod.GET, "/api/stats/healthcheck").permitAll()
+                        .requestMatchers(HttpMethod.GET, Endpoint.PARTICIPANT_STATS.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.GET, Endpoint.TANK_STATS.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.GET, Endpoint.MEASUREMENT_STATS.getPath()).permitAll()
+                        .requestMatchers(HttpMethod.GET, Endpoint.PLAGUE_STATS.getPath()).permitAll()
+                        // Motd can be requested before login
+                        .requestMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
+                        // Allow IOT Endpoints, they are checked internally based on specific API-Keys
+                        .requestMatchers(HttpMethod.POST, Endpoint.IOT_API.getPath() + "/**").permitAll()
+                        // all others require JWT authentication
+                        .anyRequest().authenticated()
+                )
                 // JWT based authentication by POST of {"username":"<name>","password":"<password>"} which sets the
                 // token header upon authentication
                 .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), sabiAuthenticationProvider),
@@ -94,7 +94,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
 
 
 }

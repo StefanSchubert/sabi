@@ -5,10 +5,9 @@
 
 package de.bluewhale.sabi.persistence.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.*;
 
 
 @Table(name = "user_measurement_reminder", schema = "sabi")
