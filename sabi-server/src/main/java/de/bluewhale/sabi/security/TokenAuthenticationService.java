@@ -8,7 +8,6 @@ package de.bluewhale.sabi.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
 import de.bluewhale.sabi.api.HttpHeader;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,10 +30,10 @@ public class TokenAuthenticationService {
 
 
     // Will be lazy initialized with @Value("${accessToken.SECRET}") through constructor
-    static private String SECRET;
+    private static String SECRET;
 
     // Will be lazy initialized with @Value("${accessToken.TTL}") through constructor
-    static private long ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS;
+    private static long ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS;
 
     // Will be lazy initialized through constructor;
     static Algorithm JWT_TOKEN_ALGORITHM;
@@ -57,8 +56,8 @@ public class TokenAuthenticationService {
         Date expiresAt = new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS * 1000);
 
         String jwtToken = JWT.create()
-                .withSubject(pUserID)
-                .withExpiresAt(expiresAt)
+              //   .withSubject(pUserID)
+              //  .withExpiresAt(expiresAt)
                 .withIssuer(SABI_JWT_ISSUER)
                 .sign(JWT_TOKEN_ALGORITHM);
 
@@ -70,7 +69,7 @@ public class TokenAuthenticationService {
      * we return the authenticated Authentication Object for that user.
      *
      * @param pRequest
-     * @return null if the request did not contained a valid JWT token.
+     * @return null if the request did not contain a valid JWT token.
      */
     static Authentication getAuthentication(HttpServletRequest pRequest) {
         String token = pRequest.getHeader(HttpHeader.AUTH_TOKEN);
@@ -95,12 +94,22 @@ public class TokenAuthenticationService {
         try {
 
             // Make sure we have a valid signed token here
+            /*
             JWTVerifier verifier = JWT.require(JWT_TOKEN_ALGORITHM)
                     .withIssuer(SABI_JWT_ISSUER)
                     .build();
 
             DecodedJWT jwt = verifier.verify(token);
-            userID = jwt.getSubject();
+            */
+
+            DecodedJWT decoded = JWT.decode(token);
+
+            DecodedJWT verified = JWT.require(JWT_TOKEN_ALGORITHM)
+                    .withIssuer("SABI-server module")
+                    .build()
+                    .verify(token);
+
+            userID = verified.getSubject();
 
         } catch (Exception e) {
             System.out.println("Sabi.Service: TokenAuthenticationService could not parse JWT Token!");
@@ -120,8 +129,10 @@ public class TokenAuthenticationService {
      */
     public TokenAuthenticationService(String pSECRET, String pTOKEN_TTL_IN_SECS) {
         SECRET = pSECRET;
-        ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS = Long.valueOf(pTOKEN_TTL_IN_SECS);
-        JWT_TOKEN_ALGORITHM = Algorithm.HMAC512(SECRET);
+        ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS = Long.parseLong(pTOKEN_TTL_IN_SECS);
+        if (JWT_TOKEN_ALGORITHM == null) {
+            JWT_TOKEN_ALGORITHM = Algorithm.HMAC512(SECRET);
+        }
     }
 }
 
