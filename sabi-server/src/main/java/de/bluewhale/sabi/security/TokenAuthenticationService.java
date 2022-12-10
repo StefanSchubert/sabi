@@ -9,6 +9,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import de.bluewhale.sabi.api.HttpHeader;
+import de.bluewhale.sabi.configs.AppConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -56,8 +57,8 @@ public class TokenAuthenticationService {
         Date expiresAt = new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS * 1000);
 
         String jwtToken = JWT.create()
-              //   .withSubject(pUserID)
-              //  .withExpiresAt(expiresAt)
+                .withSubject(pUserID)
+                .withExpiresAt(expiresAt)
                 .withIssuer(SABI_JWT_ISSUER)
                 .sign(JWT_TOKEN_ALGORITHM);
 
@@ -91,17 +92,14 @@ public class TokenAuthenticationService {
      */
     public static String extractUserFromToken(String token) {
         String userID = null;
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
         try {
 
             // Make sure we have a valid signed token here
-            /*
-            JWTVerifier verifier = JWT.require(JWT_TOKEN_ALGORITHM)
-                    .withIssuer(SABI_JWT_ISSUER)
-                    .build();
-
-            DecodedJWT jwt = verifier.verify(token);
-            */
-
             DecodedJWT decoded = JWT.decode(token);
 
             DecodedJWT verified = JWT.require(JWT_TOKEN_ALGORITHM)
@@ -122,7 +120,11 @@ public class TokenAuthenticationService {
 // --------------------------- CONSTRUCTORS ---------------------------
 
     /**
-     * Used for lazy initialization.
+     * Notice I'm using encrypt and decrypt functions in a static way
+     * which is required by the JWTAuthorizationFilter. You might think that JWT_TOKEN_ALGORITHM won't
+     * be initialized then by using in combination with this constructor.
+     * The lazy initalization is being done by {@link AppConfig#encryptionService()}
+     * which happens during bootstrapping before using the Service within JWTAuthorizationFilter
      *
      * @param pSECRET
      * @param pTOKEN_TTL_IN_SECS

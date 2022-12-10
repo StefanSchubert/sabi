@@ -7,6 +7,7 @@ package de.bluewhale.sabi.services.rest;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
@@ -19,7 +20,6 @@ import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.UserService;
 import de.bluewhale.sabi.util.RestHelper;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,48 +113,26 @@ public class UserProfileControllerTest {
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
-    @Test
-    public void testJWTTokenParsing() throws Exception {
-        /* based on https://github.com/auth0/java-jwt/issues/644 */
-        String jwt = JWT.create().withIssuer("SABI-server module").sign(Algorithm.HMAC512("badsecret"));
+    /**
+     *  Test TTL on jwt Tokens. Expired tokens must not be accepted by the APIs verifier.
+     * @throws TokenExpiredException
+     */
+    @Test(expected = com.auth0.jwt.exceptions.TokenExpiredException.class)
+    public void testJWTTokenParsing() throws TokenExpiredException {
+
+        Date expiresAt = new Date(System.currentTimeMillis() - 60 * 1000); // Past date
+        String jwt = JWT.create()
+                .withIssuer("SABI-server module")
+                .withExpiresAt(expiresAt)
+                .sign(Algorithm.HMAC512("secret"));
+
         DecodedJWT decoded = JWT.decode(jwt);
-        DecodedJWT verified = JWT.require(Algorithm.HMAC512("badsecret"))
+
+        DecodedJWT verified = JWT.require(Algorithm.HMAC512("secret"))
                 .withIssuer("SABI-server module")
                 .build()
                 .verify(jwt);
-        assertThat("In case something went wrong we would have encountered an exception.", verified != null);
     }
-
-    @Test
-    public void testJWTTokenParsing_SabiUsage() throws Exception {
-        /* statements used within sabi */
-
-        long ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS = 60;
-        Algorithm JWT_TOKEN_ALGORITHM = Algorithm.HMAC512("sampleSECRET");
-        String SABI_JWT_ISSUER = "Sabi-Backend Module";
-        String pUserID = "junit@bluewhale.de";
-
-        Date expiresAt = new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS * 1000);
-
-        String jwtToken = JWT.create()
-                .withSubject(pUserID)
-                .withExpiresAt(expiresAt)
-                .withIssuer(SABI_JWT_ISSUER)
-                .sign(JWT_TOKEN_ALGORITHM);
-
-        DecodedJWT decoded = JWT.decode(jwtToken);
-
-        DecodedJWT verified = JWT.require(JWT_TOKEN_ALGORITHM)
-                .withIssuer(SABI_JWT_ISSUER)
-                .build()
-                .verify(jwtToken);
-
-        String tokenUserID = verified.getSubject();
-
-        assertThat("In case something went wrong we would have encountered an exception.", verified != null);
-        assertThat(pUserID, Matchers.equalTo(tokenUserID));
-    }
-
 
     @Test // REST-API
     public void testUserProfileUpdateWithNewMeasurementReminder() throws Exception {
