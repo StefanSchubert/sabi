@@ -113,4 +113,11 @@ public interface MeasurementService extends Serializable {
      */
     @Null ParameterTo getParameterFor(@NotNull Integer selectedUnitId, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
+    /**
+     * Push a new Measurement reminder to the backend.
+     * In case the measurementUnit is already on the list, do nothing (Idempotent)
+     * @param measurementReminderTo
+     * @param pJWTBackendAuthtoken
+     */
+    void addMeasurementReminder(MeasurementReminderTo measurementReminderTo, String pJWTBackendAuthtoken) throws BusinessException;
 }

@@ -38,7 +38,7 @@ import java.util.*;
 public class UserProfileView extends AbstractControllerTools implements Serializable {
 
     private static final String USER_PROFILE_VIEW_PAGE = "userProfile";
-    private static final int DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS = 14;
+    private static final int DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS = 7;
 
     @Inject
     UserSession userSession;
@@ -111,8 +111,9 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             measurementReminderTo.setPastDays(DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS);
 
             /* TODO STS (13.11.22): Save new reminder as request scope might cause to drop the setting again */
-            this.measurementReminderTos.add(measurementReminderTo);
+            measurementService.addMeasurementReminder(measurementReminderTo, userSession.getSabiBackendToken());
 
+            // todo falls durch request scope nicht aktualisiert, dann hier neu laden.
         }
         return USER_PROFILE_VIEW_PAGE;
     }

@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static de.bluewhale.sabi.util.Mapper.*;
+
 /**
  * Provides all required for dealing with measurements here e.g. for use cases around the {@link de.bluewhale.sabi.persistence.model.MeasurementEntity}
  *
@@ -50,6 +52,9 @@ public class MeasurementServiceImpl implements MeasurementService {
     @Autowired
     ParameterRepository parameterRepository;
 
+    @Autowired
+    UserMeasurementReminderRepository measurementReminderRepository;
+
     @Override
     public List<MeasurementTo> listMeasurements(Long pTankID) {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
@@ -70,15 +75,6 @@ public class MeasurementServiceImpl implements MeasurementService {
         return measurementTos;
     }
 
-    private List<MeasurementTo> mapMeasurementEntities2TOs(@NotNull List<MeasurementEntity> measurementsOfAquarium) {
-        List<MeasurementTo> measurementTos = new ArrayList<MeasurementTo>();
-        for (MeasurementEntity measurementEntity : measurementsOfAquarium) {
-            MeasurementTo measurementTo = new MeasurementTo();
-            Mapper.mapMeasurementEntity2To(measurementEntity, measurementTo);
-            measurementTos.add(measurementTo);
-        }
-        return measurementTos;
-    }
 
     @Override
     public @NotNull List<UnitTo> listAllMeasurementUnits() {
@@ -91,15 +87,6 @@ public class MeasurementServiceImpl implements MeasurementService {
         return unitToList;
     }
 
-    private List<UnitTo> mapUnitEntities2TOs(@NotNull List<UnitEntity> measurementUnits) {
-        List<UnitTo> unitTos = new ArrayList<UnitTo>();
-        for (UnitEntity unitEntity : measurementUnits) {
-            UnitTo unitTo = new UnitTo();
-            Mapper.mapUnitEntity2To(unitEntity, unitTo);
-            unitTos.add(unitTo);
-        }
-        return unitTos;
-    }
 
     @Override
     public List<MeasurementTo> listMeasurements(String pUserEmail, Integer resultLimit) {
@@ -312,5 +299,74 @@ public class MeasurementServiceImpl implements MeasurementService {
             }
         }
         return measurementReminderTos;
+    }
+
+    @Override
+    public ResultTo<MeasurementReminderTo> addMeasurementReminder(MeasurementReminderTo pReminderTo, String pUserEmail) {
+
+        Message resultMsg;
+        UserEntity userEntity = userRepository.getByEmail(pUserEmail);
+        if (pReminderTo != null && pReminderTo.getUserId() != userEntity.getId()) {
+            resultMsg = Message.warning(UserSpecificMessageCodes.NOT_YOUR_RECORD);
+        } else {
+            // check if it already exists
+            Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
+
+            if (optionalReminderEntity.isPresent()) {
+                resultMsg = Message.warning(UserSpecificMessageCodes.RECORD_ALREADY_EXISTS);
+                mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get(), pReminderTo);
+            } else {
+                // if not add it
+                UserMeasurementReminderEntity reminderEntity = new UserMeasurementReminderEntity();
+                mapUserMeasurementReminderTO2Entity(pReminderTo, reminderEntity, userEntity);
+
+                UserMeasurementReminderEntity savedReminderEntity = measurementReminderRepository.save(reminderEntity);
+                mapUserMeasurementReminderEntity2TO(savedReminderEntity, pReminderTo);
+                resultMsg = Message.info(UserSpecificMessageCodes.CREATE_SUCCEEDED);
+            }
+        }
+        return new ResultTo<>(pReminderTo, resultMsg);
+    }
+
+    @Override
+    public ResultTo<MeasurementReminderTo> updateMeasurementReminder(MeasurementReminderTo pReminderTo, String pUserEmail) {
+
+        Message resultMsg;
+        UserEntity userEntity = userRepository.getByEmail(pUserEmail);
+        if (pReminderTo != null && pReminderTo.getUserId() != userEntity.getId()) {
+            resultMsg = Message.warning(UserSpecificMessageCodes.NOT_YOUR_RECORD);
+        } else {
+            // check if it already exists
+            Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
+            if (optionalReminderEntity.isPresent()) {
+                mapUserMeasurementReminderTO2Entity(pReminderTo, optionalReminderEntity.get(), userEntity);
+                // no saving required, as entity is attached.
+                resultMsg = Message.info(UserSpecificMessageCodes.UPDATE_SUCCEEDED);
+            } else {
+                // if not add it
+                resultMsg = Message.info(UserSpecificMessageCodes.UNKOWN_RECORD);
+            }
+        }
+
+        return new ResultTo<>(pReminderTo, resultMsg);
+    }
+
+    @Override
+    public ResultTo<MeasurementReminderTo> deleteMeasurementReminder(MeasurementReminderTo pReminderTo, String pUserEmail) {
+        Message resultMsg;
+        UserEntity userEntity = userRepository.getByEmail(pUserEmail);
+        if (pReminderTo != null && pReminderTo.getUserId() != userEntity.getId()) {
+            resultMsg = Message.warning(UserSpecificMessageCodes.NOT_YOUR_RECORD);
+        } else {
+            // look it up
+            Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
+            if (optionalReminderEntity.isPresent()) {
+                measurementReminderRepository.delete(optionalReminderEntity.get());
+                resultMsg = Message.warning(UserSpecificMessageCodes.REMOVAL_SUCCEEDED);
+            } else {
+                resultMsg = Message.warning(UserSpecificMessageCodes.UNKOWN_RECORD);
+            }
+        }
+        return new ResultTo<>(pReminderTo, resultMsg);
     }
 }

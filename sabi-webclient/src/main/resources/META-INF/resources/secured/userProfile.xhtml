@@ -88,7 +88,7 @@
                                 </p:selectOneMenu>
 
                                 <p:commandButton value="#{msg['common.add.b']}" action="#{userProfileView.addUnit}"
-                                                 ajax="true"/>
+                                                 update=":reminderTable" />
 
                             </p:panelGrid>
 
@@ -113,8 +113,6 @@
                                 </p:column>
 
                             </p:dataTable>
-
-                            (Algorithmik: Anzeige aus User Profile. Beim Speichern Aktualisieren der Collection, Null Handling berücksichtigen)
 
                             (SAVE)
 

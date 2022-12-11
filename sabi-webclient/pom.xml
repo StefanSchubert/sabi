@@ -58,11 +58,11 @@
         <java.version>17</java.version>
         <log4j2.version>2.19.0</log4j2.version>
         <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
-        <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>
-        <joinfaces.version>5.0.0-m5</joinfaces.version>
+        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
+        <joinfaces.version>5.0.0</joinfaces.version>
         <sabi.boundary.version>1.2.0</sabi.boundary.version>
         <passay.version>1.6.2</passay.version>
-        <owasp.plugin.version>7.3.0</owasp.plugin.version>
+        <owasp.plugin.version>7.4.1</owasp.plugin.version>
         <maven.versions.plugin.version>2.12.0</maven.versions.plugin.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>
