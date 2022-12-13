@@ -12,6 +12,7 @@ import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.MeasurementService;
 import de.bluewhale.sabi.services.TankService;
+import de.bluewhale.sabi.services.UserSpecificMessageCodes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,15 +48,15 @@ public class MeasurementController {
     @Operation(method = "Add a new measurement. Needs to be provided via json body.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created-Remember Id of returned measurement if you want to update it afterwards or retrieve it via list operation."
-                    ),
+            ),
             @ApiResponse(responseCode = "409", description = "AlreadyCreated-A measurement with this Id has already been created.Create called doubled?"),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
-                    })
+            @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
+    })
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-            @ResponseStatus(HttpStatus.CREATED)
-            @ResponseBody
-            public ResponseEntity<MeasurementTo>addMeasurement(@RequestHeader(name = AUTH_TOKEN) String token,
-            @RequestBody MeasurementTo measurementTo, Principal principal) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public ResponseEntity<MeasurementTo> addMeasurement(@RequestHeader(name = AUTH_TOKEN) String token,
+                                                        @RequestBody MeasurementTo measurementTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         ResultTo<MeasurementTo> measurementResultTo = measurementService.addMeasurement(measurementTo, principal.getName());
@@ -78,13 +79,16 @@ public class MeasurementController {
             @ApiResponse(responseCode = "201", description = "Created - Remember Id of returned measurement reminder if you want to update it afterwards."
             ),
             @ApiResponse(responseCode = "409", description = "Already created - A measurement reminder for the same unit has already been created. Create called doubled?"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token.")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token."),
+            @ApiResponse(responseCode = "503", description = "Unknown Backend error. Service not available.")
     })
-    @RequestMapping(value = "/reminder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ResponseEntity<MeasurementReminderTo>addMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
-                                                       @RequestBody MeasurementReminderTo reminderTo, Principal principal) {
+    public ResponseEntity<MeasurementReminderTo> addMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                        @RequestBody MeasurementReminderTo reminderTo, Principal principal) {
+        String msg;
+
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         ResultTo<MeasurementReminderTo> reminderToResultTo = measurementService.addMeasurementReminder(reminderTo, principal.getName());
@@ -95,9 +99,15 @@ public class MeasurementController {
             MeasurementReminderTo createdReminderTo = reminderToResultTo.getValue();
             responseEntity = new ResponseEntity<>(createdReminderTo, HttpStatus.CREATED);
         } else {
-            String msg = "Measurement reminder cannot be added twice. A reminder for measurement unit " + reminderTo.getUnitName() + " already exist for requesting user.";
-            log.warn(msg);
-            responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.CONFLICT);
+            if (resultMessage.getCode().equals(UserSpecificMessageCodes.RECORD_ALREADY_EXISTS)) {
+                msg = "Measurement reminder cannot be added twice. A reminder for measurement unit " + reminderTo.getUnitName() + " already exist for requesting user.";
+                log.warn(msg);
+                responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.CONFLICT);
+            } else {
+                msg = "Unknown error occured.";
+                log.warn(msg);
+                responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.SERVICE_UNAVAILABLE);
+            }
         }
         return responseEntity;
     }
@@ -109,40 +119,53 @@ public class MeasurementController {
             @ApiResponse(responseCode = "404", description = "Not Found - Reminder to update does not exists."),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token.")
     })
-    @RequestMapping(value = "/reminder", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder/", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<MeasurementReminderTo>updateMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
-                                                                       @RequestBody MeasurementReminderTo reminderTo, Principal principal) {
+    public ResponseEntity<MeasurementReminderTo> updateMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                           @RequestBody MeasurementReminderTo reminderTo, Principal principal) {
+
+        String msg;
+
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         ResultTo<MeasurementReminderTo> reminderToResultTo = measurementService.updateMeasurementReminder(reminderTo, principal.getName());
 
         ResponseEntity<MeasurementReminderTo> responseEntity;
         final Message resultMessage = reminderToResultTo.getMessage();
+
         if (Message.CATEGORY.INFO.equals(resultMessage.getType())) {
             MeasurementReminderTo createdReminderTo = reminderToResultTo.getValue();
             responseEntity = new ResponseEntity<>(createdReminderTo, HttpStatus.OK);
         } else {
-            String msg = "Measurement reminder cannot be added twice. A reminder for measurement unit " + reminderTo.getUnitName() + " already exist for requesting user.";
-            log.warn(msg);
-            responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.NOT_FOUND);
+            if (resultMessage.getCode().equals(UserSpecificMessageCodes.NOT_YOUR_RECORD)) {
+                msg = "Tried to update a reminder for wrong user. Fraud detected?";
+                log.error(msg);
+                responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.UNAUTHORIZED);
+            } else {
+                msg = "Measurement reminder cannot be updated as it doesn't seem to exists.";
+                log.warn(msg);
+                responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.NOT_FOUND);
+            }
         }
         return responseEntity;
     }
 
     @Operation(method = "Deletes a measurement reminder. Needs to be provided via json body.")
     @ApiResponses({
-            @ApiResponse(responseCode = "202", description = "Deleted."
+            @ApiResponse(responseCode = "202", description = "Accepted - Reminder deleted."
             ),
             @ApiResponse(responseCode = "208", description = "Already deleted - A measurement reminder for this unit was not found for requesting user. Delete called doubled?"),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token.")
     })
-    @RequestMapping(value = "/reminder", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder/", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public ResponseEntity<MeasurementReminderTo>deleteMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
-                                                                       @RequestBody MeasurementReminderTo reminderTo, Principal principal) {
+    public ResponseEntity<MeasurementReminderTo> deleteMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                           @RequestBody MeasurementReminderTo reminderTo, Principal principal) {
+
+        String msg;
+
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         ResultTo<MeasurementReminderTo> reminderToResultTo = measurementService.deleteMeasurementReminder(reminderTo, principal.getName());
@@ -153,9 +176,16 @@ public class MeasurementController {
             MeasurementReminderTo createdReminderTo = reminderToResultTo.getValue();
             responseEntity = new ResponseEntity<>(createdReminderTo, HttpStatus.ACCEPTED);
         } else {
-            String msg = "Measurement reminder cannot be deleted twice. A reminder for measurement unit " + reminderTo.getUnitName() + " does not exist for requesting user.";
-            log.warn(msg);
-            responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.ALREADY_REPORTED);
+
+            if (resultMessage.getCode().equals(UserSpecificMessageCodes.NOT_YOUR_RECORD)) {
+                msg = "Tried to delete a reminder for wrong user. Fraud detected?";
+                log.error(msg);
+                responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.UNAUTHORIZED);
+            } else {
+                msg = "Measurement reminder for unit " + reminderTo.getUnitName() + " already removed for requesting user.";
+                log.warn(msg);
+                responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.ALREADY_REPORTED);
+            }
         }
         return responseEntity;
     }
@@ -165,13 +195,13 @@ public class MeasurementController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK-Measurement has been updated"),
             @ApiResponse(responseCode = "409", description = "Something wrong-Measurement ID does not exists or something like that."),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
-                    })
+            @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
+    })
     @RequestMapping(value = "", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-            @ResponseStatus(HttpStatus.OK)
-            @ResponseBody
-            public ResponseEntity<MeasurementTo>updateMeasurement(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
-            @RequestBody MeasurementTo measurementTo, Principal principal) {
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<MeasurementTo> updateMeasurement(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                           @RequestBody MeasurementTo measurementTo, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         ResultTo<MeasurementTo> measurementResultTo = measurementService.updateMeasurement(measurementTo, principal.getName());
@@ -255,7 +285,7 @@ public class MeasurementController {
     @Operation(method = "List measurements belonging to a specific tank and measurement unit. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(responseCode = "200",
-                    description= "Success - list of tanks measurements for requested measurement unit returned."),
+                    description = "Success - list of tanks measurements for requested measurement unit returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
     })
     @RequestMapping(value = "/tank/{tankid}/unit/{unitid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -296,14 +326,14 @@ public class MeasurementController {
             "You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(responseCode = "200",
-                    description= "Success - list of measurement reminders for authed user returned."),
+                    description = "Success - list of measurement reminders for authed user returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
     })
     @RequestMapping(value = "/reminder/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<MeasurementReminderTo>> listUsersMeasurementReminders(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
-                                                                                               Principal principal) {
+                                                                                     Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
 
@@ -316,9 +346,9 @@ public class MeasurementController {
     @Operation(method = "Drop a specific measurement. You need to set the token issued by login or registration in the request header field 'Authorization'.")
     @ApiResponses({
             @ApiResponse(responseCode = "200",
-                    description= "Measurement deleted"),
+                    description = "Measurement deleted"),
             @ApiResponse(responseCode = "409",
-                    description= "Measurement does not exists or does not belong to requesting user."),
+                    description = "Measurement does not exists or does not belong to requesting user."),
             @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)

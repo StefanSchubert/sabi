@@ -97,7 +97,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         return USER_PROFILE_VIEW_PAGE;
     }
 
-    public String addUnit() {
+    public String addReminderForMeasurementUnit() {
         if (selectedUnitId != null) {
 
             MeasurementReminderTo measurementReminderTo = new MeasurementReminderTo();
@@ -110,10 +110,14 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             }
             measurementReminderTo.setPastDays(DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS);
 
-            /* TODO STS (13.11.22): Save new reminder as request scope might cause to drop the setting again */
-            measurementService.addMeasurementReminder(measurementReminderTo, userSession.getSabiBackendToken());
+            try {
+                measurementService.addMeasurementReminder(measurementReminderTo, userSession.getSabiBackendToken());
+                measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken());
+            } catch (BusinessException e) {
+                log.error("Could not add new Measurement Reminder.", e);
+                MessageUtil.warn("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+            }
 
-            // todo falls durch request scope nicht aktualisiert, dann hier neu laden.
         }
         return USER_PROFILE_VIEW_PAGE;
     }

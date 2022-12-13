@@ -64,7 +64,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
 
                         // Allow OAS3 api-doc access
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         // Registration and Login are accessible without JWT based authentication
                         .requestMatchers(HttpMethod.POST, Endpoint.LOGIN.getPath()).permitAll()
                         .requestMatchers(HttpMethod.POST, Endpoint.REGISTER.getPath()).permitAll()

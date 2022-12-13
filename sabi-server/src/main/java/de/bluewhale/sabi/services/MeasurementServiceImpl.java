@@ -306,25 +306,25 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         Message resultMsg;
         UserEntity userEntity = userRepository.getByEmail(pUserEmail);
-        if (pReminderTo != null && pReminderTo.getUserId() != userEntity.getId()) {
-            resultMsg = Message.warning(UserSpecificMessageCodes.NOT_YOUR_RECORD);
+        pReminderTo.setUserId(userEntity.getId());
+        pReminderTo.setActive(true);
+
+        // check if it already exists
+        Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
+
+        if (optionalReminderEntity.isPresent()) {
+            resultMsg = Message.warning(UserSpecificMessageCodes.RECORD_ALREADY_EXISTS);
+            mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get(), pReminderTo);
         } else {
-            // check if it already exists
-            Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
+            // if not add it
+            UserMeasurementReminderEntity reminderEntity = new UserMeasurementReminderEntity();
+            mapUserMeasurementReminderTO2Entity(pReminderTo, reminderEntity, userEntity);
 
-            if (optionalReminderEntity.isPresent()) {
-                resultMsg = Message.warning(UserSpecificMessageCodes.RECORD_ALREADY_EXISTS);
-                mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get(), pReminderTo);
-            } else {
-                // if not add it
-                UserMeasurementReminderEntity reminderEntity = new UserMeasurementReminderEntity();
-                mapUserMeasurementReminderTO2Entity(pReminderTo, reminderEntity, userEntity);
-
-                UserMeasurementReminderEntity savedReminderEntity = measurementReminderRepository.save(reminderEntity);
-                mapUserMeasurementReminderEntity2TO(savedReminderEntity, pReminderTo);
-                resultMsg = Message.info(UserSpecificMessageCodes.CREATE_SUCCEEDED);
-            }
+            UserMeasurementReminderEntity savedReminderEntity = measurementReminderRepository.save(reminderEntity);
+            mapUserMeasurementReminderEntity2TO(savedReminderEntity, pReminderTo);
+            resultMsg = Message.info(UserSpecificMessageCodes.CREATE_SUCCEEDED);
         }
+
         return new ResultTo<>(pReminderTo, resultMsg);
     }
 

@@ -150,13 +150,12 @@ public interface MeasurementService {
     @NotNull List<MeasurementReminderTo> fetchUsersNextMeasurements(@NotNull String pUserEmail);
 
     /**
-     * Addes provided MeasurementReminderTo if it is consistent with requesting user.
+     * Adds provided MeasurementReminderTo if it is consistent with requesting user.
      *
      * @param reminderTo MeasurementReminderTo which shall be added.
      * @param pUserEmail preAuthed UserID
      * @return ResultTo with the record and a process state.
      * result state can be of <ul>
-     * <li>{@link UserSpecificMessageCodes#NOT_YOUR_RECORD}</li>
      * <li>{@link UserSpecificMessageCodes#RECORD_ALREADY_EXISTS}</li>
      * <li>{@link UserSpecificMessageCodes#CREATE_SUCCEEDED}</li>
      * </ul>
