@@ -42,21 +42,19 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.2.0</sabi.boundary.version>
+        <sabi.boundary.version>1.2.1</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <log4j2.version>2.19.0</log4j2.version>
-        <springdoc.version>1.6.12</springdoc.version>
-
+        <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
         <!--        <eclipselink.version>2.7.9</eclipselink.version>-->
         <eclipselink.version>4.0.0</eclipselink.version>
         <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
         <spring.instrument.version>6.0.2</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.24</lombok.version>
-        <owasp.plugin.version>7.3.0</owasp.plugin.version>
-        <maven.versions.plugin.version>2.13.0</maven.versions.plugin.version>
+        <owasp.plugin.version>7.4.1</owasp.plugin.version>
         <passay.version>1.6.2</passay.version>
         <mariadb.java.client.version>3.1.0</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
@@ -65,6 +63,7 @@
         <archunit.version>0.23.1</archunit.version>
         <auth0.jwt.version>4.2.1</auth0.jwt.version>
         <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
+        <jetbrains.annotation.version>23.1.0</jetbrains.annotation.version>
     </properties>
 
     <dependencyManagement>
@@ -235,8 +234,8 @@
         <!-- REST API-Doc using Springdoc https://springdoc.org -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.openapiv2.version}</version>
         </dependency>
 
         <!--
@@ -311,7 +310,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>${jetbrains.annotation.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -406,10 +405,9 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
+                        <phase>compile</phase>
                         <goals>
                             <!--                            <goal>display-dependency-updates</goal>-->
                             <!--                            <goal>display-plugin-updates</goal>-->

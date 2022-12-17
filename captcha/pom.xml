@@ -45,10 +45,9 @@
         <log4j2.version>2.19.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.version>1.6.13</springdoc.version>
+        <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
         <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
         <junit.version>4.13.2</junit.version>
-        <maven.versions.plugin.version>2.13.0</maven.versions.plugin.version>
         <owasp.plugin.version>7.4.1</owasp.plugin.version>
     </properties>
 
@@ -100,24 +99,12 @@
             <version>${micrometer.prometheus.version}</version>
         </dependency>
 
-        <!-- REST API-Doc using Springdoc https://springdoc.org -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>snakeyaml</artifactId>
-                    <groupId>org.yaml</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.openapiv2.version}</version>
         </dependency>
-        <dependency>
-            <!-- May be removed as soon as openapi-ui patches usage of snakeyaml 1.29 -->
-            <artifactId>snakeyaml</artifactId>
-            <groupId>org.yaml</groupId>
-            <version>1.32</version>
-        </dependency>
+
 
         <!-- Test dependencies -->
         <dependency>
@@ -212,7 +199,6 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
