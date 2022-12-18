@@ -11,7 +11,8 @@ This is a semi-scientific (or open-science) project that aims to gain insights
 ## Latest project news:
 | Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 7th Okt 2022 | Released Plage-Center. All required base workflows have been implemented. This marks version 1.0.0 of sabi.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 18th Dez 2022 | Feature Release (Reminder Service) / Technical Migration to Spring-Boot 3  / Marks Sabi-Version 1.2.0                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 7th Okt 2022  | Released Plague-Center. All required base workflows have been implemented. This marks version 1.0.0 of sabi.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 22nd Jul 2022 | Article about SABI has been published in the journal "KORALLE", Issue Nr. 136. 😊 Available on start of August. Many Thanks goes to Daniel Knop!                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 26th Feb 2022 | Offical Softlaunch Day of the project. Starting with a twitter announcement. Going to spread the word in selected forums in the next days, hoping to get some Beta-Testers, Fellow-Coders and to collect valuable feedback.                                                                                                                                                                                                                                                                                                                                  |
 | 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning.                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -79,7 +80,7 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 ### Common
 
 * Java 17
-* openAPI3 (Swagger) via springdoc
+* openAPI3 (Swagger) via springdoc-v2
 * ARM-Platform (raspberryPis)
 * IPv6 DynDNS (at least for the start)
 
@@ -87,8 +88,8 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
 
 * JSF2.3 based WebClient
-  * Primefaces 11.x
-* Spring-Boot-Application
+* Primefaces 12
+* Spring-Boot-3
 
 Why JSF and not some current modern framework like angular or VUE? In fact, it took me quite a while to came to a decision here.
 The two main reasons for me are:
@@ -99,7 +100,7 @@ The two main reasons for me are:
 * Though since 2014-2017 it became rather quiet around the mature JSF technology (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I decided to improve my skills in JSF again.
 
 ### Server side
-* Spring-Boot-Application
+* Spring-Boot 3 Application
 * REST
 * JPA 2.x (Eclipselink instead of Hibernate)
 * jUnit
@@ -139,7 +140,7 @@ You may need to do some port tweaking in case it collides with your personal env
 and there you are. Give it 2 min for the services to come up and then your you can access 
 
 * the swagger-APIs here:
-  * Catpcha: http://localhost:8081/captcha/swagger-ui.html
+  * Captcha: http://localhost:8081/captcha/swagger-ui.html
   * Sabi-Service: http://localhost:8080/sabi/swagger-ui.html
   
 * the Faked SMTP Server to Catch all Registration-Workflow Emails:
@@ -235,12 +236,12 @@ As we are using eclipselink you must add a specific javaagent, when running your
 Because of eclipselink we are using weaving at runtime which requires the following vm option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.0-M4/spring-instrument-6.0.0-M4.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.2/spring-instrument-6.0.2.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
 test runner config. **Please verify** that you use the correct version as derived from pom.xml dependency tree, as you may require
-to apdopt the javaagent string above to suite to your version.
+to adopt the javaagent string above to suite to your version.
 You may also need to adopt your setting if that version in the pom changes because of patch management.
 
 ## Architectural Notes

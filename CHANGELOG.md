@@ -1,13 +1,23 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.0
+
+### New Features
+* SABI-64: Add open stats to prometheus registry
+* SABI-85: Added a Reminder Service
+
+### Technical Maintenance
+* Migration to Spring-Boot-3
+* Patch-Management (openapidoc v2 / Primefaces 12)
+
 ## Release 1.0.2
 
 ### New Features
-* SABI-116: Added more (time-view) measurment report charts 
+* SABI-116: Added more (time-view) measurement report charts 
 * SABI-130: PastPlagues table includes the duration of observed plage
 
 ### Technical Maintenance
-* Patchmanagement
+* Patch-Management
 
 ## Release 1.0.1
 
@@ -25,7 +35,7 @@
 * SABI-115: added Plague Center
 
 ### Technical Maintenance 
-* Patchmanagement
+* Patch-Management
 
 ## Release 0.9.3
 
