@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -84,7 +84,7 @@ public class UserSession implements Serializable {
     /**
      * After being successful authenticated against the sabi backend,
      * this token will be submitted via HTTP-Header whenever calling
-     * sabis rest api backend.
+     * sabis rest api backend. It contains the "Bearer prefix"
      *
      * @param sabiBackendToken
      */

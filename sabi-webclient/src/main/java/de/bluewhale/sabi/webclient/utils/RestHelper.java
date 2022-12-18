@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
-import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 
 /**
  * Everything that can be reused and helps in communication with the backend.
@@ -43,13 +42,13 @@ public class RestHelper {
 
     /**
      * Contains Mediatype Application Json, User Agent and Auth-Informations
-     * @param JWTBackendAuthtoken valid Auth-Token for the Backend-Session
+     * @param JWTBackendAuthtoken valid Auth-Token (incl. Bearer Prefix) for the Backend-Session
      * @param contentTypeHeader sets the header 'Content-Type'
      * @return http header required to mak calls against secured API
      */
     public static HttpHeaders prepareAuthedHttpHeader(String JWTBackendAuthtoken, MediaType contentTypeHeader) {
         HttpHeaders headers = buildHttpHeader();
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + JWTBackendAuthtoken);
+        headers.add(AUTH_TOKEN, JWTBackendAuthtoken);
         headers.setContentType(contentTypeHeader);
         return headers;
     }

@@ -13,6 +13,7 @@ import de.bluewhale.sabi.configs.HazelcastMapItem;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.PasswordPolicy;
 import de.bluewhale.sabi.util.Mapper;
@@ -26,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -135,6 +138,17 @@ public class UserServiceImpl implements UserService {
         if (existingUser != null) {
             existingUser.setLanguage(userProfileTo.getLanguage());
             existingUser.setCountry(userProfileTo.getCountry());
+
+            List<UserMeasurementReminderEntity> userMeasurementReminders = existingUser.getUserMeasurementReminders();
+            List<MeasurementReminderTo> updateReminderToList = userProfileTo.getMeasurementReminderTos();
+            for (UserMeasurementReminderEntity userMeasurementReminder : userMeasurementReminders) {
+                Optional<MeasurementReminderTo> optionalMeasurementReminderTo = updateReminderToList.stream().filter(item -> item.getUnitId() == userMeasurementReminder.getUnitId()).findFirst();
+                if (optionalMeasurementReminderTo.isPresent()) {
+                    userMeasurementReminder.setPastdays(optionalMeasurementReminderTo.get().getPastDays());
+                    userMeasurementReminder.setActive(optionalMeasurementReminderTo.get().isActive());
+                }
+            }
+
         } else {
             throw BusinessException.with(AuthMessageCodes.INVALID_EMAIL_ADDRESS);
         }

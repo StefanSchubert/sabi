@@ -138,6 +138,7 @@ public interface MeasurementService {
      * only if the message is of {@link Message.CATEGORY#INFO}
      * @return
      */
+    @Transactional
     ResultTo<MeasurementTo> addIotAuthorizedMeasurement(MeasurementTo pMeasurementTo);
 
     /**
@@ -160,6 +161,7 @@ public interface MeasurementService {
      * <li>{@link UserSpecificMessageCodes#CREATE_SUCCEEDED}</li>
      * </ul>
      */
+    @Transactional
     @NotNull ResultTo<MeasurementReminderTo> addMeasurementReminder(@NotNull MeasurementReminderTo reminderTo, @NotNull String pUserEmail);
 
     /**
@@ -174,6 +176,7 @@ public interface MeasurementService {
      * <li>{@link UserSpecificMessageCodes#UPDATE_SUCCEEDED}</li>
      * </ul>
      */
+    @Transactional
     @NotNull ResultTo<MeasurementReminderTo> updateMeasurementReminder(@NotNull MeasurementReminderTo reminderTo, @NotNull String pUserEmail);
 
     /**
@@ -188,6 +191,7 @@ public interface MeasurementService {
      * <li>{@link UserSpecificMessageCodes#REMOVAL_SUCCEEDED}</li>
      * </ul>
      */
+    @Transactional
     @NotNull ResultTo<MeasurementReminderTo> deleteMeasurementReminder(@NotNull MeasurementReminderTo reminderTo, @NotNull String pUserEmail);
 
 }

@@ -84,6 +84,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             // Already stored
             try {
                 UserProfileTo userProfileTo = new UserProfileTo(selectedLocale.getLanguage(), selectedLocale.getCountry());
+                userProfileTo.setMeasurementReminderTos(measurementReminderTos);
                 userService.updateUsersProfile(userProfileTo, userSession.getSabiBackendToken());
                 userSession.setLocale(selectedLocale);
                 userSession.setLanguage(selectedLocale.getLanguage());

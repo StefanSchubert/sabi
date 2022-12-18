@@ -47,7 +47,7 @@
                                 <f:selectItems value="#{userProfileView.supportedLocales}"
                                                var="n"
                                                itemValue="#{n.locale}"
-                                               itemLabel="#{n.locale.getDisplayName(userSession.locale)}"
+                                               itemLabel="#{n.locale.getDisplayName()}"
                                 />
                             </p:selectOneMenu>
 
@@ -64,6 +64,13 @@
 
                     </h:form>
 
+
+                    <p:divider align="center"/>
+                    <p:spacer width="10px"/>
+
+                    <h:form id="pwreset">
+                        <p:button value="#{msg['userprofile.pwchange.l']}" outcome="/pwreset"/>
+                    </h:form>
 
                     <p:divider align="center"/>
                     <p:spacer width="10px"/>
@@ -114,16 +121,10 @@
 
                             </p:dataTable>
 
+                            <p:commandButton value="#{msg['common.save.b']}" action="#{userProfileView.save}" />
+
                         </h:form>
-
                     </p:panel>
-
-                    <p:divider align="center"/>
-                    <p:spacer width="10px"/>
-
-                    <h:form id="pwreset">
-                        <p:button value="#{msg['userprofile.pwchange.l']}" outcome="/pwreset"/>
-                    </h:form>
 
                 </p:outputPanel>
 

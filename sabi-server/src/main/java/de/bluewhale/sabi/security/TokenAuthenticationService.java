@@ -93,7 +93,7 @@ public class TokenAuthenticationService {
     public static String extractUserFromToken(String token) {
         String userID = null;
 
-        if (token != null && token.startsWith("Bearer ")) {
+        if (token != null && token.startsWith(HttpHeader.TOKEN_PREFIX)) {
             token = token.substring(7);
         }
 

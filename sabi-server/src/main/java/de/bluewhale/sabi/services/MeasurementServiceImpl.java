@@ -321,6 +321,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             mapUserMeasurementReminderTO2Entity(pReminderTo, reminderEntity, userEntity);
 
             UserMeasurementReminderEntity savedReminderEntity = measurementReminderRepository.save(reminderEntity);
+            userEntity.getUserMeasurementReminders().add(savedReminderEntity); // update cached reminderlist on users side.
             mapUserMeasurementReminderEntity2TO(savedReminderEntity, pReminderTo);
             resultMsg = Message.info(UserSpecificMessageCodes.CREATE_SUCCEEDED);
         }
