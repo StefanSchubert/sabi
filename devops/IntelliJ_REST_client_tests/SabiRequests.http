@@ -73,3 +73,7 @@ Content-Type: application/json
   "language": "de"
 }
 
+### Get Measurement Reminder List
+GET http://{{sabi-host}}:{{sabi-port}}{{sabi-rootctx}}api/measurement/reminder/list
+Authorization: {{auth_token}}
+Accept: application/json
