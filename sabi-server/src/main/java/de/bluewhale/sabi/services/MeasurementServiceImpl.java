@@ -266,7 +266,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         List<MeasurementReminderTo> measurementReminderTos = new ArrayList<>();
 
         List<UnitTo> allMeasurementUnits = listAllMeasurementUnits();
-        UserEntity user = userRepository.getByUsername(pUserEmail);
+        UserEntity user = userRepository.getByEmail(pUserEmail);
         List<UserMeasurementReminderEntity> userMeasurementReminders = user.getUserMeasurementReminders();
 
         if (userMeasurementReminders != null) {
