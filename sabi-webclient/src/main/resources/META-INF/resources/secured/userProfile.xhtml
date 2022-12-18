@@ -121,7 +121,13 @@
 
                             </p:dataTable>
 
-                            <p:commandButton value="#{msg['common.save.b']}" action="#{userProfileView.save}" />
+                            <p:commandButton value="#{msg['common.save.b']}"
+                                             update=":reminderTable" ajax="true"
+                                             action="#{userProfileView.save}" />
+
+                            <p:messages id="msg2" for="profileupdate" showDetail="true" closable="true">
+                                <p:autoUpdate/>
+                            </p:messages>
 
                         </h:form>
                     </p:panel>

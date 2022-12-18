@@ -62,7 +62,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
 
     @Override
     public void addMeasurementReminder(MeasurementReminderTo measurementReminderTo, String pJWTBackendAuthtoken) throws BusinessException {
-        String addMeasurementReminderUri = sabiBackendUrl + Endpoint.MEASUREMENTS + "/reminder/";
+        String addMeasurementReminderUri = sabiBackendUrl + Endpoint.MEASUREMENTS + "/reminder";
 
         String requestJson;
         try {
@@ -157,7 +157,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
 
             List<MeasurementTo> usersMeasurements;
 
-            String listOfUsersMeasurements = sabiBackendUrl + "/api/measurement/list/" + maxResultCount;
+            String listOfUsersMeasurements = sabiBackendUrl + Endpoint.MEASUREMENTS +"/list/" + maxResultCount;
 
             ResponseEntity<String> responseEntity = getAPIResponseFor(listOfUsersMeasurements, pJWTBackendAuthtoken, HttpMethod.GET);
 
@@ -186,7 +186,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
             if (tankId == null || unitId == null) return Collections.emptyList();
 
             List<MeasurementTo> usersMeasurements;
-            String apiURL = String.format(sabiBackendUrl + "/api/measurement/tank/%s/unit/%s", tankId, unitId);
+            String apiURL = String.format(sabiBackendUrl + Endpoint.MEASUREMENTS +"/tank/%s/unit/%s", tankId, unitId);
             ResponseEntity<String> responseEntity = getAPIResponseFor(apiURL, pJWTBackendAuthtoken, HttpMethod.GET);
 
             try {
@@ -209,7 +209,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
         @Override
         public void save (MeasurementTo measurement, String pJWTBackendAuthtoken) throws BusinessException {
 
-            String saveMeasurmentURI = sabiBackendUrl + "/api/measurement/"; // PUT for update POST for create
+            String saveMeasurmentURI = sabiBackendUrl + Endpoint.MEASUREMENTS; // PUT for update POST for create
             String requestJson;
             try {
                 requestJson = objectMapper.writeValueAsString(measurement);
@@ -233,7 +233,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                     log.error("Couldn't reach backend {} to add a measurement reason was {}", saveMeasurmentURI, e.getLocalizedMessage());
                     throw BusinessException.with(CommonMessageCodes.NETWORK_PROBLEM);
                 } catch (Exception e) {
-                    log.error("Couln'd save measurment. Reason: {}", e);
+                    log.error("Couldn't save measurement. Reason: {}", e);
                     e.printStackTrace();
                     throw BusinessException.with(CommonMessageCodes.BACKEND_API_PROBLEM);
                 }

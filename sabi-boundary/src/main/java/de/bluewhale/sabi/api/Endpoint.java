@@ -23,6 +23,7 @@ public enum Endpoint {
     MEASUREMENTS("/api/measurement"),
     PLAGUE_STATS("/api/stats/plagues"),
     IOT_API("/api/aquarium_iot"),
+    TANKS("/api/tank"),
     UNITS("/api/units"),
     USER_PROFILE("/api/userprofile"),
     PLAGUE_CENTER_SERVICE("/api/plagues");

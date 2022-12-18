@@ -82,7 +82,7 @@ public class MeasurementController {
             @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token."),
             @ApiResponse(responseCode = "503", description = "Unknown Backend error. Service not available.")
     })
-    @RequestMapping(value = "/reminder/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity<MeasurementReminderTo> addMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
@@ -104,7 +104,7 @@ public class MeasurementController {
                 log.warn(msg);
                 responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.CONFLICT);
             } else {
-                msg = "Unknown error occured.";
+                msg = "Unknown error occurred.";
                 log.warn(msg);
                 responseEntity = new ResponseEntity<>(reminderTo, HttpStatus.SERVICE_UNAVAILABLE);
             }
@@ -119,7 +119,7 @@ public class MeasurementController {
             @ApiResponse(responseCode = "404", description = "Not Found - Reminder to update does not exists."),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token.")
     })
-    @RequestMapping(value = "/reminder/", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<MeasurementReminderTo> updateMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
@@ -158,7 +158,7 @@ public class MeasurementController {
             @ApiResponse(responseCode = "208", description = "Already deleted - A measurement reminder for this unit was not found for requesting user. Delete called doubled?"),
             @ApiResponse(responseCode = "401", description = "Unauthorized - Request did not contained a valid user token.")
     })
-    @RequestMapping(value = "/reminder/", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public ResponseEntity<MeasurementReminderTo> deleteMeasurementReminder(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
