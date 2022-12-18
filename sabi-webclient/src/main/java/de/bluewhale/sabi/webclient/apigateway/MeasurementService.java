@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
+import de.bluewhale.sabi.model.MeasurementReminderTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
@@ -37,6 +38,17 @@ public interface MeasurementService extends Serializable {
      * @throws BusinessException in case of backend auth failures.
      */
     @NotNull List<MeasurementTo> getMeasurementsTakenByUser(@NotNull String pJWTBackendAuthtoken, @NotNull Integer maxResultCount) throws BusinessException;
+
+    /**
+     * List Users Measurement Reminders he has set via his user profile settings.
+     * Concrete user will be derived by the calling context (JWT Token Auth)
+     *
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return List of MeasurementReminderTo that belong to current user. List may be empty but never NULL.
+     * @throws BusinessException in case of backend auth failures.
+     */
+    @NotNull List<MeasurementReminderTo> getMeasurementRemindersForUser(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
+
 
     /**
      * To avoid unnecessary Backend calls, the implementation is suggested to
@@ -101,4 +113,11 @@ public interface MeasurementService extends Serializable {
      */
     @Null ParameterTo getParameterFor(@NotNull Integer selectedUnitId, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
+    /**
+     * Push a new Measurement reminder to the backend.
+     * In case the measurementUnit is already on the list, do nothing (Idempotent)
+     * @param measurementReminderTo
+     * @param pJWTBackendAuthtoken
+     */
+    void addMeasurementReminder(MeasurementReminderTo measurementReminderTo, String pJWTBackendAuthtoken) throws BusinessException;
 }

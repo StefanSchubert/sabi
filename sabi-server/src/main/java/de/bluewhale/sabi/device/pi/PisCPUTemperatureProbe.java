@@ -67,8 +67,7 @@ public class PisCPUTemperatureProbe implements MeterBinder {
             reader.close();
 
         } catch (Exception e) {
-            log.warn("Could not access or parse GPU Temperature from result line: {}", line);
-            e.printStackTrace();
+            log.warn("Could not access or parse GPU Temperature from result line: {}. Running on a raspberryPi? Is /usr/bin/vcgencmd available?", line);
         }
         return tempValue;
     }

@@ -44,6 +44,11 @@ public class StatsMeter implements MeterBinder {
                 .baseUnit("Number")
                 .register(meterRegistry);
 
+        Gauge.builder("Tank_APIKey_Count", this, value -> readTankApiKeyCount())
+                .description("Number of tanks where the user has created an API Key for.")
+                .baseUnit("Number")
+                .register(meterRegistry);
+
         Gauge.builder("Overall_Measurement_Count", this, value -> readMeasurementCount())
                 .description("Number of recorded measurements.")
                 .baseUnit("Number")
@@ -69,6 +74,11 @@ public class StatsMeter implements MeterBinder {
     private double readTankCount() {
         String amountOfTanks = tankService.fetchAmountOfTanks();
         return Double.valueOf(amountOfTanks);
+    }
+
+    private long readTankApiKeyCount() {
+        String amountOfTanks = tankService.fetchAmountOfTanksWithAPIKeyUsage();
+        return Long.valueOf(amountOfTanks);
     }
 
     private double readParticipantCount() {

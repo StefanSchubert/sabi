@@ -74,7 +74,7 @@ public class FishServiceTest {
         fish.setAquariumId(aquariumToResultTo.getValue().getId());
         fish.setNickname("Green Latern");
 
-        // The user is required to check that he your she really posses the tank
+        // The user is required to check that he or she really possesses the tank
         final ResultTo<FishTo> fishResultTo = fishService.registerNewFish(fish,registeredUser);
 
         // Then

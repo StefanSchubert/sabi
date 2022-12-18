@@ -10,9 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <!-- Taking care to have all spring dependencies right. -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.3</version>
+        <version>3.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -41,36 +42,28 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.0.7</sabi.boundary.version>
+        <sabi.boundary.version>1.2.1</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <log4j2.version>2.19.0</log4j2.version>
-        <springdoc.version>1.6.11</springdoc.version>
-
-        <eclipselink.version>2.7.9</eclipselink.version>
-<!--                <eclipselink.version>3.1.0-M1</eclipselink.version>-->
-<!--                <eclipselink.version>4.0.0-M3</eclipselink.version>-->
-        <!--
-                Caution since 3.x we have some API changes - because Impl of PersistenceProvider seems
-                to have been extracted from the jar or migrated and won't be found
-                through current springboot 2.4.3 deps.
-        -->
+        <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
+        <!--        <eclipselink.version>2.7.9</eclipselink.version>-->
+        <eclipselink.version>4.0.0</eclipselink.version>
         <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
-<!--        <micrometer.prometheus.version>1.8.1</micrometer.prometheus.version>-->
-<!--        <micrometer.prometheus.version>2.0.0-M3</micrometer.prometheus.version>-->
         <spring.instrument.version>6.0.2</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.24</lombok.version>
-        <owasp.plugin.version>7.3.0</owasp.plugin.version>
-        <maven.versions.plugin.version>2.12.0</maven.versions.plugin.version>
-        <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
+        <owasp.plugin.version>7.4.1</owasp.plugin.version>
         <passay.version>1.6.2</passay.version>
-        <mariadb.java.client.version>3.0.8</mariadb.java.client.version>
+        <mariadb.java.client.version>3.1.0</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
         <archunit.version>0.23.1</archunit.version>
+        <auth0.jwt.version>4.2.1</auth0.jwt.version>
+        <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
+        <jetbrains.annotation.version>23.1.0</jetbrains.annotation.version>
     </properties>
 
     <dependencyManagement>
@@ -137,11 +130,27 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- THE NEXT THREE DEPS ARE ONLY FOR JWT HANDLING, THIS SHOULD BE SIMPLYFIED, AS SOON AS
+             SPRINGS OWN JWT IS COMPATIBLE WITH SPRIMG 6 -->
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>${jsonwebtoken.version}</version>
+            <!-- https://github.com/auth0/java-jwt -->
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${auth0.jwt.version}</version>
         </dependency>
+        <!-- API, java.xml.bind module -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta.xml.bind.version}</version>
+        </dependency>
+        <!-- Runtime, com.sun.xml.bind module -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${glassfish-jaxb.version}</version>
+        </dependency>
+
 
         <!-- Spring Framework Caching Support (using hazelcast as distributed IMDG) -->
         <dependency>
@@ -225,19 +234,9 @@
         <!-- REST API-Doc using Springdoc https://springdoc.org -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc.version}</version>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.openapiv2.version}</version>
         </dependency>
-
-<!--
-        May be helpful if you choose to work with @AuthenticationPrincipal on RestControllers instead
-        of defining Rules on WebSecurityConfig class.
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-security</artifactId>
-            <version>${springdoc.version}</version>
-        </dependency>
--->
 
         <!-- just to download the eclipse jpa weaver which will be referenced as javaagent -->
         <dependency>
@@ -251,7 +250,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <!-- This is the replacement database which will
@@ -297,6 +295,12 @@
             <artifactId>archunit</artifactId>
             <version>${archunit.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${jetbrains.annotation.version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -390,13 +394,12 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-<!--                            <goal>display-dependency-updates</goal>-->
-<!--                            <goal>display-plugin-updates</goal>-->
+                            <!--                            <goal>display-dependency-updates</goal>-->
+                            <!--                            <goal>display-plugin-updates</goal>-->
                             <goal>display-property-updates</goal>
                         </goals>
                     </execution>

@@ -8,10 +8,10 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -85,6 +85,14 @@ public interface TankService {
      * @return Number of Tanks.
      */
     String fetchAmountOfTanks();
+
+    /**
+     * Used to display some project stats.
+     * Is the API-Key Feature used at all? How many are using it?
+     *
+     * @return Number of Tanks.
+     */
+    String fetchAmountOfTanksWithAPIKeyUsage();
 
     /**
      * Used to determine the Tank for incoming request of IoT devices to submit temperature values, to users tank

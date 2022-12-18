@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -10,6 +10,7 @@ import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,7 @@ import java.util.Collections;
  */
 @Service
 @Configurable
-public class SabiDoorKeeper implements AuthenticationProvider {
+public class SabiDoorKeeper implements AuthenticationProvider , AuthenticationManager {
 
     @Autowired
     UserService userService;
