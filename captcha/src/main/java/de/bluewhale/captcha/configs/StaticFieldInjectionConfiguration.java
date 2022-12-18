@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,11 +7,10 @@ package de.bluewhale.captcha.configs;
 
 import de.bluewhale.captcha.service.ChallengeRequestThrottle;
 import de.bluewhale.captcha.service.ValidationCache;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Little trick that enables us to inject properties into static util classes through

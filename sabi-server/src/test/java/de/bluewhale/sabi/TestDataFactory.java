@@ -75,9 +75,21 @@ public class TestDataFactory {
         return userToResultTo.getValue();
     }
 
-    public UserProfileTo getUserProfileTo() {
+    public UserProfileTo getBasicUserProfileTo() {
         return new UserProfileTo(Locale.ENGLISH.getLanguage(), Locale.UK.getCountry());
     }
+
+    public UserProfileTo getUserProfileToWithMeasurementReminderFor(UserTo userTo) {
+        UserProfileTo userProfileTo = getBasicUserProfileTo();
+        MeasurementReminderTo reminderTo = new MeasurementReminderTo();
+        reminderTo.setUserId(userTo.getId().intValue());
+        reminderTo.setPastDays(12);
+        reminderTo.setUnitId(1);
+        userProfileTo.getMeasurementReminderTos().add(reminderTo);
+
+        return userProfileTo;
+    }
+
 
     /**
      * Links preexisting testdata for aquarium (user) and unit.

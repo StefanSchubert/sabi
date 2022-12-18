@@ -1,9 +1,3 @@
-
-/*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
- * See project LICENSE file for the detailed terms and conditions.
- */
-
 -- Basic Data:
 INSERT INTO plague (id, scientific_name, created_on, lastmod_on)
 VALUES (5, 'Zygnema stellinum', '2022-06-05 22:00:00', '2022-06-05 22:00:00');

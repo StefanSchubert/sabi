@@ -6,9 +6,9 @@
 package de.bluewhale.sabi.persistence.repositories;
 
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -42,4 +42,9 @@ public interface AquariumRepository extends JpaRepository<AquariumEntity, Long> 
      * @return null if we found no match, or the tank belonging to the api key.
      */
      AquariumEntity getAquariumEntityByTemperatureApiKeyEquals(String apiKey);
+
+    /**
+     * @return Amount of tanks for which the User has activated the API Key Feature.
+     */
+    Long countAquariumEntitiesByTemperatureApiKeyNotNull();
 }

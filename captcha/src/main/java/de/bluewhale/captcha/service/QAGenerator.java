@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -256,7 +256,7 @@ public class QAGenerator {
 
 // -------------------------- INNER CLASSES --------------------------
 
-    static private class ChallengeData {
+    private static class ChallengeData {
         protected Map<Locale, String> questionMap;
         protected Map<String, Boolean> answerMap; // the one marked with true is the right answer.
 

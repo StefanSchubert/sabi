@@ -8,11 +8,13 @@ package de.bluewhale.sabi.persistence.repositories;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * SpringDataRepository
@@ -52,9 +54,9 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
      * @param pUserId
      * @return null if the measurement does not belong to the user, or does not exists.
      */
-    MeasurementEntity getByIdAndUser_Id(@NotNull Long pPersistedMeasurementId, @NotNull Long pUserId);
+    @Nullable MeasurementEntity getByIdAndUser_Id(@NotNull Long pPersistedMeasurementId, @NotNull Long pUserId);
 
-    MeasurementEntity getByIdAndUser(@NotNull Long pPersistedMeasurementId, @NotNull UserEntity user);
+    @Nullable MeasurementEntity getByIdAndUser(@NotNull Long pPersistedMeasurementId, @NotNull UserEntity user);
 
     /**
      * Retrieves all measurements for a specific tank.
@@ -77,12 +79,20 @@ public interface MeasurementRepository extends JpaRepository<MeasurementEntity, 
     @NotNull List<MeasurementEntity> findByAquariumAndUnitIdOrderByMeasuredOnAsc(@NotNull AquariumEntity aquariumEntity, @NotNull Integer unitID);
 
     /**
+     * Retrieves last recent measurement of a specific measurement unit for given user
+     * @param unitID identifies your unit.
+     * @param userEntity search will be limited to
+     * @return measurementReminder.
+     */
+    Optional<MeasurementEntity> findTopByUserAndUnitIdOrderByMeasuredOnDesc(@NotNull UserEntity userEntity, @NotNull Integer unitID);
+
+    /**
      * Retrieves the latest measurement of provided unit for given tank.
      * @param aquariumId identifies your aquarium.
      * @param unitID identifies the requested unit.
      * @return latest Measurement or null if no such one exists.
      */
-    MeasurementEntity findTopByAquarium_IdAndUnitIdOrderByMeasuredOnDesc(@NotNull Long aquariumId, @NotNull Integer unitID);
+    @Nullable MeasurementEntity findTopByAquarium_IdAndUnitIdOrderByMeasuredOnDesc(@NotNull Long aquariumId, @NotNull Integer unitID);
 
     /**
      * Used to count measurements which does not belong to the test user (if you pass the right user ;-) )

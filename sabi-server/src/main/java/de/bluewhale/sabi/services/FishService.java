@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,9 +9,8 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.FishTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Provides all required controller for use cases around the {@link de.bluewhale.sabi.persistence.model.FishEntity}

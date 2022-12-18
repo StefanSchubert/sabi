@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -30,7 +30,24 @@
             <ui:remove>
                 <!--  This is a little hack as using the viewAction from Metadata doesn't seem to work. -->
             </ui:remove>
-            <p:outputPanel>projectStats....comming soon</p:outputPanel>
+            <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
+
+                <p:outputLabel value="#{msg['userportal.projectstate.l']}"/>
+                <p:outputLabel value="#{msg['userportal.currentprojectstate.l']}"/>
+
+                <p:outputLabel value="#{msg['projectstats.usercount.l']}"/>
+                <p:outputLabel value="#{applicationInfo.numberOfParticipants}"/>
+
+                <p:outputLabel value="#{msg['projectstats.tankcount.l']}"/>
+                <p:outputLabel value="#{applicationInfo.numberOfTanks}"/>
+
+                <p:outputLabel value="#{msg['projectstats.measurementcount.l']}"/>
+                <p:outputLabel value="#{applicationInfo.numberOfMeasurements}"/>
+
+                <p:outputLabel value="#{msg['projectstats.plagueObservationRecordCount.l']}"/>
+                <p:outputLabel value="#{applicationInfo.numberOfPlagueObeservationRecords}"/>
+
+            </p:panelGrid>
         </ui:define>
 
     </ui:composition>

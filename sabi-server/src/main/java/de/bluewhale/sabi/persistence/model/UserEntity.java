@@ -5,10 +5,10 @@
 
 package de.bluewhale.sabi.persistence.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +46,9 @@ public class UserEntity extends Auditable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<TreatmentEntity> treatments = new ArrayList<TreatmentEntity>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserMeasurementReminderEntity> userMeasurementReminders = new ArrayList<UserMeasurementReminderEntity>();
 
     @Basic
     @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)

@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.rest.exceptions.TankMessageCodes;
@@ -105,8 +106,8 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
     @Override
     public void save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException {
 
-        String updateTankURI = sabiBackendUrl + "/api/tank/"; // PUT here
-        String createTankURI = sabiBackendUrl + "/api/tank/create"; // POST here
+        String updateTankURI = sabiBackendUrl + Endpoint.TANKS; // PUT here
+        String createTankURI = sabiBackendUrl + Endpoint.TANKS + "/create"; // POST here
         String requestJson;
         try {
             requestJson = objectMapper.writeValueAsString(tank);

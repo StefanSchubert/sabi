@@ -20,11 +20,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
-        <flyway.version>9.4.0</flyway.version>
-        <mariadb.client.version>3.0.8</mariadb.client.version>
+        <flyway.version>9.10.1</flyway.version>
+        <mariadb.client.version>3.1.0</mariadb.client.version>
         <maven.compile.plugin.version>3.10.1</maven.compile.plugin.version>
-        <maven.versions.plugin.version>2.12.0</maven.versions.plugin.version>
-        <owasp.plugin.version>7.2.1</owasp.plugin.version>
+        <owasp.plugin.version>7.4.1</owasp.plugin.version>
         <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
         checkin those secrets for stage and production
         <mariadb.schema>sabi</mariadb.schema>
@@ -128,7 +127,6 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>${maven.versions.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
