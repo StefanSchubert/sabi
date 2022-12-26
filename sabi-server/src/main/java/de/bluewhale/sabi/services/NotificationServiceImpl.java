@@ -42,6 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
         String text = bundle.getString("email.verify.token.request.txt");
 
         String verifyLink = mailValidationURL + "email/" + createdUser.getEmail() + "/validation/" + createdUser.getValidationToken();
+        verifyLink = verifyLink.trim();
 
         // use the true flag to indicate you need a multipart message
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -52,8 +53,8 @@ public class NotificationServiceImpl implements NotificationService {
         helper.setText(String.format(usersLocale, "<html><body>" +
                 "<h1>%s</h1>" +
                 "<p>%s</p>" +
-                "%s <br/ >" +
-                "</body></html>",headline,text,verifyLink), true);
+                "<a href=\"%s\">%s</a> <br/ >" +
+                "</body></html>",headline,text,verifyLink,verifyLink), true);
 
         mailer.send(message);
     }

@@ -2,7 +2,9 @@
 'Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 'SPDX-License-Identifier: MIT (For details, see https://github.com/awslabs/aws-icons-for-plantuml/blob/master/LICENSE)
 
-!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/dist
+' !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/dist
+' I'm using a local clone for better performance
+!define AWSPuml /Users/schubert/dev/aws-icons-for-plantuml.git/dist
 !include AWSPuml/AWSCommon.puml
 !include AWSPuml/AWSSimplified.puml
 !include AWSPuml/Compute/EC2.puml
@@ -23,14 +25,17 @@
 hide stereotype
 skinparam linetype ortho
 
+
 AWSCloudGroup(cloud) {
 
   RegionGroup(rg) {
-    ElasticLoadBalancing(lb, "LoadBalancing", "")
+
     DynamoDB(dynamodb, "CaptchaCache", "")
     Lambda(captcha_lamda, "Captcha\nREST Service", "")
 
       VPCGroup(vpc) {
+
+        ElasticLoadBalancing(lb, "LoadBalancing", "")
 
         VPCInternetGateway(internet_gateway, "Internet gateway", "")
 
@@ -67,6 +72,7 @@ AWSCloudGroup(cloud) {
             Aurora(az_2_db_sabi, "SabiDB\nReplica", "") #Transparent
           }
 
+
           internet_gateway .> az_2_public
           lb .> az_2_public
           az_2_ec2_fe .> az_2_nat_gateway
@@ -75,13 +81,13 @@ AWSCloudGroup(cloud) {
           az_2_ec2_be .> captcha_lamda
           az_1_db_sabi .d.> az_2_db_sabi
 
-        az_1_public .[hidden]r.> az_2_public
-        az_1_public .[hidden]d.> az_1_private
-        az_2_public .[hidden]d.> az_2_private
-        az_1_private .[hidden]d.> rg
-        az_2_nat_gateway .[hidden]u.> internet_gateway
-        az_1_nat_gateway .[hidden]u.> internet_gateway
-      }
+            az_1_public .[hidden]r.> az_2_public
+            az_1_public .[hidden]d.> az_1_private
+            az_2_public .[hidden]d.> az_2_private
+            az_1_private .[hidden]d.> rg
+            az_2_nat_gateway .[hidden]u.> internet_gateway
+            az_1_nat_gateway .[hidden]u.> internet_gateway
+        }
   }
 }
 @enduml
