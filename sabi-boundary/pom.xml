@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -42,7 +42,7 @@
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
         <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
-        <owasp.plugin.version>7.4.1</owasp.plugin.version>
+        <owasp.plugin.version>7.4.3</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
         <maven.site.plugin.version>4.0.0-M4</maven.site.plugin.version>

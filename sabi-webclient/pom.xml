@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -48,7 +48,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <!-- requires java 17 - now available on raspberry pi -->
-        <version>3.0.1</version>
+        <version>3.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -58,11 +58,11 @@
         <java.version>17</java.version>
         <log4j2.version>2.19.0</log4j2.version>
         <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
-        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.10.3</micrometer.prometheus.version>
         <joinfaces.version>5.0.0</joinfaces.version>
         <sabi.boundary.version>1.2.1</sabi.boundary.version>
         <passay.version>1.6.2</passay.version>
-        <owasp.plugin.version>7.4.1</owasp.plugin.version>
+        <owasp.plugin.version>7.4.3</owasp.plugin.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>
 

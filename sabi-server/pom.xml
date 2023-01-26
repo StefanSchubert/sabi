@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -13,7 +13,7 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.1</version>
+        <version>3.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -50,20 +50,20 @@
         <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
         <!--        <eclipselink.version>2.7.9</eclipselink.version>-->
         <eclipselink.version>4.0.0</eclipselink.version>
-        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.10.3</micrometer.prometheus.version>
         <spring.instrument.version>6.0.2</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.24</lombok.version>
-        <owasp.plugin.version>7.4.1</owasp.plugin.version>
+        <owasp.plugin.version>7.4.3</owasp.plugin.version>
         <passay.version>1.6.2</passay.version>
-        <mariadb.java.client.version>3.1.0</mariadb.java.client.version>
+        <mariadb.java.client.version>3.1.2</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
         <archunit.version>0.23.1</archunit.version>
-        <auth0.jwt.version>4.2.1</auth0.jwt.version>
+        <auth0.jwt.version>4.2.2</auth0.jwt.version>
         <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
-        <jetbrains.annotation.version>23.1.0</jetbrains.annotation.version>
+        <jetbrains.annotation.version>24.0.0</jetbrains.annotation.version>
     </properties>
 
     <dependencyManagement>
