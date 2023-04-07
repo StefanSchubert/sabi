@@ -41,7 +41,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <springdoc.openapiv2.version>2.0.3</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>2.1.0</springdoc.openapiv2.version>
         <owasp.plugin.version>7.4.3</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
