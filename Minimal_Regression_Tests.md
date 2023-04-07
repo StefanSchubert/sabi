@@ -14,6 +14,6 @@ on existing functionality.
 ## Business Services
 
 - Add Tank
-- Add Mesurement
+- Add Measurement
 - Show Report
 - Export CSV

@@ -42,10 +42,10 @@
 
     <properties>
         <java.version>17</java.version>
-        <log4j2.version>2.19.0</log4j2.version>
+        <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>2.0.3</springdoc.openapiv2.version>
         <micrometer.prometheus.version>1.10.3</micrometer.prometheus.version>
         <junit.version>4.13.2</junit.version>
         <owasp.plugin.version>7.4.3</owasp.plugin.version>
