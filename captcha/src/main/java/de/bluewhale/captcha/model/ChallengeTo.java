@@ -39,7 +39,7 @@ public class ChallengeTo {
         this.answers = pAnswers;
     }
 
-    @Schema(description =  "Served language. If the requested on is not avialable, you will retrieve english as default.")
+    @Schema(description =  "Served language. If the requested on is not available, you will retrieve english as default.")
     public String getLanguage() {
         return this.language;
     }
@@ -48,7 +48,7 @@ public class ChallengeTo {
         this.language = pLanguage;
     }
 
-    @Schema(description =  "Question which is supposed to sort out robotes.", required = true)
+    @Schema(description =  "Question which is supposed to sort out robots.", required = true)
     public String getQuestion() {
         return this.question;
     }

@@ -116,8 +116,8 @@ public class QAGenerator {
         challenge9.answerMap.put("XXXXX", FALSE);
 
         ChallengeData challenge10 = new ChallengeData();
-        challenge10.questionMap.put(Locale.GERMAN, "Was wird immer besser ereichbar?");
-        challenge10.questionMap.put(Locale.ENGLISH, "Which one get's more and more reachable?");
+        challenge10.questionMap.put(Locale.GERMAN, "Was wird immer besser erreichbar?");
+        challenge10.questionMap.put(Locale.ENGLISH, "Which one gets more and more reachable?");
         challenge10.answerMap.put("Jupiter", FALSE);
         challenge10.answerMap.put("Mars", TRUE);
         challenge10.answerMap.put("Venus", FALSE);
@@ -132,7 +132,7 @@ public class QAGenerator {
         challenge11.answerMap.put("20x20x20 Box", FALSE);
 
         ChallengeData challenge12 = new ChallengeData();
-        challenge12.questionMap.put(Locale.GERMAN, "Welcher Ball rollt am ehsten durch ein Mäuseloch?");
+        challenge12.questionMap.put(Locale.GERMAN, "Welcher Ball rollt am ehesten durch ein Mäuseloch?");
         challenge12.questionMap.put(Locale.ENGLISH, "Which ball is likely to be rolling through a mouse hole?");
         challenge12.answerMap.put("5cm Ball", TRUE);
         challenge12.answerMap.put("10cm Ball", FALSE);
@@ -151,7 +151,7 @@ public class QAGenerator {
         challenge14.questionMap.put(Locale.GERMAN, "Welches davon kippen manche in ihr Riff-Aquarium?");
         challenge14.questionMap.put(Locale.ENGLISH, "Which one of these will be added by some of us to the reef-tank?");
         challenge14.answerMap.put("Blue Curaçao", FALSE);
-        challenge14.answerMap.put("Wodka", TRUE);
+        challenge14.answerMap.put("Vodka", TRUE);
         challenge14.answerMap.put("Campari", FALSE);
         challenge14.answerMap.put("Ginger Ale", FALSE);
 
@@ -179,6 +179,30 @@ public class QAGenerator {
         challenge17.answerMap.put("22", FALSE);
         challenge17.answerMap.put("5", TRUE);
 
+        ChallengeData challenge18 = new ChallengeData();
+        challenge18.questionMap.put(Locale.GERMAN, "Was geschieht mit Korallen bei einer durchschnittlichen Wassertemperatur vom 30°C");
+        challenge18.questionMap.put(Locale.ENGLISH, "What happens to corals if the average water temperature is around 86°F?");
+        challenge18.answerMap.put("☠️", TRUE);
+        challenge18.answerMap.put("🦐", FALSE);
+        challenge18.answerMap.put("🐡", FALSE);
+        challenge18.answerMap.put("🧜🏽‍", FALSE);
+
+        ChallengeData challenge19 = new ChallengeData();
+        challenge19.questionMap.put(Locale.GERMAN, "Was geschieht wahrscheinlich mit den nützlichen Bakterien in deinem Riff, wenn der KH-Wert sinkt?");
+        challenge19.questionMap.put(Locale.ENGLISH, "What is likely to happen to the useful bacteria in your reef if the carbonate level decreases?");
+        challenge19.answerMap.put("🦐", FALSE);
+        challenge19.answerMap.put("🐡", FALSE);
+        challenge19.answerMap.put("🧜🏽‍", FALSE);        
+        challenge19.answerMap.put("☠️", TRUE);
+
+        ChallengeData challenge20 = new ChallengeData();
+        challenge20.questionMap.put(Locale.GERMAN, "Wer von den gezeigten hat die Chance älter als die anderen zu werden?");
+        challenge20.questionMap.put(Locale.ENGLISH, "Who among those shown has the chance to become older than the others?");
+        challenge20.answerMap.put("🐬", FALSE);
+        challenge20.answerMap.put("🐒", FALSE);
+        challenge20.answerMap.put("🐢", TRUE);
+        challenge20.answerMap.put("🦉", FALSE);
+
         dataSet.add(challenge1);
         dataSet.add(challenge2);
         dataSet.add(challenge3);
@@ -196,6 +220,9 @@ public class QAGenerator {
         dataSet.add(challenge15);
         dataSet.add(challenge16);
         dataSet.add(challenge17);
+        dataSet.add(challenge18);
+        dataSet.add(challenge19);
+        dataSet.add(challenge20);
     }
 
 // -------------------------- OTHER METHODS --------------------------
