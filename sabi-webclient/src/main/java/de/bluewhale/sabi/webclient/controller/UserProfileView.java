@@ -24,6 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -132,4 +133,16 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         this.selectedUnitId = selectedUnitId;
     }
 
+    /**
+     * Used to color the font output if the measuredate is overdue.
+     * @param pLocalDateTime
+     * @return false if next measure date is in the future, else true.
+     */
+    public Boolean isOverdueMeasureDate(LocalDateTime pLocalDateTime) {
+        if (pLocalDateTime == null) {
+            return false;
+        } else {
+            return (pLocalDateTime.toLocalDate().isBefore(LocalDateTime.now().toLocalDate()) ? true : false);
+        }
+    }
 }

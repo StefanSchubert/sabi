@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -48,7 +48,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <!-- requires java 17 - now available on raspberry pi -->
-        <version>3.0.0</version>
+        <version>3.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -56,14 +56,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <log4j2.version>2.19.0</log4j2.version>
+        <log4j2.version>2.20.0</log4j2.version>
         <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
-        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.11.0-M2</micrometer.prometheus.version>
         <joinfaces.version>5.0.0</joinfaces.version>
-        <sabi.boundary.version>1.2.1</sabi.boundary.version>
-        <passay.version>1.6.2</passay.version>
-        <owasp.plugin.version>7.4.1</owasp.plugin.version>
-        <lombok.version>1.18.24</lombok.version>
+        <sabi.boundary.version>1.2.2</sabi.boundary.version>
+        <passay.version>1.6.3</passay.version>
+        <owasp.plugin.version>7.4.3</owasp.plugin.version>
+        <lombok.version>1.18.26</lombok.version>
     </properties>
 
     <dependencyManagement>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -11,7 +11,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -42,13 +42,13 @@
 
     <properties>
         <java.version>17</java.version>
-        <log4j2.version>2.19.0</log4j2.version>
+        <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
+        <springdoc.openapiv2.version>2.0.3</springdoc.openapiv2.version>
+        <micrometer.prometheus.version>1.10.3</micrometer.prometheus.version>
         <junit.version>4.13.2</junit.version>
-        <owasp.plugin.version>7.4.1</owasp.plugin.version>
+        <owasp.plugin.version>7.4.3</owasp.plugin.version>
     </properties>
 
     <dependencies>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.webclient.CDIBeans.ApplicationInfo;
@@ -97,7 +98,7 @@ public class RegistrationView implements Serializable {
 
     public String doRegister() {
 
-        String registerURI = sabiBackendUrl + "/api/auth/register";
+        String registerURI = sabiBackendUrl + Endpoint.REGISTER;
 
         // Preliminary checks before sending requests to the backend.
         String userAnswer = model.getCaptchaCode();
@@ -111,7 +112,7 @@ public class RegistrationView implements Serializable {
             return REGISTER_PAGE;
         }
 
-        // For registration we take the language settings from guessed environment
+        // For registration, we take the language settings from guessed environment
         model.setLanguage(userSession.getLanguage());
         model.setCountry(userSession.getLocale().getCountry());
 
@@ -122,7 +123,7 @@ public class RegistrationView implements Serializable {
         try {
             requestJson = objectMapper.writeValueAsString(model);
         } catch (JsonProcessingException e) {
-            log.error("Coudn't convert form data into JSON reprasentation. {}", e);
+            log.error("Couldn't convert form data into JSON representation. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
             return REGISTER_PAGE;

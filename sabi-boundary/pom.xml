@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -36,13 +36,13 @@
 
     <properties>
         <java.version>17</java.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.26</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <springdoc.openapiv2.version>2.0.2</springdoc.openapiv2.version>
-        <owasp.plugin.version>7.4.1</owasp.plugin.version>
+        <springdoc.openapiv2.version>2.1.0</springdoc.openapiv2.version>
+        <owasp.plugin.version>7.4.3</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
         <maven.site.plugin.version>4.0.0-M4</maven.site.plugin.version>

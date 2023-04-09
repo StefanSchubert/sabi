@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -11,8 +11,8 @@
       xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
     <f:loadBundle basename="i18n.messages" var="msg"/>
-    <f:view locale="#{userSession.locale}" contentType="text/html" encoding="utf-8"/>
 </f:metadata>
 
 <h:head>

@@ -4,3 +4,6 @@ Content-Type: application/json
 
 ###
 
+GET http://{{captcha-host}}:{{captcha-port}}/captcha/api/check/#ejFm
+Accept: */*
+Content-Type: application/json

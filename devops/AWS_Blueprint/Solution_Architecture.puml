@@ -2,7 +2,9 @@
 'Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 'SPDX-License-Identifier: MIT (For details, see https://github.com/awslabs/aws-icons-for-plantuml/blob/master/LICENSE)
 
-!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/dist
+' !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/dist
+' I'm using a local clone for better performance
+!define AWSPuml /Users/schubert/dev/aws-icons-for-plantuml.git/dist
 !include AWSPuml/AWSCommon.puml
 !include AWSPuml/AWSSimplified.puml
 !include AWSPuml/Compute/EC2.puml
@@ -16,25 +18,29 @@
 !include AWSPuml/Groups/PublicSubnet.puml
 !include AWSPuml/Groups/PrivateSubnet.puml
 !include AWSPuml/Groups/Region.puml
-!include AWSPuml/NetworkingContentDelivery/ElasticLoadBalancing.puml
+!include AWSPuml/NetworkingContentDelivery/ElasticLoadBalancingApplicationLoadBalancer.puml
 !include AWSPuml/NetworkingContentDelivery/VPCNATGateway.puml
 !include AWSPuml/NetworkingContentDelivery/VPCInternetGateway.puml
 
 hide stereotype
 skinparam linetype ortho
 
+
 AWSCloudGroup(cloud) {
 
   RegionGroup(rg) {
-    ElasticLoadBalancing(lb, "LoadBalancing", "")
+
     DynamoDB(dynamodb, "CaptchaCache", "")
     Lambda(captcha_lamda, "Captcha\nREST Service", "")
 
       VPCGroup(vpc) {
 
+        ElasticLoadBalancingApplicationLoadBalancer(fe_lb, "FE-ALB", "")
+        ElasticLoadBalancingApplicationLoadBalancer(be_lb, "BE-ALB", "")
+
         VPCInternetGateway(internet_gateway, "Internet gateway", "")
 
-        lb .> captcha_lamda
+        ' fe_lb .> captcha_lamda
         captcha_lamda .d.> dynamodb
 
         AvailabilityZoneGroup(az_1, "\tAvailability Zone 1\t") {
@@ -48,13 +54,15 @@ AWSCloudGroup(cloud) {
           }
 
 
-          internet_gateway .>az_1_public
-          internet_gateway .>lb
-          lb .>az_1_public
-          az_1_ec2_fe .> az_1_nat_gateway
-          az_1_ec2_fe .> az_1_ec2_be
+          internet_gateway .[hidden].> az_1_public
+          internet_gateway .d.> fe_lb
+          fe_lb .l.> az_1_ec2_fe
+          az_1_ec2_fe .u.> az_1_nat_gateway
+          ' az_1_ec2_fe .> az_1_ec2_be
           az_1_ec2_be .> captcha_lamda
           az_1_ec2_be .> az_1_db_sabi
+          az_1_public .> be_lb
+          be_lb .> az_1_ec2_be
         }
 
         AvailabilityZoneGroup(az_2, "\tAvailability Zone 2\t") {
@@ -67,21 +75,24 @@ AWSCloudGroup(cloud) {
             Aurora(az_2_db_sabi, "SabiDB\nReplica", "") #Transparent
           }
 
-          internet_gateway .> az_2_public
-          lb .> az_2_public
-          az_2_ec2_fe .> az_2_nat_gateway
-          az_2_ec2_fe .> az_2_ec2_be
+
+          internet_gateway .[hidden].> az_2_public
+          fe_lb .r.> az_2_ec2_fe
+          az_2_ec2_fe ..> az_2_nat_gateway
+          ' az_2_ec2_fe .> az_2_ec2_be
           az_2_ec2_be .> az_1_db_sabi
           az_2_ec2_be .> captcha_lamda
           az_1_db_sabi .d.> az_2_db_sabi
+          az_2_public .> be_lb
+          be_lb .> az_2_ec2_be
 
-        az_1_public .[hidden]r.> az_2_public
-        az_1_public .[hidden]d.> az_1_private
-        az_2_public .[hidden]d.> az_2_private
-        az_1_private .[hidden]d.> rg
-        az_2_nat_gateway .[hidden]u.> internet_gateway
-        az_1_nat_gateway .[hidden]u.> internet_gateway
-      }
+            az_1_public .[hidden]r.> az_2_public
+            az_1_public .[hidden]d.> az_1_private
+            az_2_public .[hidden]d.> az_2_private
+            az_1_private .[hidden]d.> rg
+            az_2_nat_gateway .[hidden]u.> internet_gateway
+            az_1_nat_gateway .[hidden]u.> internet_gateway
+        }
   }
 }
 @enduml
