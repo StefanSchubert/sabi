@@ -203,6 +203,14 @@ public class QAGenerator {
         challenge20.answerMap.put("🐢", TRUE);
         challenge20.answerMap.put("🦉", FALSE);
 
+        ChallengeData challenge21 = new ChallengeData();
+        challenge21.questionMap.put(Locale.GERMAN, "Emotie Rätsel: Welche Kombination repräsentiert den Song Titel 'Walking this way'?");
+        challenge21.questionMap.put(Locale.ENGLISH, "Emotie quiz: Which combination represents the song 'Walking this way'?");
+        challenge21.answerMap.put("🪢👀", FALSE);
+        challenge21.answerMap.put("🚶‍➡️", TRUE);
+        challenge21.answerMap.put("🏄‍💨", FALSE);
+        challenge21.answerMap.put("🐋🌎", FALSE);
+
         dataSet.add(challenge1);
         dataSet.add(challenge2);
         dataSet.add(challenge3);
@@ -223,6 +231,7 @@ public class QAGenerator {
         dataSet.add(challenge18);
         dataSet.add(challenge19);
         dataSet.add(challenge20);
+        dataSet.add(challenge21);
     }
 
 // -------------------------- OTHER METHODS --------------------------
