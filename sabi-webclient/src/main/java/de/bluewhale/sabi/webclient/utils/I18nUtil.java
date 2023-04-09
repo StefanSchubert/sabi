@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.utils;
 import de.bluewhale.sabi.model.SupportedLocales;
 import jakarta.inject.Named;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -19,6 +20,7 @@ import java.util.Locale;
  * @author Stefan Schubert
  */
 @Named
+@Slf4j
 public class I18nUtil {
 
     /**
@@ -33,6 +35,7 @@ public class I18nUtil {
         boolean fallBack = true;
         for (SupportedLocales sabiLocale : SupportedLocales.values()) {
             if (sabiLocale.getLocale().getLanguage().equals(requestedLocale.getLanguage())) {
+                log.debug("Requested language {} matches supported languages by sabi",language);
                 fallBack = false;
                 break;
             }

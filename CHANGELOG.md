@@ -1,5 +1,12 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.1
+### Bugfixes
+* i18n Language detection
+
+### Technical Maintenance
+* Patch-Management
+
 ## Release 1.2.0
 
 ### New Features
