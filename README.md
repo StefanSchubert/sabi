@@ -6,6 +6,10 @@ This is a semi-scientific (or open-science) project that aims to gain insights
 [![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
 [![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
 
+### Notice on the red code analytic status: 
+* Code-QL due to everlasting timeouts by github to downloading CVEs databases.
+* Maven build: Due to currently including milestone releases of micrometer.
+
 ## Latest project news:
 | Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
