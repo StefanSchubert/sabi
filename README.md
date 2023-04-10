@@ -1,21 +1,7 @@
 # Welcome to Open Science at the SABI-Project - Seawater Aquarium Business Intelligence
 
-This is a semi-scientific (or open-science) project that aims to gain insights
- from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
-
-[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
-[![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
-
-## Latest project news:
-| Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 09th Apr 2023 | Hotfix Release (i18n issues)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 18th Dez 2022 | Feature Release (Reminder Service) / Technical Migration to Spring-Boot 3  / Marks Sabi-Version 1.2.0                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 7th Okt 2022  | Released Plague-Center. All required base workflows have been implemented. This marks version 1.0.0 of sabi.                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| 22nd Jul 2022 | Article about SABI has been published in the journal "KORALLE", Issue Nr. 136. 😊 Available on start of August. Many Thanks goes to Daniel Knop!                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 26th Feb 2022 | Offical Softlaunch Day of the project. Starting with a twitter announcement. Going to spread the word in selected forums in the next days, hoping to get some Beta-Testers, Fellow-Coders and to collect valuable feedback.                                                                                                                                                                                                                                                                                                                                 |
-| 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning.                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 16th Mai 2021 | **Sneak Preview** available on https://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
+This is a semi-scientific (or open-science) project that aims to gain insights from aquarium hobbyist for aquarium
+hobbyist according seawater ecosystems.
 
 ## Vision I
 
@@ -51,6 +37,14 @@ The AI challenge here is, that if the human provided data on a given problem con
  that advices were not successful the AI must revise the original training set and do some
   recalibration by its own.
 
+## Climate-Friendly (#greenwashing?)
+I declare the Sabi Project climate-friendly because of:
+* You as a user, who is **not** demanding, that the Sabi Service is up and running 24/7 with
+ 99% availability, accepting minor service outages, thus enabling the low-energy platform for the project.
+* The decision to use raspberry pis as operation platform, which have a very low energy profile  (Have a look at my pis here: https://github.com/StefanSchubert/sabi/wiki/07.-Deployment-View )
+  The alternative would be running in a public cloud, which would allow 99% availability but surly a much bigger CO2 footprint (as well as bigger costs).
+* The private cloud at my homesite is powered by a green electricity tariff of my power supply provider.
+  I in future I will generate my own electricity through solarcells on the roof.
 
 ## Project Planning
 
@@ -74,7 +68,25 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 
 Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/milestones?direction=asc&sort=due_date&state=open) from the Issue Board
 
+## Latest project news
+| Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 09th Apr 2023 | Hotfix Release (i18n issues)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 18th Dez 2022 | Feature Release (Reminder Service) / Technical Migration to Spring-Boot 3  / Marks Sabi-Version 1.2.0                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 7th Okt 2022  | Released Plague-Center. All required base workflows have been implemented. This marks version 1.0.0 of sabi.                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 22nd Jul 2022 | Article about SABI has been published in the journal "KORALLE", Issue Nr. 136. 😊 Available on start of August. Many Thanks goes to Daniel Knop!                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 26th Feb 2022 | Offical Softlaunch Day of the project. Starting with a twitter announcement. Going to spread the word in selected forums in the next days, hoping to get some Beta-Testers, Fellow-Coders and to collect valuable feedback.                                                                                                                                                                                                                                                                                                                                 |
+| 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning.                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 16th Mai 2021 | **Sneak Preview** available on https://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
+
 ## Technology Stack
+
+[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
+[![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
+
+#### Notice on the red code analytic status:
+* Code-QL due to everlasting timeouts by github to downloading CVEs databases.
+* Maven build: Due to currently including milestone releases of micrometer.
 
 ### Common
 
