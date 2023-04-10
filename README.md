@@ -1,14 +1,7 @@
 # Welcome to Open Science at the SABI-Project - Seawater Aquarium Business Intelligence
 
-This is a semi-scientific (or open-science) project that aims to gain insights
- from aquarium hobbyist for aquarium hobbyist according seawater ecosystems.
-
-[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
-[![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
-
-### Notice on the red code analytic status: 
-* Code-QL due to everlasting timeouts by github to downloading CVEs databases.
-* Maven build: Due to currently including milestone releases of micrometer.
+This is a semi-scientific (or open-science) project that aims to gain insights from aquarium hobbyist for aquarium
+hobbyist according seawater ecosystems.
 
 ## Vision I
 
@@ -67,7 +60,7 @@ I have some siblings in my nano reef tank and need to do some gardening. But whe
 
 Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/milestones?direction=asc&sort=due_date&state=open) from the Issue Board
 
-## Latest project news:
+## Latest project news
 | Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 09th Apr 2023 | Hotfix Release (i18n issues)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -79,6 +72,13 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 | 16th Mai 2021 | **Sneak Preview** available on https://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
 
 ## Technology Stack
+
+[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
+[![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
+
+#### Notice on the red code analytic status:
+* Code-QL due to everlasting timeouts by github to downloading CVEs databases.
+* Maven build: Due to currently including milestone releases of micrometer.
 
 ### Common
 
