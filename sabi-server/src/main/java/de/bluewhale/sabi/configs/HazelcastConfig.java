@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -45,7 +45,7 @@ public class HazelcastConfig {
                 .setInstanceName(HZ_INSTANCE_NAME)
                 .addMapConfig(
                         new MapConfig()
-                                .setName("pwfToken")
+                                .setName(HazelcastMapItem.PASSWORD_FORGOTTEN_TOKEN)
                                 .setTimeToLiveSeconds(TOKEN_TTL_10_MIN));
         // TODO STS (16.03.21): Elaborate MapConfig to suite possible DoS.
 
