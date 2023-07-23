@@ -247,7 +247,7 @@ As we are using eclipselink you must add a specific javaagent, when running your
 Because of eclipselink we are using weaving at runtime which requires the following vm option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.2/spring-instrument-6.0.2.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.7/spring-instrument-6.0.7.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 

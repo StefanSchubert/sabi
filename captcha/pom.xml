@@ -11,7 +11,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
+        <version>3.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -46,9 +46,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>2.1.0</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.11.0-M2</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.11.2</micrometer.prometheus.version>
         <junit.version>4.13.2</junit.version>
-        <owasp.plugin.version>7.4.3</owasp.plugin.version>
+        <owasp.plugin.version>8.3.1</owasp.plugin.version>
     </properties>
 
     <dependencies>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -48,7 +48,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <micrometer.prometheus.version>1.10.2</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.11.2</micrometer.prometheus.version>
         <pimetric.version>1.0</pimetric.version>
     </properties>
 
