@@ -63,26 +63,38 @@
         shell: /usr/sbin/nologin
         comment: "prometheus Service Account, no login possible."
         expires: -1
-    - name: Create prometheus directory
+    - name: Create prometheus bin dir
       file:
         path: /var/prometheus
         state: directory
         owner: prometheus
         group: prometheus
-    - name: Fetch prometheus version 2.39.1
-      command: wget https://github.com/prometheus/prometheus/releases/download/v2.39.1/prometheus-2.39.1.linux-arm64.tar.gz
+    - name: Create prometheus data dir
+      file:
+        path: /var/prometheus_data
+        state: directory
+        owner: prometheus
+        group: prometheus
+    - name: Create prometheus config dir
+      file:
+        path: /var/prometheus_config
+        state: directory
+        owner: prometheus
+        group: prometheus
+    - name: Fetch prometheus version 2.46.0
+      command: wget https://github.com/prometheus/prometheus/releases/download/v2.46.0/prometheus-2.46.0.linux-arm64.tar.gz
       args:
         chdir: /var/prometheus
     - name: Unpack prometheus version
-      command: tar -xzf prometheus-2.39.1.linux-arm64.tar.gz --strip-components=1
+      command: tar -xzf prometheus-2.46.0.linux-arm64.tar.gz --strip-components=1
       args:
         chdir: /var/prometheus
     - name: Cleanup old files
-      file: path=/var/prometheus/prometheus-2.39.1.linux-arm64.tar.gz state=absent
+      file: path=/var/prometheus/prometheus-2.46.0.linux-arm64.tar.gz state=absent
     - name: Copy last secured configuration
       copy:
         src: /Users/schubert/Documents/privat/SABI_Config_Safe/prometheus/prometheus.yml
-        dest: /var/prometheus
+        dest: /var/prometheus_config
         owner: prometheus
         group: prometheus
         mode: '0640'
