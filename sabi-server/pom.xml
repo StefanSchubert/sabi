@@ -47,16 +47,17 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <springdoc.openapiv2.version>2.1.0</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
         <!-- Don't use EclipseLink 4.0.1 this breaks JPAConfigs -->
         <eclipselink.version>4.0.0</eclipselink.version>
-        <micrometer.prometheus.version>1.11.2</micrometer.prometheus.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <micrometer.prometheus.version>1.11.3</micrometer.prometheus.version>
         <spring.instrument.version>6.0.7</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.28</lombok.version>
         <owasp.plugin.version>8.3.1</owasp.plugin.version>
         <passay.version>1.6.3</passay.version>
-        <mariadb.java.client.version>3.1.4</mariadb.java.client.version>
+        <mariadb.java.client.version>3.2.0</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
@@ -194,6 +195,13 @@
         </dependency>
 
         <dependency>
+            <!-- MapStruct Bean Mapping dependencies -->
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>${mariadb.java.client.version}</version>
@@ -317,10 +325,16 @@
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
                     <annotationProcessorPaths>
+                        <path>
+                            <!-- Handle Mapstruts annotations -->
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
                         <!-- Process lombok annotations found in included libraries.
                              Required e.g. for sabi-boundary.
                         -->
-                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
@@ -348,6 +362,7 @@
                 </dependencies>
                 <configuration>
                     <test>de.bluewhale.sabi.MasterTestSuite</test>
+                    <!--suppress UnresolvedMavenProperty -->
                     <argLine>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
                     </argLine>
@@ -364,6 +379,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
                     <jvmArguments>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
                     </jvmArguments>
