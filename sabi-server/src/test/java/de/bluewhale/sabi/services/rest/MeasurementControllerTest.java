@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -34,7 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 import static de.bluewhale.sabi.util.Mapper.mapMeasurementTo2EntityWithoutAquarium;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -71,6 +71,9 @@ public class MeasurementControllerTest {
     @MockBean
     AquariumRepository aquariumRepository;
 
+    @Autowired
+    AquariumMapper aquariumMapper;
+
     @MockBean
     MeasurementRepository measurementRepository;
     @Autowired
@@ -97,8 +100,7 @@ public class MeasurementControllerTest {
 
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        Mapper.mapAquariumTo2Entity(aquariumTo, aquariumEntity);
+        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
 
         MeasurementEntity measurementEntity = new MeasurementEntity();
@@ -144,8 +146,7 @@ public class MeasurementControllerTest {
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        Mapper.mapAquariumTo2Entity(aquariumTo, aquariumEntity);
+        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         aquariumEntity.setUser(userEntity);
         given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
         given(this.aquariumRepository.getOne(aquariumTo.getId())).willReturn(aquariumEntity);
@@ -200,8 +201,7 @@ public class MeasurementControllerTest {
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        Mapper.mapAquariumTo2Entity(aquariumTo, aquariumEntity);
+        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         aquariumEntity.setUser(userEntity);
         given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
         given(this.aquariumRepository.getOne(aquariumTo.getId())).willReturn(aquariumEntity);
@@ -280,9 +280,8 @@ public class MeasurementControllerTest {
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = new AquariumEntity();
+        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
 
-        mapAquariumTo2Entity(aquariumTo, aquariumEntity);
         given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
         given(this.aquariumRepository.findById(aquariumTo.getId())).willReturn(Optional.of(aquariumEntity));
 
@@ -328,8 +327,7 @@ public class MeasurementControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        Mapper.mapAquariumTo2Entity(aquariumTo, aquariumEntity);
+        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         MeasurementTo updatableMeasurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
         updatableMeasurementTo.setId(88L);
 

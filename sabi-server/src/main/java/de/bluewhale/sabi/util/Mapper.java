@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -23,38 +23,6 @@ import java.util.List;
  */
 public class Mapper {
 
-    /**
-     * Maps given Entity attributes into provided TO.
-     *
-     * @param pAquariumEntity
-     * @param pAquariumTo
-     */
-    public static void mapAquariumEntity2To(@NotNull final AquariumEntity pAquariumEntity, @NotNull final AquariumTo pAquariumTo) {
-        pAquariumTo.setId(pAquariumEntity.getId());
-        pAquariumTo.setSizeUnit(pAquariumEntity.getSizeUnit());
-        pAquariumTo.setSize(pAquariumEntity.getSize());
-        pAquariumTo.setDescription(pAquariumEntity.getDescription());
-        pAquariumTo.setUserId(pAquariumEntity.getUser().getId());
-        pAquariumTo.setActive(pAquariumEntity.getActive());
-        pAquariumTo.setTemperatueApiKey(pAquariumEntity.getTemperatureApiKey());
-        pAquariumTo.setInceptionDate(pAquariumEntity.getInceptionDate());
-    }
-
-    /**
-     * Mapping without user relationsship
-     *
-     * @param pAquariumTo
-     * @param pAquariumEntity
-     */
-    public static void mapAquariumTo2Entity(@NotNull final AquariumTo pAquariumTo, @NotNull final AquariumEntity pAquariumEntity) {
-        pAquariumEntity.setId(pAquariumTo.getId());
-        pAquariumEntity.setSizeUnit(pAquariumTo.getSizeUnit());
-        pAquariumEntity.setSize(pAquariumTo.getSize());
-        pAquariumEntity.setDescription(pAquariumTo.getDescription());
-        pAquariumEntity.setTemperatureApiKey(pAquariumTo.getTemperatueApiKey());
-        pAquariumEntity.setActive(pAquariumTo.getActive());
-        pAquariumEntity.setInceptionDate(pAquariumTo.getInceptionDate());
-    }
 
     /**
      * Mapping without flyweight relationsships to Aquarium and Catalogue

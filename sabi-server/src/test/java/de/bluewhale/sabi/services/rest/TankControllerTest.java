@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
@@ -31,7 +32,6 @@ import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
-import static de.bluewhale.sabi.util.Mapper.mapAquariumTo2Entity;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -60,6 +60,10 @@ public class TankControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
+
+    @Autowired
+    AquariumMapper aquariumMapper;
+
     TestDataFactory testDataFactory = TestDataFactory.getInstance();
     @Autowired
     private TestRestTemplate restTemplate;
@@ -116,8 +120,7 @@ public class TankControllerTest {
                                                  List<AquariumEntity> testAquariumEntities,
                                                  UserEntity pOwner) {
         for (AquariumTo testAquarium : testAquariums) {
-            AquariumEntity aquariumEntity = new AquariumEntity();
-            Mapper.mapAquariumTo2Entity(testAquarium, aquariumEntity);
+            AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(testAquarium);
             aquariumEntity.setUser(pOwner);
             testAquariumEntities.add(aquariumEntity);
         }
@@ -136,8 +139,7 @@ public class TankControllerTest {
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        Mapper.mapAquariumTo2Entity(aquariumTo, aquariumEntity);
+        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         aquariumEntity.setUser(userEntity); // ToMappper does not Map the User
 
         given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
@@ -176,11 +178,8 @@ public class TankControllerTest {
 
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity createdAquariumEntity = new AquariumEntity();
-
+        AquariumEntity createdAquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         createdAquariumEntity.setUser(storedUserEntity);
-
-        mapAquariumTo2Entity(aquariumTo, createdAquariumEntity);
 
         given(this.aquariumRepository.saveAndFlush(any())).willReturn(createdAquariumEntity);
 
@@ -216,10 +215,8 @@ public class TankControllerTest {
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity existingAquariumEntity = new AquariumEntity();
+        AquariumEntity existingAquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         existingAquariumEntity.setUser(userEntity);
-
-        mapAquariumTo2Entity(aquariumTo, existingAquariumEntity);
 
         given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(existingAquariumEntity);
 
@@ -248,23 +245,25 @@ public class TankControllerTest {
 
         UserEntity userEntity = new UserEntity();
         Mapper.mapUserTo2Entity(userTo, userEntity);
-
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
+        // This represents to TO/Entity bevore the update
         AquariumTo updatableAquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity updatableAquariumEntity = new AquariumEntity();
+        AquariumEntity updatableAquariumEntity =  aquariumMapper.mapAquariumTo2Entity(updatableAquariumTo);
         updatableAquariumEntity.setUser(userEntity);
-        mapAquariumTo2Entity(updatableAquariumTo, updatableAquariumEntity);
 
-        AquariumEntity updatedAquariumEntity = new AquariumEntity();
+        // Here we prepare the updated Entity which will be returned after the update
+        AquariumEntity updatedAquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatableAquariumTo);
         updatedAquariumEntity.setUser(userEntity);
-        mapAquariumTo2Entity(updatableAquariumTo, updatedAquariumEntity);
         String updateTestString = "Updated";
         updatedAquariumEntity.setDescription(updateTestString); // we test only on description in this test
 
+        // MockInit
+        // return the Entity as it was before the update
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatableAquariumTo.getId(), userTo.getId())).willReturn(updatableAquariumEntity);
         given(aquariumRepository.getOne(updatableAquariumTo.getId())).willReturn(updatableAquariumEntity);
-        given(aquariumRepository.saveAndFlush(updatableAquariumEntity)).willReturn(updatedAquariumEntity);
+        // when saving return the prepared updated entity
+        given(aquariumRepository.saveAndFlush(any())).willReturn(updatedAquariumEntity);
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
