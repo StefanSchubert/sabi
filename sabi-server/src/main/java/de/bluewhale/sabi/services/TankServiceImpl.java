@@ -136,7 +136,11 @@ public class TankServiceImpl implements TankService {
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatedAquariumTo.getId(), requestingUser.getId());
 
         if (aquariumEntity != null) {
+            // FIXME STS (04.09.23): The Mapping here will provide a completley new entity
+            // however we have the aquarium before. Isn't there a merge mapping
+            // between entities available by mapstruts?
             aquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatedAquariumTo);
+            aquariumEntity.setUser(requestingUser);
             AquariumEntity updatedEntity = aquariumRepository.saveAndFlush(aquariumEntity);
             updatedAquariumTo = aquariumMapper.mapAquariumEntity2To(updatedEntity);
             message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, updatedAquariumTo.getDescription());

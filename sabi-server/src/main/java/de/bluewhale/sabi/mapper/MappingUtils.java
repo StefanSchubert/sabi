@@ -7,6 +7,9 @@ package de.bluewhale.sabi.mapper;
 
 import org.mapstruct.Named;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+
 /**
  * Used for required type conversions
  *
@@ -31,6 +34,24 @@ public class MappingUtils {
             return 1;
         }
         return 0;
+    }
+
+    @Named("LocalDateToTimestamp")
+    public static Timestamp localDateToTimestamp(LocalDate pLocalDate) {
+        if (pLocalDate != null) {
+            return Timestamp.valueOf(pLocalDate.atStartOfDay());
+        } else {
+            return null;
+        }
+    }
+
+    @Named("TimestampToLocalDate")
+    public static LocalDate timestampToLocalDate(Timestamp pTimestamp) {
+        if (pTimestamp != null) {
+            return pTimestamp.toLocalDateTime().toLocalDate();
+        } else {
+            return null;
+        }
     }
 
 }

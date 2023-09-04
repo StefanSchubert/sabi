@@ -9,7 +9,6 @@ import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,40 +23,6 @@ import java.util.List;
 public class Mapper {
 
 
-    /**
-     * Mapping without flyweight relationsships to Aquarium and Catalogue
-     *
-     * @param pFishTo
-     * @param pFishEntity
-     */
-    public static void mapFishTo2Entity(@NotNull final FishTo pFishTo, @NotNull final FishEntity pFishEntity) {
-        pFishEntity.setAddedOn(Timestamp.valueOf(pFishTo.getAddedOn().atStartOfDay()));
-        if (pFishTo.getExodusOn() != null) {
-            pFishEntity.setExodusOn(Timestamp.valueOf(pFishTo.getExodusOn().atStartOfDay()));
-        } else {
-            pFishEntity.setExodusOn(null);
-        }
-        pFishEntity.setNickname(pFishTo.getNickname());
-        pFishEntity.setObservedBehavior(pFishTo.getObservedBehavior());
-        pFishEntity.setAquariumId(pFishTo.getAquariumId());
-        pFishEntity.setFishCatalogueId(pFishTo.getFishCatalogueId());
-    }
-
-    /**
-     * Maps given Entity attributes into provided TO.
-     *
-     * @param pFishTo
-     * @param pFishEntity
-     */
-    public static void mapFishEntity2To(@NotNull final FishEntity pFishEntity, @NotNull final FishTo pFishTo) {
-        pFishTo.setId(pFishEntity.getId());
-        pFishTo.setAddedOn(pFishEntity.getAddedOn().toLocalDateTime().toLocalDate());
-        pFishTo.setExodusOn(pFishEntity.getExodusOn() == null ? null : pFishEntity.getExodusOn().toLocalDateTime().toLocalDate());
-        pFishTo.setNickname(pFishEntity.getNickname());
-        pFishTo.setObservedBehavior(pFishEntity.getObservedBehavior());
-        pFishTo.setAquariumId(pFishEntity.getAquariumId());
-        pFishTo.setFishCatalogueId(pFishEntity.getFishCatalogueId());
-    }
 
     /**
      * Maps given Entity attributes into provided TO.
