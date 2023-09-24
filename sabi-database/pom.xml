@@ -19,11 +19,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <flyway.version>9.10.1</flyway.version>
         <mariadb.client.version>3.1.0</mariadb.client.version>
-        <maven.compile.plugin.version>3.10.1</maven.compile.plugin.version>
-        <owasp.plugin.version>8.3.1</owasp.plugin.version>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <owasp.plugin.version>8.4.0</owasp.plugin.version>
         <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
         checkin those secrets for stage and production
         <mariadb.schema>sabi</mariadb.schema>
@@ -116,7 +116,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compile.plugin.version}</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
