@@ -48,8 +48,8 @@
         <java.version>21</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <!-- Don't use EclipseLink 4.0.1 this breaks JPAConfigs -->
-        <eclipselink.version>4.0.0</eclipselink.version>
+        <!-- Last worked with Eclipselink 4.0.0 / Don't use EclipseLink 4.0.1 this breaks JPAConfigs / Try Eclipselink 4.0.2-->
+        <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <micrometer.prometheus.version>1.11.4</micrometer.prometheus.version>
         <spring.instrument.version>6.0.7</spring.instrument.version>

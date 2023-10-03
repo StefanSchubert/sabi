@@ -1,5 +1,5 @@
 # Base container with amazon corretto
-FROM amazoncorretto:19.0.0-al2
+FROM amazoncorretto:21-alpine
 
 # Copy Captcha executable jar. You need to replace the jar from the assets dir after a new build
 # copyjars.sh will do it for you
