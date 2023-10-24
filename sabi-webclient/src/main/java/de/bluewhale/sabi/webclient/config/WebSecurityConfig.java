@@ -38,7 +38,7 @@ public class WebSecurityConfig {
         
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/jakarta.faces.resource/**").permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/jakarta.faces.resource/**")).permitAll()
                         // Allow Pages that don't require an auth context.
                         .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/robots.txt")).permitAll()
