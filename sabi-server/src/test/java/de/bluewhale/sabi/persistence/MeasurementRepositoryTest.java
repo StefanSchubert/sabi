@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.persistence;
 import de.bluewhale.sabi.BasicDataFactory;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
+import de.bluewhale.sabi.mapper.MeasurementMapper;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
@@ -15,7 +16,6 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import de.bluewhale.sabi.util.Mapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -54,6 +54,9 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
     MeasurementRepository measurementRepository;
 
     @Autowired
+    MeasurementMapper measurementMapper;
+
+    @Autowired
     AquariumRepository aquariumRepository;
 
     @Autowired
@@ -88,8 +91,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(1L);
         AquariumEntity aquariumEntity = aquariumRepository.getOne(measurementTo.getAquariumId());
 
-        MeasurementEntity measurementEntity = new MeasurementEntity();
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
+        MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
         measurementEntity.setAquarium(aquariumEntity);
         measurementEntity.setUser(aquariumEntity.getUser());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -57,7 +57,7 @@ public class AquariumIoTController {
             ),
             @ApiResponse(responseCode = "429", description = "Request ignored, please take care to have at least "+MIN_GAP_IN_HOURS_BETWEEN_SUBSEQUENT_SUBMISSIONS+"h between subsequent requests."),
             @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid API-key."),
-            @ApiResponse(responseCode = "400", description = "In case of passing an invalid IoTMeasurementTo")
+            @ApiResponse(responseCode = "400", description = "In case of passing an invalid IoTMeasurementTo (JSR303 Violation)")
     })
     @RequestMapping(value = {"temp_measurement"}, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

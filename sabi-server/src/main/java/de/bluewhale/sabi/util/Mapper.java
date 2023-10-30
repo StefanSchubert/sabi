@@ -23,39 +23,6 @@ import java.util.List;
 public class Mapper {
 
 
-
-    /**
-     * Maps given Entity attributes into provided TO.
-     *
-     * @param pMeasurementEntity
-     * @param pMeasurementTo
-     */
-    public static void mapMeasurementEntity2To(@NotNull final MeasurementEntity pMeasurementEntity, @NotNull final MeasurementTo pMeasurementTo) {
-        pMeasurementTo.setId(pMeasurementEntity.getId());
-        if (pMeasurementEntity.getAquarium() != null) {
-            pMeasurementTo.setAquariumId(pMeasurementEntity.getAquarium().getId());
-
-        } else {
-            pMeasurementTo.setAquariumId(null);
-        }
-        pMeasurementTo.setMeasuredOn(pMeasurementEntity.getMeasuredOn());
-        pMeasurementTo.setMeasuredValue(pMeasurementEntity.getMeasuredValue());
-        pMeasurementTo.setUnitId(pMeasurementEntity.getUnitId());
-    }
-
-    /**
-     * Maps given To attributes into provided Entity.
-     *
-     * @param pMeasurementEntity
-     * @param pMeasurementTo
-     */
-    public static void mapMeasurementTo2EntityWithoutAquarium(@NotNull final MeasurementTo pMeasurementTo, @NotNull final MeasurementEntity pMeasurementEntity) {
-        pMeasurementEntity.setMeasuredOn(pMeasurementTo.getMeasuredOn());
-        pMeasurementEntity.setMeasuredValue(pMeasurementTo.getMeasuredValue());
-        pMeasurementEntity.setUnitId(pMeasurementTo.getUnitId());
-        pMeasurementEntity.setId(pMeasurementTo.getId());
-    }
-
     /**
      * Maps given To attributes into provided Entity
      *
@@ -131,16 +98,6 @@ public class Mapper {
         plagueRecordTo.setId(plagueRecordEntity.getId());
         plagueRecordTo.setObservedOn(plagueRecordEntity.getObservedOn());
         plagueRecordTo.setPlagueIntervallId(plagueRecordEntity.getPlagueIntervallId());
-    }
-
-    public static List<MeasurementTo> mapMeasurementEntities2TOs(@NotNull List<MeasurementEntity> measurementsOfAquarium) {
-        List<MeasurementTo> measurementTos = new ArrayList<MeasurementTo>();
-        for (MeasurementEntity measurementEntity : measurementsOfAquarium) {
-            MeasurementTo measurementTo = new MeasurementTo();
-            Mapper.mapMeasurementEntity2To(measurementEntity, measurementTo);
-            measurementTos.add(measurementTo);
-        }
-        return measurementTos;
     }
 
     public static void mapPlagueRecordTo2Entity(PlagueRecordTo source, PlagueRecordEntity target, AquariumEntity usedTank, UserEntity user) {

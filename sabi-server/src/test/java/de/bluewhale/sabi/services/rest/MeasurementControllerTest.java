@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.mapper.AquariumMapper;
+import de.bluewhale.sabi.mapper.MeasurementMapper;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -35,7 +36,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static de.bluewhale.sabi.util.Mapper.mapMeasurementTo2EntityWithoutAquarium;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -74,6 +74,9 @@ public class MeasurementControllerTest {
     @Autowired
     AquariumMapper aquariumMapper;
 
+    @Autowired
+    MeasurementMapper measurementMapper;
+
     @MockBean
     MeasurementRepository measurementRepository;
     @Autowired
@@ -103,8 +106,7 @@ public class MeasurementControllerTest {
         AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
 
-        MeasurementEntity measurementEntity = new MeasurementEntity();
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
+        MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
         measurementEntity.setAquarium(aquariumEntity);
 
         List<MeasurementEntity> testMeasurements = new ArrayList<>(1);
@@ -153,10 +155,8 @@ public class MeasurementControllerTest {
 
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
         MeasurementTo measurementTo2 = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
-        MeasurementEntity measurementEntity = new MeasurementEntity();
-        MeasurementEntity measurementEntity2 = new MeasurementEntity();
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo2, measurementEntity2);
+        MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
+        MeasurementEntity measurementEntity2 = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo2);
         measurementEntity.setAquarium(aquariumEntity);
         measurementEntity2.setAquarium(aquariumEntity);
 
@@ -207,8 +207,7 @@ public class MeasurementControllerTest {
         given(this.aquariumRepository.getOne(aquariumTo.getId())).willReturn(aquariumEntity);
 
         MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
-        MeasurementEntity measurementEntity = new MeasurementEntity();
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
+        MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
         measurementEntity.setAquarium(aquariumEntity);
 
         List<MeasurementEntity> testMeasurements = new ArrayList<>(2);
@@ -289,7 +288,7 @@ public class MeasurementControllerTest {
         MeasurementEntity measurementEntity = new MeasurementEntity();
         measurementEntity.setId(88L);
         measurementEntity.setAquarium(aquariumEntity);
-        mapMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
+        measurementMapper.mergeMeasurementTo2EntityWithoutAquarium(measurementTo, measurementEntity);
         given(this.measurementRepository.saveAndFlush(any())).willReturn(measurementEntity);
 
         // and we need a valid authentication token for our mocked user
@@ -331,18 +330,16 @@ public class MeasurementControllerTest {
         MeasurementTo updatableMeasurementTo = testDataFactory.getTestMeasurementTo(aquariumTo.getId());
         updatableMeasurementTo.setId(88L);
 
-        MeasurementEntity updatableMeasurementEntity = new MeasurementEntity();
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo, updatableMeasurementEntity);
+        MeasurementEntity updatableMeasurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo);
         updatableMeasurementEntity.setId(updatableMeasurementTo.getId());
         updatableMeasurementEntity.setAquarium(aquariumEntity);
 
-        MeasurementTo updatedMeasurementTo = new MeasurementTo();
-        Mapper.mapMeasurementEntity2To(updatableMeasurementEntity, updatedMeasurementTo);
+        MeasurementTo updatedMeasurementTo = measurementMapper.mapMeasurementEntity2To(updatableMeasurementEntity);
         updatedMeasurementTo.setMeasuredValue(updatableMeasurementTo.getMeasuredValue() + 2f);
 
         MeasurementEntity updatedMeasurementEntity = new MeasurementEntity();
         updatedMeasurementEntity.setAquarium(aquariumEntity);
-        Mapper.mapMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo, updatedMeasurementEntity);
+        measurementMapper.mergeMeasurementTo2EntityWithoutAquarium(updatableMeasurementTo, updatedMeasurementEntity);
 
         Optional<MeasurementEntity> optionalMeasurementEntity = Optional.of(updatableMeasurementEntity);
 

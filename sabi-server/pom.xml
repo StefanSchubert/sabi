@@ -13,7 +13,7 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -51,11 +51,11 @@
         <!-- Last worked with Eclipselink 4.0.0 / Don't use EclipseLink 4.0.1 this breaks JPAConfigs / Try Eclipselink 4.0.2-->
         <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <micrometer.prometheus.version>1.11.4</micrometer.prometheus.version>
-        <spring.instrument.version>6.0.7</spring.instrument.version>
+        <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
+        <spring.instrument.version>6.0.12</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <lombok.version>1.18.30</lombok.version>
-        <owasp.plugin.version>8.4.0</owasp.plugin.version>
+        <owasp.plugin.version>8.4.2</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>
         <mariadb.java.client.version>3.2.0</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
