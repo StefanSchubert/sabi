@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,6 +9,9 @@ import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.lang.ArchCondition;
+import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.SimpleConditionEvent;
 import com.tngtech.archunit.library.Architectures;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,34 +32,40 @@ public class ArchitectureTest {
             .that(DescribedPredicate.not(JavaClass.Predicates.simpleNameEndingWith("Test")))
             .that(DescribedPredicate.not(JavaClass.Predicates.simpleNameEndingWith("TestSuite")));
 
-    DescribedPredicate<JavaClass> isJavaClass = new DescribedPredicate<>("is Java class") {
+    ArchCondition<JavaClass> isJavaClass = new ArchCondition<>("is a Java classes") {
         @Override
-        public boolean apply(JavaClass clazz) {
-            return clazz.getPackageName().startsWith("java");
+        public void check(JavaClass clazz, ConditionEvents events) {
+            boolean satisfied = clazz.getPackageName().startsWith("java");
+            String message = clazz.getDescription();
+            events.add(new SimpleConditionEvent(clazz, satisfied, message));
         }
     };
-    DescribedPredicate<JavaClass> isFrameworkClass = new DescribedPredicate<>("is Java class") {
+    ArchCondition<JavaClass> isFrameworkClass = new ArchCondition<>("is a Framework Java class") {
         @Override
-        public boolean apply(JavaClass clazz) {
-            boolean result = clazz.getPackageName().startsWith("org.") ||
+        public void check(JavaClass clazz, ConditionEvents events) {
+            boolean satisfied = clazz.getPackageName().startsWith("org.") ||
                     clazz.getPackageName().startsWith("com.") ||
                     clazz.getPackageName().startsWith("io.swagger");
-            return result;
+            String message = clazz.getDescription() + " is a dependency class.";
+            events.add(new SimpleConditionEvent(clazz, satisfied, message));
         }
     };
-    DescribedPredicate<JavaClass> isSabiClass = new DescribedPredicate<>("is any Sabi class") {
+    ArchCondition<JavaClass> isSabiClass = new ArchCondition<>("is any Sabi class") {
         @Override
-        public boolean apply(JavaClass clazz) {
-            return clazz.getPackageName().startsWith(PACKAGE_PREFIX);
+        public void check(JavaClass clazz, ConditionEvents events) {
+            boolean satisfied =  clazz.getPackageName().startsWith(PACKAGE_PREFIX);
+            String message = clazz.getDescription() + " belongs to sabi backend core.";
+            events.add(new SimpleConditionEvent(clazz, satisfied, message));
         }
     };
 
-    DescribedPredicate<JavaClass> isSabiBoundaryClass = new DescribedPredicate<>("is any Boundary class") {
+    ArchCondition<JavaClass> isSabiBoundaryClass = new ArchCondition<>("is any Boundary class") {
         @Override
-        public boolean apply(JavaClass clazz) {
-            boolean result = clazz.getPackageName().startsWith("de.bluewhale.sabi.model") ||
+        public void check(JavaClass clazz, ConditionEvents events) {
+            boolean satisfied = clazz.getPackageName().startsWith("de.bluewhale.sabi.model") ||
                     clazz.getPackageName().startsWith("de.bluewhale.sabi.exception");
-            return result;
+            String message = clazz.getDescription() + " belongs to sabi boundary layer.";
+            events.add(new SimpleConditionEvent(clazz, satisfied, message));
         }
     };
 
@@ -70,7 +79,7 @@ public class ArchitectureTest {
         Layer utilLayer = new Layer("Utilities", PACKAGE_PREFIX_WITH_WILDCARD + ".util..");
 
         Architectures.LayeredArchitecture layeredArchitecture = Architectures.layeredArchitecture()
-                .withOptionalLayers(true)
+                .consideringOnlyDependenciesInLayers()
                 .layer(coreDataLayer.name).definedBy(coreDataLayer.pkg)
                 .layer(serviceLayer.name).definedBy(serviceLayer.pkg)
                 .layer(securityLayer.name).definedBy(securityLayer.pkg)
@@ -81,15 +90,9 @@ public class ArchitectureTest {
         layeredArchitecture
                 .whereLayer(apiLayer.name).mayNotBeAccessedByAnyLayer()
                 .whereLayer(apiLayer.name).mayOnlyAccessLayers(serviceLayer.name)
-                .whereLayer(serviceLayer.name).mayOnlyAccessLayers(coreDataLayer.name,utilLayer.name, securityLayer.name)
-                // ignore all dependencies to java..
-                .ignoreDependency(isSabiClass, isJavaClass)
-                // ignore all dependencies to spring
-                .ignoreDependency(isSabiClass, isFrameworkClass)
-                // ignore all dependencies to boundary artefact
-                .ignoreDependency(isSabiClass, isSabiBoundaryClass)
-                .because("we want to enforce the onion architecure inside each component")
-                .check(classesFromSabi);
+                .whereLayer(serviceLayer.name).mayOnlyAccessLayers(coreDataLayer.name, utilLayer.name, securityLayer.name);
+
+        layeredArchitecture.evaluate(classesFromSabi);
     }
 
     class Layer {

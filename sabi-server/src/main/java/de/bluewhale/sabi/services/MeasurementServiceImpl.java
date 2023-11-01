@@ -9,6 +9,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
+import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
@@ -27,7 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static de.bluewhale.sabi.util.Mapper.*;
+import static de.bluewhale.sabi.util.Mapper.mapUserMeasurementReminderEntity2TO;
+import static de.bluewhale.sabi.util.Mapper.mapUserMeasurementReminderTO2Entity;
 
 /**
  * Provides all required for dealing with measurements here e.g. for use cases around the {@link de.bluewhale.sabi.persistence.model.MeasurementEntity}
@@ -52,6 +54,9 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
     UnitRepository unitRepository;
+
+    @Autowired
+    UnitMapper unitMapper;
 
     @Autowired
     ParameterRepository parameterRepository;
@@ -85,7 +90,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         List<UnitTo> unitToList = Collections.emptyList();
         List<UnitEntity> unitEntityList = unitRepository.findAll();
         if (unitEntityList != null && !unitEntityList.isEmpty()) {
-            unitToList = mapUnitEntities2TOs(unitEntityList);
+            unitToList = unitMapper.mapUnitEntities2TOs(unitEntityList);
 
         }
         return unitToList;

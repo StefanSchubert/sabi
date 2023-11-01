@@ -8,12 +8,7 @@ package de.bluewhale.sabi.util;
 import de.bluewhale.sabi.model.MeasurementReminderTo;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.PlagueRecordTo;
-import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.persistence.model.*;
-import jakarta.validation.constraints.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Mapping Util Functions.
@@ -24,27 +19,6 @@ import java.util.List;
  * @author Stefan Schubert
  */
 public class Mapper {
-
-
-
-
-    /**
-     * Maps given Entity attributes into provided To
-     *
-     * @param unitEntity
-     * @param unitTo
-     */
-    public static void mapUnitEntity2To(UnitEntity unitEntity, UnitTo unitTo) {
-        unitTo.setId(unitEntity.getId());
-        unitTo.setDescription(unitEntity.getDescription());
-        unitTo.setUnitSign(unitEntity.getName());
-    }
-
-    public static void mapUnitToEntity(UnitTo pUnitTo, UnitEntity pUnitEntity) {
-        pUnitEntity.setId(pUnitTo.getId());
-        pUnitEntity.setDescription(pUnitTo.getDescription());
-        pUnitEntity.setName(pUnitTo.getUnitSign());
-    }
 
     public static void mapParameterEntity2To(ParameterEntity parameterEntity, ParameterTo parameterTo) {
         parameterTo.setId(parameterEntity.getId());
@@ -94,16 +68,6 @@ public class Mapper {
         target.setActive(source.isActive());
         target.setPastdays(source.getPastDays());
         target.setUnitId(source.getUnitId());
-    }
-
-    public static List<UnitTo> mapUnitEntities2TOs(@NotNull List<UnitEntity> measurementUnits) {
-        List<UnitTo> unitTos = new ArrayList<UnitTo>();
-        for (UnitEntity unitEntity : measurementUnits) {
-            UnitTo unitTo = new UnitTo();
-            Mapper.mapUnitEntity2To(unitEntity, unitTo);
-            unitTos.add(unitTo);
-        }
-        return unitTos;
     }
 
 }

@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
@@ -72,6 +73,9 @@ public class UnitControllerTest {
     UserMapper userMapper;
 
     @Autowired
+    UnitMapper unitMapper;
+
+    @Autowired
     ObjectMapper objectMapper;  // json mapper
     TestDataFactory testDataFactory = TestDataFactory.getInstance();
     @Autowired
@@ -93,8 +97,7 @@ public class UnitControllerTest {
 
         UnitTo unitTo = testDataFactory.getTestUnitTo();
 
-        UnitEntity unitEntity = new UnitEntity();
-        Mapper.mapUnitToEntity(unitTo, unitEntity);
+        UnitEntity unitEntity = unitMapper.mapUnitToEntity(unitTo);
 
         List<UnitEntity> unitEntityList = new ArrayList<UnitEntity>();
         unitEntityList.add(unitEntity);
