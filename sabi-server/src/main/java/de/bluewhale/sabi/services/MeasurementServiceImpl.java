@@ -9,6 +9,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
+import de.bluewhale.sabi.mapper.MeasurementReminderMapper;
 import de.bluewhale.sabi.mapper.ParameterMapper;
 import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.model.*;
@@ -28,8 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static de.bluewhale.sabi.util.Mapper.mapUserMeasurementReminderEntity2TO;
-import static de.bluewhale.sabi.util.Mapper.mapUserMeasurementReminderTO2Entity;
 
 /**
  * Provides all required for dealing with measurements here e.g. for use cases around the {@link de.bluewhale.sabi.persistence.model.MeasurementEntity}
@@ -45,6 +44,9 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
     MeasurementMapper measurementMapper;
+
+    @Autowired
+    MeasurementReminderMapper measurementReminderMapper;
 
     @Autowired
     UserRepository userRepository;
@@ -323,15 +325,15 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         if (optionalReminderEntity.isPresent()) {
             resultMsg = Message.warning(UserSpecificMessageCodes.RECORD_ALREADY_EXISTS);
-            mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get(), pReminderTo);
+            pReminderTo = measurementReminderMapper.mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get());
         } else {
             // if not add it
-            UserMeasurementReminderEntity reminderEntity = new UserMeasurementReminderEntity();
-            mapUserMeasurementReminderTO2Entity(pReminderTo, reminderEntity, userEntity);
+            UserMeasurementReminderEntity reminderEntity = measurementReminderMapper.mapUserMeasurementReminderTO2EntityWithoutUser(pReminderTo);
+            reminderEntity.setUser(userEntity);
 
             UserMeasurementReminderEntity savedReminderEntity = measurementReminderRepository.save(reminderEntity);
             userEntity.getUserMeasurementReminders().add(savedReminderEntity); // update cached reminderlist on users side.
-            mapUserMeasurementReminderEntity2TO(savedReminderEntity, pReminderTo);
+            pReminderTo = measurementReminderMapper.mapUserMeasurementReminderEntity2TO(savedReminderEntity);
             resultMsg = Message.info(UserSpecificMessageCodes.CREATE_SUCCEEDED);
         }
 
@@ -349,7 +351,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             // check if it already exists
             Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
             if (optionalReminderEntity.isPresent()) {
-                mapUserMeasurementReminderTO2Entity(pReminderTo, optionalReminderEntity.get(), userEntity);
+                measurementReminderMapper.mapUserMeasurementReminderTO2EntityWithoutUser(pReminderTo, optionalReminderEntity.get());
                 // no saving required, as entity is attached.
                 resultMsg = Message.info(UserSpecificMessageCodes.UPDATE_SUCCEEDED);
             } else {

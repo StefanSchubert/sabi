@@ -5,10 +5,6 @@
 
 package de.bluewhale.sabi.util;
 
-import de.bluewhale.sabi.model.MeasurementReminderTo;
-import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity;
-
 /**
  * Mapping Util Functions.
  * Since we have very few attributes per class and the targeted runtime environment of a pi at the beginning,
@@ -19,19 +15,6 @@ import de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity;
  */
 public class Mapper {
 
-
-    public static void mapUserMeasurementReminderEntity2TO(UserMeasurementReminderEntity source, MeasurementReminderTo target) {
-        target.setUserId(source.getUser().getId());
-        target.setPastDays(source.getPastdays());
-        target.setActive(source.isActive());
-        target.setUnitId(source.getUnitId());
-    }
-
-    public static void mapUserMeasurementReminderTO2Entity(MeasurementReminderTo source, UserMeasurementReminderEntity target, UserEntity user ) {
-        target.setUser(user);
-        target.setActive(source.isActive());
-        target.setPastdays(source.getPastDays());
-        target.setUnitId(source.getUnitId());
-    }
+  // Resolved by introduction of MapStruts. See de.bluewhale.sabi.mapper
 
 }
