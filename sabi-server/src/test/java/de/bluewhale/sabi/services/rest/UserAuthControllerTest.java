@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -10,12 +10,12 @@ import com.dumbster.smtp.SmtpMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.CaptchaAdapter;
-import de.bluewhale.sabi.util.Mapper;
 import de.bluewhale.sabi.util.RestHelper;
 import org.junit.After;
 import org.junit.Before;
@@ -66,6 +66,9 @@ public class UserAuthControllerTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Before
     public void initFakeMailer() throws NamingException {
@@ -122,8 +125,7 @@ public class UserAuthControllerTest {
         // given a test user
         UserTo userTo = new UserTo("test@bluewhale.de", "Tester", TestDataFactory.VALID_PASSWORD);
         userTo.setCaptchaCode("test");
-        UserEntity userEntity = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo,userEntity);
+        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
         // given a mocked captcha service - accepting our captcha
         given(this.captchaAdapter.isCaptchaValid(userTo.getCaptchaCode())).willReturn(Boolean.TRUE);
@@ -159,8 +161,7 @@ public class UserAuthControllerTest {
         // given a test user
         UserTo userTo = new UserTo("test@bluewhale.de", "Tester",TestDataFactory.INVALID_PASSWORD);
         userTo.setCaptchaCode("test");
-        UserEntity userEntity = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo,userEntity);
+        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
         // given a mocked captcha service - accepting our captcha
         given(this.captchaAdapter.isCaptchaValid(userTo.getCaptchaCode())).willReturn(Boolean.TRUE);
@@ -185,8 +186,7 @@ public class UserAuthControllerTest {
         // Given a user
         UserTo userTo = new UserTo("test@bluewhale.de", "tester", "test");
         userTo.setValidationToken("validPass");
-        UserEntity userEntity = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo,userEntity);
+        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
         // Give some Mocks
         given(this.userRepository.getByEmail(userTo.getEmail())).willReturn(userEntity);
@@ -223,8 +223,7 @@ public class UserAuthControllerTest {
         String encrypted_Password = passwordEncoder.encode(plain_password);
         UserTo userTo = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
         userTo.setValidated(false);
-        UserEntity userFromDatabase = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo,userFromDatabase);
+        UserEntity userFromDatabase = userMapper.mapUserTo2Entity(userTo);
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();
         accountCredentialsTo.setUsername(userFromDatabase.getEmail());
@@ -252,8 +251,7 @@ public class UserAuthControllerTest {
         String encrypted_Password = passwordEncoder.encode(plain_password);
         UserTo userTo = new UserTo("test@bluewhale.de", "Tester", encrypted_Password);
         userTo.setValidated(true);
-        UserEntity userFromDatabase = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo,userFromDatabase);
+        UserEntity userFromDatabase = userMapper.mapUserTo2Entity(userTo);
         userFromDatabase.setPassword(encrypted_Password); // mapper excludes the password
 
         AccountCredentialsTo accountCredentialsTo = new AccountCredentialsTo();

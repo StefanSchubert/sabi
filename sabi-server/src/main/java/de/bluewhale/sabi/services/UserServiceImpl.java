@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -11,12 +11,12 @@ import com.hazelcast.map.IMap;
 import de.bluewhale.sabi.configs.HazelcastConfig;
 import de.bluewhale.sabi.configs.HazelcastMapItem;
 import de.bluewhale.sabi.exception.*;
+import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.PasswordPolicy;
-import de.bluewhale.sabi.util.Mapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
@@ -52,45 +52,46 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserMapper userMapper;
+
     public ResultTo<UserTo> registerNewUser(@NotNull NewRegistrationTO pRegistrationUserTo) {
 
         // mapping incoming reqTo to internal UserTo to suite service contract
-        UserTo newUser = new UserTo(pRegistrationUserTo.getEmail(), pRegistrationUserTo.getUsername(), pRegistrationUserTo.getPassword(),
+        UserTo newUserTO = new UserTo(pRegistrationUserTo.getEmail(), pRegistrationUserTo.getUsername(), pRegistrationUserTo.getPassword(),
                 pRegistrationUserTo.getLanguage(), pRegistrationUserTo.getCountry());
 
         String validateToken = generateValidationToken();
-        newUser.setValidationToken(validateToken);
-        newUser.setValidated(false);
+        newUserTO.setValidationToken(validateToken);
+        newUserTO.setValidated(false);
 
         UserTo createdUser = null;
         Message message;
 
-        UserEntity alreadyExistingUserWithSameEmail = userRepository.getByEmail(newUser.getEmail());
-        UserEntity alreadyExistingUserWithSameUsername = userRepository.getByUsername(newUser.getUsername());
+        UserEntity alreadyExistingUserWithSameEmail = userRepository.getByEmail(newUserTO.getEmail());
+        UserEntity alreadyExistingUserWithSameUsername = userRepository.getByUsername(newUserTO.getUsername());
         if ((alreadyExistingUserWithSameEmail == null) && (alreadyExistingUserWithSameUsername == null)) {
 
-            UserEntity newUserEntity = new UserEntity();
-            newUser.setId(null); // to make sure we have no collision
-            Mapper.mapUserTo2Entity(newUser, newUserEntity);
+            UserEntity newUserEntity = userMapper.mapUserTo2Entity(newUserTO);
+            newUserTO.setId(null); // to make sure we have no collision
 
-            if (!PasswordPolicy.isPasswordValid(newUser.getPassword())) {
+            if (!PasswordPolicy.isPasswordValid(newUserTO.getPassword())) {
                 message = Message.error(AuthMessageCodes.PASSWORD_TO_WEAK, "At least 10 Character, Digit, Special Sign, Capitalletter required");
             } else {
 
-                newUserEntity.setPassword(passwordEncoder.encode(newUser.getPassword()));
+                newUserEntity.setPassword(passwordEncoder.encode(newUserTO.getPassword()));
                 newUserEntity.setValidated(false);
 
                 UserEntity userEntity = userRepository.saveAndFlush(newUserEntity);
-                createdUser = new UserTo();
-                Mapper.mapUserEntity2To(userEntity, createdUser);
+                createdUser = userMapper.mapUserEntity2To(userEntity);
 
                 message = Message.info(AuthMessageCodes.USER_CREATION_SUCCEEDED, createdUser.getEmail());
             }
         } else {
             if (alreadyExistingUserWithSameEmail != null) {
-                message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL, newUser.getEmail());
+                message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_EMAIL, newUserTO.getEmail());
             } else {
-                message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME, newUser.getUsername());
+                message = Message.error(AuthMessageCodes.USER_ALREADY_EXISTS_WITH_THIS_USERNAME, newUserTO.getUsername());
             }
         }
 

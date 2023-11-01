@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -66,6 +67,10 @@ public class UnitControllerTest {
     ParameterRepository parameterRepository;
     @MockBean
     UserRepository userRepository;
+
+    @Autowired
+    UserMapper userMapper;
+
     @Autowired
     ObjectMapper objectMapper;  // json mapper
     TestDataFactory testDataFactory = TestDataFactory.getInstance();
@@ -82,8 +87,7 @@ public class UnitControllerTest {
         UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
-        UserEntity userEntity = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo, userEntity);
+        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
@@ -124,8 +128,7 @@ public class UnitControllerTest {
         UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
         userTo.setId(1L);
 
-        UserEntity userEntity = new UserEntity();
-        Mapper.mapUserTo2Entity(userTo, userEntity);
+        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 

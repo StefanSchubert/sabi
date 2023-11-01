@@ -5,7 +5,10 @@
 
 package de.bluewhale.sabi.util;
 
-import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.model.MeasurementReminderTo;
+import de.bluewhale.sabi.model.ParameterTo;
+import de.bluewhale.sabi.model.PlagueRecordTo;
+import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.persistence.model.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,39 +26,7 @@ import java.util.List;
 public class Mapper {
 
 
-    /**
-     * Maps given To attributes into provided Entity
-     *
-     * @param pUserTo
-     * @param pUserEntity
-     */
-    public static void mapUserTo2Entity(@NotNull final UserTo pUserTo, @NotNull final UserEntity pUserEntity) {
-        pUserEntity.setId(pUserTo.getId());
-        pUserEntity.setEmail(pUserTo.getEmail());
-        pUserEntity.setUsername(pUserTo.getUsername());
-        // pUserEntity.setPassword(pUserTo.getPassword()); No won't do because of encryption layer
-        pUserEntity.setValidated(pUserTo.isValidated());
-        pUserEntity.setValidateToken(pUserTo.getValidationToken());
-        pUserEntity.setLanguage(pUserTo.getLanguage());
-        pUserEntity.setCountry(pUserTo.getCountry());
-    }
 
-    /**
-     * Maps given Entity attributes into provided To
-     *
-     * @param pUserEntity
-     * @param pUserTo
-     */
-    public static void mapUserEntity2To(@NotNull final UserEntity pUserEntity, @NotNull final UserTo pUserTo) {
-        pUserTo.setId(pUserEntity.getId());
-        pUserTo.setEmail(pUserEntity.getEmail());
-        pUserTo.setUsername(pUserEntity.getUsername());
-        // pUserTo.setPassword(pUserEntity.getPassword()); No won't do because of encryption layer
-        pUserTo.setValidated(pUserEntity.isValidated());
-        pUserTo.setValidationToken(pUserEntity.getValidateToken());
-        pUserTo.setLanguage(pUserEntity.getLanguage());
-        pUserTo.setCountry(pUserEntity.getCountry());
-    }
 
     /**
      * Maps given Entity attributes into provided To
