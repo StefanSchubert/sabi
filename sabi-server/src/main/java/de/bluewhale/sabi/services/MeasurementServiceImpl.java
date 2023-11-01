@@ -9,11 +9,11 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
+import de.bluewhale.sabi.mapper.ParameterMapper;
 import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
-import de.bluewhale.sabi.util.Mapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +60,9 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Autowired
     ParameterRepository parameterRepository;
+
+    @Autowired
+    ParameterMapper parameterMapper;
 
     @Autowired
     UserMeasurementReminderRepository measurementReminderRepository;
@@ -216,8 +219,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             return null;
         }
 
-        ParameterTo parameterTo = new ParameterTo();
-        Mapper.mapParameterEntity2To(parameterEntity, parameterTo);
+        ParameterTo parameterTo = parameterMapper.mapParameterEntity2To(parameterEntity);
 
         return parameterTo;
     }

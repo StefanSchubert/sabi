@@ -6,9 +6,11 @@
 package de.bluewhale.sabi.util;
 
 import de.bluewhale.sabi.model.MeasurementReminderTo;
-import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.PlagueRecordTo;
-import de.bluewhale.sabi.persistence.model.*;
+import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.PlagueRecordEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity;
 
 /**
  * Mapping Util Functions.
@@ -19,22 +21,6 @@ import de.bluewhale.sabi.persistence.model.*;
  * @author Stefan Schubert
  */
 public class Mapper {
-
-    public static void mapParameterEntity2To(ParameterEntity parameterEntity, ParameterTo parameterTo) {
-        parameterTo.setId(parameterEntity.getId());
-        parameterTo.setDescription(parameterEntity.getDescription());
-        parameterTo.setBelongingUnitId(parameterEntity.getBelongingUnitId());
-        parameterTo.setMinThreshold(parameterEntity.getMinThreshold());
-        parameterTo.setMaxThreshold(parameterEntity.getMaxThreshold());
-    }
-
-    public static void mapParameterTo2Entity(ParameterTo parameterTo, ParameterEntity parameterEntity) {
-        parameterEntity.setId(parameterTo.getId());
-        parameterEntity.setDescription(parameterTo.getDescription());
-        parameterEntity.setBelongingUnitId(parameterTo.getBelongingUnitId());
-        parameterEntity.setMinThreshold(parameterTo.getMinThreshold());
-        parameterEntity.setMaxThreshold(parameterTo.getMaxThreshold());        
-    }
 
     public static void mapPlagueRecordEntity2To(PlagueRecordEntity plagueRecordEntity, PlagueRecordTo plagueRecordTo) {
         plagueRecordTo.setPlagueId(plagueRecordEntity.getPlagueId());

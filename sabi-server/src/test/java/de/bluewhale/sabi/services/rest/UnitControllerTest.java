@@ -8,6 +8,7 @@ package de.bluewhale.sabi.services.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.mapper.ParameterMapper;
 import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.ParameterTo;
@@ -20,7 +21,6 @@ import de.bluewhale.sabi.persistence.repositories.ParameterRepository;
 import de.bluewhale.sabi.persistence.repositories.UnitRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
-import de.bluewhale.sabi.util.Mapper;
 import de.bluewhale.sabi.util.RestHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,6 +74,9 @@ public class UnitControllerTest {
 
     @Autowired
     UnitMapper unitMapper;
+
+    @Autowired
+    ParameterMapper parameterMapper;
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
@@ -136,8 +139,7 @@ public class UnitControllerTest {
         given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
         ParameterTo parameterTo = testDataFactory.getTestParameterTo();
-        ParameterEntity parameterEntity = new ParameterEntity();
-        Mapper.mapParameterTo2Entity(parameterTo, parameterEntity);
+        ParameterEntity parameterEntity = parameterMapper.mapParameterTo2Entity(parameterTo);
 
         given(this.parameterRepository.findByBelongingUnitIdEquals(testDataFactory.getTestUnitTo().getId())).willReturn(parameterEntity);
 
