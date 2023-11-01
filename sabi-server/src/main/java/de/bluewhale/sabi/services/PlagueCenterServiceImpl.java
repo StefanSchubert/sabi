@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.mapper.PlagueRecordMapper;
 import de.bluewhale.sabi.model.PlagueRecordTo;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.PlagueTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
-import de.bluewhale.sabi.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +41,9 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
 
     @Autowired
     PlagueRepository plagueRepository;
+
+    @Autowired
+    PlagueRecordMapper plagueRecordMapper;
 
     @Autowired
     AquariumRepository aquariumRepository;
@@ -144,11 +147,13 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
             }
         }
 
-        createdPlagueRecordTo = new PlagueRecordTo();
-        PlagueRecordEntity plagueRecordEntity = new PlagueRecordEntity();
-        Mapper.mapPlagueRecordTo2Entity(pPlagueRecordTo,plagueRecordEntity,aquariumEntity, requestingUser);
+        PlagueRecordEntity plagueRecordEntity = plagueRecordMapper.mapPlagueRecordTo2EntityWithoutPrimaryKeyAndAquarium(pPlagueRecordTo);
+        plagueRecordEntity.setAquarium(aquariumEntity);
+        plagueRecordEntity.setUser(requestingUser);
+
         PlagueRecordEntity createdPlagueRecordEntity = plagueRecordEntityRepository.saveAndFlush(plagueRecordEntity);
-        Mapper.mapPlagueRecordEntity2To(createdPlagueRecordEntity,createdPlagueRecordTo);
+
+        createdPlagueRecordTo = plagueRecordMapper.mapPlagueRecordEntity2To(createdPlagueRecordEntity);
         message = Message.info(PlagueCenterMessageCodes.CREATE_SUCCEEDED, createdPlagueRecordTo.getId());
 
         ResultTo<PlagueRecordTo> plagueRecordToResultTo = new ResultTo<>(createdPlagueRecordTo, message) ;
@@ -169,8 +174,7 @@ public class PlagueCenterServiceImpl implements PlagueCenterService {
     private List<PlagueRecordTo> mapPlagueRecordEntities2TOs(List<PlagueRecordEntity> plagueRecordEntityList) {
         List<PlagueRecordTo> plagueRecordToList = new ArrayList<PlagueRecordTo>();
         for (PlagueRecordEntity plagueRecordEntity : plagueRecordEntityList) {
-            PlagueRecordTo plagueRecordTo = new PlagueRecordTo();
-            Mapper.mapPlagueRecordEntity2To(plagueRecordEntity, plagueRecordTo);
+            PlagueRecordTo plagueRecordTo = plagueRecordMapper.mapPlagueRecordEntity2To(plagueRecordEntity);
             plagueRecordToList.add(plagueRecordTo);
         }
         return plagueRecordToList;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -218,11 +218,11 @@ public class MeasurementServiceTest extends BasicDataFactory {
         ResultTo<AquariumTo> newTankResultTo = tankService.registerNewTank(testAquariumTo, newTestUserMail);
 
         MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(newTankResultTo.getValue().getId());
-        testMeasurementTo.setId(889911L); // to ensure not to interfere with others
+        testMeasurementTo.setId(889911L); // will be ignored ID will be overwritten, i.e. provided by addMeasurement
         ResultTo<MeasurementTo> measurementToResultTo1 = measurementService.addMeasurement(testMeasurementTo, newTestUserMail);
 
         // When
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(testMeasurementTo.getId(), newTestUserMail);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(measurementToResultTo1.getValue().getId(), newTestUserMail);
 
         // Then
         assertNotNull(measurementToResultTo);

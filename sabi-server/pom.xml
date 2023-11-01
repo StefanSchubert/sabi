@@ -13,7 +13,7 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.2</version>
+        <version>3.1.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -42,25 +42,26 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.2.2</sabi.boundary.version>
+        <sabi.boundary.version>1.2.3</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <springdoc.openapiv2.version>2.1.0</springdoc.openapiv2.version>
-        <!-- Don't use EclipseLink 4.0.1 this breaks JPAConfigs -->
-        <eclipselink.version>4.0.0</eclipselink.version>
-        <micrometer.prometheus.version>1.11.2</micrometer.prometheus.version>
-        <spring.instrument.version>6.0.7</spring.instrument.version>
+        <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
+        <!-- Last worked with Eclipselink 4.0.0 / Don't use EclipseLink 4.0.1 this breaks JPAConfigs / Try Eclipselink 4.0.2-->
+        <eclipselink.version>4.0.2</eclipselink.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
+        <spring.instrument.version>6.0.12</spring.instrument.version>
         <surefire.version>3.0.0-M7</surefire.version>
-        <lombok.version>1.18.28</lombok.version>
-        <owasp.plugin.version>8.3.1</owasp.plugin.version>
-        <passay.version>1.6.3</passay.version>
-        <mariadb.java.client.version>3.1.4</mariadb.java.client.version>
+        <lombok.version>1.18.30</lombok.version>
+        <owasp.plugin.version>8.4.2</owasp.plugin.version>
+        <passay.version>1.6.4</passay.version>
+        <mariadb.java.client.version>3.2.0</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
-        <archunit.version>0.23.1</archunit.version>
+        <archunit.version>1.1.0</archunit.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
         <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
         <jetbrains.annotation.version>24.0.1</jetbrains.annotation.version>
@@ -194,6 +195,14 @@
         </dependency>
 
         <dependency>
+            <!-- MapStruct Bean Mapping dependencies -->
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>${mariadb.java.client.version}</version>
@@ -205,6 +214,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Monitoring
@@ -297,10 +307,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- https://github.com/JetBrains/java-annotations
+                 A set of Java annotations which can be used in JVM-based languages.
+                 They serve as an additional documentation and can be interpreted by IDEs
+                 and static analysis tools to improve code analysis.
+            -->
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>${jetbrains.annotation.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -317,13 +332,20 @@
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
                     <annotationProcessorPaths>
+                        <path>
                         <!-- Process lombok annotations found in included libraries.
                              Required e.g. for sabi-boundary.
                         -->
-                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <!-- Handle Mapstruts annotations. Important: Ensure that Lombok
+                             comes first otherwise mapstrut would complain about missing properties. -->
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -348,6 +370,7 @@
                 </dependencies>
                 <configuration>
                     <test>de.bluewhale.sabi.MasterTestSuite</test>
+                    <!--suppress UnresolvedMavenProperty -->
                     <argLine>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
                     </argLine>
@@ -364,6 +387,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
                     <jvmArguments>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
                     </jvmArguments>

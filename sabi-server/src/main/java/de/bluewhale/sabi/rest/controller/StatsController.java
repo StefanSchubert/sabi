@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "api/stats")
 public class StatsController {
 
-    @Autowired
     UserService userService;
 
     @Autowired

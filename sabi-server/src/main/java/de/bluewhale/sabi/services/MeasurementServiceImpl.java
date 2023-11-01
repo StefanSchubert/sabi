@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,10 +8,13 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.mapper.MeasurementMapper;
+import de.bluewhale.sabi.mapper.MeasurementReminderMapper;
+import de.bluewhale.sabi.mapper.ParameterMapper;
+import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
-import de.bluewhale.sabi.util.Mapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static de.bluewhale.sabi.util.Mapper.*;
 
 /**
  * Provides all required for dealing with measurements here e.g. for use cases around the {@link de.bluewhale.sabi.persistence.model.MeasurementEntity}
@@ -41,6 +43,12 @@ public class MeasurementServiceImpl implements MeasurementService {
     MeasurementRepository measurementRepository;
 
     @Autowired
+    MeasurementMapper measurementMapper;
+
+    @Autowired
+    MeasurementReminderMapper measurementReminderMapper;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -50,7 +58,13 @@ public class MeasurementServiceImpl implements MeasurementService {
     UnitRepository unitRepository;
 
     @Autowired
+    UnitMapper unitMapper;
+
+    @Autowired
     ParameterRepository parameterRepository;
+
+    @Autowired
+    ParameterMapper parameterMapper;
 
     @Autowired
     UserMeasurementReminderRepository measurementReminderRepository;
@@ -60,7 +74,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
         @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquarium(aquarium);
 
-        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
+        List<MeasurementTo> measurementTos = measurementMapper.mapMeasurementEntities2TOs(measurementsOfAquarium);
 
         return measurementTos;
     }
@@ -70,7 +84,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         AquariumEntity aquarium = aquariumRepository.getOne(pTankID);
         @NotNull List<MeasurementEntity> measurementsOfAquarium = measurementRepository.findByAquariumAndUnitIdOrderByMeasuredOnAsc(aquarium, pUnitID);
 
-        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfAquarium);
+        List<MeasurementTo> measurementTos = measurementMapper.mapMeasurementEntities2TOs(measurementsOfAquarium);
 
         return measurementTos;
     }
@@ -81,7 +95,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         List<UnitTo> unitToList = Collections.emptyList();
         List<UnitEntity> unitEntityList = unitRepository.findAll();
         if (unitEntityList != null && !unitEntityList.isEmpty()) {
-            unitToList = mapUnitEntities2TOs(unitEntityList);
+            unitToList = unitMapper.mapUnitEntities2TOs(unitEntityList);
 
         }
         return unitToList;
@@ -101,7 +115,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             measurementsOfUser = measurementRepository.findByUserOrderByMeasuredOnDesc(user, page);
         }
 
-        List<MeasurementTo> measurementTos = mapMeasurementEntities2TOs(measurementsOfUser);
+        List<MeasurementTo> measurementTos = measurementMapper.mapMeasurementEntities2TOs(measurementsOfUser);
         return measurementTos;
     }
 
@@ -124,7 +138,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             resultMsg = Message.error(TankMessageCodes.MEASURMENT_ALREADY_DELETED);
         } else {
             measurementRepository.delete(usersMeasurementEntity);
-            Mapper.mapMeasurementEntity2To(usersMeasurementEntity, usersMeasurementTo);
+            usersMeasurementTo = measurementMapper.mapMeasurementEntity2To(usersMeasurementEntity);
             resultMsg = Message.info(TankMessageCodes.REMOVAL_SUCCEEDED);
         }
 
@@ -149,13 +163,12 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         if (usersAquarium != null) {
 
-            MeasurementEntity measurementEntity = new MeasurementEntity();
-            Mapper.mapMeasurementTo2EntityWithoutAquarium(pMeasurementTo, measurementEntity);
+            MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(pMeasurementTo);
             measurementEntity.setAquarium(usersAquarium);
             measurementEntity.setUser(user);
 
             MeasurementEntity createdMeasurementEntity = measurementRepository.saveAndFlush(measurementEntity);
-            Mapper.mapMeasurementEntity2To(createdMeasurementEntity, pMeasurementTo);
+            pMeasurementTo = measurementMapper.mapMeasurementEntity2To(createdMeasurementEntity);
 
             resultMsg = Message.info(TankMessageCodes.CREATE_SUCCEEDED);
         } else {
@@ -180,9 +193,9 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         if (measurementEntity != null) {
 
-            Mapper.mapMeasurementTo2EntityWithoutAquarium(pMeasurementTo, measurementEntity);
+            measurementMapper.mergeMeasurementTo2EntityWithoutAquarium(pMeasurementTo, measurementEntity);
             MeasurementEntity updatedEntity = measurementRepository.save(measurementEntity);
-            Mapper.mapMeasurementEntity2To(updatedEntity, pMeasurementTo);
+            pMeasurementTo = measurementMapper.mapMeasurementEntity2To(updatedEntity);
 
             resultMsg = Message.info(TankMessageCodes.UPDATE_SUCCEEDED);
 
@@ -208,8 +221,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             return null;
         }
 
-        ParameterTo parameterTo = new ParameterTo();
-        Mapper.mapParameterEntity2To(parameterEntity, parameterTo);
+        ParameterTo parameterTo = parameterMapper.mapParameterEntity2To(parameterEntity);
 
         return parameterTo;
     }
@@ -243,13 +255,12 @@ public class MeasurementServiceImpl implements MeasurementService {
         Optional<AquariumEntity> optionalAquarium = aquariumRepository.findById(pMeasurementTo.getAquariumId());
         if (optionalAquarium.isPresent()) {
 
-            MeasurementEntity measurementEntity = new MeasurementEntity();
-            Mapper.mapMeasurementTo2EntityWithoutAquarium(pMeasurementTo, measurementEntity);
+            MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(pMeasurementTo);
             measurementEntity.setAquarium(optionalAquarium.get());
             measurementEntity.setUser(optionalAquarium.get().getUser());
 
             MeasurementEntity createdMeasurementEntity = measurementRepository.saveAndFlush(measurementEntity);
-            Mapper.mapMeasurementEntity2To(createdMeasurementEntity, pMeasurementTo);
+            pMeasurementTo = measurementMapper.mapMeasurementEntity2To(createdMeasurementEntity);
 
             resultMsg = Message.info(TankMessageCodes.CREATE_SUCCEEDED);
 
@@ -314,15 +325,15 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         if (optionalReminderEntity.isPresent()) {
             resultMsg = Message.warning(UserSpecificMessageCodes.RECORD_ALREADY_EXISTS);
-            mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get(), pReminderTo);
+            pReminderTo = measurementReminderMapper.mapUserMeasurementReminderEntity2TO(optionalReminderEntity.get());
         } else {
             // if not add it
-            UserMeasurementReminderEntity reminderEntity = new UserMeasurementReminderEntity();
-            mapUserMeasurementReminderTO2Entity(pReminderTo, reminderEntity, userEntity);
+            UserMeasurementReminderEntity reminderEntity = measurementReminderMapper.mapUserMeasurementReminderTO2EntityWithoutUser(pReminderTo);
+            reminderEntity.setUser(userEntity);
 
             UserMeasurementReminderEntity savedReminderEntity = measurementReminderRepository.save(reminderEntity);
             userEntity.getUserMeasurementReminders().add(savedReminderEntity); // update cached reminderlist on users side.
-            mapUserMeasurementReminderEntity2TO(savedReminderEntity, pReminderTo);
+            pReminderTo = measurementReminderMapper.mapUserMeasurementReminderEntity2TO(savedReminderEntity);
             resultMsg = Message.info(UserSpecificMessageCodes.CREATE_SUCCEEDED);
         }
 
@@ -340,7 +351,7 @@ public class MeasurementServiceImpl implements MeasurementService {
             // check if it already exists
             Optional<UserMeasurementReminderEntity> optionalReminderEntity = measurementReminderRepository.findTopByUserAndUnitId(userEntity, pReminderTo.getUnitId());
             if (optionalReminderEntity.isPresent()) {
-                mapUserMeasurementReminderTO2Entity(pReminderTo, optionalReminderEntity.get(), userEntity);
+                measurementReminderMapper.mapUserMeasurementReminderTO2EntityWithoutUser(pReminderTo, optionalReminderEntity.get());
                 // no saving required, as entity is attached.
                 resultMsg = Message.info(UserSpecificMessageCodes.UPDATE_SUCCEEDED);
             } else {

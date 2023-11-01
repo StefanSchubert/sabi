@@ -18,6 +18,7 @@ logging:
       springframework:
         transaction:
           interceptor: TRACE
+        security: DEBUG
 management:
   endpoint:
     health:

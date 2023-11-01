@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.mapper.FishMapper;
 import de.bluewhale.sabi.model.FishTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -17,9 +18,6 @@ import de.bluewhale.sabi.persistence.repositories.FishRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static de.bluewhale.sabi.util.Mapper.mapFishEntity2To;
-import static de.bluewhale.sabi.util.Mapper.mapFishTo2Entity;
 
 /**
  * It's all about Fish here ;-)
@@ -35,6 +33,9 @@ public class FishServiceImpl implements FishService {
 
     @Autowired
     private FishRepository fishRepository;
+
+    @Autowired
+    private FishMapper fishMapper;
 
     @Override
     public ResultTo<FishTo> registerNewFish(FishTo pFishTo, UserTo pRegisteredUser) {
@@ -59,11 +60,9 @@ public class FishServiceImpl implements FishService {
 
             if (message == null) {
                 // Continue only if we got no error so far
-                FishEntity fishEntity = new FishEntity();
-                mapFishTo2Entity(pFishTo, fishEntity);
+                FishEntity fishEntity = fishMapper.mapFishTo2Entity(pFishTo);
                 FishEntity createdFishEntity = fishRepository.save(fishEntity);
-                createdFishTo = new FishTo();
-                mapFishEntity2To(createdFishEntity, createdFishTo);
+                createdFishTo = fishMapper.mapFishEntity2To(createdFishEntity);
                 message = Message.info(TankMessageCodes.CREATE_SUCCEEDED, fishEntity.getId());
             }
         }
@@ -87,8 +86,7 @@ public class FishServiceImpl implements FishService {
         FishEntity fishEntity = fishRepository.findUsersFish(pFishId, registeredUser.getId());
 
         if (fishEntity != null) {
-            fishTo =  new FishTo();
-            mapFishEntity2To(fishEntity, fishTo);
+            fishTo =  fishMapper.mapFishEntity2To(fishEntity);
         }
 
         return fishTo;

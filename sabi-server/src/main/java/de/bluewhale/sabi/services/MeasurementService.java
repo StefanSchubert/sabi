@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -69,6 +69,7 @@ public interface MeasurementService {
 
     /**
      * Creates a new measurement for provided users tank.
+     * Notice a possible {@link MeasurementTo#id} in pMeasurementTo will be ignored, as it will be provided by this call.
      *
      * @param pMeasurementTo measurement data.
      * @param pUserEmail     Owner of the tank for which the measurement has been taken

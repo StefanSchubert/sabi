@@ -30,7 +30,7 @@ services:
     depends_on:
       - db
   flyway:
-    image: flyway/flyway:9.8.1
+    image: flyway/flyway:9.22
     platform: linux/arm64
     command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 baseline migrate
     volumes:
@@ -40,7 +40,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:10.9.4
+    image: mariadb:11.1
     platform: linux/arm64/v8
     environment:
       - MYSQL_ROOT_PASSWORD=SuperDooper
@@ -54,7 +54,7 @@ services:
       - "3306:3306"
 # To check what emails will be send and for being able to test the registration workflow
   fakeSMTP:
-    image: gessnerfl/fake-smtp-server:1.10.2
+    image: gessnerfl/fake-smtp-server:2.1.2
     platform: linux/arm64
     environment:
       - server.port=5080
@@ -68,7 +68,7 @@ services:
       - "5080:5080"
 # Monitoring Sample with Prometheus Grafana
   grafana:
-    image: grafana/grafana:9.1.7
+    image: grafana/grafana:10.1.2
     platform: linux/arm64
     volumes:
      - ./grafanaData:/var/lib/grafana
@@ -79,7 +79,7 @@ services:
     depends_on:
       - prometheus
   prometheus:
-    image: prom/prometheus:v2.39.0
+    image: prom/prometheus:v2.47.0
     platform: linux/arm64
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
