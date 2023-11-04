@@ -86,11 +86,10 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 
 #### Notice on the red code analytic status:
 * Code-QL due to everlasting timeouts by github to downloading CVEs databases.
-* Maven build: Due to currently including milestone releases of micrometer.
 
 ### Common
 
-* Java 17
+* Java 21
 * openAPI3 (Swagger) via springdoc-v2
 * ARM-Platform (raspberryPis)
 * IPv6 DynDNS (at least for the start)
@@ -125,7 +124,7 @@ With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki
 
 ### Preconditions
 
-* You have a JDK17 and current Maven installed
+* You have a JDK21 and current Maven installed
 * You have docker installed on your machine, and you know docker usage fairly well.
 
 #### Prepare your local docker environment
@@ -247,7 +246,7 @@ As we are using eclipselink you must add a specific javaagent, when running your
 Because of eclipselink we are using weaving at runtime which requires the following vm option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.7/spring-instrument-6.0.7.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.13/spring-instrument-6.0.13.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
