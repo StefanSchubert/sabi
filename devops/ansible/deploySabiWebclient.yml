@@ -53,7 +53,7 @@
         dest: /etc/systemd/system/sabi.service
         owner: root
         group: root
-    - name: enforce deamon config reload
+    - name: enforce daemon config reload
       command: systemctl daemon-reload
     - name: Enable service sabi and ensure it is not masked
       systemd:

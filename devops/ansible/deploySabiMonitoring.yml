@@ -44,7 +44,7 @@
         dest: /etc/systemd/system/nodeexporter.service
         owner: root
         group: root
-    - name: enforce deamon config reload
+    - name: enforce daemon config reload
       command: systemctl daemon-reload
     - name: Enable service nodeexporter and ensure it is not masked
       systemd:
@@ -108,7 +108,7 @@
         dest: /etc/systemd/system/prometheus.service
         owner: root
         group: root
-    - name: enforce deamon config reload
+    - name: enforce daemon config reload
       command: systemctl daemon-reload
     - name: Enable service prometheus and ensure it is not masked
       systemd:
@@ -167,7 +167,7 @@
         dest: /etc/systemd/system/grafana.service
         owner: root
         group: root
-    - name: enforce deamon config reload
+    - name: enforce daemon config reload
       command: systemctl daemon-reload
     - name: Enable service grafana and ensure it is not masked
       systemd:

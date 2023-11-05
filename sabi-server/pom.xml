@@ -42,18 +42,17 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.2.3</sabi.boundary.version>
+        <sabi.boundary.version>1.2.4</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <!-- Last worked with Eclipselink 4.0.0 / Don't use EclipseLink 4.0.1 this breaks JPAConfigs / Try Eclipselink 4.0.2-->
         <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
         <spring.instrument.version>6.0.12</spring.instrument.version>
-        <surefire.version>3.0.0-M7</surefire.version>
+        <surefire.version>3.2.1</surefire.version>
         <lombok.version>1.18.30</lombok.version>
         <owasp.plugin.version>8.4.2</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>

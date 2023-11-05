@@ -46,9 +46,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.11.4</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
         <junit.version>4.13.2</junit.version>
-        <owasp.plugin.version>8.4.0</owasp.plugin.version>
+        <owasp.plugin.version>8.4.2</owasp.plugin.version>
     </properties>
 
     <dependencies>

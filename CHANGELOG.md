@@ -1,5 +1,11 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.2
+
+### Technical Maintenance
+* Common Patch-Management (Java 21 / Primefaces 13 / Dependencies)
+* Mapping Layer (BE module), replaces by using Mapstruts
+
 ## Release 1.2.1
 ### Bugfixes
 * i18n Language detection

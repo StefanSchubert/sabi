@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -42,7 +42,7 @@
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
         <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <owasp.plugin.version>8.4.0</owasp.plugin.version>
+        <owasp.plugin.version>8.4.2</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.3.1</maven.clean.plugin.version>
         <maven.site.plugin.version>4.0.0-M9</maven.site.plugin.version>
