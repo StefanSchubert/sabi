@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "api/stats")
 public class StatsController {
 
+    @Autowired
     UserService userService;
 
     @Autowired
