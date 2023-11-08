@@ -51,8 +51,8 @@
         <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
-        <spring.instrument.version>6.0.12</spring.instrument.version>
-        <surefire.version>3.2.1</surefire.version>
+        <spring.instrument.version>6.0.13</spring.instrument.version>
+        <surefire.version>3.2.2</surefire.version>
         <lombok.version>1.18.30</lombok.version>
         <owasp.plugin.version>8.4.2</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>
@@ -60,10 +60,11 @@
         <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
         <junit.version>4.13.2</junit.version>
-        <archunit.version>1.1.0</archunit.version>
+        <archunit.version>1.2.0</archunit.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
         <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
         <jetbrains.annotation.version>24.0.1</jetbrains.annotation.version>
+        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -417,6 +418,7 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>

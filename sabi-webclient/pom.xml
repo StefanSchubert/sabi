@@ -63,6 +63,7 @@
         <passay.version>1.6.4</passay.version>
         <owasp.plugin.version>8.4.2</owasp.plugin.version>
         <lombok.version>1.18.30</lombok.version>
+        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -307,6 +308,7 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>

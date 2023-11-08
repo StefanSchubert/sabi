@@ -48,6 +48,7 @@
         <maven.site.plugin.version>4.0.0-M9</maven.site.plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <buildhelper.maven.plugin.version>3.3.0</buildhelper.maven.plugin.version>
+        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
 
     </properties>
 
@@ -135,6 +136,7 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>

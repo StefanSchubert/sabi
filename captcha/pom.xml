@@ -49,6 +49,7 @@
         <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
         <junit.version>4.13.2</junit.version>
         <owasp.plugin.version>8.4.2</owasp.plugin.version>
+        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -199,6 +200,7 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>

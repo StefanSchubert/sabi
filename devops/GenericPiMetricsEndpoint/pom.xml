@@ -49,6 +49,7 @@
         <lombok.version>1.18.30</lombok.version>
         <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
         <pimetric.version>1.0</pimetric.version>
+        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -121,6 +122,7 @@
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
