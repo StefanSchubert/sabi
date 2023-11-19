@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -96,7 +96,7 @@ public class AuthenticationController {
             userService.resetPassword(requestData);
         } catch (BusinessException e) {
             HttpStatus httpStatus = responseState.get(e.getCode());
-            responseEntity = new ResponseEntity<>(requestData.toString(), (httpStatus == null ? HttpStatus.FAILED_DEPENDENCY : httpStatus));
+            responseEntity = new ResponseEntity<>("Sorry, something went wrong.", (httpStatus == null ? HttpStatus.FAILED_DEPENDENCY : httpStatus));
         }
 
         return responseEntity;
