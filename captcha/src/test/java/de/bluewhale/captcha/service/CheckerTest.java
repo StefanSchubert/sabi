@@ -7,34 +7,35 @@ package de.bluewhale.captcha.service;
 
 import de.bluewhale.captcha.configs.AppConfig;
 import jakarta.annotation.PostConstruct;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.test.util.AssertionErrors.*;
+
 /**
  * Functional and quality tests of the captcha validation
  *
  * @author Stefan Schubert
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ContextConfiguration(classes = AppConfig.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CheckerTest {
 
     final String BASE_API_URL = "http://localhost:8081/captcha/api";
@@ -53,7 +54,7 @@ public class CheckerTest {
         configuredTTL = Long.parseLong(ttl);
     }
 
-    @Before
+    @BeforeEach
     public void resetThresholdMeter(){
         ChallengeRequestThrottle.resetAPICounter();
         ChallengeRequestThrottle.setThrottleThreshold(MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE);
@@ -72,9 +73,9 @@ public class CheckerTest {
         long ttl = ValidationCache.getTTL();
 
         // Then
-        Assert.assertTrue("application.properties from testclass not accessed?", configuredTTL > 0);
-        Assert.assertTrue("application.properties from ValidationCache not accessed?", ttl > 0);
-        Assert.assertEquals("Different than configured TTL?", configuredTTL, ttl);
+        assertTrue("application.properties from testclass not accessed?", configuredTTL > 0);
+        assertTrue("application.properties from ValidationCache not accessed?", ttl > 0);
+        assertEquals("Different than configured TTL?", configuredTTL, ttl);
     }
 
 
@@ -85,11 +86,11 @@ public class CheckerTest {
         ValidationCache.registerToken(validToken);
 
         // When
-        Assert.assertTrue("Register of token failed", ValidationCache.knowsCode(validToken));
+        assertTrue("Register of token failed", ValidationCache.knowsCode(validToken));
         ValidationCache.invalidateCode(validToken);
 
         // Then
-        Assert.assertFalse("Token was not consumed", ValidationCache.knowsCode(validToken));
+        assertFalse("Token was not consumed", ValidationCache.knowsCode(validToken));
     }
 
 
@@ -109,7 +110,7 @@ public class CheckerTest {
         final String checkresult = restTemplate.getForObject(checkURI, String.class, params);
 
         // Then (be Happy)
-        Assert.assertEquals("Ouch - Token was not recognized", "Accepted", checkresult);
+        assertEquals("Ouch - Token was not recognized", "Accepted", checkresult);
     }
 
     @Test
@@ -129,12 +130,12 @@ public class CheckerTest {
                 String forObject = restTemplate.getForObject(checkURI, String.class);
             } catch (RestClientException e) {
                 // 429 - TOO MANY Request Exception
-                Assert.assertTrue(e.getMessage().startsWith("429"));
+                assertTrue("Did not retrieved expected error code.",e.getMessage().startsWith("429"));
             }
         }
 
         // Then (be Happy)
-        Assert.assertEquals("Throttle ignition too early.", MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE + 1, too_many_requests);
+        assertTrue("Throttle ignition too early.", (MAX_CHALLENGE_REQUEST_THROUGHPUT_PER_MINUTE + 1) == too_many_requests);
     }
 
 
@@ -154,7 +155,7 @@ public class CheckerTest {
                 restTemplate.getForObject(checkURI, String.class);
             } catch (RestClientException e) {
                 // 429 - TOO MANY Request Exception
-                Assert.assertTrue(e.getMessage().startsWith("429"));
+                assertTrue("Did not retrieved expected error code.",e.getMessage().startsWith("429"));
                 break;
             }
         }
@@ -165,9 +166,9 @@ public class CheckerTest {
         // Then (should work without throwing excepting)
         try {
             String object = restTemplate.getForObject(checkURI, String.class);
-            Assert.assertTrue("Did not received a valid captcha.", object.length() > 10);
+            assertTrue("Did not received a valid captcha.", object.length() > 10);
         } catch (Exception e) {
-            Assert.fail("Last call should have been accepted.");
+            fail("Last call should have been accepted.");
         }
     }
 
@@ -185,13 +186,13 @@ public class CheckerTest {
                 restTemplate.getForObject(checkURI, String.class);
             } catch (RestClientException e) {
                 // 429 - TOO MANY Request Exception
-                Assert.assertTrue(e.getMessage().startsWith("429"));
+                assertTrue("Did not retrieved expected error code.",e.getMessage().startsWith("429"));
                 break;
             }
         }
 
         // Then
-        Assert.assertFalse("Throttel not activated.", ChallengeRequestThrottle.requestAllowed());
+        assertFalse("Throttel not activated.", ChallengeRequestThrottle.requestAllowed());
 
     }
 
@@ -214,7 +215,7 @@ public class CheckerTest {
 
         ValidationCache.setTTL(old_ttl); // restablish to avoid conflicts with other tests,
         // Because of the expired TTL  the stale one should be unknown by now
-        Assert.assertFalse("Cache cleanup failed", ValidationCache.knowsCode(staleToken));
+        assertFalse("Cache cleanup failed", ValidationCache.knowsCode(staleToken));
     }
 
 }
