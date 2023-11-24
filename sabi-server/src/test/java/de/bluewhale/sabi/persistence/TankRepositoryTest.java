@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -12,20 +12,17 @@ import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.util.AssertionErrors.*;
 
 
 /**
@@ -34,7 +31,6 @@ import static org.junit.Assert.assertNotNull;
  * Date: 3.3.2021
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 // @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - maybe not compatible with eclipse way?
@@ -48,7 +44,7 @@ public class TankRepositoryTest extends BasicDataFactory {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTestDataFactory() {
         testDataFactory = TestDataFactory.getInstance();
     }
@@ -60,7 +56,7 @@ public class TankRepositoryTest extends BasicDataFactory {
      * The different behaviour can be observed by e.g. calling the master test suite and as comparising
      * the measurement testsuite while this is method is deaktivated.
      */
-    @Before
+    @BeforeEach
     public void ensureBasicDataAvailability() {
 
         UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
@@ -84,9 +80,9 @@ public class TankRepositoryTest extends BasicDataFactory {
         List<AquariumEntity> tanksOfUser2 = aquariumRepository.findAllByUser_IdIs(user2.getId());
 
         // then
-        Assert.assertTrue("User1 one should have excatly 2 tanks", tanksOfUser1.size() == 2);
-        Assert.assertTrue("User2 one should have excatly 1 tank", tanksOfUser2.size() == 1);
-        Assert.assertFalse("Delivered Tank from other user!?", tanksOfUser1.contains(tanksOfUser2));
+        assertTrue("User1 one should have excatly 2 tanks", tanksOfUser1.size() == 2);
+        assertTrue("User2 one should have excatly 1 tank", tanksOfUser2.size() == 1);
+        assertFalse("Delivered Tank from other user!?", tanksOfUser1.contains(tanksOfUser2));
     }
 
 

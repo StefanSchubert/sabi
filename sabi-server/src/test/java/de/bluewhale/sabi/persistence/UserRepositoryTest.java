@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,20 +9,20 @@ import de.bluewhale.sabi.BasicDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertNotEquals;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 
 /**
@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
  * Date: 14.11.2015
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserRepositoryTest extends BasicDataFactory {
@@ -46,7 +45,7 @@ public class UserRepositoryTest extends BasicDataFactory {
      * The different behaviour can be observed by e.g. calling the master test suite and as comparising
      * the measurement testsuite while this is method is deaktivated.
      */
-    @Before
+    @BeforeEach
     public void ensureBasicDataAvailability() {
         UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
         if (byEmail == null) populateBasicData();

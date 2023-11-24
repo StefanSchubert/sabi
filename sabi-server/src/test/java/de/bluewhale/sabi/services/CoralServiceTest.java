@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -9,20 +9,18 @@ import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
-import static org.junit.Assert.fail;
+import static org.springframework.test.util.AssertionErrors.fail;
 
 
 /**
@@ -30,10 +28,9 @@ import static org.junit.Assert.fail;
  * User: Stefan
  * Date: 16.06.2017
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = AppConfig.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CoralServiceTest {
 // ------------------------------ FIELDS ------------------------------
@@ -53,7 +50,7 @@ public class CoralServiceTest {
      */
     @Test
     @Transactional
-    @Ignore
+    @Disabled
     public void testAddCoral() throws Exception {
         // Given
         TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);

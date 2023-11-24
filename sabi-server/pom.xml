@@ -50,34 +50,21 @@
         <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
         <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
-        <spring.instrument.version>6.0.13</spring.instrument.version>
-        <surefire.version>3.2.2</surefire.version>
+        <micrometer.prometheus.version>1.12.0</micrometer.prometheus.version>
+        <spring.instrument.version>6.1.1</spring.instrument.version>
         <lombok.version>1.18.30</lombok.version>
-        <owasp.plugin.version>8.4.2</owasp.plugin.version>
+        <owasp.plugin.version>9.0.0</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>
-        <mariadb.java.client.version>3.2.0</mariadb.java.client.version>
+        <mariadb.java.client.version>3.3.0</mariadb.java.client.version>
         <h2.version>2.1.214</h2.version>
         <dumbster.version>1.6</dumbster.version>
-        <junit.version>4.13.2</junit.version>
         <archunit.version>1.2.0</archunit.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
         <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
-        <jetbrains.annotation.version>24.0.1</jetbrains.annotation.version>
-        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
+        <jetbrains.annotation.version>24.1.0</jetbrains.annotation.version>
+        <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-
-            <dependency>
-                <groupId>org.apache.maven.surefire</groupId>
-                <artifactId>surefire-junit47</artifactId>
-                <version>${surefire.version}</version>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
 
@@ -254,7 +241,7 @@
             <artifactId>spring-instrument</artifactId>
         </dependency>
 
-        <!-- Test dependencies -->
+        <!-- Test dependencies, Since SB3 we have junit5 as default  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -290,13 +277,6 @@
                     <groupId>javax.mail</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <!-- In case you want to switch from junit4.x make sure to adopt the surefire provider as well. -->
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- Supports checking on architectural integrity -->
@@ -353,19 +333,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-instrument</artifactId>
                         <version>${spring.instrument.version}</version>
-                    </dependency>
-                    <dependency>
-                        <!-- Surefire seemed to have difficulties to determine the test provider junit4
-                        in our case, so we configured the provider manually here.-->
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>${surefire.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>

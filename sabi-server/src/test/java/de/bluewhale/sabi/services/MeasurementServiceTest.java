@@ -12,21 +12,20 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
 import jakarta.transaction.Transactional;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.springframework.test.util.AssertionErrors.*;
 
 
 /**
@@ -34,10 +33,9 @@ import static org.junit.Assert.*;
  * User: Stefan
  * Date: 30.08.15
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = AppConfig.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MeasurementServiceTest extends BasicDataFactory {
 
@@ -63,20 +61,20 @@ public class MeasurementServiceTest extends BasicDataFactory {
      * The different behaviour can be observed by e.g. calling the master test suite and as comparising
      * the measurement testsuite while this is method is deaktivated.
      */
-    @Before
+    @BeforeEach
     public void ensureBasicDataAvailability() {
         List<MeasurementTo> list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
         if (list.isEmpty()) {
             populateBasicData();
             list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
         }
-        assertTrue("H2-Basicdata injection did not work!", list.size() > 0);
+        assert(list.size() > 0);
 
         // PROBLEM here: We thought that stores User gets the ID wie set hard, but H2 Dirties context
         // drops data but not sequence values, which is why repeated user creation leads to a different user ID.
         // So any test which is relies on a certain user ID might run into trouble.
         //        UserEntity storedTestUser = userRepository.getByEmail(P_USER1_EMAIL);
-        //        assertNotNull("Precondition stored Test User failed!",storedTestUser);
+        //        assertNotNull("Should not happen!","Precondition stored Test User failed!",storedTestUser);
         //        assertEquals("Stored Test User got wrong ID!? ", 1l, storedTestUser.getId().longValue());
     }
 
@@ -93,8 +91,8 @@ public class MeasurementServiceTest extends BasicDataFactory {
         List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER1_EMAIL, 0);
 
         // Then
-        assertNotNull(tank1Measurements);
-        assertNotNull(usersMeasurements);
+        assertNotNull("Should not happen!",tank1Measurements);
+        assertNotNull("Should not happen!",usersMeasurements);
         assertTrue("Testdata gone?", tank1Measurements.size() >= 1);
         assertTrue("Stored Testdata changed?", usersMeasurements.containsAll(tank1Measurements));
     }
@@ -108,7 +106,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         ParameterTo parameterTo = measurementService.fetchParameterInfoFor(1);
 
         // Then
-        assertNotNull(parameterTo);
+        assertNotNull("Should not happen!",parameterTo);
     }
 
     @Test
@@ -135,7 +133,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         List<MeasurementTo> measurements = measurementService.listMeasurementsFilteredBy(2L, 1);
 
         // Then
-        assertNotNull(measurements);
+        assertNotNull("Should not happen!",measurements);
         assertTrue("Testdata gone or changed? Received more or less than expected on measurement.", measurements.size() == 1);
     }
 
@@ -148,7 +146,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         List<UnitTo> measurementUnits = measurementService.listAllMeasurementUnits();
 
         // Then
-        assertNotNull(measurementUnits);
+        assertNotNull("Should not happen!",measurementUnits);
         assertTrue("Testdata gone?", measurementUnits.size() >= 1);
     }
 
@@ -166,8 +164,8 @@ public class MeasurementServiceTest extends BasicDataFactory {
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, P_USER1_EMAIL);
 
         // Then
-        assertNotNull(measurementToResultTo);
-        assertNotNull(measurementToResultTo.getValue());
+        assertNotNull("Should not happen!",measurementToResultTo);
+        assertNotNull("Should not happen!",measurementToResultTo.getValue());
         assertEquals("Creating measurement failed? " + measurementToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementToResultTo.getMessage().getType());
     }
 
@@ -225,8 +223,8 @@ public class MeasurementServiceTest extends BasicDataFactory {
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(measurementToResultTo1.getValue().getId(), newTestUserMail);
 
         // Then
-        assertNotNull(measurementToResultTo);
-        assertNotNull(measurementToResultTo.getValue());
+        assertNotNull("Should not happen!",measurementToResultTo);
+        assertNotNull("Should not happen!",measurementToResultTo.getValue());
         CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Removal of measurement failed?", messageType.equals(Message.CATEGORY.INFO));
 
@@ -246,8 +244,8 @@ public class MeasurementServiceTest extends BasicDataFactory {
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(prestoresMeasurementTo, P_USER1_EMAIL);
 
         // Then
-        assertNotNull(measurementToResultTo);
-        assertEquals(newValue, measurementToResultTo.getValue().getMeasuredValue(), 0f);
+        assertNotNull("Should not happen!",measurementToResultTo);
+        assertEquals("Update failed?",newValue, measurementToResultTo.getValue().getMeasuredValue());
         CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Update of measurement failed?", messageType.equals(Message.CATEGORY.INFO));
 
@@ -268,8 +266,8 @@ public class MeasurementServiceTest extends BasicDataFactory {
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addIotAuthorizedMeasurement(testMeasurementTo);
 
         // Then
-        assertNotNull(measurementToResultTo);
-        assertNotNull(measurementToResultTo.getValue());
+        assertNotNull("Should not happen!",measurementToResultTo);
+        assertNotNull("Should not happen!",measurementToResultTo.getValue());
         CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Creating measurement failed?", messageType.equals(Message.CATEGORY.INFO));
     }

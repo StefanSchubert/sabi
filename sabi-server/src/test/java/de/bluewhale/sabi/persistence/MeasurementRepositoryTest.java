@@ -16,11 +16,9 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -28,12 +26,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
 /**
@@ -42,7 +41,6 @@ import static org.junit.Assert.assertNotNull;
  * Date: 14.11.2015
  */
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 // @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - maybe not compatible with eclipse way?
@@ -62,7 +60,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTestDataFactory() {
         testDataFactory = TestDataFactory.getInstance();
     }
@@ -74,7 +72,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
      * The different behaviour can be observed by e.g. calling the master test suite and as comparising
      * the measurement testsuite while this is method is deaktivated.
      */
-    @Before
+    @BeforeEach
     public void ensureBasicDataAvailability() {
 
         UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
@@ -99,11 +97,11 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         MeasurementEntity createdMeasurementEntity = measurementRepository.saveAndFlush(measurementEntity);
 
         // then
-        Assert.assertNotNull("Measurement was not persisted!", createdMeasurementEntity.getId());
+        assertNotNull("Measurement was not persisted!", createdMeasurementEntity.getId());
         MeasurementEntity foundMeasurementEntity = measurementRepository.findById(createdMeasurementEntity.getId()).get();
 
-        Assert.assertEquals(createdMeasurementEntity.getAquarium(), foundMeasurementEntity.getAquarium());
-        Assert.assertEquals(createdMeasurementEntity.getAquarium().getId(), measurementTo.getAquariumId());
+        assertEquals(createdMeasurementEntity.getAquarium(), foundMeasurementEntity.getAquarium());
+        assertEquals(createdMeasurementEntity.getAquarium().getId(), measurementTo.getAquariumId());
 
     }
 
@@ -115,7 +113,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         // when
         List<MeasurementEntity> usersMeasurements = measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity);
         // then
-        Assert.assertTrue("Basic testdata missing!?", usersMeasurements.size() > 0);
+        assertTrue("Basic testdata missing!?", usersMeasurements.size() > 0);
     }
 
     @Test
@@ -127,7 +125,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         Pageable page = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "measuredOn"));
         List<MeasurementEntity> usersMeasurements = measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity,page);
         // then expect 2 because of paging out of 3 rows available via BasicTestDataFactory
-        Assert.assertTrue("Basic testdata missing!?", usersMeasurements.size() == 2);
+        assertTrue("Basic testdata missing!?", usersMeasurements.size() == 2);
     }
 
 
@@ -141,7 +139,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         // When
         MeasurementEntity measurement = measurementRepository.getByIdAndUser(testMeasurementId, userEntity);
         // Then
-        Assert.assertEquals("Missing testdata for user 1L",  measurement.getAquarium().getId(),testAquariumId);
+        assertTrue("Missing testdata for user 1L",  measurement.getAquarium().getId()==testAquariumId);
     }
 
 
