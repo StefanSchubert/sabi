@@ -17,10 +17,9 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.util.RestHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,7 +27,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.naming.NamingException;
 
@@ -44,7 +42,6 @@ import static org.mockito.Mockito.reset;
  * Checks user authorization workflows from client point of view.
  * You may consult the test cases, while developing a specific client.
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserAuthControllerTest {
@@ -70,18 +67,18 @@ public class UserAuthControllerTest {
     @Autowired
     private UserMapper userMapper;
 
-    @Before
+    @BeforeEach
     public void initFakeMailer() throws NamingException {
         smtpServer = SimpleSmtpServer.start(2525);
     }
 
 
-    @After
+    @AfterEach
     public void stopFakeMailer() throws Exception {
         smtpServer.stop();
     }
 
-    @After
+    @AfterEach
     public void cleanUpMocks() {
         reset(captchaAdapter, userRepository);
     }

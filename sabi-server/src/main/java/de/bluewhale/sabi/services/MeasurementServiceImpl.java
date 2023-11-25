@@ -18,6 +18,7 @@ import de.bluewhale.sabi.persistence.repositories.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -91,6 +92,7 @@ public class MeasurementServiceImpl implements MeasurementService {
 
 
     @Override
+    @Cacheable("unitsCache")
     public @NotNull List<UnitTo> listAllMeasurementUnits() {
         List<UnitTo> unitToList = Collections.emptyList();
         List<UnitEntity> unitEntityList = unitRepository.findAll();

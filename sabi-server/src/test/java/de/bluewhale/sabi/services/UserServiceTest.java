@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -14,19 +14,17 @@ import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import jakarta.validation.constraints.NotNull;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
 import static de.bluewhale.sabi.TestDataFactory.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -34,7 +32,6 @@ import static org.junit.Assert.*;
  * User: Stefan
  * Date: 30.08.15
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = AppConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -147,29 +144,30 @@ public class UserServiceTest {
 
         UserProfileTo userProfileTo = userProfileToResultTo.getValue();
         assertNotNull(userProfileTo);
-        assertEquals(userProfileTo.getLanguage(),userTo1.getLanguage());
-        assertEquals(userProfileTo.getCountry(),userTo1.getCountry());
+        assertEquals(userProfileTo.getLanguage(), userTo1.getLanguage());
+        assertEquals(userProfileTo.getCountry(), userTo1.getCountry());
 
     }
 
-    @Test(expected = BusinessException.class)
+    @Test
     @Transactional
     public void testFraudUserProfileUpdate() throws Exception {
-        // Given
-        NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", VALID_PASSWORD);
-        userTo1.setLanguage(Locale.GERMAN.getLanguage());
-        userTo1.setCountry(Locale.GERMAN.getCountry());
-        final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
+        assertThrows(BusinessException.class, () -> {
 
-        // When
-        UserProfileTo userProfileTo = new UserProfileTo(
-                Locale.ENGLISH.getLanguage(),
-                Locale.ENGLISH.getCountry());
+            // Given
+            NewRegistrationTO userTo1 = new NewRegistrationTO(TESTUSER_EMAIL1, "User1", VALID_PASSWORD);
+            userTo1.setLanguage(Locale.GERMAN.getLanguage());
+            userTo1.setCountry(Locale.GERMAN.getCountry());
+            final ResultTo<UserTo> firstUserResultTo = userService.registerNewUser(userTo1);
 
-        ResultTo<UserProfileTo> userProfileResultTo = userService.updateProfile(userProfileTo, "DOES@NOT.MATCH");
+            // When
+            UserProfileTo userProfileTo = new UserProfileTo(
+                    Locale.ENGLISH.getLanguage(),
+                    Locale.ENGLISH.getCountry());
 
-        // Then
-        // expected Business Exception
+            ResultTo<UserProfileTo> userProfileResultTo = userService.updateProfile(userProfileTo, "DOES@NOT.MATCH");
+
+        });
     }
 
     @Test
@@ -206,8 +204,8 @@ public class UserServiceTest {
         // Then
         assertNotNull(userToResultTo);
         assertNotNull(userToResultTo.getValue());
-        assertNotNull("User did not got an Id!", userToResultTo.getValue().getId());
-        assertNotNull("New user was not issued with a token.", userToResultTo.getValue().getValidationToken());
+        assertNotNull(userToResultTo.getValue().getId());
+        assertNotNull(userToResultTo.getValue().getValidationToken());
     }
 
 
@@ -348,7 +346,6 @@ public class UserServiceTest {
                 AuthExceptionCodes.AUTHENTICATION_FAILED);
         assertEquals(message.getCode(), AuthMessageCodes.INCOMPLETE_REGISTRATION_PROCESS);
     }
-
 
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,7 +8,7 @@ package de.bluewhale.sabi;
 import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -51,7 +51,7 @@ public class BasicDataFactory {
     protected static final String P_USER1_EMAIL = "sabi@bluewhale.de";
     protected static final String P_USER2_EMAIL = "sabi_II@bluewhale.de";
 
-    @Before
+    @BeforeEach
     public void initOnlyOnce()  {
 
         if (populatedBasicData) return;

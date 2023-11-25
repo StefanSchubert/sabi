@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -20,28 +20,26 @@ import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.UserService;
 import de.bluewhale.sabi.util.RestHelper;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 
 /**
  * Checks UserProfile Rest API
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserProfileControllerTest {
@@ -57,7 +55,7 @@ public class UserProfileControllerTest {
 
     TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
-    @After
+    @AfterEach
     public void cleanUpMocks() {
         reset(userService);
     }
@@ -117,8 +115,9 @@ public class UserProfileControllerTest {
      *  Test TTL on jwt Tokens. Expired tokens must not be accepted by the APIs verifier.
      * @throws TokenExpiredException
      */
-    @Test(expected = com.auth0.jwt.exceptions.TokenExpiredException.class)
+    @Test
     public void testJWTTokenParsing() throws TokenExpiredException {
+        assertThrows(TokenExpiredException.class, () -> {
 
         Date expiresAt = new Date(System.currentTimeMillis() - 60 * 1000); // Past date
         String jwt = JWT.create()
@@ -132,6 +131,7 @@ public class UserProfileControllerTest {
                 .withIssuer("SABI-server module")
                 .build()
                 .verify(jwt);
+    });
     }
 
     @Test // REST-API

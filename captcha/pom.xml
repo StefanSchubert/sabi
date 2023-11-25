@@ -46,10 +46,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
-        <junit.version>4.13.2</junit.version>
-        <owasp.plugin.version>8.4.2</owasp.plugin.version>
-        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
+        <micrometer.prometheus.version>1.12.0</micrometer.prometheus.version>
+        <owasp.plugin.version>9.0.0</owasp.plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -106,18 +106,10 @@
             <version>${springdoc.openapiv2.version}</version>
         </dependency>
 
-
-        <!-- Test dependencies -->
+        <!-- Test dependencies, since SB3.x junit5 is default -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -151,6 +143,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
                 <dependencies/>
             </plugin>
             <plugin>
