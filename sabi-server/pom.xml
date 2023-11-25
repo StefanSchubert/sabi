@@ -336,13 +336,17 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <dependencies>
                     <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit-platform</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                    </dependency>
+                    <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-instrument</artifactId>
                         <version>${spring.instrument.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <test>de.bluewhale.sabi.MasterTestSuite</test>
                     <!--suppress UnresolvedMavenProperty -->
                     <argLine>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
