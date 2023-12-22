@@ -11,7 +11,7 @@ Restart=on-failure
 ExecStart=/var/prometheus/prometheus \
   --config.file=/var/prometheus_config/prometheus.yml \
   --storage.tsdb.path=/var/prometheus_data \
-  --storage.tsdb.retention.time=90d \
+  --storage.tsdb.retention.time=356d \
   --storage.tsdb.retention.size=8GB
 
 [Install]
