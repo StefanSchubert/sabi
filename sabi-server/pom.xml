@@ -27,8 +27,6 @@
     <inceptionYear>2015</inceptionYear>
 
     <developers>
-        <!-- PLEASE ADD YOURSELF HERE for maven site docu
-        If you like to have an image link, you need to have a gravatar registered with the used email address here. -->
         <developer>
             <id>StS</id>
             <name>Stefan Schubert</name>
@@ -53,10 +51,11 @@
         <micrometer.prometheus.version>1.12.0</micrometer.prometheus.version>
         <spring.instrument.version>6.1.1</spring.instrument.version>
         <lombok.version>1.18.30</lombok.version>
-        <owasp.plugin.version>9.0.0</owasp.plugin.version>
+        <owasp.plugin.version>9.0.7</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>
         <mariadb.java.client.version>3.3.0</mariadb.java.client.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.224</h2.version>
+<!--        <h2.version>2.1.214</h2.version>-->
         <dumbster.version>1.6</dumbster.version>
         <archunit.version>1.2.0</archunit.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
