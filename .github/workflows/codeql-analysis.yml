@@ -25,6 +25,9 @@ jobs:
     name: Analyze
     runs-on: macos-latest
 
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}    
+
     strategy:
       fail-fast: false
       matrix:
