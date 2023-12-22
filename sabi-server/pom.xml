@@ -42,7 +42,7 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.2.4</sabi.boundary.version>
+        <sabi.boundary.version>1.2.5</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
@@ -381,6 +381,12 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${owasp.plugin.version}</version>
+                <configuration>
+                    <!-- You need to register yourself at https://nvd.nist.gov/
+                         to get an API-KEY, which you can store in the
+                         properties section of your local settings.xml -->
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>verify</phase>
