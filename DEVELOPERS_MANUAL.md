@@ -162,12 +162,7 @@ Nothing very special here, except two things you need to know:
 
 ##### Junit testing.
 
-Introducing new functionalities require addition of junit test. Please integrate them such way that they will be picked up along with execution of
-
-`sabi-server/src/test/java/de/bluewhale/sabi/MasterTestSuite.java`
-
-Notice this test class will be also executed via githubs action.
-Naturally we expect that changes won't break anything.
+Introducing new functionalities require addition of junit test. 
 
 As we are using eclipselink you must add a specific javaagent, when running your tests. See section prepare your IDE below for it:
 
@@ -177,7 +172,7 @@ As we are using eclipselink you must add a specific javaagent, when running your
 Because of eclipselink we are using weaving at runtime which requires the following vm option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.0.13/spring-instrument-6.0.13.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.1.2/spring-instrument-6.1.2.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 

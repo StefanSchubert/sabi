@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -51,13 +51,13 @@ public class TestDataFactory {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    // FIXME: 14.06.17 Add singelton constructor
     public AquariumTo getTestAquariumTo() {
         final AquariumTo aquariumTo = new AquariumTo();
         aquariumTo.setDescription("Test Tank");
         aquariumTo.setActive(Boolean.TRUE);
         aquariumTo.setSize(40);
         aquariumTo.setSizeUnit(SizeUnit.LITER);
+        aquariumTo.setWaterType(WaterType.SEA_WATER);
         return aquariumTo;
     }
 
@@ -65,6 +65,7 @@ public class TestDataFactory {
         AquariumTo aquariumTo = getTestAquariumTo();
         aquariumTo.setId(1L);
         aquariumTo.setUserId(userTo.getId());
+        aquariumTo.setWaterType(WaterType.SEA_WATER);
         return aquariumTo;
     }
 

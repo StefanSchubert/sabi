@@ -23,6 +23,7 @@ public interface AquariumMapper {
     @Mappings({
             @Mapping(target ="id", source="id"),
             @Mapping(target ="sizeUnit", source="sizeUnit"),
+            @Mapping(target ="waterType", source="waterType"),
             @Mapping(target ="size", source="size"),
             @Mapping(target ="description", source="description"),
             @Mapping(target ="userId", source="user.id"),
@@ -35,6 +36,7 @@ public interface AquariumMapper {
     @Mappings({
             @Mapping(target ="id", source="id"),
             @Mapping(target ="sizeUnit", source="sizeUnit"),
+            @Mapping(target ="waterType", source="waterType"),
             @Mapping(target ="size", source="size"),
             @Mapping(target ="description", source="description"),
             @Mapping(target ="active", source="active"),

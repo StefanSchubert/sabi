@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -27,6 +27,9 @@ public class AquariumTo implements Serializable {
 
     @Schema(description =  "Unit of tanks volume size.", required = true)
     private SizeUnit sizeUnit;
+
+    @Schema(description =  "Fresh, Sea- or other Water Type.", required = true)
+    private WaterType waterType;
 
     @Schema(description =  "Description or Name of the tank, so the user can distinguish them.", required = true)
     private String description;
