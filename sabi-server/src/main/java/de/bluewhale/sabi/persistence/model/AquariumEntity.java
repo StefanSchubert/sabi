@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence.model;
 
 import de.bluewhale.sabi.model.SizeUnit;
+import de.bluewhale.sabi.model.WaterType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,7 @@ import java.util.List;
 @Table(name = "aquarium", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude={"user", "measurements"})
+@EqualsAndHashCode(exclude={"user", "measurements"}, callSuper = false)
 public class AquariumEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -37,6 +38,10 @@ public class AquariumEntity extends Auditable {
     @Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
     @Enumerated(EnumType.STRING)
     private SizeUnit sizeUnit;
+
+    @Column(name = "water_type", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
+    @Enumerated(EnumType.STRING)
+    private WaterType waterType;
 
     @Basic
     @Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
