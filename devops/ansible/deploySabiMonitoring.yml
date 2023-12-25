@@ -93,7 +93,7 @@
       file: path=/var/prometheus/prometheus-2.46.0.linux-arm64.tar.gz state=absent
     - name: Copy last secured configuration
       copy:
-        src: /Users/schubert/Documents/privat/SABI_Config_Safe/prometheus/prometheus.yml
+        src: /Users/bluewhale/Documents/privat/SABI_Config_Safe/prometheus/prometheus.yml
         dest: /var/prometheus_config
         owner: prometheus
         group: prometheus
@@ -145,14 +145,14 @@
       file: path=/var/grafana/grafana-10.0.3.linux-arm64.tar.gz state=absent
     - name: Copy last secured configuration
       copy:
-        src: /Users/schubert/Documents/privat/SABI_Config_Safe/grafana/custom.ini
+        src: /Users/bluewhale/Documents/privat/SABI_Config_Safe/grafana/custom.ini
         dest: /var/grafana/conf
         owner: grafana
         group: grafana
         mode: '0640'
     - name: Copy last database backup
       copy:
-        src: /Users/schubert/Documents/privat/SABI_Config_Safe/grafana/grafana.db
+        src: /Users/bluewhale/Documents/privat/SABI_Config_Safe/grafana/grafana.db
         dest: /var/grafana/data
         owner: grafana
         group: grafana

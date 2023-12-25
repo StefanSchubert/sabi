@@ -35,14 +35,14 @@
         group: sabi
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/target/sabi-webclient.jar
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/sabi-webclient/target/sabi-webclient.jar
         dest: /var/sabi/sabi-webclient.jar
         owner: sabi
         group: sabi
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-webclient/sabi-webclient.conf
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/sabi-webclient/sabi-webclient.conf
         dest: /var/sabi
         owner: sabi
         group: sabi

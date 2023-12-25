@@ -4,14 +4,14 @@
   tasks:
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/captcha/target/captcha-service.jar
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/captcha/target/captcha-service.jar
         dest: /var/captcha
         owner: captcha
         group: captcha
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/captcha/captcha-service.conf
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/captcha/captcha-service.conf
         dest: /var/captcha
         owner: captcha
         group: captcha

@@ -37,4 +37,4 @@ or check the unattended update logs
 ## Deployment of a sabi frontend release
 
 1) Build the new sabi webclient release
-2) ansible-playbook deploySabiWebclient.yml
+2) ansible-playbook -i hosts deploySabiWebclient.yml
