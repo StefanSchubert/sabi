@@ -6,6 +6,7 @@
 package de.bluewhale.sabi;
 
 import de.bluewhale.sabi.model.SizeUnit;
+import de.bluewhale.sabi.model.WaterType;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,6 +131,7 @@ public class BasicDataFactory {
         aquariumEntity.setId(1l);
         aquariumEntity.setSize(80);
         aquariumEntity.setSizeUnit(SizeUnit.LITER);
+        aquariumEntity.setWaterType(WaterType.SEA_WATER);
         aquariumEntity.setDescription("Nano-Reef_H2");
         aquariumEntity.setActive(Boolean.TRUE);
         aquariumEntity.setUser(testuser1);
@@ -138,6 +140,7 @@ public class BasicDataFactory {
         aquariumEntity2.setId(2l);
         aquariumEntity2.setSize(200);
         aquariumEntity2.setSizeUnit(SizeUnit.LITER);
+        aquariumEntity2.setWaterType(WaterType.SEA_WATER);
         aquariumEntity2.setDescription("Freshwater_H2");
         aquariumEntity2.setActive(Boolean.TRUE);
         aquariumEntity2.setUser(testuser1);
@@ -146,6 +149,7 @@ public class BasicDataFactory {
         aquariumEntity3.setId(3l);
         aquariumEntity3.setSize(150);
         aquariumEntity3.setSizeUnit(SizeUnit.GALLONS);
+        aquariumEntity3.setWaterType(WaterType.SEA_WATER);
         aquariumEntity3.setDescription("Exhibit");
         aquariumEntity3.setActive(Boolean.TRUE);
         aquariumEntity3.setUser(testuser2);

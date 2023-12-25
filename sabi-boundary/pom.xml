@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -41,12 +41,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <owasp.plugin.version>9.0.0</owasp.plugin.version>
+        <springdoc.openapiv2.version>2.3.0</springdoc.openapiv2.version>
+        <owasp.plugin.version>9.0.7</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.3.2</maven.clean.plugin.version>
-        <maven.site.plugin.version>4.0.0-M9</maven.site.plugin.version>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <maven.site.plugin.version>4.0.0-M13</maven.site.plugin.version>
+        <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
         <buildhelper.maven.plugin.version>3.5.0</buildhelper.maven.plugin.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
 
@@ -155,6 +155,13 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${owasp.plugin.version}</version>
+                <configuration>
+                    <!-- You need to register yourself at https://nvd.nist.gov/
+                         to get an API-KEY, which you can store in the
+                         properties section of your local settings.xml -->
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                </configuration>
+
                 <executions>
                     <execution>
                         <phase>verify</phase>

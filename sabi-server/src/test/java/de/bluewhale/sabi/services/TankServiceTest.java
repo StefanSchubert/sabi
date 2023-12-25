@@ -8,10 +8,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
-import de.bluewhale.sabi.model.AquariumTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.SizeUnit;
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.*;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -89,11 +86,13 @@ public class TankServiceTest {
         aquariumTo1.setDescription("Small Test Tank");
         aquariumTo1.setSize(40);
         aquariumTo1.setSizeUnit(SizeUnit.LITER);
+        aquariumTo1.setWaterType(WaterType.SEA_WATER);
 
         AquariumTo aquariumTo2 = new AquariumTo();
         aquariumTo2.setDescription("Big Test Tank");
         aquariumTo2.setSize(120);
         aquariumTo2.setSizeUnit(SizeUnit.LITER);
+        aquariumTo2.setWaterType(WaterType.SEA_WATER);
 
        ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo1, registeredUser.getEmail());
        ResultTo<AquariumTo> aquariumToResultTo1 = tankService.registerNewTank(aquariumTo2, registeredUser.getEmail());
