@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.WaterType;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
@@ -21,7 +22,9 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for the Tanklist View as shown in tankView.xhtml
@@ -45,6 +48,7 @@ public class TankListView implements Serializable {
 
     private List<AquariumTo> tanks;
     private AquariumTo selectedTank;
+    private Map<WaterType, String> translatedWaterType;
 
     @PostConstruct
     public void init() {
@@ -56,6 +60,14 @@ public class TankListView implements Serializable {
             log.error(e.getLocalizedMessage());
             MessageUtil.warn("messages","common.token.expired.t",userSession.getLocale());
         }
+
+        translatedWaterType = new HashMap<WaterType, String>();
+        for (WaterType value : WaterType.values()) {
+            String msgKey = "enum.waterType."+value.getWaterType()+".l";
+            String translatedType = MessageUtil.getFromMessageProperties(msgKey, userSession.getLocale());
+            translatedWaterType.put(value,translatedType);
+        }
+
     }
 
     @PreDestroy

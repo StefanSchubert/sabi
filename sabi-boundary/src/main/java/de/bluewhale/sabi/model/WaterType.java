@@ -30,8 +30,6 @@ public enum WaterType {
 
     @Override
     public String toString() {
-        return "WaterType{" +
-                "waterType='" + waterType + '\'' +
-                '}';
+        return waterType;
     }
 }

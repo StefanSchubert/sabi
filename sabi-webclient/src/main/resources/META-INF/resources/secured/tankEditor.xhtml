@@ -44,6 +44,15 @@
                         <f:selectItems value="#{units.sizeUnits}"/>
                     </h:selectOneMenu>
 
+                    <p:outputLabel for="type" value="#{msg['tankview.waterType.l']}"/>
+                    <h:selectOneMenu id="type" value="#{tankListView.selectedTank.waterType}">
+                        <f:selectItems value="#{units.waterTypes}"
+                                       var="n"
+                                       itemValue="#{n}"
+                                       itemLabel="#{tankListView.translatedWaterType[n]}"
+                        />
+                    </h:selectOneMenu>
+
                     <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
                     <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
                                   pattern="dd.MM.yyyy"
