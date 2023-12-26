@@ -13,7 +13,7 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
+        <version>3.2.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -27,8 +27,6 @@
     <inceptionYear>2015</inceptionYear>
 
     <developers>
-        <!-- PLEASE ADD YOURSELF HERE for maven site docu
-        If you like to have an image link, you need to have a gravatar registered with the used email address here. -->
         <developer>
             <id>StS</id>
             <name>Stefan Schubert</name>
@@ -42,28 +40,29 @@
     </developers>
 
     <properties>
-        <sabi.boundary.version>1.2.4</sabi.boundary.version>
+        <sabi.boundary.version>1.2.5</sabi.boundary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>2.3.0</springdoc.openapiv2.version>
         <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <micrometer.prometheus.version>1.12.0</micrometer.prometheus.version>
-        <spring.instrument.version>6.1.1</spring.instrument.version>
+        <micrometer.prometheus.version>1.12.1</micrometer.prometheus.version>
+        <spring.instrument.version>6.1.2</spring.instrument.version>
         <lombok.version>1.18.30</lombok.version>
-        <owasp.plugin.version>9.0.0</owasp.plugin.version>
+        <owasp.plugin.version>9.0.7</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>
-        <mariadb.java.client.version>3.3.0</mariadb.java.client.version>
-        <h2.version>2.1.214</h2.version>
+        <mariadb.java.client.version>3.3.2</mariadb.java.client.version>
+        <h2.version>2.2.224</h2.version>
+<!--        <h2.version>2.1.214</h2.version>-->
         <dumbster.version>1.6</dumbster.version>
-        <archunit.version>1.2.0</archunit.version>
+        <archunit.version>1.2.1</archunit.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
-        <jakarta.xml.bind.version>4.0.0</jakarta.xml.bind.version>
+        <jakarta.xml.bind.version>4.0.1</jakarta.xml.bind.version>
         <jetbrains.annotation.version>24.1.0</jetbrains.annotation.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
-        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.2.3</maven-surefire-plugin.version>
     </properties>
 
     <dependencies>
@@ -381,6 +380,12 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${owasp.plugin.version}</version>
+                <configuration>
+                    <!-- You need to register yourself at https://nvd.nist.gov/
+                         to get an API-KEY, which you can store in the
+                         properties section of your local settings.xml -->
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>verify</phase>

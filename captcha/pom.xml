@@ -11,7 +11,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
+        <version>3.2.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -45,10 +45,10 @@
         <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>2.2.0</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.12.0</micrometer.prometheus.version>
-        <owasp.plugin.version>9.0.0</owasp.plugin.version>
-        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <springdoc.openapiv2.version>2.3.0</springdoc.openapiv2.version>
+        <micrometer.prometheus.version>1.12.1</micrometer.prometheus.version>
+        <owasp.plugin.version>9.0.7</owasp.plugin.version>
+        <maven-surefire-plugin.version>3.2.3</maven-surefire-plugin.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
     </properties>
 
@@ -180,6 +180,12 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${owasp.plugin.version}</version>
+                <configuration>
+                    <!-- You need to register yourself at https://nvd.nist.gov/
+                         to get an API-KEY, which you can store in the
+                         properties section of your local settings.xml -->
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

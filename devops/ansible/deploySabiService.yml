@@ -9,14 +9,14 @@
         append: yes
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-server/target/sabi-service.jar
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/sabi-server/target/sabi-service.jar
         dest: /var/sabi/sabi-service.jar
         owner: sabi
         group: sabi
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/sabi-server/sabi-service.conf
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/sabi-server/sabi-service.conf
         dest: /var/sabi
         owner: sabi
         group: sabi

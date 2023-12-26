@@ -23,14 +23,14 @@
         mode: 0775
     - name: Copy new jar file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/devops/GenericPiMetricsEndpoint/target/pimetric-service-1.0.jar
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/devops/GenericPiMetricsEndpoint/target/pimetric-service-1.0.jar
         dest: /var/pimetric/pimetric-service.jar
         owner: pimetric
         group: pimetric
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/schubert/dev/Intellij-wss/github/sabi/devops/GenericPiMetricsEndpoint/pimetric-service.conf
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/devops/GenericPiMetricsEndpoint/pimetric-service.conf
         dest: /var/pimetric
         owner: pimetric
         group: pimetric
