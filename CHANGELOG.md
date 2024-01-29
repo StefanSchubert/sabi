@@ -1,5 +1,15 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.4
+
+### Bugfixes
+* i18n usage for Measurement threshold info in Measurement-View
+
+## Release 1.2.3
+
+### New Features
+* SABI-146: Support to add freshwater tanks as well
+
 ## Release 1.2.2
 
 ### Technical Maintenance
