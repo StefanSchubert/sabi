@@ -1,0 +1,1 @@
+ALTER TABLE `aquarium` ADD COLUMN `water_type` VARCHAR(20) DEFAULT 'SEA_WATER';
