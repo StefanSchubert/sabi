@@ -4,14 +4,6 @@ The following helps new developers to setup the required local build environment
 
 ## Technology Stack
 
-[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
-[![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
-
-## Architectural Notes
-
-Before starting to contribute on this project, make sure that you have read the architectural notes in the [wiki](https://github.com/StefanSchubert/sabi/wiki) which
-are based upon arc42 templates.
-
 ### Common
 
 * Java 21
@@ -40,6 +32,18 @@ The two main reasons for me are:
 * JPA 2.x (Eclipselink instead of Hibernate)
 * jUnit
 * MariaDB 10.x
+
+----
+
+## Architectural Notes
+
+Before starting to contribute on this project, make sure that you have read the architectural notes in the [wiki](https://github.com/StefanSchubert/sabi/wiki) which
+are based upon arc42 templates.
+
+### Current Code-Quality State
+
+[![CodeQL](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/codeql-analysis.yml)
+[![Java CI with Maven](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml/badge.svg)](https://github.com/StefanSchubert/sabi/actions/workflows/maven.yml)
 
 ----
 
