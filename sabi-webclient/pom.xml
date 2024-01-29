@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -57,11 +57,11 @@
         <java.version>21</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
-        <micrometer.prometheus.version>1.12.1</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.12.2</micrometer.prometheus.version>
         <joinfaces.version>5.1.4</joinfaces.version>
         <sabi.boundary.version>1.2.5</sabi.boundary.version>
         <passay.version>1.6.4</passay.version>
-        <owasp.plugin.version>9.0.7</owasp.plugin.version>
+        <owasp.plugin.version>9.0.9</owasp.plugin.version>
         <lombok.version>1.18.30</lombok.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
     </properties>

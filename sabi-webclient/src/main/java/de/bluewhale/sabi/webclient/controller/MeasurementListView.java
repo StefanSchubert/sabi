@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -26,6 +26,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Controller for the Measurement View as shown in measureView.xhtml
@@ -159,8 +160,9 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         if (unitId != null && unitId != 0) {
             try {
                 ParameterTo parameterTo = measurementService.getParameterFor(unitId, userSession.getSabiBackendToken());
-                if (parameterTo != null) {
-                    result = String.format("min = %.03f / max = %.03f", parameterTo.getMinThreshold(), parameterTo.getMaxThreshold());
+                Locale usersLocale = userSession.getLocale();
+                if (parameterTo != null && usersLocale != null) {
+                    result = String.format(usersLocale, "min = %.03f / max = %.03f", parameterTo.getMinThreshold(), parameterTo.getMaxThreshold());
                 }
             } catch (Exception e) {
                 log.warn("Could not resolve parameter info for unit {}", unitId);
