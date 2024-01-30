@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -38,6 +38,8 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.REPORT_VIEW_PAGE;
+
 /**
  * Controller for the Report View as shown in reportView.xhtml
  *
@@ -52,7 +54,6 @@ public class ReportView extends AbstractControllerTools implements Serializable 
 
     // Limit drawn graph to avoid steady visual narrowing of target range by global minimum or maximum measurements
     final static int MAX_GRAPH_RECORDS = 14;
-    private static final String REPORT_VIEW_PAGE = "reportView";
     @Autowired
     TankService tankService;
 
@@ -85,14 +86,14 @@ public class ReportView extends AbstractControllerTools implements Serializable 
 
         if (selectedTankId == null || selectedUnitId == null) {
             MessageUtil.info("messages", "common.no_such_data.t", userSession.getLocale());
-            return REPORT_VIEW_PAGE;
+            return REPORT_VIEW_PAGE.getNavigationableAddress();
         }
 
         try {
             measurementTos = measurementService.getMeasurementsForUsersTankFilteredByUnit(userSession.getSabiBackendToken(), selectedTankId, selectedUnitId);
 
             if (measurementTos == null || measurementTos.isEmpty()) {
-                return REPORT_VIEW_PAGE;
+                return REPORT_VIEW_PAGE.getNavigationableAddress();
             }
 
             // Ensure that measured points are sorted
@@ -220,7 +221,7 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             e.printStackTrace();
         }
 
-        return REPORT_VIEW_PAGE;
+        return REPORT_VIEW_PAGE.getNavigationableAddress();
     }
 
     private void populteDataSet(LineChartDataSet lineChartDataSet, List<Object> valuesList, List<String> labelsList, LineChartModel lineChartModel, boolean spanGAPs) {

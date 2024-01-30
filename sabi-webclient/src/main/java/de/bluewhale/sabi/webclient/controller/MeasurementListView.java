@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.MEASUREMENT_VIEW_PAGE;
+
 /**
  * Controller for the Measurement View as shown in measureView.xhtml
  *
@@ -39,7 +41,6 @@ import java.util.Locale;
 @Getter
 public class MeasurementListView extends AbstractControllerTools implements Serializable  {
 
-    private static final String MEASUREMENT_VIEW_PAGE = "measureView";
     private static final int MAX_RESULT_COUNT = 5;
 
     @Autowired
@@ -119,7 +120,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
 
     public String resetForm() {
         measurement = new MeasurementTo();
-        return MEASUREMENT_VIEW_PAGE;
+        return MEASUREMENT_VIEW_PAGE.getNavigationableAddress();
     }
 
     public String save() {
@@ -135,7 +136,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         } else {
             MessageUtil.warn("troubleMsg", "common.incompleted_formdata.t", userSession.getLocale());
         }
-        return MEASUREMENT_VIEW_PAGE;
+        return MEASUREMENT_VIEW_PAGE.getNavigationableAddress();
     }
 
     private boolean allDataProvided(MeasurementTo measurement) {

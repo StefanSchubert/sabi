@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.TANK_EDITOR_PAGE;
+import static de.bluewhale.sabi.webclient.utils.PageRegister.TANK_VIEW_PAGE;
+
 /**
  * Controller for the Tanklist View as shown in tankView.xhtml
  *
@@ -36,9 +39,6 @@ import java.util.Map;
 @Slf4j
 @Getter
 public class TankListView implements Serializable {
-
-    private static final String TANK_EDITOR_PAGE = "tankEditor";
-    private static final String TANK_VIEW_PAGE = "tankView";
 
     @Autowired
     TankService tankService;
@@ -77,12 +77,12 @@ public class TankListView implements Serializable {
 
     public String edit(AquariumTo tank) {
         selectedTank = tank;
-        return TANK_EDITOR_PAGE;
+        return TANK_EDITOR_PAGE.getNavigationableAddress();
     }
 
     public String addTank() {
         selectedTank = new AquariumTo();
-        return TANK_EDITOR_PAGE;
+        return TANK_EDITOR_PAGE.getNavigationableAddress();
     }
 
     public void delete(AquariumTo tank) {
@@ -120,7 +120,7 @@ public class TankListView implements Serializable {
                 MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
             }
         }
-        return TANK_VIEW_PAGE;
+        return TANK_VIEW_PAGE.getNavigationableAddress();
     }
 
 }

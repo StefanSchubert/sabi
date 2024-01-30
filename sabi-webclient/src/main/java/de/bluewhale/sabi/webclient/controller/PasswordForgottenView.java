@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -12,6 +12,7 @@ import de.bluewhale.sabi.model.ResetPasswordTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.model.ChallengeTo;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
+import de.bluewhale.sabi.webclient.utils.PageRegister;
 import de.bluewhale.sabi.webclient.utils.PasswordPolicy;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import jakarta.inject.Named;
@@ -32,6 +33,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.PASSWORD_FORGOTTEN_PAGE;
+
 
 /**
  * Manages password forgotten use case
@@ -42,9 +45,6 @@ import java.util.Map;
 @SessionScope // ViewScope would be better, but bean will be renewed on captcha errors
 @Slf4j
 public class PasswordForgottenView implements Serializable {
-
-    static String PASSWORD_FORGOTTEN_PAGE = "pwreset";
-    static String LOGIN_PAGE = "login";
 
     @Value("${captcha.backend.url}")
     private String captchaBackendUrl;
@@ -117,7 +117,7 @@ public class PasswordForgottenView implements Serializable {
         // preliminary checks
         if (PasswordPolicy.failedCheck(pwResetModel.getNewPassword(), checkPwd)) {
             MessageUtil.error("messages5", "register.password.policy_failed.t", userSession.getLocale());
-            return PASSWORD_FORGOTTEN_PAGE;
+            return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
         }
 
         // Continue processing by calling the backend
@@ -129,7 +129,7 @@ public class PasswordForgottenView implements Serializable {
         } catch (JsonProcessingException e) {
             log.error("Couldn't convert form data into JSON reprasentation. {}", e);
             MessageUtil.fatal("commonerror", "common.error.backend_unreachable.l", userSession.getLocale());
-            return PASSWORD_FORGOTTEN_PAGE;
+            return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
         }
 
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -153,7 +153,7 @@ public class PasswordForgottenView implements Serializable {
             MessageUtil.fatal("commonerror", "common.error.backend_unreachable.l", userSession.getLocale());
         }
 
-        return PASSWORD_FORGOTTEN_PAGE;
+        return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
     }
 
     /**
@@ -164,7 +164,7 @@ public class PasswordForgottenView implements Serializable {
         pwResetted = false;
         pwReqModel = new RequestNewPasswordTo();
         pwResetModel = new ResetPasswordTo();
-        return LOGIN_PAGE;
+        return PageRegister.LOGIN_PAGE.getNavigationableAddress();
     }
 
     /**
@@ -180,7 +180,7 @@ public class PasswordForgottenView implements Serializable {
         String userAnswer = pwReqModel.getCaptchaToken();
         if (Strings.isEmpty(userAnswer)) {
             MessageUtil.error("captcha", "register.captcha_missing.t", userSession.getLocale());
-            return PASSWORD_FORGOTTEN_PAGE;
+            return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
         }
 
         // Continue processing by calling the backend
@@ -192,7 +192,7 @@ public class PasswordForgottenView implements Serializable {
         } catch (JsonProcessingException e) {
             log.error("Coudn't convert form data into JSON reprasentation. {}", e);
             MessageUtil.fatal("commonerror", "common.error.backend_unreachable.l", userSession.getLocale());
-            return PASSWORD_FORGOTTEN_PAGE;
+            return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
         }
 
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -203,7 +203,7 @@ public class PasswordForgottenView implements Serializable {
             if (HttpStatus.ACCEPTED.equals(responseEntity.getStatusCode())) {
                 captchaAccepted = true; // signals to proceed with the form.
                 MessageUtil.info("captcha", "pw_forgotten.reset_request_accepted.t", userSession.getLocale());
-                return PASSWORD_FORGOTTEN_PAGE;
+                return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
             }
 
         } catch (HttpClientErrorException e) {
@@ -217,16 +217,16 @@ public class PasswordForgottenView implements Serializable {
 
             }
             fetchNewCaptchaChallenge();
-            return PASSWORD_FORGOTTEN_PAGE;
+            return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
 
         } catch (RestClientException e) {
             log.error("Backend processing error. {}", e);
             MessageUtil.fatal("commonerror", "common.error.backend_unreachable.l", userSession.getLocale());
-            return PASSWORD_FORGOTTEN_PAGE;
+            return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
         }
 
         // any unhandled case? stays on the same page!
-        return PASSWORD_FORGOTTEN_PAGE;
+        return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
     }
 
     /**

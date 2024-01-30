@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,6 +8,8 @@ package de.bluewhale.sabi.webclient.controller;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
+
+import static de.bluewhale.sabi.webclient.utils.PageRegister.LOGOUT_PAGE;
 
 /**
  * MenuActions
@@ -19,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MenuView {
 
-    static String LOGOUT_PAGE = "/logout?faces-redirect=true";
+    // static String LOGOUT_PAGE = "/logout?faces-redirect=true";
 
     /**
      * Kills the sessions. The frontend session will be invalidated during rendering
@@ -30,7 +32,7 @@ public class MenuView {
      */
     public String logout() {
         log.info(" #### User logged out. ####");
-        return LOGOUT_PAGE;
+        return "/"+LOGOUT_PAGE.getNavigationableAddress()+"?faces-redirect=true";
     }
 
 }

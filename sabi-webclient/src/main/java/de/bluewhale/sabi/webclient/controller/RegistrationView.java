@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -34,6 +34,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.PREREGISTER_PAGE;
+import static de.bluewhale.sabi.webclient.utils.PageRegister.REGISTER_PAGE;
 
 
 /**
@@ -46,9 +48,6 @@ import java.util.Map;
 @Slf4j
 public class RegistrationView implements Serializable {
 // ------------------------------ FIELDS ------------------------------
-
-    static String REGISTER_PAGE = "register";
-    static String PREREGISTER_PAGE = "preregistration";
 
     @Value("${captcha.backend.url}")
     private String captchaBackendUrl;
@@ -104,12 +103,12 @@ public class RegistrationView implements Serializable {
         String userAnswer = model.getCaptchaCode();
         if (Strings.isEmpty(userAnswer)) {
             MessageUtil.error("captcha", "register.captcha_missing.t", userSession.getLocale());
-            return REGISTER_PAGE;
+            return REGISTER_PAGE.getNavigationableAddress();
         }
 
         if (PasswordPolicy.failedCheck(model.getPassword(), checkPwd)) {
             MessageUtil.error("pwd2", "register.password.policy_failed.t", userSession.getLocale());
-            return REGISTER_PAGE;
+            return REGISTER_PAGE.getNavigationableAddress();
         }
 
         // For registration, we take the language settings from guessed environment
@@ -126,7 +125,7 @@ public class RegistrationView implements Serializable {
             log.error("Couldn't convert form data into JSON representation. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);
-            return REGISTER_PAGE;
+            return REGISTER_PAGE.getNavigationableAddress();
         }
 
         HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
@@ -136,7 +135,7 @@ public class RegistrationView implements Serializable {
             ResponseEntity<UserTo> responseEntity = restTemplate.postForEntity(registerURI, entity, UserTo.class);
 
             if (HttpStatus.CREATED.equals(responseEntity.getStatusCode())) {
-                return PREREGISTER_PAGE;
+                return PREREGISTER_PAGE.getNavigationableAddress();
             }
 
         } catch (HttpClientErrorException e) {
@@ -153,16 +152,16 @@ public class RegistrationView implements Serializable {
 
             }
             fetchNewCaptchaChallenge();
-            return REGISTER_PAGE;
+            return REGISTER_PAGE.getNavigationableAddress();
         } catch (RestClientException e) {
             log.error("Backend processing error. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("commonFailure", message);
-            return REGISTER_PAGE;
+            return REGISTER_PAGE.getNavigationableAddress();
         }
 
         // any unhandled case? stays on the same page!
-        return REGISTER_PAGE;
+        return REGISTER_PAGE.getNavigationableAddress();
     }
 
 

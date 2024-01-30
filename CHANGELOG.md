@@ -1,5 +1,10 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.5
+
+### Bugfixes
+* HTTP.500 in some cases for returing users with timedout session (sabi-113)
+
 ## Release 1.2.4
 
 ### Bugfixes
