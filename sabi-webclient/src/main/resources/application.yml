@@ -41,6 +41,8 @@ server:
   error:
     whitelabel:
       enabled: false
+    # This will cause error occuring in DsipatcherServlet Context to be routed through the Controller listening on the /error Endpoint
+    path: /error
   servlet:
     session:
       # dev. setting for sessionExpired
