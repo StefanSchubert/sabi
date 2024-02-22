@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -8,16 +8,20 @@ package de.bluewhale.sabi.webclient.CDIBeans;
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Container for mandatory things which we need to keep in a user session.
@@ -170,8 +174,24 @@ public class UserSession implements Serializable {
 
     /** Invalidates Frontend Session in case of logout. */
     public void endSession(){
+
+        // On the Serverside
         FacesContext context = FacesContext.getCurrentInstance();
-        context.getExternalContext().invalidateSession();
+        ExternalContext externalContext = context.getExternalContext();
+        externalContext.invalidateSession();
+
+        // And on the Client Side. Otherwise the cookies there
+        // might survive and we may observe a HTTP-500
+        // in combination with a server restart, see sabi-113 for details.
+        // Löschen der Cookies
+        Map<String, Object> cookies = externalContext.getRequestCookieMap();
+        Iterator<String> iterator = cookies.keySet().iterator();
+        while (iterator.hasNext()) {
+            String cookieName = iterator.next();
+            Cookie cookie = (Cookie) cookies.get(cookieName);
+            cookie.setMaxAge(0); // By setting the expiration "date" to 0, the cookie is being invalidates by the browser.
+            externalContext.addResponseCookie(cookieName, null, null);
+        }
     }
 
     @PostConstruct

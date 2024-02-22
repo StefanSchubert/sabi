@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -30,9 +30,15 @@
 
 <h:body styleClass="baselayout">
 
-    <div id="header"><ui:include src="/template/header.xhtml"/></div>
-    <div id="content"><ui:insert name="content">Sorry content is missing. Report to site owner.</ui:insert></div>
-    <div id="footer"><ui:include src="/template/footer.xhtml"/></div>
+    <div id="header">
+        <ui:include src="/template/header.xhtml"/>
+    </div>
+    <div id="content">
+        <ui:insert name="content">Sorry content is missing. Report to site owner.</ui:insert>
+    </div>
+    <div id="footer">
+        <ui:include src="/template/footer.xhtml"/>
+    </div>
 
 </h:body>
 </html>
