@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -13,7 +13,10 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <f:metadata>
-    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+    <f:view locale="#{userSession.locale}"
+            language="#{userSession.language}"
+            contentType="text/html"
+            encoding="utf-8"/>
     <f:loadBundle basename="i18n.messages" var="msg"/>
     <!-- Workaround (for broken workflow) -->
     <f:viewAction action="#{passwordForgottenView.resetWorkflow}"/>
@@ -33,7 +36,7 @@
 
 <h:body styleClass="splashscreen">
     <ui:remove>
-    <!--
+        <!--
     We specify prependId="false" on the form as otherwise the JSF framework will prefix the parameters with the ID of the form.
     but we require username and password inputfields unchanges, as spring-security will look them up.
 
@@ -44,28 +47,28 @@
     <div style="height:50vh"/>
     <h:form id="login-form" prependId="false">
 
-        <p:panel header="#{msg['login.welcome.h']} (#{applicationInfo.version})">
-            <h3>#{msg['login.panel.h']}</h3>
-            <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
+            <p:panel header="#{msg['login.welcome.h']} (#{applicationInfo.version})">
+                <h3>#{msg['login.panel.h']}</h3>
+                <p:panelGrid columns="2" styleClass="ui-fluid center ui-noborder">
 
-                <p:outputLabel value="#{msg['login.username.l']}" for="username"/>
-                <p:inputText id="username" placeholder="username or email"/>
+                    <p:outputLabel value="#{msg['login.username.l']}" for="username"/>
+                    <p:inputText id="username" placeholder="username or email"/>
 
-                <p:outputLabel value="#{msg['login.password.l']}" for="password"/>
-                <p:password id="password" placeholder="password"/>
+                    <p:outputLabel value="#{msg['login.password.l']}" for="password"/>
+                    <p:password id="password" placeholder="password"/>
 
-                <p:commandButton ajax="false" value="Login"/>
-                <p:link outcome="pwreset" value="#{msg['login.resetPW.b']}"/>
+                    <p:commandButton ajax="false" value="Login"/>
+                    <p:link outcome="pwreset" value="#{msg['login.resetPW.b']}"/>
 
-                <p:outputLabel value="#{msg['login.register.l']}" for="reglink"/>
-                <p:link id="reglink" outcome="register" value="#{msg['welcome.but.register']}"/>
+                    <p:outputLabel value="#{msg['login.register.l']}" for="reglink"/>
+                    <p:link id="reglink" outcome="register" value="#{msg['welcome.but.register']}"/>
 
-            </p:panelGrid>
+                </p:panelGrid>
 
-            <p:outputLabel value="#{msg['login.forgottenPW.l']}" style="font-style: oblique; color: red"
-                           rendered="${!empty param['error']}"/>
+                <p:outputLabel value="#{msg['login.forgottenPW.l']}" style="font-style: oblique; color: red"
+                               rendered="${!empty param['error']}"/>
 
-        </p:panel>
+            </p:panel>
 
     </h:form>
 

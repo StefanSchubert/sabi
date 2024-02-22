@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -32,6 +32,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.PLAGUE_VIEW_PAGE;
+
 /**
  * Controller for the plague center as shown in plagueView.xhtml
  *
@@ -44,7 +46,6 @@ import java.util.stream.Collectors;
 @Setter
 public class PlagueView extends AbstractControllerTools implements Serializable {
 
-    private static final String PLAGUE_VIEW_PAGE = "plagueView";
     private static final Integer PLAGUE_CURED_STATUS_ID = 5; // Needs to match vanished state in table localized_plague_status.
 
     @Autowired
@@ -300,7 +301,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
         } else {
             MessageUtil.warn("saveresult", "common.incompleted_formdata.t", userSession.getLocale());
         }
-        return PLAGUE_VIEW_PAGE;
+        return PLAGUE_VIEW_PAGE.getNavigationableAddress();
     }
 
     private boolean allDataProvided(PlagueRecordTo plagueRecordTo) {

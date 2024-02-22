@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -27,6 +27,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static de.bluewhale.sabi.webclient.utils.PageRegister.USER_PROFILE_VIEW_PAGE;
+
 /**
  * Controller for the Report View as shown in reportView.xhtml
  *
@@ -38,7 +40,6 @@ import java.util.*;
 @Data
 public class UserProfileView extends AbstractControllerTools implements Serializable {
 
-    private static final String USER_PROFILE_VIEW_PAGE = "userProfile";
     private static final int DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS = 7;
 
     @Inject
@@ -96,7 +97,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
                 MessageUtil.warn("profileupdate", "common.error.internal_server_problem.t", userSession.getLocale());
             }
         }
-        return USER_PROFILE_VIEW_PAGE;
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
     }
 
     public String addReminderForMeasurementUnit() {
@@ -121,7 +122,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             }
 
         }
-        return USER_PROFILE_VIEW_PAGE;
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
     }
 
 
