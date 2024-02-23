@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -45,7 +45,7 @@ public class I18nUtil {
 
 
     /**
-     * Uses to distinguish users decimal seperator, depending on provided locale, which will be the sessions locale settings
+     * Uses to distinguish users decimal separator, depending on provided locale, which will be the sessions locale settings
      * in most cases. However you may request other punctuation than sessions locale through the locale parameter.
      *
      * @param forLocale

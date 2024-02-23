@@ -1,5 +1,10 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.6
+
+### Enhancements
+* SABI-68: Spanish ressource bundles added
+
 ## Release 1.2.5
 
 ### Bugfixes
