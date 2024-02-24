@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -42,13 +42,23 @@
                             <p:outputLabel for="localeselection" value="#{msg['userprofile.localechoice.l']}"/>
                             <p:selectOneMenu id="localeselection"
                                              value="#{userProfileView.selectedLocale}"
-                                             widgetVar="n">
+                                             widgetVar="n" var="c">
                                 <pe:convertLocale/>
                                 <f:selectItems value="#{userProfileView.supportedLocales}"
                                                var="n"
                                                itemValue="#{n.locale}"
                                                itemLabel="#{n.locale.getDisplayName()}"
                                 />
+
+                                <p:column>
+                                    <img src="#{resource[userProfileView.getFlagResource(c)]}"
+                                         alt="#{c.getLanguage()}-Lang Flag"
+                                         width="24px" height="24px"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{c.getDisplayName()}"/>
+                                </p:column>
+
                             </p:selectOneMenu>
 
                             <p:commandButton id="updateLocale"
