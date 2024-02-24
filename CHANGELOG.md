@@ -4,6 +4,11 @@
 
 ### Enhancements
 * SABI-68: Spanish ressource bundles added
+** THX to deepl I added French, Italian as well
+
+### Technical Maintenance
+
+* SABI-128 Additional TLS on Backend component (required by aquarium-IoT project)
 
 ## Release 1.2.5
 

@@ -17,7 +17,9 @@ import java.util.Locale;
 public enum SupportedLocales {
     German(Locale.GERMAN),
     English(Locale.ENGLISH),
-    Spanish(new Locale("es", "ES"));
+    French(Locale.FRENCH),
+    Italian(Locale.ITALIAN),
+    Spanish(new Locale("es"));
 
     private Locale locale;
 
