@@ -89,6 +89,8 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         return "images:icons8-flag-" + c.getLanguage() + "-48.png";
     }
 
+
+
     public String save() {
         if (selectedLocale != null) {
             // Already stored

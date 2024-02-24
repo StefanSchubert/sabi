@@ -47,7 +47,7 @@
                                 <f:selectItems value="#{userProfileView.supportedLocales}"
                                                var="n"
                                                itemValue="#{n.locale}"
-                                               itemLabel="#{n.locale.getDisplayName()}"
+                                               itemLabel="#{n.locale.getDisplayLanguage(n.locale)}"
                                 />
 
                                 <p:column>
@@ -56,7 +56,7 @@
                                          width="24px" height="24px"/>
                                 </p:column>
                                 <p:column>
-                                    <h:outputText value="#{c.getDisplayName()}"/>
+                                    <h:outputText value="#{c.getDisplayLanguage(c)}"/>
                                 </p:column>
 
                             </p:selectOneMenu>
