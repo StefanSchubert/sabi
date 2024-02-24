@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -16,7 +16,10 @@ import java.util.Locale;
  */
 public enum SupportedLocales {
     German(Locale.GERMAN),
-    English(Locale.ENGLISH);
+    English(Locale.ENGLISH),
+    French(Locale.FRENCH),
+    Italian(Locale.ITALIAN),
+    Spanish(new Locale("es"));
 
     private Locale locale;
 

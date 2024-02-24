@@ -81,6 +81,16 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         return !measurementReminderTos.isEmpty();
     }
 
+    /**
+     * Used as Workaround to create dynamic images resources
+     * @return
+     */
+    public String getFlagResource(Locale c) {
+        return "images:icons8-flag-" + c.getLanguage() + "-48.png";
+    }
+
+
+
     public String save() {
         if (selectedLocale != null) {
             // Already stored

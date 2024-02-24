@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -59,7 +59,7 @@
         <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
         <micrometer.prometheus.version>1.12.3</micrometer.prometheus.version>
         <joinfaces.version>5.2.2</joinfaces.version>
-        <sabi.boundary.version>1.2.5</sabi.boundary.version>
+        <sabi.boundary.version>1.2.6</sabi.boundary.version>
         <passay.version>1.6.4</passay.version>
         <owasp.plugin.version>9.0.9</owasp.plugin.version>
         <lombok.version>1.18.30</lombok.version>
