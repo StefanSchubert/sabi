@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
