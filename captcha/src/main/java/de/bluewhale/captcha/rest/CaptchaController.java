@@ -44,7 +44,7 @@ public class CaptchaController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<ChallengeTo> getNewCaptchaChallenge(
             @PathVariable(value = "language", required = true)
-            @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication.") String language) {
+            @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication. English will be used as fallback, if language is not available.") String language) {
 
         ResponseEntity<ChallengeTo> response;
 
