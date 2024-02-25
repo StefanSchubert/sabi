@@ -104,8 +104,9 @@
                                     />
                                 </p:selectOneMenu>
 
-                                <p:commandButton value="#{msg['common.add.b']}" action="#{userProfileView.addReminderForMeasurementUnit}"
-                                                 update=":reminderTable" />
+                                <p:commandButton value="#{msg['common.add.b']}"
+                                                 action="#{userProfileView.addReminderForMeasurementUnit}"
+                                                 update=":reminderTable"/>
 
                             </p:panelGrid>
 
@@ -133,7 +134,7 @@
 
                             <p:commandButton value="#{msg['common.save.b']}"
                                              update=":reminderTable" ajax="true"
-                                             action="#{userProfileView.save}" />
+                                             action="#{userProfileView.save}"/>
 
                             <p:messages id="msg2" for="profileupdate" showDetail="true" closable="true">
                                 <p:autoUpdate/>

@@ -62,6 +62,8 @@ With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki
             <nvd.api.key>YOUR_API_KEY</nvd.api.key>
         </properties>
 
+* If you work with IntelliJ: Install the "Jakarta Server Faces (JSF)" Plugin
+
 #### Prepare your local docker environment
 
 Do some maven builds in the following order:
