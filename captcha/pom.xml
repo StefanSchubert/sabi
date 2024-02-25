@@ -47,6 +47,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>2.3.0</springdoc.openapiv2.version>
         <micrometer.prometheus.version>1.12.3</micrometer.prometheus.version>
+        <lombok.version>1.18.30</lombok.version>
         <owasp.plugin.version>9.0.9</owasp.plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
@@ -104,6 +105,14 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.openapiv2.version}</version>
+        </dependency>
+
+        <!-- Common Stuff -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies, since SB3.x junit5 is default -->

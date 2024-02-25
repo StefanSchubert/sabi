@@ -6,6 +6,7 @@
 package de.bluewhale.captcha.service;
 
 import de.bluewhale.captcha.model.ChallengeTo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,6 +28,7 @@ import static java.lang.Boolean.TRUE;
  * @author Stefan Schubert
  */
 @Service
+@Slf4j
 public class QAGenerator {
     private static final int TOKEN_SIZE = 5;
     // ------------------------------ FIELDS ------------------------------

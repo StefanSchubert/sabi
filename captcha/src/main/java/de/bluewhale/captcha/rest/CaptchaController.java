@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(value = "api/")
+@Slf4j
 public class CaptchaController {
 
     @Autowired
@@ -46,9 +48,11 @@ public class CaptchaController {
             @PathVariable(value = "language", required = true)
             @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication. English will be used as fallback, if language is not available.") String language) {
 
+        log.debug("Received new challenge request for langcode {}", language);
         ResponseEntity<ChallengeTo> response;
 
         if (ChallengeRequestThrottle.requestAllowed()) {
+            log.debug("Request passed throttle barrier");
             ChallengeTo challengeTo = generator.provideChallengeFor(language);
             response = new ResponseEntity<>(challengeTo, HttpStatus.OK);
         } else {
