@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -44,10 +44,11 @@ public interface MeasurementService extends Serializable {
      * Concrete user will be derived by the calling context (JWT Token Auth)
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pLanguage ISO-639-1 language code for which the translation is being requested.
      * @return List of MeasurementReminderTo that belong to current user. List may be empty but never NULL.
      * @throws BusinessException in case of backend auth failures.
      */
-    @NotNull List<MeasurementReminderTo> getMeasurementRemindersForUser(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
+    @NotNull List<MeasurementReminderTo> getMeasurementRemindersForUser(@NotNull String pJWTBackendAuthtoken, @NotNull String pLanguage) throws BusinessException;
 
 
     /**
@@ -58,11 +59,12 @@ public interface MeasurementService extends Serializable {
      * the backend introduces more units.
      *
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @param pLanguage            ISO-639-1 language code for which the translation is being requested.
      * @return List of units known by the backend.
      * @throws BusinessException in case of backend auth failures.
      */
     @Cacheable
-    @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
+    @NotNull List<UnitTo> getAvailableMeasurementUnits(@NotNull String pJWTBackendAuthtoken, @NotNull String pLanguage) throws BusinessException;
 
     /**
      * List Users Measurements for a specific tank. Concrete user will be derived by the calling context
@@ -105,13 +107,14 @@ public interface MeasurementService extends Serializable {
     void save(MeasurementTo measurement, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
-     * Fetches detailed Parameterinfos for requested measurement unti
+     * Fetches detailed Parameterinfos for requested measurement unit
      *
      * @param selectedUnitId      ID of measurement unit
+     * @param language             ISO-639-1 language code for which the translation is being requested.
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
      * @return detailed info if available or null if it does not exists
      */
-    @Null ParameterTo getParameterFor(@NotNull Integer selectedUnitId, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
+    @Null ParameterTo getParameterFor(@NotNull Integer selectedUnitId, @NotNull String language, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
      * Push a new Measurement reminder to the backend.

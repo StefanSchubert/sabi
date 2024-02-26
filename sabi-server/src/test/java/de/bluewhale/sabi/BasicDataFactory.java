@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Derive your tests from this class to inject required minimum required basic data into H2.
@@ -30,6 +31,9 @@ public class BasicDataFactory {
 
     @Autowired
     UnitRepository unitRepository;
+
+    @Autowired
+    LocalizedUnitRepository localizedUnitRepository;
 
     @Autowired
     RemedyRepository remedyRepository;
@@ -88,31 +92,51 @@ public class BasicDataFactory {
 
         UnitEntity unitEntity = new UnitEntity();
         unitEntity.setName("KH");
-        unitEntity.setDescription("Karbonathärte / Alkanität");
         unitEntity.setId(1);
 
         UnitEntity unitEntity2 = new UnitEntity();
         unitEntity2.setName("°C");
-        unitEntity2.setDescription("Grad Celsius");
         unitEntity2.setId(2);
 
-        unitRepository.saveAndFlush(unitEntity);
-        unitRepository.saveAndFlush(unitEntity2);
+        UnitEntity savedUnitEntity = unitRepository.saveAndFlush(unitEntity);
+
+        LocalizedUnitEntity localizedUnitEntity = new LocalizedUnitEntity();
+        localizedUnitEntity.setDescription("Karbonathärte / Alkanität");
+        localizedUnitEntity.setUnitId(savedUnitEntity.getId());
+        localizedUnitRepository.saveAndFlush(localizedUnitEntity);
+        unitEntity.setLocalizedUnitEntities(List.of(localizedUnitEntity));
+
+        UnitEntity savedUnitEntity2 = unitRepository.saveAndFlush(unitEntity2);
+
+        LocalizedUnitEntity localizedUnitEntity2 = new LocalizedUnitEntity();
+        localizedUnitEntity2.setDescription("Grad Celsius");
+        localizedUnitEntity2.setUnitId(savedUnitEntity2.getId());
+        localizedUnitRepository.saveAndFlush(localizedUnitEntity2);
+        unitEntity2.setLocalizedUnitEntities(List.of(localizedUnitEntity2));
 
         ParameterEntity parameterEntity = new ParameterEntity();
-        parameterEntity.setDescription("Karbonathärte");
         parameterEntity.setBelongingUnitId(1);
         parameterEntity.setMinThreshold(6.5f);
         parameterEntity.setMaxThreshold(10f);
 
         ParameterEntity parameterEntity2 = new ParameterEntity();
-        parameterEntity2.setDescription("Temperatur");
         parameterEntity2.setBelongingUnitId(2);
         parameterEntity2.setMinThreshold(24f);
         parameterEntity2.setMaxThreshold(27f);
 
-        parameterRepository.saveAndFlush(parameterEntity);
-        parameterRepository.saveAndFlush(parameterEntity2);
+        ParameterEntity savedParameterEntity1 = parameterRepository.saveAndFlush(parameterEntity);
+        LocalizedParameterEntity localizedParameterEntity = new LocalizedParameterEntity();
+        localizedParameterEntity.setDescription("Karbonathärte");
+        localizedParameterEntity.setLanguage("de");
+        localizedParameterEntity.setParameter_id(savedParameterEntity1.getId());
+        savedParameterEntity1.setLocalizedParameterEntities(List.of(localizedParameterEntity));
+
+        ParameterEntity savedParameterEntity2 = parameterRepository.saveAndFlush(parameterEntity2);
+        LocalizedParameterEntity localizedParameterEntity2 = new LocalizedParameterEntity();
+        localizedParameterEntity2.setDescription("Temperatur");
+        localizedParameterEntity2.setLanguage("de");
+        localizedParameterEntity2.setParameter_id(savedParameterEntity2.getId());
+        savedParameterEntity2.setLocalizedParameterEntities(List.of(localizedParameterEntity2));
 
         RemedyEntity remedyEntity = new RemedyEntity();
         remedyEntity.setProductname("KH+");

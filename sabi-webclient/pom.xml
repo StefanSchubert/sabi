@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.2.6</version>
+    <version>1.2.7</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>

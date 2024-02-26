@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -103,7 +103,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         // Given already stored testdata for measurements
 
         // When
-        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(1);
+        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(1, "de");
 
         // Then
         assertNotNull("Should not happen!",parameterTo);
@@ -116,7 +116,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         Integer nonExistingUnit = Integer.MAX_VALUE;
 
         // When
-        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(nonExistingUnit);
+        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(nonExistingUnit,"de");
 
         // Then
         assertNull(parameterTo);
@@ -143,7 +143,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         // Given already stored testdata for measurements
 
         // When
-        List<UnitTo> measurementUnits = measurementService.listAllMeasurementUnits();
+        List<UnitTo> measurementUnits = measurementService.listAllMeasurementUnits("de");
 
         // Then
         assertNotNull("Should not happen!",measurementUnits);

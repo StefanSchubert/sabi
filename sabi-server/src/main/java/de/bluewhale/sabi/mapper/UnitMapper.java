@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -25,7 +25,6 @@ public interface UnitMapper {
     @Mappings({
             @Mapping(target ="id", source="id"),
             @Mapping(target ="unitSign", source="name"),
-            @Mapping(target ="description", source="description"),
     })
     UnitTo mapUnitEntity2To(@NotNull final UnitEntity pUnitEntity);
 
@@ -33,7 +32,6 @@ public interface UnitMapper {
     @Mappings({
             @Mapping(target ="id", source="id"),
             @Mapping(target ="name", source="unitSign"),
-            @Mapping(target ="description", source="description"),
     })
     UnitEntity mapUnitToEntity(@NotNull final UnitTo pUnitTo);
 

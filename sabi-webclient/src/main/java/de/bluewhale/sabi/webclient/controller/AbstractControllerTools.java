@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -53,8 +53,8 @@ public abstract class AbstractControllerTools {
      */
     @NotNull
     public String getUnitDescriptionForId(Integer unitId, List<UnitTo> fromUnitList) {
-        // TODO STS (13.04.21): Improvment: instead of providing the list of known units those should be fetched here
-        // wee need to change the auth scope on the api for this
+        // TODO STS (13.04.21): Improvement: instead of providing the list of known units those should be fetched here
+        // we need to change the auth scope on the api for this
         String result = "";
         if (unitId != null) {
             for (UnitTo unitTo : fromUnitList) {

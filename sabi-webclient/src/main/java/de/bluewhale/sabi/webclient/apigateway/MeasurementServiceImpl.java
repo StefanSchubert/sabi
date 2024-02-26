@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -40,14 +40,13 @@ import java.util.*;
 @Slf4j
 public class MeasurementServiceImpl extends APIServiceImpl implements MeasurementService {
 
-    static List<UnitTo> cachedAvailableMeasurementUnits = Collections.emptyList();
-    // TODO STS (04.05.21): Revisit and check after i18n of ParameterTo...
+    static Map<String ,List<UnitTo>> cachedAvailableMeasurementUnits = new HashMap<>();
     static Map<Integer, ParameterTo> cachedUnitParameterMap = new HashMap<>();
 
     @Override
-    public List<MeasurementReminderTo> getMeasurementRemindersForUser(String pJWTBackendAuthtoken) throws BusinessException {
+    public List<MeasurementReminderTo> getMeasurementRemindersForUser(String pJWTBackendAuthtoken, String pLanguage) throws BusinessException {
 
-        String listMeasurementReminderUri = sabiBackendUrl + Endpoint.MEASUREMENTS + "/reminder/list";
+        String listMeasurementReminderUri = sabiBackendUrl + Endpoint.MEASUREMENTS + "/reminder/list/"+pLanguage;
         ResponseEntity<String> responseEntity = getAPIResponseFor(listMeasurementReminderUri, pJWTBackendAuthtoken, HttpMethod.GET);
         MeasurementReminderTo[] measurementReminderTos;
         try {
@@ -102,18 +101,18 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
 
 
         @Override
-        public @NotNull List<UnitTo> getAvailableMeasurementUnits (@NotNull String pJWTBackendAuthtoken) throws
+        public @NotNull List<UnitTo> getAvailableMeasurementUnits (@NotNull String pJWTBackendAuthtoken, @NotNull String pLanguage) throws
         BusinessException {
 
-            String listMeasurementUnitsUri = sabiBackendUrl + Endpoint.UNITS + "/list";
+            String listMeasurementUnitsUri = sabiBackendUrl + Endpoint.UNITS + "/list" + "/" +pLanguage;
 
-            if (cachedAvailableMeasurementUnits.isEmpty()) {
+            if (cachedAvailableMeasurementUnits.get(pLanguage) == null) {
 
                 ResponseEntity<String> responseEntity = getAPIResponseFor(listMeasurementUnitsUri, pJWTBackendAuthtoken, HttpMethod.GET);
 
                 try {
                     UnitTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), UnitTo[].class);
-                    cachedAvailableMeasurementUnits = Arrays.asList(myObjects);
+                    cachedAvailableMeasurementUnits.put(pLanguage, Arrays.asList(myObjects));
                 } catch (JsonProcessingException e) {
                     log.error(String.format("Didn't understand response from %s got parsing exception %s", listMeasurementUnitsUri, e.getMessage()), e.getMessage());
                     e.printStackTrace();
@@ -121,11 +120,11 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                 }
             }
 
-            return cachedAvailableMeasurementUnits;
+            return cachedAvailableMeasurementUnits.get(pLanguage);
         }
 
         @Override
-        public ParameterTo getParameterFor (Integer selectedUnitId, String pJWTBackendAuthtoken) throws
+        public ParameterTo getParameterFor (Integer selectedUnitId, String pLanguage, String pJWTBackendAuthtoken) throws
         BusinessException {
 
             if (selectedUnitId != null && cachedUnitParameterMap.containsKey(selectedUnitId)) {
@@ -133,7 +132,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                 return cachedUnitParameterMap.get(selectedUnitId);
             } else {
 
-                String listUnitsParameterUri = sabiBackendUrl + Endpoint.UNITS + "/parameter/" + selectedUnitId;
+                String listUnitsParameterUri = sabiBackendUrl + Endpoint.UNITS + "/parameter/" + selectedUnitId + "/"+pLanguage;
 
                 ResponseEntity<String> responseEntity = getAPIResponseFor(listUnitsParameterUri, pJWTBackendAuthtoken, HttpMethod.GET);
 

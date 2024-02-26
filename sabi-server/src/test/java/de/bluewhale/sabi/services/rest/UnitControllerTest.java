@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -14,9 +14,11 @@ import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.ParameterTo;
 import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.persistence.model.LocalizedUnitEntity;
 import de.bluewhale.sabi.persistence.model.ParameterEntity;
 import de.bluewhale.sabi.persistence.model.UnitEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.LocalizedUnitRepository;
 import de.bluewhale.sabi.persistence.repositories.ParameterRepository;
 import de.bluewhale.sabi.persistence.repositories.UnitRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
@@ -62,6 +64,8 @@ public class UnitControllerTest {
     @MockBean
     UnitRepository unitRepository;
     @MockBean
+    LocalizedUnitRepository localizedUnitRepository;
+    @MockBean
     ParameterRepository parameterRepository;
     @MockBean
     UserRepository userRepository;
@@ -98,11 +102,18 @@ public class UnitControllerTest {
         UnitTo unitTo = testDataFactory.getTestUnitTo();
 
         UnitEntity unitEntity = unitMapper.mapUnitToEntity(unitTo);
+        LocalizedUnitEntity localizedUnitEntity = new LocalizedUnitEntity();
+        localizedUnitEntity.setUnitId(unitEntity.getId());
+        localizedUnitEntity.setDescription(unitTo.getDescription());
+        localizedUnitEntity.setLanguage("en");
+        unitEntity.setLocalizedUnitEntities(List.of(localizedUnitEntity));
 
         List<UnitEntity> unitEntityList = new ArrayList<UnitEntity>();
         unitEntityList.add(unitEntity);
 
         given(this.unitRepository.findAll()).willReturn(unitEntityList);
+        given(this.localizedUnitRepository.findByLanguageAndUnitId("en", unitEntity.getId())).willReturn(localizedUnitEntity);
+
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
@@ -112,7 +123,7 @@ public class UnitControllerTest {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the rest-template will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/units/list", HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/units/list/en", HttpMethod.GET, requestEntity, String.class);
 
         // then we should get a 202 as result.
         assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
@@ -149,7 +160,7 @@ public class UnitControllerTest {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Notice the that the controller defines a list, the rest-template will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.UNITS + "/parameter/" + parameterEntity.getBelongingUnitId(), HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.UNITS + "/parameter/" + parameterEntity.getBelongingUnitId() + "/en", HttpMethod.GET, requestEntity, String.class);
 
         // Then
         // then we should get a 202 as result.

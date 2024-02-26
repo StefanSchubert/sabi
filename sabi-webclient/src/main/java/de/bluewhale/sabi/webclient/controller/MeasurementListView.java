@@ -74,7 +74,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         }
 
         try {
-            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
+            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken(),userSession.getLanguage());
         } catch (BusinessException e) {
             knownUnits = Collections.emptyList();
             log.error(e.getLocalizedMessage());
@@ -160,7 +160,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         String result = "";
         if (unitId != null && unitId != 0) {
             try {
-                ParameterTo parameterTo = measurementService.getParameterFor(unitId, userSession.getSabiBackendToken());
+                ParameterTo parameterTo = measurementService.getParameterFor(unitId, userSession.getLanguage(), userSession.getSabiBackendToken());
                 Locale usersLocale = userSession.getLocale();
                 if (parameterTo != null && usersLocale != null) {
                     result = String.format(usersLocale, "min = %.03f / max = %.03f", parameterTo.getMinThreshold(), parameterTo.getMaxThreshold());

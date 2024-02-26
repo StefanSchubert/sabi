@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -59,6 +59,9 @@ public class MeasurementServiceImpl implements MeasurementService {
     UnitRepository unitRepository;
 
     @Autowired
+    LocalizedUnitRepository localizedUnitRepository;
+
+    @Autowired
     UnitMapper unitMapper;
 
     @Autowired
@@ -93,12 +96,15 @@ public class MeasurementServiceImpl implements MeasurementService {
 
     @Override
     @Cacheable("unitsCache")
-    public @NotNull List<UnitTo> listAllMeasurementUnits() {
+    public @NotNull List<UnitTo> listAllMeasurementUnits(String pUsersLanguage) {
         List<UnitTo> unitToList = Collections.emptyList();
         List<UnitEntity> unitEntityList = unitRepository.findAll();
         if (unitEntityList != null && !unitEntityList.isEmpty()) {
             unitToList = unitMapper.mapUnitEntities2TOs(unitEntityList);
-
+            for (UnitTo unitTo : unitToList) {
+                LocalizedUnitEntity localizedUnit = localizedUnitRepository.findByLanguageAndUnitId(pUsersLanguage, unitTo.getId());
+                unitTo.setDescription((localizedUnit == null) ? null : localizedUnit.getDescription());
+            }
         }
         return unitToList;
     }
@@ -209,11 +215,16 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public ParameterTo fetchParameterInfoFor(Integer pUnitID) {
+    public ParameterTo fetchParameterInfoFor(Integer pUnitID, String pUsersLanguage) {
 
         if (pUnitID == null) {
             log.warn("Tried to fetch Parameter Info for null unit. This smells after a logic flaw.");
             return null;
+        }
+
+        if (pUsersLanguage == null) {
+            log.warn("Called fetch parameter Info without language param. Using english as default.");
+            pUsersLanguage = "en";
         }
 
         ParameterEntity parameterEntity = parameterRepository.findByBelongingUnitIdEquals(pUnitID);
@@ -225,7 +236,14 @@ public class MeasurementServiceImpl implements MeasurementService {
 
         ParameterTo parameterTo = parameterMapper.mapParameterEntity2To(parameterEntity);
 
-        return parameterTo;
+        List<LocalizedParameterEntity> localizedParameterEntities = parameterEntity.getLocalizedParameterEntities();
+        String finalPUsersLanguage = pUsersLanguage;
+        Optional<LocalizedParameterEntity> localizedParameterEntity = localizedParameterEntities.stream().filter(item -> finalPUsersLanguage.equalsIgnoreCase(item.getLanguage())).findFirst();
+        if (localizedParameterEntity.isPresent()) {
+            parameterTo.setDescription(localizedParameterEntity.get().getDescription());
+        }
+
+            return parameterTo;
     }
 
     @Override
@@ -275,10 +293,10 @@ public class MeasurementServiceImpl implements MeasurementService {
     }
 
     @Override
-    public List<MeasurementReminderTo> fetchUsersNextMeasurements(String pUserEmail) {
+    public List<MeasurementReminderTo> fetchUsersNextMeasurements(String pUserEmail, String pUserLanguage) {
         List<MeasurementReminderTo> measurementReminderTos = new ArrayList<>();
 
-        List<UnitTo> allMeasurementUnits = listAllMeasurementUnits();
+        List<UnitTo> allMeasurementUnits = listAllMeasurementUnits(pUserLanguage);
         UserEntity user = userRepository.getByEmail(pUserEmail);
         List<UserMeasurementReminderEntity> userMeasurementReminders = user.getUserMeasurementReminders();
 
