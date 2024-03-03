@@ -28,7 +28,7 @@ import org.primefaces.model.charts.line.LineChartModel;
 import org.primefaces.model.charts.line.LineChartOptions;
 import org.primefaces.model.charts.optionconfig.title.Title;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -46,7 +46,7 @@ import static de.bluewhale.sabi.webclient.utils.PageRegister.REPORT_VIEW_PAGE;
  * @author Stefan Schubert
  */
 @Named
-@SessionScope
+@RequestScope
 @Slf4j
 @Getter
 @Setter

@@ -106,7 +106,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
 
             String listMeasurementUnitsUri = sabiBackendUrl + Endpoint.UNITS + "/list" + "/" +pLanguage;
 
-            if (cachedAvailableMeasurementUnits.get(pLanguage) == null) {
+            if (cachedAvailableMeasurementUnits.containsKey(pLanguage) == false) {
 
                 ResponseEntity<String> responseEntity = getAPIResponseFor(listMeasurementUnitsUri, pJWTBackendAuthtoken, HttpMethod.GET);
 

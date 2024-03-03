@@ -21,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import static de.bluewhale.sabi.webclient.utils.PageRegister.MEASUREMENT_VIEW_PA
  * @author Stefan Schubert
  */
 @Named
-@SessionScope
+@RequestScope
 @Slf4j
 @Getter
 public class MeasurementListView extends AbstractControllerTools implements Serializable  {

@@ -21,13 +21,13 @@ INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, las
 VALUES (1, 'Karbonathärte (1 °DH = 0,178 mmol/l CAO3)', 'de', DEFAULT, DEFAULT, DEFAULT);
 
 INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, lastmod_on, optlock)
-VALUES (2, 'Temperatur', 'de', DEFAULT, DEFAULT, DEFAULT);
+VALUES (2, 'Temperatur in Celsius', 'de', DEFAULT, DEFAULT, DEFAULT);
 
 INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, lastmod_on, optlock)
-VALUES (3, 'Calcium concentration in ppm (1 ppm = 1.023 mg/L)', 'de', DEFAULT, DEFAULT, DEFAULT);
+VALUES (3, 'Calcium-Konzentration in ppm (1 ppm = 1.023 mg/L)', 'de', DEFAULT, DEFAULT, DEFAULT);
 
 INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, lastmod_on, optlock)
-VALUES (4, 'Magnesium concentration in ppm (1 ppm = 1.023 mg/L)', 'de', DEFAULT, DEFAULT, DEFAULT);
+VALUES (4, 'Magnesium-Konzentration in ppm (1 ppm = 1.023 mg/L)', 'de', DEFAULT, DEFAULT, DEFAULT);
 
 INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, lastmod_on, optlock)
 VALUES (5, 'PH Wert', 'de', DEFAULT, DEFAULT, DEFAULT);
@@ -54,7 +54,7 @@ INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, las
 VALUES (1, 'Carbonate hardness (1 °DH = 0.178 mmol/l CAO3)', 'en', DEFAULT, DEFAULT, DEFAULT);
 
 INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, lastmod_on, optlock)
-VALUES (2, 'Temperature', 'en', DEFAULT, DEFAULT, DEFAULT);
+VALUES (2, 'Temperature in Celsius', 'en', DEFAULT, DEFAULT, DEFAULT);
 
 INSERT INTO sabi.localized_unit (unit_id, description, language, created_on, lastmod_on, optlock)
 VALUES (3, 'Calcium concentration in ppm (1 ppm = 1,023 mg/L)', 'en', DEFAULT, DEFAULT, DEFAULT);
