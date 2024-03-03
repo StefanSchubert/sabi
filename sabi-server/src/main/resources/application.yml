@@ -64,6 +64,10 @@ spring:
   application:
     name: sabi-service
   # JPA Database configuration
+  threads:
+    virtual:
+      # No need to configure Http Threadpool size, we use virtual Threads
+      enabled: true
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     # Hikari Connection Pool

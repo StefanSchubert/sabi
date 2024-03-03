@@ -67,8 +67,8 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         selectedLocale = userSession.getLocale();
 
         try {
-            measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken());
-            knownMeasurementUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
+            measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken(),selectedLocale.getLanguage());
+            knownMeasurementUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken(), userSession.getLanguage());
         } catch (BusinessException e) {
             measurementReminderTos = new ArrayList<>();
             knownMeasurementUnits = new ArrayList<>();
@@ -125,7 +125,7 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
 
             try {
                 measurementService.addMeasurementReminder(measurementReminderTo, userSession.getSabiBackendToken());
-                measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken());
+                measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken(), userSession.getLanguage());
             } catch (BusinessException e) {
                 log.error("Could not add new Measurement Reminder.", e);
                 MessageUtil.warn("messages", "common.error.internal_server_problem.t", userSession.getLocale());

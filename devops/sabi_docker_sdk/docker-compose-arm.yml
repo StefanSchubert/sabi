@@ -40,7 +40,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:11.1
+    image: mariadb:11.3.2
     platform: linux/arm64/v8
     environment:
       - MYSQL_ROOT_PASSWORD=SuperDooper
@@ -93,6 +93,6 @@ networks:
   sabinet:
     driver: bridge
 
-# TODO: application.properties files contains "localhost" this does not matches the hosts,
+# Notice: application.properties files contains "localhost" this does not matches the hosts,
 # db, fakeSMTP etc.. so the application.properties need to be externalized as in production
 # through the assets.

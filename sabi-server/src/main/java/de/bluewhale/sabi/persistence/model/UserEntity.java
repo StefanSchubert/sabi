@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "users", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"aquariums","corals","fishes","measurements","treatments"})
+@EqualsAndHashCode(exclude = {"aquariums","corals","fishes","measurements","treatments"},callSuper = false)
 public class UserEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -33,10 +33,11 @@ public interface MeasurementService {
      * Measurement units are not hard coded via enums, they can dynamically added through the database if required.
      * Use this function to retrieve the list of known ones.
      *
+     * @param pUsersLanguage ISO-639-1 language code - used for i18n in communication (localized parameter description)
      * @return List of supported measurement units
      */
     @NotNull
-    List<UnitTo> listAllMeasurementUnits();
+    List<UnitTo> listAllMeasurementUnits(String pUsersLanguage);
 
     /**
      * Lists all measurements of a specific user.
@@ -118,9 +119,10 @@ public interface MeasurementService {
      * Required because of the loose coupling.
      *
      * @param pUnitID identifies the unit for which we are interested on additional parameter infos.
-     * @return ParameterTo with details or null if they do not exists.
+     * @param pUsersLanguage ISO-639-1 language code - used for i18n in communication (localized parameter description)
+     * @return ParameterTo with details or null if they do not exist.
      */
-    ParameterTo fetchParameterInfoFor(Integer pUnitID);
+    ParameterTo fetchParameterInfoFor(Integer pUnitID, String pUsersLanguage);
 
     /**
      * Used to display some project stats.
@@ -149,7 +151,7 @@ public interface MeasurementService {
      * @param pUserEmail preAuthed UserID
      * @return List of measurement reminders, might be empty.
      */
-    @NotNull List<MeasurementReminderTo> fetchUsersNextMeasurements(@NotNull String pUserEmail);
+    @NotNull List<MeasurementReminderTo> fetchUsersNextMeasurements(@NotNull String pUserEmail, @NotNull String pUserLanguage);
 
     /**
      * Adds provided MeasurementReminderTo if it is consistent with requesting user.

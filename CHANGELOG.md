@@ -1,5 +1,10 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.7
+
+### Feature
+* SABI-17: i18n of measurement units, parameter and plagues.
+
 ## Release 1.2.6
 
 ### Enhancements

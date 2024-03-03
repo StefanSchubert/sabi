@@ -36,7 +36,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:11.1
+    image: mariadb:11.3.2
     platform: linux/amd64
     environment:
       - MYSQL_ROOT_PASSWORD=SuperDooper

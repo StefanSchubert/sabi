@@ -21,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import static de.bluewhale.sabi.webclient.utils.PageRegister.MEASUREMENT_VIEW_PA
  * @author Stefan Schubert
  */
 @Named
-@SessionScope
+@RequestScope
 @Slf4j
 @Getter
 public class MeasurementListView extends AbstractControllerTools implements Serializable  {
@@ -74,7 +74,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         }
 
         try {
-            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
+            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken(),userSession.getLanguage());
         } catch (BusinessException e) {
             knownUnits = Collections.emptyList();
             log.error(e.getLocalizedMessage());
@@ -160,7 +160,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         String result = "";
         if (unitId != null && unitId != 0) {
             try {
-                ParameterTo parameterTo = measurementService.getParameterFor(unitId, userSession.getSabiBackendToken());
+                ParameterTo parameterTo = measurementService.getParameterFor(unitId, userSession.getLanguage(), userSession.getSabiBackendToken());
                 Locale usersLocale = userSession.getLocale();
                 if (parameterTo != null && usersLocale != null) {
                     result = String.format(usersLocale, "min = %.03f / max = %.03f", parameterTo.getMinThreshold(), parameterTo.getMaxThreshold());

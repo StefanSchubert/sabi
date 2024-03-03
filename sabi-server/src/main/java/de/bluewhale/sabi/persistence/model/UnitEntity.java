@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,9 @@ package de.bluewhale.sabi.persistence.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "unit", schema = "sabi")
 @Entity
@@ -24,8 +27,10 @@ public class UnitEntity extends Auditable {
     @Basic
     private String name;
 
-    @jakarta.persistence.Column(name = "description", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
-    @Basic
-    private String description;
+    // Unidirectional for now - as this contains more static data, we won't provide an admin gui for it.
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="unit_id")
+    private List<LocalizedUnitEntity> localizedUnitEntities = new ArrayList<LocalizedUnitEntity>();
+
 
 }
