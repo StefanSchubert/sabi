@@ -28,7 +28,7 @@ import org.primefaces.model.charts.line.LineChartModel;
 import org.primefaces.model.charts.line.LineChartOptions;
 import org.primefaces.model.charts.optionconfig.title.Title;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -46,7 +46,7 @@ import static de.bluewhale.sabi.webclient.utils.PageRegister.REPORT_VIEW_PAGE;
  * @author Stefan Schubert
  */
 @Named
-@SessionScope
+@RequestScope
 @Slf4j
 @Getter
 @Setter
@@ -246,7 +246,7 @@ public class ReportView extends AbstractControllerTools implements Serializable 
 
         ParameterTo parameterTo = null;
         try {
-            parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getSabiBackendToken());
+            parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getLanguage(),userSession.getSabiBackendToken());
         } catch (Exception e) {
             log.error("Could not Reach Backend to access detail parameter infos for unit {}", selectedUnitId);
             e.printStackTrace();
@@ -302,7 +302,7 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             // TODO STS (12.04.21): Refactor this. To make use of the request scope here, this should went into
             // users session, it does not make sense that we to this in measureview and in report view again.
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
-            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken());
+            knownUnits = measurementService.getAvailableMeasurementUnits(userSession.getSabiBackendToken(), userSession.getLanguage());
             if (tanks.size() == 1) {
                 // default selection if user has only one tank
                 this.selectedTankId = (tanks.get(0).getId());

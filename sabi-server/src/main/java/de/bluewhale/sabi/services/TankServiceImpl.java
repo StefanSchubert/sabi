@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -136,7 +136,7 @@ public class TankServiceImpl implements TankService {
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatedAquariumTo.getId(), requestingUser.getId());
 
         if (aquariumEntity != null) {
-            // FIXME STS (04.09.23): The Mapping here will provide a completley new entity
+            // FIXME STS (04.09.23): The Mapping here will provide a completely new entity
             // however we have the aquarium before. Isn't there a merge mapping
             // between entities available by mapstruts?
             aquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatedAquariumTo);

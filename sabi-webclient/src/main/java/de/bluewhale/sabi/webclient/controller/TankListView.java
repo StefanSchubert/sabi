@@ -18,7 +18,7 @@ import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import static de.bluewhale.sabi.webclient.utils.PageRegister.TANK_VIEW_PAGE;
  * @author Stefan Schubert
  */
 @Named
-@SessionScope
+@RequestScope
 @Slf4j
 @Getter
 public class TankListView implements Serializable {

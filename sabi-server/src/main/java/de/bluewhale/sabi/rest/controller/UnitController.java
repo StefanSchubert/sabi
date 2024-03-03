@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -45,13 +45,15 @@ public class UnitController {
                     description = "Success - list of all supported measurement units returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
-    @RequestMapping(value = {"/list"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/list/{language}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseEntity<List<UnitTo>> listAllMeasurementUnits(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
+    public ResponseEntity<List<UnitTo>> listAllMeasurementUnits(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                @PathVariable(value="language", required = false)
+                                                                @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication. ") String language, Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        List<UnitTo> unitToList = measurementService.listAllMeasurementUnits();
+        List<UnitTo> unitToList = measurementService.listAllMeasurementUnits(language);
         return new ResponseEntity<>(unitToList, HttpStatus.ACCEPTED);
     }
 
@@ -64,16 +66,17 @@ public class UnitController {
                     description = "Not detail parameter available for requested unit."),
             @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
     })
-    @RequestMapping(value = {"/parameter/{unitID}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/parameter/{unitID}/{language}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<ParameterTo> readDetailParameterOfUnit(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
                                                                  @PathVariable(value = "unitID", required = true)
                                                                  @Parameter(name = "unitID", description = "id of the unit you query details for...") Integer unitID,
+                                                                 @PathVariable(value = "language", required = true) @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication.") String language,
                                                                  Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
-        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(unitID);
+        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(unitID,language);
         if (parameterTo == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {

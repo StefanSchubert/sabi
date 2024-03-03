@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Table(name = "plague_record", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"user", "aquarium"})
+@EqualsAndHashCode(exclude = {"user", "aquarium"}, callSuper = false)
 public class PlagueRecordEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

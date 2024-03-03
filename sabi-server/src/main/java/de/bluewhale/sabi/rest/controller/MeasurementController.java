@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -329,16 +329,18 @@ public class MeasurementController {
                     description = "Success - list of measurement reminders for authed user returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized-request did not contained a valid user token.")
     })
-    @RequestMapping(value = "/reminder/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/reminder/list/{language}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<MeasurementReminderTo>> listUsersMeasurementReminders(@RequestHeader(name = AUTH_TOKEN, required = true) String token,
+                                                                                     @PathVariable(value="language", required = true)
+                                                                                     @Parameter(name = "language", description = "ISO-639-1 language code - used for i18n in communication. ") String language,
                                                                                      Principal principal) {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
 
         // list may be empty but not null
-        List<MeasurementReminderTo> measurementReminderTos = measurementService.fetchUsersNextMeasurements(principal.getName());
+        List<MeasurementReminderTo> measurementReminderTos = measurementService.fetchUsersNextMeasurements(principal.getName(), language);
 
         return new ResponseEntity<>(measurementReminderTos, HttpStatus.ACCEPTED);
     }
