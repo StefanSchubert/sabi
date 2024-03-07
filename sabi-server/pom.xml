@@ -56,13 +56,18 @@
         <mariadb.java.client.version>3.3.3</mariadb.java.client.version>
         <h2.version>2.2.224</h2.version>
 <!--        <h2.version>2.1.214</h2.version>-->
+        <junit.testcontainer.version>1.19.7</junit.testcontainer.version>
+        <mariadb.testcontainer.version>1.19.7</mariadb.testcontainer.version>
         <dumbster.version>1.6</dumbster.version>
         <archunit.version>1.2.1</archunit.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
-        <jakarta.xml.bind.version>4.0.1</jakarta.xml.bind.version>
+        <jakarta.xml.bind.version>4.0.2</jakarta.xml.bind.version>
         <jetbrains.annotation.version>24.1.0</jetbrains.annotation.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <assertj-core.version>3.25.3</assertj-core.version>
+        <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
+        <flyway.version>10.9.1</flyway.version>
     </properties>
 
     <dependencies>
@@ -251,10 +256,66 @@
             <!-- This is the replacement database which will
                  we used by tests which have been annotated with @JpaDataTest
                  https://mvnrepository.com/artifact/com.h2database/h2
+
+                 DEPRECATED: Will be dropped as soon as we refactored all to test container
+                 sabi-157
                  -->
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.testcontainer.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mariadb</artifactId>
+            <version>${mariadb.testcontainer.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+<!-- Already via Spring Boot Test included.
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+
+        <!-- AssertJ -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Using Flyway to populate testcontainer
+             this also tests our migration scripts for the database -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+            <version>${flyway.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -301,6 +362,20 @@
 
     <build>
         <finalName>sabi-service</finalName>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <!-- We are using the flyway script from the database module to populate the
+                 testcontainers during testing. To enable flyway to access the scripts from
+                 outside we add the location as ressource folder so flyway can access them
+                 via the classpath during test execution. -->
+            <testResource>
+                <directory>../sabi-database/src/main/resources</directory>
+            </testResource>
+        </testResources>
+
 
         <plugins>
             <plugin>
