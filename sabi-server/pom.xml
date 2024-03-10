@@ -48,14 +48,12 @@
         <springdoc.openapiv2.version>2.3.0</springdoc.openapiv2.version>
         <eclipselink.version>4.0.2</eclipselink.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <micrometer.prometheus.version>1.12.3</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.12.4</micrometer.prometheus.version>
         <spring.instrument.version>6.1.4</spring.instrument.version>
         <lombok.version>1.18.30</lombok.version>
         <owasp.plugin.version>9.0.9</owasp.plugin.version>
         <passay.version>1.6.4</passay.version>
         <mariadb.java.client.version>3.3.3</mariadb.java.client.version>
-        <h2.version>2.2.224</h2.version>
-<!--        <h2.version>2.1.214</h2.version>-->
         <junit.testcontainer.version>1.19.7</junit.testcontainer.version>
         <mariadb.testcontainer.version>1.19.7</mariadb.testcontainer.version>
         <dumbster.version>1.6</dumbster.version>
@@ -249,20 +247,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <!-- This is the replacement database which will
-                 we used by tests which have been annotated with @JpaDataTest
-                 https://mvnrepository.com/artifact/com.h2database/h2
-
-                 DEPRECATED: Will be dropped as soon as we refactored all to test container
-                 sabi-157
-                 -->
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
             <scope>test</scope>
         </dependency>
 

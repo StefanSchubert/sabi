@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.DTOTestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.DTOTestDataFactory.TESTUSER_EMAIL1;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.*;
 
@@ -56,7 +56,7 @@ public class TankServiceTest {
     @Transactional
     public void testAlterTankProperties() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
@@ -79,7 +79,7 @@ public class TankServiceTest {
    @Transactional
     public void testListUsersTanks() throws Exception {
         // Given
-       TestDataFactory testDataFactory = TestDataFactory.getInstance().withTankService(tankService).withUserService(userService);
+       DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withTankService(tankService).withUserService(userService);
        UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         AquariumTo aquariumTo1 = new AquariumTo();
@@ -123,7 +123,7 @@ public class TankServiceTest {
     @Transactional
     public void testRegisterNewTank() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
 
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
@@ -144,7 +144,7 @@ public class TankServiceTest {
     @Transactional
     public void testCreateTemperatureAPIKeyForTankAndRetrieveTankByAPIKey() throws Exception {
         // Given - prepersisted Testdata
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         UserTo testUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
@@ -172,7 +172,7 @@ public class TankServiceTest {
     public void testRemoveTank() throws Exception {
 
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());

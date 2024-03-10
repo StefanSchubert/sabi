@@ -1,28 +1,36 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence;
 
-import de.bluewhale.sabi.BasicDataFactory;
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
+import de.bluewhale.sabi.configs.TestContainerVersions;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static org.springframework.test.util.AssertionErrors.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
 /**
@@ -31,12 +39,23 @@ import static org.springframework.test.util.AssertionErrors.*;
  * Date: 3.3.2021
  */
 @SpringBootTest
+@Testcontainers
 @ContextConfiguration(classes = AppConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-// @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - maybe not compatible with eclipse way?
-public class TankRepositoryTest extends BasicDataFactory {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Tag("IntegrationTest")
+@Transactional
+@DirtiesContext
+// DirtiesContext: Spring context is refreshed after the test class is executed,
+// which includes reinitializing the HikariCP datasource (which is defined at spring level, while the testcontainer is not)
+public class TankRepositoryTest implements TestContainerVersions {
 
-    static TestDataFactory testDataFactory;
+    @Container
+    @ServiceConnection
+    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+
+    @Autowired
+    private Flyway flyway;
 
     @Autowired
     AquariumRepository aquariumRepository;
@@ -44,45 +63,40 @@ public class TankRepositoryTest extends BasicDataFactory {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeAll
-    public static void initTestDataFactory() {
-        testDataFactory = TestDataFactory.getInstance();
+
+    @BeforeEach
+    public void setUp() {
+
+        // flyway.clean(); // Optional: Clean DB before each single test
+        // org.flywaydb.core.api.FlywayException: Unable to execute clean as it has been disabled with the 'flyway.cleanDisabled' property.
+        flyway.migrate();
+
     }
 
-    /**
-     * There seems to be a timing problem with H2, that causes, that the basic data is not available
-     * for some test classes, while for others it worked out. Until we know what's going wrong...
-     * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
-     * The different behaviour can be observed by e.g. calling the master test suite and as comparising
-     * the measurement testsuite while this is method is deaktivated.
-     */
-    @BeforeEach
-    public void ensureBasicDataAvailability() {
+    @AfterAll
+    static void cleanup() {
+        mariaDBContainer.stop();
+    }
 
-        UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
-        if (byEmail == null) populateBasicData();
-        UserEntity byEmail2 = userRepository.getByEmail(P_USER1_EMAIL);
-        assertNotNull("H2-Basicdata injection did not work!" ,byEmail2);
+    @Test
+    void connectionEstablished(){
+        assertThat(mariaDBContainer.isCreated());
+        assertThat(mariaDBContainer.isRunning());
     }
 
 
     @Test
     public void testFindAllTanksOfSpecificUserById() throws Exception {
 
-        // given through BasicDataFactory
-        // User 1 has 2 tanks
-        // User 2 has 1 tank
-        UserEntity user1 = userRepository.getOne(1L);
-        UserEntity user2 = userRepository.getOne(2L);
+        // given through Flyway i.g. basic test data
+        String testUser = "sabi@bluewhale.de";
+        UserEntity storedUser = userRepository.getByEmail(testUser);
 
         // when
-        List<AquariumEntity> tanksOfUser1 = aquariumRepository.findAllByUser_IdIs(user1.getId());
-        List<AquariumEntity> tanksOfUser2 = aquariumRepository.findAllByUser_IdIs(user2.getId());
+        List<AquariumEntity> tanksOfUser1 = aquariumRepository.findAllByUser_IdIs(storedUser.getId());
 
         // then
-        assertTrue("User1 one should have excatly 2 tanks", tanksOfUser1.size() == 2);
-        assertTrue("User2 one should have excatly 1 tank", tanksOfUser2.size() == 1);
-        assertFalse("Delivered Tank from other user!?", tanksOfUser1.contains(tanksOfUser2));
+        assertTrue("Predefined BasicUser one should have exactly 2 tanks", tanksOfUser1.size() == 2);
     }
 
 

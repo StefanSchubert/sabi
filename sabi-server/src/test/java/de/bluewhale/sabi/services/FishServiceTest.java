@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.DTOTestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.DTOTestDataFactory.TESTUSER_EMAIL1;
 import static org.springframework.test.util.AssertionErrors.*;
 
 
@@ -57,7 +57,7 @@ public class FishServiceTest {
     @Transactional
     public void testAddFish() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
@@ -88,7 +88,7 @@ public class FishServiceTest {
     @Transactional
         public void testAddFishForWrongTank() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final UserTo fraudUser = testDataFactory.getRegisterNewTestUser("I_Intent@No.good");
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
@@ -133,7 +133,7 @@ public class FishServiceTest {
     @Transactional
     public void testRemoveFish() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance().withUserService(userService);
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
         final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 

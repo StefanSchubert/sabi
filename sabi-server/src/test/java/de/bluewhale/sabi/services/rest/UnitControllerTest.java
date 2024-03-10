@@ -6,7 +6,7 @@
 package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.DTOTestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.mapper.ParameterMapper;
 import de.bluewhale.sabi.mapper.UnitMapper;
@@ -81,7 +81,7 @@ public class UnitControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
+    DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
     @Autowired
     private TokenAuthenticationService encryptionService;
     @Autowired

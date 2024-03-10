@@ -19,21 +19,21 @@ import java.util.List;
 public class ParameterEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @jakarta.persistence.Column(name = "id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic
+    @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     private Integer id;
 
-    @jakarta.persistence.Column(name = "belonging_unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
+    @Column(name = "belonging_unit_id", nullable = false, insertable = true, updatable = true, length = 10, precision = 0)
     @Basic
     private int belongingUnitId;
 
-    @jakarta.persistence.Column(name = "min_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
+    @Column(name = "min_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
     @Basic
     private Float minThreshold;
 
-    @jakarta.persistence.Column(name = "max_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
+    @Column(name = "max_threshold", nullable = true, insertable = true, updatable = true, length = 12, precision = 0)
     @Basic
     private Float maxThreshold;
 

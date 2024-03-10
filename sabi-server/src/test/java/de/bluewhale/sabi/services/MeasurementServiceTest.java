@@ -6,7 +6,7 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.BasicDataFactory;
-import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.DTOTestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
@@ -159,7 +159,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         Long tankID = aquariumTo.getId();
 
         // When adding a new Measurment
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
         MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, P_USER1_EMAIL);
 
@@ -174,7 +174,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
     public void testGetLastetMeasurementEntryDateTime() throws Exception {
 
         // Given already store test data
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
         AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
         assertNotNull("Prepersisted Testdata missing", aquariumTo);
         Long tankID = aquariumTo.getId();
@@ -206,7 +206,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
     @Transactional
     public void testRemoveMeasurement() throws Exception {
         // Given a stored measurement for a tank and user
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
         testDataFactory.withUserService(userService);
         testDataFactory.withTankService(tankService);
         String newTestUserMail = "junit@sabi.de";
@@ -261,7 +261,7 @@ public class MeasurementServiceTest extends BasicDataFactory {
         Long tankID = aquariumTo.getId();
 
         // When
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
         MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addIotAuthorizedMeasurement(testMeasurementTo);
 

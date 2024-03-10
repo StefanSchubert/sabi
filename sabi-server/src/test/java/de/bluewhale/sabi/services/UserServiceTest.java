@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
-import static de.bluewhale.sabi.TestDataFactory.*;
+import static de.bluewhale.sabi.DTOTestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -18,7 +18,7 @@ import java.util.Locale;
  *
  * @author Stefan Schubert
  */
-public class TestDataFactory {
+public class DTOTestDataFactory {
 // ------------------------------ FIELDS ------------------------------
 
     public static final String TESTUSER_EMAIL1 = "testservice1@bluewhale.de";
@@ -27,7 +27,7 @@ public class TestDataFactory {
     public static final String INVALID_PASSWORD = "quertz!1";
     public static final String VALID_PASSWORD = "All!Rules8-)Applied";
 
-    private static TestDataFactory instance;
+    private static DTOTestDataFactory instance;
 
     private TankService tankService;
     private UserService userService;
@@ -36,15 +36,15 @@ public class TestDataFactory {
 
 // -------------------------- STATIC METHODS --------------------------
 
-    protected TestDataFactory() {
+    protected DTOTestDataFactory() {
         // defeat instantiation from outside
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public static TestDataFactory getInstance() {
+    public static DTOTestDataFactory getInstance() {
         if (instance == null) {
-            instance = new TestDataFactory();
+            instance = new DTOTestDataFactory();
         }
         return instance;
     }
@@ -108,17 +108,17 @@ public class TestDataFactory {
         return measurementTo;
     }
 
-    public TestDataFactory withTankService(TankService service) {
+    public DTOTestDataFactory withTankService(TankService service) {
         tankService = service;
         return this;
     }
 
-    public TestDataFactory withUserService(UserService service) {
+    public DTOTestDataFactory withUserService(UserService service) {
         userService = service;
         return this;
     }
 
-    public TestDataFactory withPlagueCenterService(PlagueCenterService service) {
+    public DTOTestDataFactory withPlagueCenterService(PlagueCenterService service) {
         plagueCenterService = service;
         return this;
     }

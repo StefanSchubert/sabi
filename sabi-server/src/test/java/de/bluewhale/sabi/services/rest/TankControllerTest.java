@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.TestDataFactory;
+import de.bluewhale.sabi.DTOTestDataFactory;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -64,7 +64,7 @@ public class TankControllerTest {
     @Autowired
     UserMapper userMapper;
 
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
+    DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
     @Autowired
     private TestRestTemplate restTemplate;
 
