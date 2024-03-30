@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -35,7 +35,7 @@ public class AquariumTo implements Serializable {
     private String description;
 
     @Schema(description =  "API-Key which can be used to submit temperature measurements for this tank by an IoT device.", required = false)
-    private String temperatueApiKey;
+    private String temperatureApiKey;
 
     @Schema(description =  "Flag telling if this tank is still in used, or if it meanwhile has been disolved.", required = false)
     private Boolean active;

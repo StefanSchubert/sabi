@@ -7,6 +7,7 @@ package de.bluewhale.sabi.persistence.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Table(name = "unit", schema = "sabi")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class UnitEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

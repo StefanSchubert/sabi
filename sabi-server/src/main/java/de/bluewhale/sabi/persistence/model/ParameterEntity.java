@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "parameter", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = "localizedParameterEntities")
+@EqualsAndHashCode(exclude = "localizedParameterEntities",callSuper = false)
 public class ParameterEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

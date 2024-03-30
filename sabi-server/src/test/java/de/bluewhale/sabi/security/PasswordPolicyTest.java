@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.security;
 
 import org.eclipse.persistence.jpa.jpql.Assert;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * @author Stefan Schubert
  */
 @ExtendWith(SpringExtension.class)
+@Tag("DeveloperTests")
 public class PasswordPolicyTest {
 
     @Test

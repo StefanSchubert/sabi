@@ -151,7 +151,7 @@ public class TankServiceTest {
 
         // When
         ResultTo<AquariumTo> resultOfAPIKeyGeneration = tankService.generateAndAssignNewTemperatureApiKey(aquariumToResultTo.getValue().getId(), TESTUSER_EMAIL1);
-        AquariumTo retrievedTankByAPIKey = tankService.getTankForTemperatureApiKey(resultOfAPIKeyGeneration.getValue().getTemperatueApiKey());
+        AquariumTo retrievedTankByAPIKey = tankService.getTankForTemperatureApiKey(resultOfAPIKeyGeneration.getValue().getTemperatureApiKey());
 
         // Then
 
@@ -159,7 +159,7 @@ public class TankServiceTest {
 
         final AquariumTo aquariumWithJustAddedAPIKey = resultOfAPIKeyGeneration.getValue();
         assertNotNull("ResultObject for generate an API Key had no Aquarium inside!",aquariumWithJustAddedAPIKey);
-        assertNotNull("API Key has not been stored!",aquariumWithJustAddedAPIKey.getTemperatueApiKey());
+        assertNotNull("API Key has not been stored!",aquariumWithJustAddedAPIKey.getTemperatureApiKey());
         assertEquals("Wrong message type.", CATEGORY.INFO, resultOfAPIKeyGeneration.getMessage().getType());
 
         assertNotNull("Did not retrieved a tank by API Key",retrievedTankByAPIKey);

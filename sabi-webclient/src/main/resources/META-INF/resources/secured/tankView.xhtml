@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  - Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -53,8 +53,8 @@
 
                         <p:outputLabel value="#{msg['tankview.tempApiKey.l']}"/>
 
-                        <p:outputLabel rendered="#{tank.temperatueApiKey != null}" value="#{tank.temperatueApiKey}"/>
-                        <p:commandButton rendered="#{tank.temperatueApiKey == null}" value="#{msg['tankview.tempApiKey.b']}" action="#{tankListView.generateTemperatureApiKey(tank)}"
+                        <p:outputLabel rendered="#{tank.temperatureApiKey != null}" value="#{tank.temperatureApiKey}"/>
+                        <p:commandButton rendered="#{tank.temperatureApiKey == null}" value="#{msg['tankview.tempApiKey.b']}" action="#{tankListView.generateTemperatureApiKey(tank)}"
                                          id="temKeyAction" icon="pi pi-key"
                                          update=":master" title="#{msg['tankview.tempApiKey.b']}"/>
 
