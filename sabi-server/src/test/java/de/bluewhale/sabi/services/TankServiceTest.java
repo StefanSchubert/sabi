@@ -68,7 +68,7 @@ public class TankServiceTest {
 	private static final String JABA_DABA_DOOOOO = "JabaDabaDooooo";
 
 
-	static TestDataFactory testDataFactory;
+	static TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
 	@Container
 	@ServiceConnection
@@ -100,7 +100,6 @@ public class TankServiceTest {
 	@Rollback
 	public void testAlterTankProperties() throws Exception {
 		// Given
-		TestDataFactory testDataFactory = TestDataFactory.getInstance();
 		final UserTo testUser = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
 		UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUser);
 
@@ -126,7 +125,6 @@ public class TankServiceTest {
 	@Test
 	public void testListUsersTanks() throws Exception {
 		// Given
-		TestDataFactory testDataFactory = TestDataFactory.getInstance();
 		UserTo testUser = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
 		UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUser);
 
@@ -153,7 +151,6 @@ public class TankServiceTest {
 	@Rollback
 	public void testRegisterNewTank() throws Exception {
 		// Given
-		TestDataFactory testDataFactory = TestDataFactory.getInstance();
 		final UserTo testUser = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
 		UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUser);
 
@@ -181,7 +178,6 @@ public class TankServiceTest {
 	@Rollback
 	public void testCreateTemperatureAPIKeyForTankAndRetrieveTankByAPIKey() throws Exception {
 		// Given
-		TestDataFactory testDataFactory = TestDataFactory.getInstance();
 		UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
 		UserEntity testUserEntity = testDataFactory.getNewTestUserEntity(testUserTo);
 		AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(testUserTo);
@@ -218,7 +214,6 @@ public class TankServiceTest {
 	public void testRemoveTank() throws Exception {
 
 		// Given
-		TestDataFactory testDataFactory = TestDataFactory.getInstance();
 		final UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
 		UserEntity testUserEntity = testDataFactory.getNewTestUserEntity(testUserTo);
 		final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();

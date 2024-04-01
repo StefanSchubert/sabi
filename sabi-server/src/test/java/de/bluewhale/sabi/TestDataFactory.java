@@ -78,10 +78,18 @@ public class TestDataFactory {
         return aquariumEntity;
     }
 
-
+    public NewRegistrationTO getNewRegistrationTO(String eMail) {
+        NewRegistrationTO newRegistrationTO = new NewRegistrationTO();
+        newRegistrationTO.setEmail(eMail);
+        newRegistrationTO.setPassword(VALID_PASSWORD);
+        newRegistrationTO.setLanguage(Locale.ENGLISH.getLanguage());
+        newRegistrationTO.setCountry(Locale.UK.getCountry());
+        return newRegistrationTO;
+    }
 
     public UserTo getNewTestUserTo(String eMail) {
         UserTo userTo1 = new UserTo(eMail, eMail, VALID_PASSWORD);
+        userTo1.setUsername("TestUser");
         userTo1.setLanguage(Locale.ENGLISH.getLanguage());
         userTo1.setCountry(Locale.UK.getCountry());
         userTo1.setValidated(true);
@@ -95,6 +103,7 @@ public class TestDataFactory {
         userEntity.setId(userTo.getId());
         userEntity.setLanguage(userTo.getLanguage());
         userEntity.setCountry(userTo.getCountry());
+        userEntity.setValidateToken("1234567890");
         userEntity.setValidated(userTo.isValidated());
         return userEntity;
     }

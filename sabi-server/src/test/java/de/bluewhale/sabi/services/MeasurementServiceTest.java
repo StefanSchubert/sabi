@@ -64,7 +64,7 @@ public class MeasurementServiceTest {
 
     // ------------------------------ FIELDS ------------------------------
 
-    static TestDataFactory testDataFactory;
+    static TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
     @Container
     @ServiceConnection
@@ -98,8 +98,6 @@ public class MeasurementServiceTest {
     public void testListMeasurements() throws Exception {
 
         // Given:
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-
         UserTo testUserTo = TestDataFactory.getInstance().getNewTestUserTo(TestDataFactory.TESTUSER_EMAIL1);
         UserEntity userEntity = TestDataFactory.getInstance().getNewTestUserEntity(testUserTo);
 
@@ -208,7 +206,6 @@ public class MeasurementServiceTest {
     @Rollback
     public void testAddNewMeasurement() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
         UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
         UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
         AquariumTo testAquariumTo = testDataFactory.getTestAquariumTo();
@@ -232,7 +229,6 @@ public class MeasurementServiceTest {
     @Rollback
     public void testRemoveMeasurement() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(TestDataFactory.TESTUSER_EMAIL1);
@@ -260,8 +256,6 @@ public class MeasurementServiceTest {
     @Rollback
     public void testUpdateMeasurement() throws Exception {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        Long tankID = 4711L;
         float oldValue = 1.0f;
         float newValue = 2.0f;
 
@@ -302,7 +296,6 @@ public class MeasurementServiceTest {
     @Rollback
     public void testAddIotAuthorizedMeasurement() {
         // Given
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
         UserTo testUserTo = testDataFactory.getNewTestUserTo(testDataFactory.TESTUSER_EMAIL1);
         UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
