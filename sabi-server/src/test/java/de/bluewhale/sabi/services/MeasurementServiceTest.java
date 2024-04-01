@@ -5,13 +5,10 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.model.MeasurementTo;
-import de.bluewhale.sabi.model.ParameterTo;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UnitTo;
+import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
 import org.junit.jupiter.api.MethodOrderer;
@@ -30,10 +27,11 @@ import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.TestDataFactory.TEST_TANK_ID;
 import static de.bluewhale.sabi.configs.TestContainerVersions.MARIADB_11_3_2;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -66,18 +64,12 @@ public class MeasurementServiceTest {
 
     // ------------------------------ FIELDS ------------------------------
 
-    static DTOTestDataFactory testDataFactory;
+    static TestDataFactory testDataFactory;
 
     @Container
     @ServiceConnection
     // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
     static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
-
-    @Autowired
-    private TankService tankService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private MeasurementService measurementService;
@@ -106,29 +98,26 @@ public class MeasurementServiceTest {
     public void testListMeasurements() throws Exception {
 
         // Given:
-        Long tankID = 8888L; // not existing tank
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        aquariumEntity.setDescription("Test Tank");
-        aquariumEntity.setId(tankID);
+        UserTo testUserTo = TestDataFactory.getInstance().getNewTestUserTo(TestDataFactory.TESTUSER_EMAIL1);
+        UserEntity userEntity = TestDataFactory.getInstance().getNewTestUserEntity(testUserTo);
 
-        MeasurementEntity measurementEntity = new MeasurementEntity();
-        measurementEntity.setMeasuredValue(1.0f);
-        measurementEntity.setMeasuredOn(LocalDateTime.now());
-        measurementEntity.setUnitId(1);
-        measurementEntity.setAquarium(aquariumEntity);
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumTo();
+        AquariumEntity aquariumEntity = testDataFactory.getTestAquariumEntity(testAquariumTo, userEntity);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(DTOTestDataFactory.TESTUSER_EMAIL1);
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
+        MeasurementEntity measurementEntity = testDataFactory.getTestMeasurementEntity(testMeasurementTo, aquariumEntity);
 
-        given(aquariumRepository.getOne(tankID)).willReturn(aquariumEntity);
+
+        given(aquariumRepository.getOne(TEST_TANK_ID)).willReturn(aquariumEntity);
         given(measurementRepository.findByAquarium(aquariumEntity)).willReturn(List.of(measurementEntity));
-        given(userRepository.getByEmail(DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
         given(measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity)).willReturn(List.of(measurementEntity));
 
         // When
-        List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(tankID);
-        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(DTOTestDataFactory.TESTUSER_EMAIL1, 0);
+        List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(TEST_TANK_ID);
+        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(TestDataFactory.TESTUSER_EMAIL1, 0);
 
         // Then
         assertNotNull("Should not happen!", tank1Measurements);
@@ -219,25 +208,19 @@ public class MeasurementServiceTest {
     @Rollback
     public void testAddNewMeasurement() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
-        Long tankID = 4711L;
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
+        UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumTo();
+        AquariumEntity aquariumEntity = testDataFactory.getTestAquariumEntity(testAquariumTo, userEntity);
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(DTOTestDataFactory.TESTUSER_EMAIL1);
-        userEntity.setId(99L);
-
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        aquariumEntity.setId(tankID);
-        aquariumEntity.setUser(userEntity);
-
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
-
-        given(userRepository.getByEmail(DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
-        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(tankID,userEntity.getId())).willReturn(aquariumEntity);
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(TEST_TANK_ID,userEntity.getId())).willReturn(aquariumEntity);
         given(measurementRepository.saveAndFlush(any())).willReturn(new MeasurementEntity());
 
         // When adding a new Measurement
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, DTOTestDataFactory.TESTUSER_EMAIL1);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, TestDataFactory.TESTUSER_EMAIL1);
 
         // Then
         assertNotNull("Should not happen!",measurementToResultTo);
@@ -249,16 +232,16 @@ public class MeasurementServiceTest {
     @Rollback
     public void testRemoveMeasurement() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
         UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(DTOTestDataFactory.TESTUSER_EMAIL1);
+        userEntity.setEmail(TestDataFactory.TESTUSER_EMAIL1);
         userEntity.setId(99L);
 
         MeasurementEntity measurementEntity = new MeasurementEntity();
         measurementEntity.setId(42L);
 
-        given(userRepository.getByEmail(DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
         given(measurementRepository.getByIdAndUser(42L, userEntity)).willReturn(measurementEntity);
         doNothing().when(measurementRepository).delete(measurementEntity);
 
@@ -277,33 +260,34 @@ public class MeasurementServiceTest {
     @Rollback
     public void testUpdateMeasurement() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
         Long tankID = 4711L;
         float oldValue = 1.0f;
         float newValue = 2.0f;
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(DTOTestDataFactory.TESTUSER_EMAIL1);
-        userEntity.setId(99L);
+        UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
+        UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
 
-        MeasurementEntity measurementEntity = new MeasurementEntity();
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(testUserTo);
+
+        MeasurementEntity measurementEntity = testDataFactory.getTestMeasurementEntityWithDefaults();
         measurementEntity.setMeasuredValue(oldValue);
         measurementEntity.setId(42L);
 
-        MeasurementEntity updatedMeasurementEntity = new MeasurementEntity();
+        MeasurementEntity updatedMeasurementEntity = testDataFactory.getTestMeasurementEntityWithDefaults();
         updatedMeasurementEntity.setMeasuredValue(newValue);
         updatedMeasurementEntity.setId(42L);
 
-        given(userRepository.getByEmail(DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
         given(measurementRepository.getByIdAndUser(42L, userEntity)).willReturn(measurementEntity);
         given(measurementRepository.save(any())).willReturn(updatedMeasurementEntity);
 
         // When we update the measurement
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
         testMeasurementTo.setMeasuredValue(newValue);
         testMeasurementTo.setId(measurementEntity.getId());
 
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(testMeasurementTo, DTOTestDataFactory.TESTUSER_EMAIL1);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(testMeasurementTo, TestDataFactory.TESTUSER_EMAIL1);
 
         // Then
         assertNotNull("Should not happen!",measurementToResultTo);
@@ -318,24 +302,18 @@ public class MeasurementServiceTest {
     @Rollback
     public void testAddIotAuthorizedMeasurement() {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
-        Long tankID = 123L;
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
+        UserTo testUserTo = testDataFactory.getNewTestUserTo(testDataFactory.TESTUSER_EMAIL1);
+        UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(DTOTestDataFactory.TESTUSER_EMAIL1);
-        userEntity.setId(99L);
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(testUserTo);
+        AquariumEntity testAquariumEntity = testDataFactory.getTestAquariumEntity(testAquariumTo, userEntity);
 
-        AquariumEntity aquariumEntity = new AquariumEntity();
-        aquariumEntity.setId(tankID);
-        aquariumEntity.setUser(userEntity);
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
+        MeasurementEntity createdMeasurementEntity = testDataFactory.getTestMeasurementEntity(testMeasurementTo, testAquariumEntity);
 
-        MeasurementEntity createdMeasurementEntity = new MeasurementEntity();
-        createdMeasurementEntity.setAquarium(aquariumEntity);
-        createdMeasurementEntity.setMeasuredValue(testMeasurementTo.getMeasuredValue());
-
-        given(aquariumRepository.findById(tankID)).willReturn(Optional.of(aquariumEntity));
+        given(aquariumRepository.findById(TEST_TANK_ID)).willReturn(Optional.of(testAquariumEntity));
         given(measurementRepository.saveAndFlush(any())).willReturn(createdMeasurementEntity);
 
         // When

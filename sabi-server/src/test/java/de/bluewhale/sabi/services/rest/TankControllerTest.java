@@ -6,7 +6,7 @@
 package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -64,7 +64,7 @@ public class TankControllerTest {
     @Autowired
     UserMapper userMapper;
 
-    DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
+    TestDataFactory testDataFactory = TestDataFactory.getInstance();
     @Autowired
     private TestRestTemplate restTemplate;
 

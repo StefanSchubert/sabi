@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static de.bluewhale.sabi.DTOTestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
 import static org.springframework.test.util.AssertionErrors.*;
 
 
@@ -57,11 +57,11 @@ public class FishServiceTest {
     @Transactional
     public void testAddFish() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        final UserTo testUser = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, testUser.getEmail());
 
 
         // When
@@ -72,7 +72,7 @@ public class FishServiceTest {
         fish.setNickname("Green Latern");
 
         // The user is required to check that he or she really possesses the tank
-        final ResultTo<FishTo> fishResultTo = fishService.registerNewFish(fish,registeredUser);
+        final ResultTo<FishTo> fishResultTo = fishService.registerNewFish(fish,testUser);
 
         // Then
         assertNotNull("ResultObject must not be empty",fishResultTo);
@@ -88,11 +88,11 @@ public class FishServiceTest {
     @Transactional
         public void testAddFishForWrongTank() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
-        final UserTo fraudUser = testDataFactory.getRegisterNewTestUser("I_Intent@No.good");
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        final UserTo testUser = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
+        final UserTo fraudUser = testDataFactory.getNewTestUserTo("I_Intent@No.good");
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, testUser.getEmail());
 
 
         // When
@@ -133,11 +133,11 @@ public class FishServiceTest {
     @Transactional
     public void testRemoveFish() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
-        final UserTo registeredUser = testDataFactory.getRegisterNewTestUser(TESTUSER_EMAIL1);
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
+        final UserTo testUser = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
 
-        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, registeredUser.getEmail());
+        final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, testUser.getEmail());
 
         final FishTo fish = new FishTo();
         fish.setAddedOn(LocalDate.now());
@@ -146,14 +146,14 @@ public class FishServiceTest {
         fish.setNickname("Green Latern");
 
         // The user is required to check that he your she really posses the tank
-        final ResultTo<FishTo> fishResultTo = fishService.registerNewFish(fish,registeredUser);
+        final ResultTo<FishTo> fishResultTo = fishService.registerNewFish(fish,testUser);
 
         // When
         Long fishId = fishResultTo.getValue().getId();
-        fishService.removeFish(fishId, registeredUser);
+        fishService.removeFish(fishId, testUser);
 
         // Then
-        FishTo removedFish = fishService.getUsersFish(fishId, registeredUser);
+        FishTo removedFish = fishService.getUsersFish(fishId, testUser);
         assertNull("Fish was not removed!", removedFish);
     }
 }

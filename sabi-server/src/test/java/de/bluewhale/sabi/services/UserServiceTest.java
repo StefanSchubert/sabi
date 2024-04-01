@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
-import static de.bluewhale.sabi.DTOTestDataFactory.*;
+import static de.bluewhale.sabi.TestDataFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 

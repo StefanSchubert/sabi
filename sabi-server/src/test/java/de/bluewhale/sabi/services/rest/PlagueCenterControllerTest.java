@@ -6,7 +6,7 @@
 package de.bluewhale.sabi.services.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -54,7 +54,7 @@ public class PlagueCenterControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
-    DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
+    TestDataFactory testDataFactory = TestDataFactory.getInstance();
     @Autowired
     private TestRestTemplate restTemplate;
 

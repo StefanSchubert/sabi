@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.persistence;
 
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.configs.TestContainerVersions;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
@@ -57,7 +57,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 // which includes reinitializing the HikariCP datasource (which is defined at spring level, while the testcontainer is not)
 public class MeasurementRepositoryTest implements TestContainerVersions {
 
-    static DTOTestDataFactory testDataFactory;
+    static TestDataFactory testDataFactory;
 
     @Container
     @ServiceConnection
@@ -81,7 +81,7 @@ public class MeasurementRepositoryTest implements TestContainerVersions {
 
     @BeforeAll
     public static void initTestDataFactory() {
-        testDataFactory = DTOTestDataFactory.getInstance();
+        testDataFactory = TestDataFactory.getInstance();
     }
 
     @AfterAll
@@ -109,7 +109,7 @@ public class MeasurementRepositoryTest implements TestContainerVersions {
     public void testCreateMeasurement() throws Exception {
 
         // given a test measurement (linked aquarium already exists in database.
-        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(1L);
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(null);
         AquariumEntity aquariumEntity = aquariumRepository.getOne(measurementTo.getAquariumId());
 
         MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
@@ -157,7 +157,7 @@ public class MeasurementRepositoryTest implements TestContainerVersions {
     public void testGetConcreteMeasurement() throws Exception {
 
         // Given some pre-stored testdata for userID 1
-        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(1L);
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(null);
         AquariumEntity aquariumEntity = aquariumRepository.getOne(measurementTo.getAquariumId());
         MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
         measurementEntity.setAquarium(aquariumEntity);

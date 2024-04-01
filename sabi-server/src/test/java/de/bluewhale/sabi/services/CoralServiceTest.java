@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
@@ -19,7 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static de.bluewhale.sabi.DTOTestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 
@@ -53,7 +53,7 @@ public class CoralServiceTest {
     @Disabled
     public void testAddCoral() throws Exception {
         // Given
-        DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance().withUserService(userService);
+        TestDataFactory testDataFactory = TestDataFactory.getInstance();
         final AquariumTo aquariumTo = testDataFactory.getTestAquariumTo();
         final ResultTo<AquariumTo> aquariumToResultTo = tankService.registerNewTank(aquariumTo, TESTUSER_EMAIL1);
 

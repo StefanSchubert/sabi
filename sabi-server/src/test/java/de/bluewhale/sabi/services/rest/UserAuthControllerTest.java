@@ -8,7 +8,7 @@ package de.bluewhale.sabi.services.rest;
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
@@ -120,7 +120,7 @@ public class UserAuthControllerTest {
     public void testSuccessfulNewUserRegistration() throws Exception {
 
         // given a test user
-        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", DTOTestDataFactory.VALID_PASSWORD);
+        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", TestDataFactory.VALID_PASSWORD);
         userTo.setCaptchaCode("test");
         UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
@@ -156,7 +156,7 @@ public class UserAuthControllerTest {
     public void testWeakPasswordUserRegistration() throws Exception {
 
         // given a test user
-        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", DTOTestDataFactory.INVALID_PASSWORD);
+        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", TestDataFactory.INVALID_PASSWORD);
         userTo.setCaptchaCode("test");
         UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 

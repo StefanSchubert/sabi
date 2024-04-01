@@ -10,7 +10,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.DTOTestDataFactory;
+import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.CommonMessageCodes;
 import de.bluewhale.sabi.exception.Message;
@@ -53,7 +53,7 @@ public class UserProfileControllerTest {
     @Autowired
     ObjectMapper objectMapper;  // json mapper
 
-    DTOTestDataFactory testDataFactory = DTOTestDataFactory.getInstance();
+    TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
     @AfterEach
     public void cleanUpMocks() {
@@ -96,10 +96,10 @@ public class UserProfileControllerTest {
         UserProfileTo userProfileTo = testDataFactory.getBasicUserProfileTo();
         Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
-        given(this.userService.updateProfile(userProfileTo, DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
+        given(this.userService.updateProfile(userProfileTo, TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
 
         // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(DTOTestDataFactory.TESTUSER_EMAIL1);
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
         HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // when - sending an update request
@@ -138,16 +138,16 @@ public class UserProfileControllerTest {
     public void testUserProfileUpdateWithNewMeasurementReminder() throws Exception {
 
         // given a successful update answer
-        UserTo testuser = new UserTo(DTOTestDataFactory.TESTUSER_EMAIL1, "testuser", "123");
+        UserTo testuser = new UserTo(TestDataFactory.TESTUSER_EMAIL1, "testuser", "123");
         testuser.setId(1L);
         UserProfileTo updatedUserProfileTo = testDataFactory.getUserProfileToWithMeasurementReminderFor(testuser);
 
         Message info = Message.info(CommonMessageCodes.UPDATE_SUCCEEDED);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(updatedUserProfileTo, info);
-        given(this.userService.updateProfile(updatedUserProfileTo, DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
+        given(this.userService.updateProfile(updatedUserProfileTo, TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
 
         // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(DTOTestDataFactory.TESTUSER_EMAIL1);
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
         HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // when - sending an update request
@@ -175,10 +175,10 @@ public class UserProfileControllerTest {
         UserProfileTo userProfileTo = testDataFactory.getBasicUserProfileTo();
         Message info = Message.info(CommonMessageCodes.OK);
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
-        given(this.userService.getUserProfile(DTOTestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
+        given(this.userService.getUserProfile(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userProfileResultTo);
 
         // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(DTOTestDataFactory.TESTUSER_EMAIL1);
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
         HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // when - sending a retrieval request
