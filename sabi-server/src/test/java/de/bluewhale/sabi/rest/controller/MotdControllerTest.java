@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.services.rest;
+package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.model.MotdTo;
 import de.bluewhale.sabi.services.AppService;

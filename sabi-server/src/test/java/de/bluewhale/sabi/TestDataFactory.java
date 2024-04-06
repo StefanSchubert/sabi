@@ -7,6 +7,7 @@ package de.bluewhale.sabi;
 
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.FishEntity;
 import de.bluewhale.sabi.persistence.model.MeasurementEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 
@@ -29,6 +30,7 @@ public class TestDataFactory {
 
     public static final Long TEST_TANK_ID = 1L; // do not change - integration tests rely on this
     public static final Long TEST_USER_ID = 1L; // do not change - integration tests rely on this
+    public static final Long TEST_FISH_ID = 1L; // do not change - integration tests rely on this
 
     private static TestDataFactory instance;
 
@@ -77,6 +79,24 @@ public class TestDataFactory {
         aquariumEntity.setUser(userEntity);
         return aquariumEntity;
     }
+
+    public FishTo getTestFishTo(AquariumTo aquariumTo) {
+        FishTo fishTo = new FishTo();
+        fishTo.setAquariumId(aquariumTo.getId());
+        fishTo.setFishCatalogueId(1L);
+        fishTo.setNickname("Green Latern");
+        return fishTo;
+    }
+
+    public FishEntity getTestFishEntity(FishTo fishTo, Long aquariumId) {
+        FishEntity fishEntity = new FishEntity();
+        fishEntity.setAquariumId(aquariumId);
+        fishEntity.setFishCatalogueId(fishTo.getFishCatalogueId());
+        fishEntity.setNickname(fishTo.getNickname());
+        fishEntity.setId(TEST_FISH_ID);
+        return fishEntity;
+    }
+
 
     public NewRegistrationTO getNewRegistrationTO(String eMail) {
         NewRegistrationTO newRegistrationTO = new NewRegistrationTO();
