@@ -5,9 +5,7 @@
 
 package de.bluewhale.sabi.persistence;
 
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
-import de.bluewhale.sabi.configs.TestContainerVersions;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
 import de.bluewhale.sabi.model.MeasurementTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
@@ -16,6 +14,8 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.util.TestContainerVersions;
+import de.bluewhale.sabi.util.TestDataFactory;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

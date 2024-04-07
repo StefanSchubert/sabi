@@ -6,7 +6,6 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -15,6 +14,7 @@ import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.util.RestHelper;
+import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

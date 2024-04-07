@@ -5,9 +5,9 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,7 +20,7 @@ import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static de.bluewhale.sabi.configs.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 

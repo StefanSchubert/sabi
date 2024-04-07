@@ -40,6 +40,7 @@ public interface MeasurementMapper {
             @Mapping(target ="measuredValue", source="measuredValue"),
             @Mapping(target ="unitId", source="unitId"),
             @Mapping(target ="aquarium", ignore = true),
+            @Mapping(target ="user", ignore = true),
     })
     MeasurementEntity mapMeasurementTo2EntityWithoutAquarium(@NotNull final MeasurementTo pMeasurementTo);
 

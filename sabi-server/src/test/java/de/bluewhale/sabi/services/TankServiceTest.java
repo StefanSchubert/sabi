@@ -5,7 +5,6 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -15,6 +14,7 @@ import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,9 +33,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
-import static de.bluewhale.sabi.TestDataFactory.TESTUSER_EMAIL1;
-import static de.bluewhale.sabi.TestDataFactory.TEST_TANK_ID;
-import static de.bluewhale.sabi.configs.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.util.TestDataFactory.TEST_TANK_ID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

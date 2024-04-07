@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * @author Stefan Schubert
  */
 @ExtendWith(SpringExtension.class)
-@Tag("DeveloperTests")
+@Tag("DeveloperTest")
 public class PasswordPolicyTest {
 
     @Test

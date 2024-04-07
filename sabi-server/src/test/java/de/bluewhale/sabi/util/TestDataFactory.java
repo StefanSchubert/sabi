@@ -3,15 +3,14 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi;
+package de.bluewhale.sabi.util;
 
 import de.bluewhale.sabi.model.*;
-import de.bluewhale.sabi.persistence.model.AquariumEntity;
-import de.bluewhale.sabi.persistence.model.FishEntity;
-import de.bluewhale.sabi.persistence.model.MeasurementEntity;
-import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.model.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -31,6 +30,7 @@ public class TestDataFactory {
     public static final Long TEST_TANK_ID = 1L; // do not change - integration tests rely on this
     public static final Long TEST_USER_ID = 1L; // do not change - integration tests rely on this
     public static final Long TEST_FISH_ID = 1L; // do not change - integration tests rely on this
+    public static final Long TEST_PLAGUE_ID = 1L; // do not change - integration tests rely on this
 
     private static TestDataFactory instance;
 
@@ -201,4 +201,34 @@ public class TestDataFactory {
         unitTo.setDescription("Scrum Story Points");
         return unitTo;
     }
+
+    public PlagueStatusEntity getTestPlagueStatusEntity() {
+        PlagueStatusEntity plagueStatusEntity = new PlagueStatusEntity();
+        plagueStatusEntity.setId(TEST_PLAGUE_ID);
+        plagueStatusEntity.setLocalizedPlagueStatusEntities(null);
+        return plagueStatusEntity;
+    }
+
+    public List<LocalizedPlagueStatusEntity> getTestLocalizedPlagueStatusEntities() {
+        ArrayList<LocalizedPlagueStatusEntity> localizedPlagueStatusEntities = new ArrayList<>();
+
+        LocalizedPlagueStatusEntity localizedPlagueStatus1 = new LocalizedPlagueStatusEntity();
+        localizedPlagueStatus1.setPlague_status_id(1);
+        localizedPlagueStatus1.setId(99l);
+        localizedPlagueStatus1.setDescription("Spreading");
+        localizedPlagueStatus1.setLanguage("en");
+
+        LocalizedPlagueStatusEntity localizedPlagueStatus2 = new LocalizedPlagueStatusEntity();
+        localizedPlagueStatus2.setPlague_status_id(1);
+        localizedPlagueStatus2.setId(88l);
+        localizedPlagueStatus2.setDescription("Ausweitend");
+        localizedPlagueStatus2.setLanguage("de");
+
+        localizedPlagueStatusEntities.add(localizedPlagueStatus1);
+        localizedPlagueStatusEntities.add(localizedPlagueStatus2);
+
+        return localizedPlagueStatusEntities;
+
+    }
+
 }

@@ -20,7 +20,7 @@ import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static de.bluewhale.sabi.configs.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
 import static org.springframework.test.util.AssertionErrors.fail;
 
 
