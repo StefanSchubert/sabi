@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.9</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -47,23 +47,23 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
+        <java.version>22</java.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
-        <micrometer.prometheus.version>1.12.3</micrometer.prometheus.version>
+        <jakarta.cdi.version>4.1.0</jakarta.cdi.version>
+        <micrometer.prometheus.version>1.13.3</micrometer.prometheus.version>
         <joinfaces.version>5.2.2</joinfaces.version>
-        <sabi.boundary.version>1.2.7</sabi.boundary.version>
-        <passay.version>1.6.4</passay.version>
-        <owasp.plugin.version>9.0.9</owasp.plugin.version>
-        <lombok.version>1.18.30</lombok.version>
-        <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
+        <sabi.boundary.version>1.2.9</sabi.boundary.version>
+        <passay.version>1.6.5</passay.version>
+        <owasp.plugin.version>10.0.3</owasp.plugin.version>
+        <lombok.version>1.18.34</lombok.version>
+        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -256,28 +256,6 @@
             </plugin>
 
             <plugin>
-                <!-- Used for vulnerability checks
-                 The examples below can be executed using mvn verify.
-                 -->
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>${owasp.plugin.version}</version>
-                <configuration>
-                    <!-- You need to register yourself at https://nvd.nist.gov/
-                         to get an API-KEY, which you can store in the
-                         properties section of your local settings.xml -->
-                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <!-- This will check for newer version on dependencies which are
                      controlled by version property variables -->
                 <groupId>org.codehaus.mojo</groupId>
@@ -297,4 +275,44 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>owasp-check</id>
+            <!-- Used for vulnerability checks
+ The examples below can be executed using mvn verify.
+ -->
+            <activation>
+                <property>
+                    <!-- Check only, if we have injected an API key -->
+                    <name>nvd.api.key</name>
+                    <value>!@{nvd.api.key}</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${owasp.plugin.version}</version>
+                        <configuration>
+                            <!-- You need to register yourself at https://nvd.nist.gov/
+     to get an API-KEY, which you can store in the
+     properties section of your local settings.xml -->
+                            <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

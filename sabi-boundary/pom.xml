@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.9</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -35,20 +35,20 @@
     </developers>
 
     <properties>
-        <java.version>21</java.version>
-        <lombok.version>1.18.32</lombok.version>
+        <java.version>22</java.version>
+        <lombok.version>1.18.34</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <springdoc.openapiv2.version>2.4.0</springdoc.openapiv2.version>
-        <owasp.plugin.version>9.0.10</owasp.plugin.version>
+        <springdoc.openapiv2.version>2.6.0</springdoc.openapiv2.version>
+        <owasp.plugin.version>10.0.3</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.3.2</maven.clean.plugin.version>
         <maven.site.plugin.version>4.0.0-M13</maven.site.plugin.version>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
-        <buildhelper.maven.plugin.version>3.5.0</buildhelper.maven.plugin.version>
-        <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
+        <buildhelper.maven.plugin.version>3.6.0</buildhelper.maven.plugin.version>
+        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -147,30 +147,46 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <!-- Used for vulnerability checks
-                 The examples below can be executed using mvn verify.
-                 -->
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>${owasp.plugin.version}</version>
-                <configuration>
-                    <!-- You need to register yourself at https://nvd.nist.gov/
-                         to get an API-KEY, which you can store in the
-                         properties section of your local settings.xml -->
-                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>owasp-check</id>
+            <!-- Used for vulnerability checks
+ The examples below can be executed using mvn verify.
+ -->
+            <activation>
+                <property>
+                    <!-- Check only, if we have injected an API key -->
+                    <name>nvd.api.key</name>
+                    <value>!@{nvd.api.key}</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${owasp.plugin.version}</version>
+                        <configuration>
+                            <!-- You need to register yourself at https://nvd.nist.gov/
+     to get an API-KEY, which you can store in the
+     properties section of your local settings.xml -->
+                            <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
