@@ -55,7 +55,7 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @Testcontainers
 @ContextConfiguration(classes = AppConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Tag("APITest")
+@Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TankControllerTest {
 // ------------------------------ FIELDS ------------------------------

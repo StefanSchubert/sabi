@@ -45,27 +45,27 @@
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
         <dumbster.version>1.6</dumbster.version>
         <eclipselink.version>4.0.2</eclipselink.version>
-        <flyway.version>10.17.3</flyway.version>
+        <flyway.version>10.19.0</flyway.version>
         <jakarta.xml.bind.version>4.0.2</jakarta.xml.bind.version>
         <java.version>22</java.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <jetbrains.annotation.version>24.1.0</jetbrains.annotation.version>
+        <jetbrains.annotation.version>25.0.0</jetbrains.annotation.version>
         <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
-        <junit-platform-suite-engine.version>1.11.0</junit-platform-suite-engine.version>
-        <junit.testcontainer.version>1.20.1</junit.testcontainer.version>
+        <junit-platform-suite-engine.version>1.11.1</junit-platform-suite-engine.version>
+        <junit.testcontainer.version>1.20.2</junit.testcontainer.version>
         <log4j2.version>2.20.0</log4j2.version>
         <lombok.version>1.18.34</lombok.version>
-        <mapstruct.version>1.6.0</mapstruct.version>
+        <mapstruct.version>1.6.2</mapstruct.version>
         <mariadb.java.client.version>3.4.1</mariadb.java.client.version>
-        <mariadb.testcontainer.version>1.20.1</mariadb.testcontainer.version>
+        <mariadb.testcontainer.version>1.20.2</mariadb.testcontainer.version>
         <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
-        <micrometer.prometheus.version>1.13.3</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.13.5</micrometer.prometheus.version>
         <owasp.plugin.version>10.0.3</owasp.plugin.version>
         <passay.version>1.6.5</passay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sabi.boundary.version>1.2.9</sabi.boundary.version>
-        <spring.instrument.version>6.1.12</spring.instrument.version>
+        <spring.instrument.version>6.1.13</spring.instrument.version>
         <springdoc.openapiv2.version>2.6.0</springdoc.openapiv2.version>
         <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
         <mapstruts-lombok-binding.version>0.2.0</mapstruts-lombok-binding.version>

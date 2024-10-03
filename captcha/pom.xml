@@ -46,9 +46,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>2.6.0</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.13.3</micrometer.prometheus.version>
+        <micrometer.prometheus.version>1.13.5</micrometer.prometheus.version>
         <lombok.version>1.18.34</lombok.version>
-        <owasp.plugin.version>10.0.3</owasp.plugin.version>
+        <owasp.plugin.version>10.0.4</owasp.plugin.version>
         <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
         <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
     </properties>

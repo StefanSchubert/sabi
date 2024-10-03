@@ -53,7 +53,7 @@ import static org.mockito.Mockito.reset;
 @Testcontainers
 @ContextConfiguration(classes = AppConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Tag("APITest")
+@Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserProfileControllerTest {
 
