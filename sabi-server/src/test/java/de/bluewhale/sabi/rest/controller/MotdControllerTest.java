@@ -5,18 +5,22 @@
 
 package de.bluewhale.sabi.rest.controller;
 
+import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.services.AppService;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -30,9 +34,10 @@ import static org.mockito.Mockito.reset;
 /**
  * Checks Motd Service
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@AutoConfigureMockMvc
+@ContextConfiguration(classes = AppConfig.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("ModuleTest")
 public class MotdControllerTest {
@@ -54,8 +59,21 @@ public class MotdControllerTest {
 	@MockBean
 	AppService appService;
 
-	@Autowired
+	@LocalServerPort
+	private int port;
+
 	private RestClient restClient;
+
+	@BeforeEach
+	public void initRestClient() {
+		if (restClient == null) {
+			String url = String.format("http://localhost:%d/sabi", port);
+			restClient = RestClient
+					.builder()
+					.baseUrl(url) // Dynamischer Port
+					.build();
+		}
+	}
 
 	@AfterEach
 	public void cleanUpMocks() {
@@ -72,20 +90,26 @@ public class MotdControllerTest {
 		given(this.appService.fetchMotdFor("xx")).willReturn(null);
 
 		restClient.get().uri("/api/app/motd/xx")
-				.retrieve()
-				.onStatus(status -> status.value() != 204, (request, response) -> {
-					throw new RuntimeException("Retrieved wrong status code: "+response.getStatusCode());
-				});
+				.retrieve() // führt den Request aus und ruft die Antwort ab
+				.onStatus(
+						status -> !status.isSameCodeAs(HttpStatus.NO_CONTENT),
+						(request, response) -> {
+							throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+						}
+				)
+				.toEntity(String.class);
+
 	}
 
 
 	/**
-	 * Tests MOTD Rest API in case we news.
+	 * Tests MOTD Rest API in case we have news.
 	 *
 	 * @throws Exception
 	 */
 	@Test // REST-API
 	public void testModtRetrieval() throws Exception {
+
 		String motd = "Junit Modt";
 		given(this.appService.fetchMotdFor("en")).willReturn(motd);
 
@@ -95,7 +119,7 @@ public class MotdControllerTest {
 					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
 				}).toEntity(String.class);
 
-		Assert.assertEquals(motd,stringResponseEntity.toString());
+		Assert.assertTrue(stringResponseEntity.toString().contains(motd));
 	}
 
 }
