@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence;
 
-import de.bluewhale.sabi.BasicDataFactory;
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
 import de.bluewhale.sabi.model.MeasurementTo;
@@ -16,20 +14,28 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import de.bluewhale.sabi.util.TestContainerVersions;
+import de.bluewhale.sabi.util.TestDataFactory;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
@@ -41,12 +47,25 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  * Date: 14.11.2015
  */
 @SpringBootTest
+@Testcontainers
 @ContextConfiguration(classes = AppConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-// @DataJpaTest todo does not work yet missing visible constructor in JPAConfig class - maybe not compatible with eclipse way?
-public class MeasurementRepositoryTest extends BasicDataFactory {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Tag("IntegrationTest")
+@Transactional
+@DirtiesContext
+// DirtiesContext: Spring context is refreshed after the test class is executed,
+// which includes reinitializing the HikariCP datasource (which is defined at spring level, while the testcontainer is not)
+public class MeasurementRepositoryTest implements TestContainerVersions {
 
     static TestDataFactory testDataFactory;
+
+    @Container
+    @ServiceConnection
+    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+
+    @Autowired
+    private Flyway flyway;
 
     @Autowired
     MeasurementRepository measurementRepository;
@@ -65,28 +84,32 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         testDataFactory = TestDataFactory.getInstance();
     }
 
-    /**
-     * There seems to be a timing problem with H2, that causes, that the basic data is not available
-     * for some test classes, while for others it worked out. Until we know what's going wrong...
-     * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
-     * The different behaviour can be observed by e.g. calling the master test suite and as comparising
-     * the measurement testsuite while this is method is deaktivated.
-     */
-    @BeforeEach
-    public void ensureBasicDataAvailability() {
+    @AfterAll
+    static void cleanup() {
+        mariaDBContainer.stop();
+    }
 
-        UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
-        if (byEmail == null) populateBasicData();
-        UserEntity byEmail2 = userRepository.getByEmail(P_USER1_EMAIL);
-        assertNotNull("H2-Basicdata injection did not work!" ,byEmail2);
+    @BeforeEach
+    public void setUp() {
+
+        // flyway.clean(); // Optional: Clean DB before each single test
+        // org.flywaydb.core.api.FlywayException: Unable to execute clean as it has been disabled with the 'flyway.cleanDisabled' property.
+        flyway.migrate();
+
     }
 
     @Test
-    @Transactional
+    void connectionEstablished(){
+        assertThat(mariaDBContainer.isCreated());
+        assertThat(mariaDBContainer.isRunning());
+    }
+
+    @Test
+    @Rollback
     public void testCreateMeasurement() throws Exception {
 
         // given a test measurement (linked aquarium already exists in database.
-        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(1L);
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(null);
         AquariumEntity aquariumEntity = aquariumRepository.getOne(measurementTo.getAquariumId());
 
         MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
@@ -101,15 +124,15 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
         MeasurementEntity foundMeasurementEntity = measurementRepository.findById(createdMeasurementEntity.getId()).get();
 
         assertEquals(createdMeasurementEntity.getAquarium(), foundMeasurementEntity.getAquarium());
-        assertEquals(createdMeasurementEntity.getAquarium().getId(), measurementTo.getAquariumId());
+        assertEquals(createdMeasurementEntity.getAquarium().getId(), aquariumEntity.getId());
 
     }
 
     @Test
     public void testFetchStoredTestUsersMeasurements() throws Exception {
 
-        // given some stored testdata for userID 1
-        UserEntity userEntity = userRepository.getOne(1L);
+        // given some stored testdata for prestored user (via flyway)
+        UserEntity userEntity = userRepository.getByEmail("sabi@bluewhale.de");
         // when
         List<MeasurementEntity> usersMeasurements = measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity);
         // then
@@ -120,7 +143,7 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
     public void testFetchStoredTestUsersMeasurementsWithResultLimit() throws Exception {
 
         // given some stored testdata for userID 1 (has two test measurements)
-        UserEntity userEntity = userRepository.getOne(1L);
+        UserEntity userEntity = userRepository.getByEmail("sabi@bluewhale.de");
         // when
         Pageable page = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "measuredOn"));
         List<MeasurementEntity> usersMeasurements = measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity,page);
@@ -130,16 +153,22 @@ public class MeasurementRepositoryTest extends BasicDataFactory {
 
 
     @Test
+    @Rollback
     public void testGetConcreteMeasurement() throws Exception {
-        // Given some prestored testdata for userID 1
-        Long testAquariumId = 1L;
-        Long testUserId = 1L;
-        Long testMeasurementId = 1L;
-        UserEntity userEntity = userRepository.getOne(testUserId);
+
+        // Given some pre-stored testdata for userID 1
+        MeasurementTo measurementTo = testDataFactory.getTestMeasurementTo(null);
+        AquariumEntity aquariumEntity = aquariumRepository.getOne(measurementTo.getAquariumId());
+        MeasurementEntity measurementEntity = measurementMapper.mapMeasurementTo2EntityWithoutAquarium(measurementTo);
+        measurementEntity.setAquarium(aquariumEntity);
+        measurementEntity.setUser(aquariumEntity.getUser());
+        MeasurementEntity createdMeasurementEntity = measurementRepository.saveAndFlush(measurementEntity);
+        UserEntity userEntity = aquariumEntity.getUser();
+
         // When
-        MeasurementEntity measurement = measurementRepository.getByIdAndUser(testMeasurementId, userEntity);
+        MeasurementEntity measurement = measurementRepository.getByIdAndUser(createdMeasurementEntity.getId(), userEntity);
         // Then
-        assertTrue("Missing testdata for user 1L",  measurement.getAquarium().getId()==testAquariumId);
+        assertTrue("Broken finder?",  measurement.getAquarium().getId()==aquariumEntity.getId());
     }
 
 

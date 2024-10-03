@@ -1,25 +1,35 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
 package de.bluewhale.sabi.persistence;
 
-import de.bluewhale.sabi.BasicDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.util.TestContainerVersions;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
@@ -31,40 +41,77 @@ import static org.springframework.test.util.AssertionErrors.assertNotNull;
  * Date: 14.11.2015
  */
 @SpringBootTest
+@Testcontainers
 @ContextConfiguration(classes = AppConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class UserRepositoryTest extends BasicDataFactory {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Tag("IntegrationTest")
+@Transactional
+@DirtiesContext
+// DirtiesContext: Spring context is refreshed after the test class is executed,
+// which includes reinitializing the HikariCP datasource (which is defined at spring level, while the testcontainer is not)
+public class UserRepositoryTest implements TestContainerVersions {
+
+
+    @Container
+    @ServiceConnection
+    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+
+    @Autowired
+    private Flyway flyway;
 
     @Autowired
     UserRepository userRepository;
 
-    /**
-     * There seems to be a timing problem with H2, that causes, that the basic data is not available
-     * for some test classes, while for others it worked out. Until we know what's going wrong...
-     * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
-     * The different behaviour can be observed by e.g. calling the master test suite and as comparising
-     * the measurement testsuite while this is method is deaktivated.
-     */
     @BeforeEach
-    public void ensureBasicDataAvailability() {
-        UserEntity byEmail = userRepository.getByEmail(P_USER1_EMAIL);
-        if (byEmail == null) populateBasicData();
-        UserEntity byEmail2 = userRepository.getByEmail(P_USER1_EMAIL);
-        assertNotNull("H2-Basicdata injection did not work!" ,byEmail2);
+    public void setUp() {
+
+        // flyway.clean(); // Optional: Clean DB before each single test
+        // org.flywaydb.core.api.FlywayException: Unable to execute clean as it has been disabled with the 'flyway.cleanDisabled' property.
+        flyway.migrate();
+
+    }
+
+    @AfterAll
+    static void cleanup() {
+        mariaDBContainer.stop();
     }
 
     @Test
-    @Transactional
-    public void testProbeTracebleAttributeMappingsOnTestData() throws Exception {
+    void connectionEstablished(){
+        assertThat(mariaDBContainer.isCreated());
+        assertThat(mariaDBContainer.isRunning());
+    }
 
-        UserEntity userEntity = userRepository.getByEmail("sabi@bluewhale.de");
+
+    @Test
+    @Rollback
+    public void testProbeTracebleAttributeMappingsHasBeenSet() throws Exception {
+
+        String email = "P_USER1_EMAIL@bluewhale.de";
+
+        // Given
+        UserEntity testuser1 = new UserEntity();
+        testuser1.setEmail(email);
+        testuser1.setPassword("098f6bcd4621d373cade4e832627b4f6");
+        testuser1.setUsername("Tim");
+        testuser1.setValidateToken("NO_IDEA");
+        testuser1.setValidated(true);
+        testuser1.setLanguage("de");
+        testuser1.setCountry("DE");
+        userRepository.save(testuser1);
+
+        // When
+        UserEntity userEntity = userRepository.getByEmail(email);
+
+        // Then
         assertNotNull("Missing Default Testdata", userEntity);
         assertNotNull("Temporal Column CreatedOn not mapped.", userEntity.getCreatedOn());
         assertNotNull("Temporal Column LastmodOn not mapped.", userEntity.getLastmodOn());
     }
 
     @Test
-    @Transactional
+    @Rollback
     public void testCreateUser() throws Exception {
 
         // given
@@ -88,7 +135,7 @@ public class UserRepositoryTest extends BasicDataFactory {
     }
 
     @Test
-    @Transactional
+    @Rollback
     public void testModifierAttributesViaGenericDAO() throws Exception {
 
         // given

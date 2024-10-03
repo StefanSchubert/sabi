@@ -48,7 +48,7 @@ CREATE TABLE `unit` (
 
 
 CREATE TABLE `parameter` (
-  `id`                     INTEGER UNSIGNED NOT NULL,
+  `id`                     INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `description`            VARCHAR(255)     NOT NULL,
   `used_threshold_unit_id` INTEGER UNSIGNED NOT NULL,
   `min_threshold`          FLOAT,

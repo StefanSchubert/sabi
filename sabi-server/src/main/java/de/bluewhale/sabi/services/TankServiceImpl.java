@@ -93,7 +93,7 @@ public class TankServiceImpl implements TankService {
 
         UserEntity user = userRepository.getByEmail(pUserEmail);
         if (user == null) {
-           return Collections.emptyList();
+            return Collections.emptyList();
         }
 
         @NotNull List<AquariumEntity> usersAquariums = aquariumRepository.findAllByUser_IdIs(user.getId());
@@ -104,21 +104,6 @@ public class TankServiceImpl implements TankService {
             aquariumTos.add(aquariumTo);
         }
 
-        /*
-                    // todo update: old comment before refactoring to repositories, needs to be rechecked
-        Bidirectional side does not work. Wrong JPA Setup?
-
-        UserEntity userEntity = userDao.find(pUserId);
-        if (userEntity != null) {
-            List<AquariumEntity> aquariumEntities = userEntity.getAquariums();
-            for (AquariumEntity aquariumEntity : aquariumEntities) {
-                AquariumTo aquariumTo = new AquariumTo();
-                mapAquariumEntity2To(aquariumEntity,aquariumTo);
-                tankList.add(aquariumTo);
-            }
-        }
-
-         */
         return aquariumTos;
     }
 
@@ -148,7 +133,7 @@ public class TankServiceImpl implements TankService {
             message = Message.error(TankMessageCodes.NOT_YOUR_TANK, updatedAquariumTo.getDescription());
         }
 
-        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(updatedAquariumTo, message) ;
+        ResultTo<AquariumTo> aquariumToResultTo = new ResultTo<>(updatedAquariumTo, message);
         return aquariumToResultTo;
     }
 
@@ -173,7 +158,7 @@ public class TankServiceImpl implements TankService {
     public ResultTo<AquariumTo> removeTank(Long persistedTankId, String pUsersEmail) {
         ResultTo<AquariumTo> resultTo;
         UserEntity user = userRepository.getByEmail(pUsersEmail);
-        if (user !=null) {
+        if (user != null) {
             AquariumEntity usersAquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(persistedTankId, user.getId());
             AquariumTo aquariumTo = new AquariumTo();
             aquariumTo.setId(persistedTankId);
@@ -186,7 +171,7 @@ public class TankServiceImpl implements TankService {
                 resultTo = new ResultTo<>(aquariumTo, Message.error(TankMessageCodes.NOT_YOUR_TANK));
             }
         } else {
-                resultTo = new ResultTo<>(new AquariumTo(), Message.error(TankMessageCodes.UNKNOWN_USER));
+            resultTo = new ResultTo<>(new AquariumTo(), Message.error(TankMessageCodes.UNKNOWN_USER));
         }
         return resultTo;
     }
@@ -219,7 +204,7 @@ public class TankServiceImpl implements TankService {
         if (usersTankEntity != null) {
 
             String apiKey = generateNewApiKey();
-            // Ensure key is unique - and not already assigned
+            // Ensure key is unique - and not already assigned. It will generate a new one until it's unique
             while (aquariumRepository.getAquariumEntityByTemperatureApiKeyEquals(apiKey) != null) {
                 apiKey = generateNewApiKey();
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -13,6 +13,7 @@ import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import com.tngtech.archunit.library.Architectures;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,6 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * @author Stefan Schubert
  */
 @ExtendWith(SpringExtension.class)
+@Tag("DeveloperTest")
 public class ArchitectureTest {
 
     private static final String PACKAGE_PREFIX = "de.bluewhale.sabi.";

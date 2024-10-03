@@ -41,10 +41,10 @@ The AI challenge here is, that if the human provided data on a given problem con
 I declare the Sabi Project climate-friendly because of:
 * You as a user, who is **not** demanding, that the Sabi Service is up and running 24/7 with
  99% availability, accepting minor service outages, thus enabling the low-energy platform for the project.
-* The decision to use raspberry pis as operation platform, which have a very low energy profile  (Have a look at my pis here: https://github.com/StefanSchubert/sabi/wiki/07.-Deployment-View )
+* The decision to use raspberry pis as an operation platform, which have a very low energy profile  (Have a look at my pis here: https://github.com/StefanSchubert/sabi/wiki/07.-Deployment-View )
   The alternative would be running in a public cloud, which would allow 99% availability but surly a much bigger CO2 footprint (as well as bigger costs).
-* The private cloud at my homesite is powered by a green electricity tariff of my power supply provider.
-  I in future I will generate my own electricity through solarcells on the roof.
+* The private cloud at my home-site is powered by a green electricity tariff of my power supply provider.
+  In future, I will generate my own electricity through solar-cells on the roof.
 
 ## Project Planning
 

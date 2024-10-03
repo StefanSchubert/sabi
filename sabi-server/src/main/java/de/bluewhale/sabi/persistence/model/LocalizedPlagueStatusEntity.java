@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -7,6 +7,7 @@ package de.bluewhale.sabi.persistence.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Table which contains the translated plague status.
@@ -14,6 +15,7 @@ import lombok.Data;
 @Table(name = "localized_plague_status", schema = "sabi")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class LocalizedPlagueStatusEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

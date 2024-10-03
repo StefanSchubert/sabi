@@ -7,6 +7,7 @@ package de.bluewhale.sabi.persistence.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Table which contains the translated parameter descriptions.
@@ -14,6 +15,7 @@ import lombok.Data;
 @Table(name = "localized_parameter", schema = "sabi")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class LocalizedParameterEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

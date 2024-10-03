@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -32,6 +32,13 @@ public interface UserMapper {
             @Mapping(target ="validateToken", source="validationToken"),
             @Mapping(target ="language", source="language"),
             @Mapping(target ="country", source="country"),
+            @Mapping(target ="aquariums", ignore = true),
+            @Mapping(target ="corals", ignore = true),
+            @Mapping(target ="fishes", ignore = true),
+            @Mapping(target ="measurements", ignore = true),
+            @Mapping(target ="plagueRecords", ignore = true),
+            @Mapping(target ="treatments", ignore = true),
+            @Mapping(target ="userMeasurementReminders", ignore = true),
     })
     UserEntity mapUserTo2Entity(@NotNull final UserTo pUserTo);
 
@@ -48,6 +55,7 @@ public interface UserMapper {
             @Mapping(target ="validationToken", source="validateToken"),
             @Mapping(target ="language", source="language"),
             @Mapping(target ="country", source="country"),
+            @Mapping(target ="captchaCode", ignore = true),
     })
     UserTo mapUserEntity2To(@NotNull final UserEntity pUserEntity);
 

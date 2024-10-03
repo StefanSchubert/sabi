@@ -101,7 +101,7 @@ public class TankListView implements Serializable {
         selectedTank = tank;
         try {
             String apiKey = tankService.reCreateTemperatureAPIKey(tank.getId(), userSession.getSabiBackendToken());
-            tank.setTemperatueApiKey(apiKey);
+            tank.setTemperatureApiKey(apiKey);
         } catch (BusinessException e) {
             log.error(e.getLocalizedMessage());
             MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());

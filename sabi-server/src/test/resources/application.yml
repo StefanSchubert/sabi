@@ -9,9 +9,6 @@ eclipselink:
   logging:
     level: INFO
   target-database: Auto
-h2:
-  test:
-    mode: true
 logging:
   level:
     org:
@@ -48,10 +45,10 @@ spring:
   datasource:
     hikari:
       connection-timeout: 3000
-      maximum-pool-size: 5
+      maximum-pool-size: 20
       minimum-idle: 2
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:mem:test;MODE=LEGACY;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_ON_EXIT=true;DB_CLOSE_DELAY=-1
+    # Hikari will be configured through Testcontainer Setup in integration tests.
+    # url: jdbc:h2:mem:test;MODE=LEGACY;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_ON_EXIT=true;DB_CLOSE_DELAY=-1
   mail:
     host: localhost
     password: YouWillNeverKnow

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -100,7 +100,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
 
-        return myTankWithAPIKey.getTemperatueApiKey();
+        return myTankWithAPIKey.getTemperatureApiKey();
     }
 
     @Override

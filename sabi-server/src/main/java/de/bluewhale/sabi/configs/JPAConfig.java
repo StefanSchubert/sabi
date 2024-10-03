@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -39,9 +39,6 @@ public class JPAConfig {
     @Value("${eclipselink.logging.level:INFO}")
     private String eclipseLinkLoggingLevel;
 
-    @Value("${h2.test.mode}")
-    private Boolean h2TestMode;
-
     @Autowired
     private DataSource dataSource;
 
@@ -77,13 +74,8 @@ public class JPAConfig {
     Properties additionalProperties() {
         Properties properties = new Properties();
 
-        if (h2TestMode) {
-            properties.setProperty("eclipselink.ddl-generation.output-mode", "database");
-            properties.setProperty("eclipselink.ddl-generation", "drop-and-create-tables");
-        } else {
-            properties.setProperty("eclipselink.ddl-generation", "create-or-extend-tables");
-            properties.setProperty("eclipselink.ddl-generation.output-mode", "sql-script");
-        }
+        properties.setProperty("eclipselink.ddl-generation", "create-or-extend-tables");
+        properties.setProperty("eclipselink.ddl-generation.output-mode", "sql-script");
 
         properties.setProperty("eclipselink.create-ddl-jdbc-file-name", "createDDL_ddlGeneration.jdbc");
         properties.setProperty("eclipselink.drop-ddl-jdbc-file-name", "dropDDL_ddlGeneration.jdbc");

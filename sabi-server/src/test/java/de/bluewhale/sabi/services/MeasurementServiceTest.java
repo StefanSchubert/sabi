@@ -5,26 +5,37 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.BasicDataFactory;
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
+import de.bluewhale.sabi.persistence.model.*;
+import de.bluewhale.sabi.persistence.repositories.*;
+import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestDataFactory.TESTUSER_EMAIL1;
+import static de.bluewhale.sabi.util.TestDataFactory.TEST_TANK_ID;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.util.AssertionErrors.*;
 
 
@@ -34,241 +45,278 @@ import static org.springframework.test.util.AssertionErrors.*;
  * Date: 30.08.15
  */
 @SpringBootTest
+@Testcontainers
 @ContextConfiguration(classes = AppConfig.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class MeasurementServiceTest extends BasicDataFactory {
+@Tag("ServiceTest")
+@DirtiesContext
+public class MeasurementServiceTest {
 
+    /*
+     NOTICE This Testclass initializes a Testcontainer to satisfy the
+        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
+        Database level, as for test layer isolation we completely mock the repositories here.
+        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
+        In future this Testclass might be refactored to be able to run without spring context,
+        but for now we keep it as it is.
+    */
 
     // ------------------------------ FIELDS ------------------------------
 
-    @Autowired
-    private TankService tankService;
+    static TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
-    @Autowired
-    private UserService userService;
+    @Container
+    @ServiceConnection
+    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
 
     @Autowired
     private MeasurementService measurementService;
 
+    @MockBean
+    private AquariumRepository aquariumRepository;
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private UnitRepository unitRepository;
+
+    @MockBean
+    private MeasurementRepository measurementRepository;
+
+    @MockBean
+    private LocalizedUnitRepository localizedUnitRepository;
+
+    @MockBean
+    ParameterRepository parameterRepository;
+
 // -------------------------- OTHER METHODS --------------------------
 
-    /**
-     * There seems to be a timing problem with H2, that causes, that the basic data is not available
-     * for some test classes, while for others it worked out. Or the Annotation is not being processed through
-     * inheritance. Until we know what's going wrong...
-     * we "double inject" by extending the BasicTestDataFactory and by calling it directly.
-     * The different behaviour can be observed by e.g. calling the master test suite and as comparising
-     * the measurement testsuite while this is method is deaktivated.
-     */
-    @BeforeEach
-    public void ensureBasicDataAvailability() {
-        List<MeasurementTo> list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
-        if (list.isEmpty()) {
-            populateBasicData();
-            list = measurementService.listMeasurements(P_USER1_EMAIL, 0);
-        }
-        assert(list.size() > 0);
-
-        // PROBLEM here: We thought that stores User gets the ID wie set hard, but H2 Dirties context
-        // drops data but not sequence values, which is why repeated user creation leads to a different user ID.
-        // So any test which is relies on a certain user ID might run into trouble.
-        //        UserEntity storedTestUser = userRepository.getByEmail(P_USER1_EMAIL);
-        //        assertNotNull("Should not happen!","Precondition stored Test User failed!",storedTestUser);
-        //        assertEquals("Stored Test User got wrong ID!? ", 1l, storedTestUser.getId().longValue());
-    }
-
     @Test
-    @Transactional
     public void testListMeasurements() throws Exception {
-        // Given already stored testdata for measurements
-        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
-        assertNotNull("Prepersisted Testdata is missing", aquariumTo);
-        Long tankID = aquariumTo.getId();
+
+        // Given:
+        UserTo testUserTo = TestDataFactory.getInstance().getNewTestUserTo(TestDataFactory.TESTUSER_EMAIL1);
+        UserEntity userEntity = TestDataFactory.getInstance().getNewTestUserEntity(testUserTo);
+
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumTo();
+        AquariumEntity aquariumEntity = testDataFactory.getTestAquariumEntity(testAquariumTo, userEntity);
+
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
+        MeasurementEntity measurementEntity = testDataFactory.getTestMeasurementEntity(testMeasurementTo, aquariumEntity);
+
+
+        given(aquariumRepository.getOne(TEST_TANK_ID)).willReturn(aquariumEntity);
+        given(measurementRepository.findByAquarium(aquariumEntity)).willReturn(List.of(measurementEntity));
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(measurementRepository.findByUserOrderByMeasuredOnDesc(userEntity)).willReturn(List.of(measurementEntity));
 
         // When
-        List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(tankID);
-        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(P_USER1_EMAIL, 0);
+        List<MeasurementTo> tank1Measurements = measurementService.listMeasurements(TEST_TANK_ID);
+        List<MeasurementTo> usersMeasurements = measurementService.listMeasurements(TestDataFactory.TESTUSER_EMAIL1, 0);
 
         // Then
-        assertNotNull("Should not happen!",tank1Measurements);
-        assertNotNull("Should not happen!",usersMeasurements);
-        assertTrue("Testdata gone?", tank1Measurements.size() >= 1);
-        assertTrue("Stored Testdata changed?", usersMeasurements.containsAll(tank1Measurements));
+        assertNotNull("Should not happen!", tank1Measurements);
+        assertNotNull("Should not happen!", usersMeasurements);
+        assertTrue("Mocks didn't worked?", tank1Measurements.size() >= 1);
+        assertTrue("Relationships brocken?", usersMeasurements.containsAll(tank1Measurements));
     }
 
+
     @Test
-    @Transactional
-    public void testFindMeasurementParameter() throws Exception {
-        // Given already stored testdata for measurements
+    public void testFindLocalizedMeasurementParameter() throws Exception {
+        // Given parameter Entity with id 1
+        LocalizedParameterEntity localizedParameterEntity = new LocalizedParameterEntity();
+        localizedParameterEntity.setId(1L);
+        localizedParameterEntity.setLanguage("de");
+        localizedParameterEntity.setDescription("Test Parameter");
+
+        ParameterEntity parameterEntity = new ParameterEntity();
+        parameterEntity.setId(1);
+        parameterEntity.setLocalizedParameterEntities(List.of(localizedParameterEntity));
+
+        given(parameterRepository.findByBelongingUnitIdEquals(1)).willReturn(parameterEntity);
 
         // When
         ParameterTo parameterTo = measurementService.fetchParameterInfoFor(1, "de");
 
         // Then
-        assertNotNull("Should not happen!",parameterTo);
+        assertNotNull("Should not happen!", parameterTo);
     }
 
     @Test
-    @Transactional
     public void testFindInvalidMeasurementParameter() throws Exception {
-        // Given already stored testdata for measurements
+        // Given
         Integer nonExistingUnit = Integer.MAX_VALUE;
+        given(parameterRepository.findByBelongingUnitIdEquals(nonExistingUnit)).willReturn(null);
 
         // When
-        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(nonExistingUnit,"de");
+        ParameterTo parameterTo = measurementService.fetchParameterInfoFor(nonExistingUnit, "de");
 
         // Then
-        assertNull(parameterTo);
+        assertNull("According to API we should get null but got: ", parameterTo);
     }
 
-
     @Test
-    @Transactional
     public void testListMeasurementsForSpecificTankAndUnit() throws Exception {
-        // Given already stored testdata for measurements
-        // for tank 2 only one measurement with unit id 1
+        // Given
+        AquariumEntity aquariumEntity = new AquariumEntity();
+        aquariumEntity.setId(2L);
+
+        MeasurementEntity measurementEntity = new MeasurementEntity();
+        measurementEntity.setAquarium(aquariumEntity);
+        measurementEntity.setUnitId(1);
+
+        given(aquariumRepository.getOne(2L)).willReturn(aquariumEntity);   // Tank
+        given(measurementRepository.findByAquariumAndUnitIdOrderByMeasuredOnAsc(aquariumEntity, 1)).willReturn(List.of(measurementEntity));
 
         // When
         List<MeasurementTo> measurements = measurementService.listMeasurementsFilteredBy(2L, 1);
 
         // Then
-        assertNotNull("Should not happen!",measurements);
-        assertTrue("Testdata gone or changed? Received more or less than expected on measurement.", measurements.size() == 1);
+        assertNotNull("Should not happen!", measurements);
+        assertTrue("Mocked Testdata gone or changed? Received more or less than expected on measurement.", measurements.size() == 1);
     }
 
     @Test
-    @Transactional
     public void testListMeasurementUnits() throws Exception {
         // Given already stored testdata for measurements
+        UnitEntity unitEntity = new UnitEntity();
+        unitEntity.setName("Happyness");
+        unitEntity.setId(1);
+        LocalizedUnitEntity localizedUnitEntity = new LocalizedUnitEntity();
+        localizedUnitEntity.setLanguage("de");
+        localizedUnitEntity.setDescription("Glück");
+
+        given(unitRepository.findAll()).willReturn(List.of(unitEntity));
+        given(localizedUnitRepository.findByLanguageAndUnitId("de",unitEntity.getId())).willReturn(localizedUnitEntity);
 
         // When
         List<UnitTo> measurementUnits = measurementService.listAllMeasurementUnits("de");
 
         // Then
-        assertNotNull("Should not happen!",measurementUnits);
+        assertNotNull("Should not happen!", measurementUnits);
         assertTrue("Testdata gone?", measurementUnits.size() >= 1);
+        assertTrue("Translation failed?", measurementUnits.get(0).getDescription().equals("Glück"));
     }
 
     @Test
-    @Transactional
+    @Rollback
     public void testAddNewMeasurement() throws Exception {
-        // Given already store test data
-        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
-        assertNotNull("Prepersisted Testdata is missing", aquariumTo);
-        Long tankID = aquariumTo.getId();
+        // Given
+        UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
+        UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumTo();
+        AquariumEntity aquariumEntity = testDataFactory.getTestAquariumEntity(testAquariumTo, userEntity);
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
 
-        // When adding a new Measurment
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, P_USER1_EMAIL);
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(TEST_TANK_ID,userEntity.getId())).willReturn(aquariumEntity);
+        given(measurementRepository.saveAndFlush(any())).willReturn(new MeasurementEntity());
+
+        // When adding a new Measurement
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.addMeasurement(testMeasurementTo, TestDataFactory.TESTUSER_EMAIL1);
 
         // Then
         assertNotNull("Should not happen!",measurementToResultTo);
-        assertNotNull("Should not happen!",measurementToResultTo.getValue());
-        assertEquals("Creating measurement failed? " + measurementToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementToResultTo.getMessage().getType());
+        assertNotNull("Should not happen! Empty ResultTo",measurementToResultTo.getValue());
+        assertEquals("Creating measurement failed? " + measurementToResultTo.getMessage().getCode(), Message.CATEGORY.INFO, measurementToResultTo.getMessage().getType());
     }
 
     @Test
-    @Transactional
-    public void testGetLastetMeasurementEntryDateTime() throws Exception {
-
-        // Given already store test data
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
-        assertNotNull("Prepersisted Testdata missing", aquariumTo);
-        Long tankID = aquariumTo.getId();
-
-        // Stored Measurement A
-        MeasurementTo testMeasurementATo = testDataFactory.getTestMeasurementTo(tankID);
-        testMeasurementATo.setMeasuredOn(LocalDateTime.now().minusYears(2));
-        ResultTo<MeasurementTo> measurementAToResultTo = measurementService.addMeasurement(testMeasurementATo, P_USER1_EMAIL);
-        assertEquals("Failure storing test data A?: " + measurementAToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementAToResultTo.getMessage().getType());
-
-
-        // And Afterwards created Measurement B
-        MeasurementTo testMeasurementBTo = testDataFactory.getTestMeasurementTo(tankID);
-        testMeasurementBTo.setId(testMeasurementATo.getId() + 1l);
-        testMeasurementBTo.setMeasuredValue(99f);
-        ResultTo<MeasurementTo> measurementBToResultTo = measurementService.addMeasurement(testMeasurementBTo, P_USER1_EMAIL);
-        assertEquals("Failure storing test data B?: " + measurementBToResultTo.getMessage().getCode(), CATEGORY.INFO, measurementBToResultTo.getMessage().getType());
-
-        // When
-        LocalDateTime lastRecordedTime = measurementService.getLastTimeOfMeasurementTakenFilteredBy(measurementAToResultTo.getValue().getAquariumId(), testMeasurementATo.getUnitId());
-
-        // Then
-        assertNotNull("Looked like stored measurments have not been flushed.", lastRecordedTime);
-        assertEquals("Did not retrieved the latest measurement date", LocalDateTime.now().getYear(), lastRecordedTime.getYear());
-    }
-
-
-    @Test
-    @Transactional
+    @Rollback
     public void testRemoveMeasurement() throws Exception {
-        // Given a stored measurement for a tank and user
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        testDataFactory.withUserService(userService);
-        testDataFactory.withTankService(tankService);
-        String newTestUserMail = "junit@sabi.de";
-        UserTo persistedTestUserTo = testDataFactory.getRegisterNewTestUser(newTestUserMail);
-        AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(persistedTestUserTo);
-        testAquariumTo.setId(57654L);
-        ResultTo<AquariumTo> newTankResultTo = tankService.registerNewTank(testAquariumTo, newTestUserMail);
+        // Given
 
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(newTankResultTo.getValue().getId());
-        testMeasurementTo.setId(889911L); // will be ignored ID will be overwritten, i.e. provided by addMeasurement
-        ResultTo<MeasurementTo> measurementToResultTo1 = measurementService.addMeasurement(testMeasurementTo, newTestUserMail);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(TestDataFactory.TESTUSER_EMAIL1);
+        userEntity.setId(99L);
+
+        MeasurementEntity measurementEntity = new MeasurementEntity();
+        measurementEntity.setId(42L);
+
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(measurementRepository.getByIdAndUser(42L, userEntity)).willReturn(measurementEntity);
+        doNothing().when(measurementRepository).delete(measurementEntity);
 
         // When
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(measurementToResultTo1.getValue().getId(), newTestUserMail);
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.removeMeasurement(42L, userEntity.getEmail());
 
         // Then
         assertNotNull("Should not happen!",measurementToResultTo);
-        assertNotNull("Should not happen!",measurementToResultTo.getValue());
-        CATEGORY messageType = measurementToResultTo.getMessage().getType();
+        assertNotNull("Should not happen! ResultTo contains no Value!",measurementToResultTo.getValue());
+        Message.CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Removal of measurement failed?", messageType.equals(Message.CATEGORY.INFO));
 
     }
 
     @Test
-    @Transactional
+    @Rollback
     public void testUpdateMeasurement() throws Exception {
-        // Given already stored measurements
-        List<MeasurementTo> measurementToList = measurementService.listMeasurements(P_USER1_EMAIL, 0);
-        MeasurementTo prestoresMeasurementTo = measurementToList.get(0);
-        float oldValue = prestoresMeasurementTo.getMeasuredValue();
+        // Given
+        float oldValue = 1.0f;
+        float newValue = 2.0f;
+
+        UserTo testUserTo = testDataFactory.getNewTestUserTo(TESTUSER_EMAIL1);
+        UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
+
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(testUserTo);
+
+        MeasurementEntity measurementEntity = testDataFactory.getTestMeasurementEntityWithDefaults();
+        measurementEntity.setMeasuredValue(oldValue);
+        measurementEntity.setId(42L);
+
+        MeasurementEntity updatedMeasurementEntity = testDataFactory.getTestMeasurementEntityWithDefaults();
+        updatedMeasurementEntity.setMeasuredValue(newValue);
+        updatedMeasurementEntity.setId(42L);
+
+        given(userRepository.getByEmail(TestDataFactory.TESTUSER_EMAIL1)).willReturn(userEntity);
+        given(measurementRepository.getByIdAndUser(42L, userEntity)).willReturn(measurementEntity);
+        given(measurementRepository.save(any())).willReturn(updatedMeasurementEntity);
 
         // When we update the measurement
-        float newValue = oldValue + 1.5f;
-        prestoresMeasurementTo.setMeasuredValue(newValue);
-        ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(prestoresMeasurementTo, P_USER1_EMAIL);
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
+        testMeasurementTo.setMeasuredValue(newValue);
+        testMeasurementTo.setId(measurementEntity.getId());
+
+        ResultTo<MeasurementTo> measurementToResultTo = measurementService.updateMeasurement(testMeasurementTo, TestDataFactory.TESTUSER_EMAIL1);
 
         // Then
         assertNotNull("Should not happen!",measurementToResultTo);
         assertEquals("Update failed?",newValue, measurementToResultTo.getValue().getMeasuredValue());
-        CATEGORY messageType = measurementToResultTo.getMessage().getType();
+        Message.CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Update of measurement failed?", messageType.equals(Message.CATEGORY.INFO));
 
     }
 
 
     @Test
-    @Transactional
+    @Rollback
     public void testAddIotAuthorizedMeasurement() {
-        // Given already store test data
-        AquariumTo aquariumTo = tankService.listTanks(P_USER1_EMAIL).get(0);
-        assertNotNull("Prepersisted Testdata is missing", aquariumTo);
-        Long tankID = aquariumTo.getId();
+        // Given
+
+        UserTo testUserTo = testDataFactory.getNewTestUserTo(testDataFactory.TESTUSER_EMAIL1);
+        UserEntity userEntity = testDataFactory.getNewTestUserEntity(testUserTo);
+
+        AquariumTo testAquariumTo = testDataFactory.getTestAquariumFor(testUserTo);
+        AquariumEntity testAquariumEntity = testDataFactory.getTestAquariumEntity(testAquariumTo, userEntity);
+
+        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(testAquariumTo);
+        MeasurementEntity createdMeasurementEntity = testDataFactory.getTestMeasurementEntity(testMeasurementTo, testAquariumEntity);
+
+        given(aquariumRepository.findById(TEST_TANK_ID)).willReturn(Optional.of(testAquariumEntity));
+        given(measurementRepository.saveAndFlush(any())).willReturn(createdMeasurementEntity);
 
         // When
-        TestDataFactory testDataFactory = TestDataFactory.getInstance();
-        MeasurementTo testMeasurementTo = testDataFactory.getTestMeasurementTo(tankID);
         ResultTo<MeasurementTo> measurementToResultTo = measurementService.addIotAuthorizedMeasurement(testMeasurementTo);
 
         // Then
         assertNotNull("Should not happen!",measurementToResultTo);
-        assertNotNull("Should not happen!",measurementToResultTo.getValue());
-        CATEGORY messageType = measurementToResultTo.getMessage().getType();
+        assertNotNull("Should not happen! ResultTO contains no value",measurementToResultTo.getValue());
+        Message.CATEGORY messageType = measurementToResultTo.getMessage().getType();
         assertTrue("Creating measurement failed?", messageType.equals(Message.CATEGORY.INFO));
     }
+
 }

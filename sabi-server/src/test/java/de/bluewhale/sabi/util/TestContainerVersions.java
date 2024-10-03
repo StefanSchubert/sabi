@@ -3,5 +3,8 @@
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-INSERT INTO parameter (id, description, belonging_unit_id, min_threshold, max_threshold)
-VALUES (4, 'Calcium', 3, 380, 420);
+package de.bluewhale.sabi.util;
+
+public interface TestContainerVersions {
+    String MARIADB_11_3_2 = "mariadb:11.3.2";
+}

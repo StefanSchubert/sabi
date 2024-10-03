@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -28,7 +28,7 @@ public interface AquariumMapper {
             @Mapping(target ="description", source="description"),
             @Mapping(target ="userId", source="user.id"),
             @Mapping(target ="active", source="active"),
-            @Mapping(target ="temperatueApiKey", source="temperatureApiKey"),
+            @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),
             @Mapping(target ="inceptionDate", source="inceptionDate"),
     })
     AquariumTo mapAquariumEntity2To(@NotNull final AquariumEntity pAquariumEntity);
@@ -40,8 +40,11 @@ public interface AquariumMapper {
             @Mapping(target ="size", source="size"),
             @Mapping(target ="description", source="description"),
             @Mapping(target ="active", source="active"),
-            @Mapping(target ="temperatureApiKey", source="temperatueApiKey"),
+            @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),
             @Mapping(target ="inceptionDate", source="inceptionDate"),
+            @Mapping(target ="user.id", source="userId"),
+            @Mapping(target = "measurements", ignore = true),
+            @Mapping(target = "plagueRecords", ignore = true)
     })
     AquariumEntity mapAquariumTo2Entity(@NotNull final AquariumTo pAquariumTo);
 
