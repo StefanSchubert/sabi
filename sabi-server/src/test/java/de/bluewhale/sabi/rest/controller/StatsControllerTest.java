@@ -39,14 +39,6 @@ import static org.mockito.BDDMockito.given;
 /**
  * Demonstrate usage of the unit REST API.
  * NOTICE: This test mocks the DAO persistent layer, as it was not meant to run as an integration test.
- * <p>
- * However notice the following drawbacks:
- * <p>
- * (1) It still requires the database, as without it we get a java.lang.IllegalStateException:
- * Failed to load ApplicationContext, though this might be fixed by proper test configuration
- * (2) Lines of code! The mocked variant outweighs the implementation by far. Which slows down development progress.
- * I leave it to demonstrate the effect. For those cases it would be much better to leave this as real integration
- * tests (however against an H2 in memory database, or by manually control your test data).
  *
  * @author Stefan Schubert
  */

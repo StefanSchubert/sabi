@@ -52,6 +52,7 @@
         <jetbrains.annotation.version>25.0.0</jetbrains.annotation.version>
         <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
         <junit-platform-suite-engine.version>1.11.1</junit-platform-suite-engine.version>
+        <junit-platform-suite-api.version>1.11.1</junit-platform-suite-api.version>
         <junit.testcontainer.version>1.20.2</junit.testcontainer.version>
         <log4j2.version>2.20.0</log4j2.version>
         <lombok.version>1.18.34</lombok.version>
@@ -279,6 +280,13 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-engine</artifactId>
             <version>${junit-platform-suite-engine.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-api</artifactId>
+            <version>${junit-platform-suite-api.version}</version> <!-- oder eine neuere Version -->
             <scope>test</scope>
         </dependency>
 
