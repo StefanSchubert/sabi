@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -39,6 +39,8 @@ public interface MeasurementMapper {
             @Mapping(target ="measuredOn", source="measuredOn"),
             @Mapping(target ="measuredValue", source="measuredValue"),
             @Mapping(target ="unitId", source="unitId"),
+            @Mapping(target ="aquarium", ignore = true),
+            @Mapping(target ="user", ignore = true),
     })
     MeasurementEntity mapMeasurementTo2EntityWithoutAquarium(@NotNull final MeasurementTo pMeasurementTo);
 
@@ -47,6 +49,8 @@ public interface MeasurementMapper {
             @Mapping(target ="measuredOn", source="measuredOn"),
             @Mapping(target ="measuredValue", source="measuredValue"),
             @Mapping(target ="unitId", source="unitId"),
+            @Mapping(target ="aquarium", ignore = true),
+            @Mapping(target ="user", ignore = true),
     })
     void mergeMeasurementTo2EntityWithoutAquarium(@NotNull final MeasurementTo pMeasurementTo,
                                                    @NotNull @MappingTarget MeasurementEntity pMeasurementEntity);

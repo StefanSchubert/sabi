@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -26,6 +26,8 @@ public interface MeasurementReminderMapper {
             @Mapping(target ="pastDays", source="pastdays"),
             @Mapping(target ="active", source="active"),
             @Mapping(target ="unitId", source="unitId"),
+            @Mapping(target = "nextMeasureDate", ignore = true),
+            @Mapping(target = "unitName", ignore = true)
     })
     MeasurementReminderTo mapUserMeasurementReminderEntity2TO(@NotNull UserMeasurementReminderEntity pUserMeasurementReminderEntity);
 
@@ -33,6 +35,8 @@ public interface MeasurementReminderMapper {
             @Mapping(target ="pastdays", source="pastDays"),
             @Mapping(target ="active", source="active"),
             @Mapping(target ="unitId", source="unitId"),
+            @Mapping(target ="user", ignore = true),
+            @Mapping(target ="id", ignore = true)
     })
     UserMeasurementReminderEntity mapUserMeasurementReminderTO2EntityWithoutUser(@NotNull MeasurementReminderTo pMeasurementReminderTo);
 
@@ -40,6 +44,8 @@ public interface MeasurementReminderMapper {
             @Mapping(target ="pastdays", source="pastDays"),
             @Mapping(target ="active", source="active"),
             @Mapping(target ="unitId", source="unitId"),
+            @Mapping(target ="user", ignore = true),
+            @Mapping(target ="id", ignore = true)
     })
     void mapUserMeasurementReminderTO2EntityWithoutUser(@NotNull MeasurementReminderTo pMeasurementReminderTo,
                                                         @NotNull @MappingTarget UserMeasurementReminderEntity pUserMeasurementReminderEntity);

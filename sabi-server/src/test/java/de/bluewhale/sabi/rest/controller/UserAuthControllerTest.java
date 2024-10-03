@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
-package de.bluewhale.sabi.services.rest;
+package de.bluewhale.sabi.rest.controller;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.bluewhale.sabi.TestDataFactory;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -17,19 +17,28 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.CaptchaAdapter;
 import de.bluewhale.sabi.util.RestHelper;
+import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.naming.NamingException;
 
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,8 +52,26 @@ import static org.mockito.Mockito.reset;
  * You may consult the test cases, while developing a specific client.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@ContextConfiguration(classes = AppConfig.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserAuthControllerTest {
+
+        /*
+     NOTICE This Testclass initializes a Testcontainer to satisfy the
+        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
+        Database level, as for test layer isolation we completely mock the repositories here.
+        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
+        In future this Testclass might be refactored to be able to run without spring context,
+        but for now we keep it as it is.
+    */
+
+    @Container
+    @ServiceConnection
+    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
 
 
     SimpleSmtpServer smtpServer;
@@ -156,7 +183,7 @@ public class UserAuthControllerTest {
     public void testWeakPasswordUserRegistration() throws Exception {
 
         // given a test user
-        UserTo userTo = new UserTo("test@bluewhale.de", "Tester",TestDataFactory.INVALID_PASSWORD);
+        UserTo userTo = new UserTo("test@bluewhale.de", "Tester", TestDataFactory.INVALID_PASSWORD);
         userTo.setCaptchaCode("test");
         UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 

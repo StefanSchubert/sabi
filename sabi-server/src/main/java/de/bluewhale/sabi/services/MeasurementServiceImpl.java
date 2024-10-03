@@ -132,7 +132,6 @@ public class MeasurementServiceImpl implements MeasurementService {
         Message resultMsg;
         MeasurementTo usersMeasurementTo = new MeasurementTo();
 
-
         UserEntity user = userRepository.getByEmail(pUserEmail);
         if (user == null) {
             resultMsg = Message.error(TankMessageCodes.UNKNOWN_USER, pUserEmail);
@@ -230,7 +229,7 @@ public class MeasurementServiceImpl implements MeasurementService {
         ParameterEntity parameterEntity = parameterRepository.findByBelongingUnitIdEquals(pUnitID);
 
         if (parameterEntity == null) {
-            log.warn("Requested parameter info for unitID «{}» is not availabe. Data maintenance recommended.", pUnitID);
+            log.warn("Requested parameter info for unitID «{}» is not available. Data maintenance recommended.", pUnitID);
             return null;
         }
 

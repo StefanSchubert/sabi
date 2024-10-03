@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "plague_status", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = "localizedPlagueStatusEntities")
+@EqualsAndHashCode(exclude = "localizedPlagueStatusEntities",callSuper = false)
 public class PlagueStatusEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 

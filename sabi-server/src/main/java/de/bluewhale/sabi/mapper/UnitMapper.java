@@ -25,6 +25,7 @@ public interface UnitMapper {
     @Mappings({
             @Mapping(target ="id", source="id"),
             @Mapping(target ="unitSign", source="name"),
+            @Mapping(target ="description", ignore = true)
     })
     UnitTo mapUnitEntity2To(@NotNull final UnitEntity pUnitEntity);
 
@@ -32,6 +33,7 @@ public interface UnitMapper {
     @Mappings({
             @Mapping(target ="id", source="id"),
             @Mapping(target ="name", source="unitSign"),
+            @Mapping(target ="localizedUnitEntities", ignore = true)
     })
     UnitEntity mapUnitToEntity(@NotNull final UnitTo pUnitTo);
 
