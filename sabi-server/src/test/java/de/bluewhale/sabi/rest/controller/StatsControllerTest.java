@@ -15,6 +15,7 @@ import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.RestHelper;
 import de.bluewhale.sabi.util.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,19 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -51,7 +54,7 @@ import static org.mockito.BDDMockito.given;
 public class StatsControllerTest {
 // ------------------------------ FIELDS ------------------------------
 
-    final static String MOCKED_USER = "testsabi@bluewhale.de";
+	final static String MOCKED_USER = "testsabi@bluewhale.de";
 
         /*
      NOTICE This Testclass initializes a Testcontainer to satisfy the
@@ -62,61 +65,77 @@ public class StatsControllerTest {
         but for now we keep it as it is.
     */
 
-    @Container
-    @ServiceConnection
-    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+	@Container
+	@ServiceConnection
+	// This does the trick. Spring Autoconfigures itself to connect against this container data requests-
+	static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
 
+	@LocalServerPort
+	private int port;
 
-    @MockBean
-    MeasurementRepository measurementRepository;
+	private RestClient restClient;
 
-    @MockBean
-    UserRepository userRepository;
+	@BeforeEach
+	public void initRestClient() {
+		if (restClient == null) {
+			String url = String.format("http://localhost:%d/sabi", port);
+			restClient = RestClient
+					.builder()
+					.baseUrl(url) // Dynamischer Port
+					.build();
+		}
+	}
 
-    @Autowired
-    UserMapper userMapper;
+	@MockBean
+	MeasurementRepository measurementRepository;
 
-    @Autowired
-    ObjectMapper objectMapper;  // json mapper
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
+	@MockBean
+	UserRepository userRepository;
 
-    @Autowired
-    private TokenAuthenticationService encryptionService;
-    @Autowired
-    private TestRestTemplate restTemplate;
+	@Autowired
+	UserMapper userMapper;
+
+	@Autowired
+	ObjectMapper objectMapper;  // json mapper
+	TestDataFactory testDataFactory = TestDataFactory.getInstance();
+
+	@Autowired
+	private TokenAuthenticationService encryptionService;
+	@Autowired
+	private TestRestTemplate restTemplate;
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @Test
-    public void testRequestMeasurementCount() throws Exception {
+	@Test
+	public void testRequestMeasurementCount() throws Exception {
 
-        // given some Testdata via mocking
-        UserTo userTo = new UserTo(MOCKED_USER,"Mocker User", "pw123");
-        userTo.setId(1L);
+		// given some Testdata via mocking
+		UserTo userTo = new UserTo(MOCKED_USER, "Mocker User", "pw123");
+		userTo.setId(1L);
 
-        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
+		UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
-        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
-        given(this.measurementRepository.count()).willReturn(1L);
+		given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
+		given(this.measurementRepository.count()).willReturn(1L);
 
-        // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+		// and we need a valid authentication token for our mocked user
+		String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        // when this authorized user requests the unit list
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+		// when this authorized user requests the unit list
+		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        // Notice the that the controller defines a list, the rest-template will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/stats/measurements", HttpMethod.GET, requestEntity, String.class);
+		// Notice the that the controller defines a list, the rest-template will get it as array.
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/stats/measurements")
+				.headers(headers -> headers.addAll(authedHeader))
+				.retrieve()
+				.onStatus(status -> status.value() != 200, (request, response) -> {
+					// then we should get a 200 as result.
+					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+				}).toEntity(String.class);
 
-        // then we should get a 200 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-
-        // and our overall measurement count
-        String measurementCount = objectMapper.readValue(responseEntity.getBody(), String.class);
-        assertThat(measurementCount, containsString("1"));
-    }
-
+		// and we should get our overall measurement count
+		String measurementCount = objectMapper.readValue(stringResponseEntity.getBody(), String.class);
+		assertThat(measurementCount, containsString("1"));
+	}
 
 }
