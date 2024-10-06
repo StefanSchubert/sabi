@@ -16,6 +16,7 @@ import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.util.RestHelper;
 import de.bluewhale.sabi.util.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -35,8 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -67,6 +69,22 @@ public class PlagueCenterControllerTest {
     @ServiceConnection
     // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
     static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+
+    @LocalServerPort
+    private int port;
+
+    private RestClient restClient;
+
+    @BeforeEach
+    public void initRestClient() {
+        if (restClient == null) {
+            String url = String.format("http://localhost:%d/sabi", port);
+            restClient = RestClient
+                    .builder()
+                    .baseUrl(url) // Dynamischer Port
+                    .build();
+        }
+    }
 
 
     final static String MOCKED_USER = "testsabi@bluewhale.de";
@@ -112,17 +130,20 @@ public class PlagueCenterControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests his aquarium list
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/plagues/status/list/de", HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/plagues/status/list/de")
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .onStatus(status -> status.value() != 202, (request, response) -> {
+                    // then we should get a 202 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                }).toEntity(String.class);
 
-        // then we should get a 202 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
 
-        // and some plague status
-        PlagueStatusTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueStatusTo[].class);
+        // and we should get some plague status
+        PlagueStatusTo[] myObjects = objectMapper.readValue(stringResponseEntity.getBody(), PlagueStatusTo[].class);
         assertTrue("Did not received mockd Plague Status",myObjects.length>0);
 
     }
