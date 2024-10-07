@@ -132,7 +132,7 @@ public class PlagueCenterControllerTest {
         // when this authorized user requests his aquarium list
         HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        // Notice the that the controller defines a list, the resttemplate will get it as array.
+        // Notice the that the controller defines a list, the restClient will get it as array.
         ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/plagues/status/list/de")
                 .headers(headers -> headers.addAll(authedHeader))
                 .retrieve()
