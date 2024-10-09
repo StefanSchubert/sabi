@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
@@ -142,7 +143,7 @@ public class TankControllerTest {
 		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		// Notice the that the controller defines a list, the restClient will get it as array.
-		ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/tank/list")
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.TANKS.getPath()+"/list")
 				.headers(headers -> headers.addAll(authedHeader))
 				.retrieve()
 				.onStatus(status -> status.value() != 202, (request, response) -> {
@@ -197,7 +198,7 @@ public class TankControllerTest {
 		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		// Notice the that the controller defines a list, the restClient will get it as array.
-		ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/tank/"+aquariumTo.getId())
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.TANKS.getPath()+"/"+aquariumTo.getId())
 				.headers(headers -> headers.addAll(authedHeader))
 				.retrieve()
 				.onStatus(status -> status.value() != 200, (request, response) -> {
@@ -237,7 +238,7 @@ public class TankControllerTest {
 		String requestJson = objectMapper.writeValueAsString(aquariumTo);
 
 		ResponseEntity<String> responseEntity = restClient.post()
-				.uri("/api/tank/create")
+				.uri(Endpoint.TANKS.getPath()+"/create")
 				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
 				.body(requestJson)  // Set the request body
 				.retrieve()  // Executes the request and retrieves the response
@@ -276,7 +277,7 @@ public class TankControllerTest {
 		HttpHeaders authedHttpHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		ResponseEntity<String> responseEntity = restClient.delete()
-				.uri("/api/tank/" + aquariumTo.getId())
+				.uri(Endpoint.TANKS.getPath()+"/" + aquariumTo.getId())
 				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
 				.retrieve()  // Executes the request and retrieves the response
 				.onStatus(status -> status.value() != 200, (request, response) -> {
@@ -326,7 +327,7 @@ public class TankControllerTest {
 		String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);
 
 		ResponseEntity<String> responseEntity = restClient.put()
-				.uri("/api/tank")
+				.uri(Endpoint.TANKS.getPath())
 				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
 				.body(requestJson)  // Set the request body
 				.retrieve()  // Executes the request and retrieves the response
@@ -358,7 +359,7 @@ public class TankControllerTest {
 
 		try {
 			ResponseEntity<String> responseEntity = restClient.get()
-					.uri("/api/tank/list")
+					.uri(Endpoint.TANKS.getPath()+"/list")
 					.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
 					.retrieve()  // Executes the request and retrieves the response
 					.toEntity(String.class);  // Converts the response to a ResponseEntity

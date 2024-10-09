@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
@@ -160,7 +161,7 @@ public class MeasurementControllerTest {
 		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		// Notice the that the controller defines a list, the rest-template will get it as array.
-		ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/measurement/list/0")
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.MEASUREMENTS.getPath() +"/list/0")
 				.headers(headers -> headers.addAll(authedHeader))
 				.retrieve()
 				.onStatus(status -> status.value() != 202, (request, response) -> {
@@ -212,7 +213,7 @@ public class MeasurementControllerTest {
 		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		// Notice the that the controller defines a list, the rest-template will get it as array.
-		ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/measurement/tank/" + usersTankID)
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.MEASUREMENTS.getPath() +"/tank/" + usersTankID)
 				.headers(headers -> headers.addAll(authedHeader))
 				.retrieve()
 				.onStatus(status -> status.value() != 202, (request, response) -> {
@@ -262,7 +263,7 @@ public class MeasurementControllerTest {
 		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		// Notice the that the controller defines a list, the rest-template will get it as array.
-		String apiURL = String.format("/api/measurement/tank/%s/unit/%s", usersTankID, requestedUnitID);
+		String apiURL = String.format(Endpoint.MEASUREMENTS.getPath() +"/tank/%s/unit/%s", usersTankID, requestedUnitID);
 		ResponseEntity<String> stringResponseEntity = restClient.get().uri(apiURL)
 				.headers(headers -> headers.addAll(authedHeader))
 				.retrieve()
@@ -299,7 +300,7 @@ public class MeasurementControllerTest {
 
 		// Notice the that the controller defines a list, the rest-template will get it as array.
 		try {
-			ResponseEntity<String> stringResponseEntity = restClient.delete().uri("/api/measurement/" + measurementID)
+			ResponseEntity<String> stringResponseEntity = restClient.delete().uri(Endpoint.MEASUREMENTS.getPath() +"/" + measurementID)
 					.headers(headers -> headers.addAll(authedHeader))
 					.retrieve()
 					.toEntity(String.class);
@@ -348,7 +349,7 @@ public class MeasurementControllerTest {
 		String requestJson = objectMapper.writeValueAsString(measurementTo);
 
 		ResponseEntity<String> responseEntity = restClient.post()
-				.uri("/api/measurement")
+				.uri(Endpoint.MEASUREMENTS.getPath())
 				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
 				.body(requestJson)  // Set the request body
 				.retrieve()  // Executes the request and retrieves the response
@@ -406,7 +407,7 @@ public class MeasurementControllerTest {
 		String requestJson = objectMapper.writeValueAsString(updatableMeasurementTo);
 
 		ResponseEntity<String> responseEntity = restClient.put()
-				.uri("/api/measurement")
+				.uri(Endpoint.MEASUREMENTS.getPath())
 				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
 				.body(requestJson)  // Set the request body
 				.retrieve()  // Executes the request and retrieves the response

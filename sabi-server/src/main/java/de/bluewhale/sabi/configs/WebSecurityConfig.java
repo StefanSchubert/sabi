@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+ * Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
  * See project LICENSE file for the detailed terms and conditions.
  */
 
@@ -76,7 +76,7 @@ public class WebSecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, Endpoint.PW_RESET.getPath())).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/auth/email/**")).permitAll()
                         // Open statistics
-                        .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/stats/healthcheck")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, Endpoint.HEALTH_STATS.getPath())).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, Endpoint.PARTICIPANT_STATS.getPath())).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, Endpoint.TANK_STATS.getPath())).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, Endpoint.MEASUREMENT_STATS.getPath())).permitAll()

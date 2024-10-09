@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.PlagueStatusTo;
@@ -133,7 +134,7 @@ public class PlagueCenterControllerTest {
         HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // Notice the that the controller defines a list, the restClient will get it as array.
-        ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/plagues/status/list/de")
+        ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.PLAGUE_CENTER_SERVICE.getPath() +"/status/list/de")
                 .headers(headers -> headers.addAll(authedHeader))
                 .retrieve()
                 .onStatus(status -> status.value() != 202, (request, response) -> {

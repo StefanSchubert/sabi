@@ -35,7 +35,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
     @Override
     public @NotNull List<AquariumTo> getUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException {
 
-        String listTankUri = sabiBackendUrl + "/api/tank/list";
+        String listTankUri = sabiBackendUrl + Endpoint.TANKS.getPath()+"/list";
         List<AquariumTo> tankList;
         ResponseEntity<String> responseEntity = getAPIResponseFor(listTankUri, pJWTBackendAuthtoken, HttpMethod.GET);
 
@@ -53,7 +53,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
 
     @Override
     public void deleteTankById(@NotNull Long tankId, @NotNull String pJWTBackendAuthtoken) throws BusinessException {
-        String tankUri = sabiBackendUrl + "/api/tank/"+tankId;
+        String tankUri = sabiBackendUrl + Endpoint.TANKS.getPath()+"/"+tankId;
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity;
@@ -83,7 +83,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
 
     @Override
     public String reCreateTemperatureAPIKey(Long tankID, String pJWTBackendAuthtoken) throws BusinessException {
-        String requestTempAPIKeyURI = sabiBackendUrl + "/api/tank/"+tankID+"/tempApiKey";
+        String requestTempAPIKeyURI = sabiBackendUrl + Endpoint.TANKS.getPath()+"/"+tankID+"/tempApiKey";
 
         ResponseEntity<String> responseEntity = getAPIResponseFor(requestTempAPIKeyURI,pJWTBackendAuthtoken,HttpMethod.GET);
 

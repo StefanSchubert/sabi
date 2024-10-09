@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.IoTMeasurementTo;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
@@ -106,7 +107,7 @@ public class AquariumIoTControllerTest {
 
 		try {
 			ResponseEntity<String> responseEntity = restClient.post()
-					.uri("/api/aquarium_iot/temp_measurement")
+					.uri(Endpoint.IOT_API.getPath() +"/temp_measurement")
 					.headers(headers -> headers.addAll(RestHelper.buildHttpHeader()))  // Set headers
 					.body(requestJson)  // Set the request body
 					.retrieve()  // Executes the request and retrieves the response
@@ -138,7 +139,7 @@ public class AquariumIoTControllerTest {
 
 		try {
 			ResponseEntity<String> responseEntity = restClient.post()
-					.uri("/api/aquarium_iot/temp_measurement")
+					.uri(Endpoint.IOT_API.getPath() +"/temp_measurement")
 					.headers(headers -> headers.addAll(RestHelper.buildHttpHeader()))  // Set headers
 					.body(requestJson)  // Set the request body
 					.retrieve()  // Executes the request and retrieves the response

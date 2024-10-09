@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.UserTo;
@@ -125,7 +126,7 @@ public class StatsControllerTest {
 		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
 		// Notice the that the controller defines a list, the rest-template will get it as array.
-		ResponseEntity<String> stringResponseEntity = restClient.get().uri("/api/stats/measurements")
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.MEASUREMENT_STATS.getPath())
 				.headers(headers -> headers.addAll(authedHeader))
 				.retrieve()
 				.onStatus(status -> status.value() != 200, (request, response) -> {
