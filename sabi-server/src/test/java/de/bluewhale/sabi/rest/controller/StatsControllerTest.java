@@ -15,27 +15,18 @@ import de.bluewhale.sabi.persistence.repositories.MeasurementRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.RestHelper;
-import de.bluewhale.sabi.util.TestDataFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.client.RestClient;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -52,40 +43,11 @@ import static org.mockito.BDDMockito.given;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class StatsControllerTest {
+public class StatsControllerTest extends CommonTestController {
 // ------------------------------ FIELDS ------------------------------
 
 	final static String MOCKED_USER = "testsabi@bluewhale.de";
 
-        /*
-     NOTICE This Testclass initializes a Testcontainer to satisfy the
-        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
-        Database level, as for test layer isolation we completely mock the repositories here.
-        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
-        In future this Testclass might be refactored to be able to run without spring context,
-        but for now we keep it as it is.
-    */
-
-	@Container
-	@ServiceConnection
-	// This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-	static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
-
-	@LocalServerPort
-	private int port;
-
-	private RestClient restClient;
-
-	@BeforeEach
-	public void initRestClient() {
-		if (restClient == null) {
-			String url = String.format("http://localhost:%d/sabi", port);
-			restClient = RestClient
-					.builder()
-					.baseUrl(url) // Dynamischer Port
-					.build();
-		}
-	}
 
 	@MockBean
 	MeasurementRepository measurementRepository;
@@ -98,12 +60,9 @@ public class StatsControllerTest {
 
 	@Autowired
 	ObjectMapper objectMapper;  // json mapper
-	TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
 	@Autowired
 	private TokenAuthenticationService encryptionService;
-	@Autowired
-	private TestRestTemplate restTemplate;
 
 // -------------------------- OTHER METHODS --------------------------
 
