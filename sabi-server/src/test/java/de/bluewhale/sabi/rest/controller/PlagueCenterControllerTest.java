@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.PlagueStatusTo;
@@ -15,28 +16,21 @@ import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.services.PlagueCenterService;
 import de.bluewhale.sabi.util.RestHelper;
-import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -51,23 +45,8 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class PlagueCenterControllerTest {
+public class PlagueCenterControllerTest extends CommonTestController {
 // ------------------------------ FIELDS ------------------------------
-
-        /*
-     NOTICE This Testclass initializes a Testcontainer to satisfy the
-        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
-        Database level, as for test layer isolation we completely mock the repositories here.
-        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
-        In future this Testclass might be refactored to be able to run without spring context,
-        but for now we keep it as it is.
-    */
-
-    @Container
-    @ServiceConnection
-    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
-
 
     final static String MOCKED_USER = "testsabi@bluewhale.de";
 
@@ -83,10 +62,6 @@ public class PlagueCenterControllerTest {
     @Autowired
     ObjectMapper objectMapper;  // json mapper
 
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -112,17 +87,20 @@ public class PlagueCenterControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests his aquarium list
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/plagues/status/list/de", HttpMethod.GET, requestEntity, String.class);
+        // Notice the that the controller defines a list, the restClient will get it as array.
+        ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.PLAGUE_CENTER_SERVICE.getPath() +"/status/list/de")
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .onStatus(status -> status.value() != 202, (request, response) -> {
+                    // then we should get a 202 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                }).toEntity(String.class);
 
-        // then we should get a 202 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
 
-        // and some plague status
-        PlagueStatusTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueStatusTo[].class);
+        // and we should get some plague status
+        PlagueStatusTo[] myObjects = objectMapper.readValue(stringResponseEntity.getBody(), PlagueStatusTo[].class);
         assertTrue("Did not received mockd Plague Status",myObjects.length>0);
 
     }

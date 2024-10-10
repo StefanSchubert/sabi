@@ -28,20 +28,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Date;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
@@ -55,32 +53,13 @@ import static org.mockito.Mockito.reset;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class UserProfileControllerTest {
-
-            /*
-     NOTICE This Testclass initializes a Testcontainer to satisfy the
-        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
-        Database level, as for test layer isolation we completely mock the repositories here.
-        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
-        In future this Testclass might be refactored to be able to run without spring context,
-        but for now we keep it as it is.
-    */
-
-    @Container
-    @ServiceConnection
-    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+public class UserProfileControllerTest extends CommonTestController {
 
     @MockBean
     UserService userService;
 
     @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
     ObjectMapper objectMapper;  // json mapper
-
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
     @AfterEach
     public void cleanUpMocks() {
@@ -102,13 +81,24 @@ public class UserProfileControllerTest {
         given(this.userService.updateProfile(userProfileTo, "junit@maven.here")).willReturn(userProfileResultTo);
 
         // when - sending an update request
-        HttpHeaders headers = RestHelper.buildHttpHeader();
+        HttpHeaders httpHeader = RestHelper.buildHttpHeader();
         String requestJson = objectMapper.writeValueAsString(userProfileTo);
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.PUT, entity, String.class);
 
-        // then we should get a 403 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
+        try {
+            ResponseEntity<String> responseEntity = restClient.put()
+                    .uri(Endpoint.USER_PROFILE.getPath())
+                    .headers(headers -> headers.addAll(httpHeader))  // Set headers
+                    .body(requestJson)  // Set the request body
+                    .retrieve()  // Executes the request and retrieves the response
+                    .toEntity(String.class);  // Converts the response to a ResponseEntity
+
+            // In case no exception is thrown, fail the test
+            fail("Expected HttpClientErrorException$Forbidden to be thrown");
+
+        } catch (HttpClientErrorException e) {
+            // then we should get a 403 as result.
+            assertThat("Spoofed access should produce a forbidden status.", e.getStatusCode().equals(HttpStatus.FORBIDDEN));
+        }
     }
 
     /**
@@ -127,15 +117,21 @@ public class UserProfileControllerTest {
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+        HttpHeaders httpHeaders = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // when - sending an update request
         String requestJson = objectMapper.writeValueAsString(userProfileTo);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.PUT, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restClient.put()
+                .uri(Endpoint.USER_PROFILE.getPath())
+                .headers(headers -> headers.addAll(httpHeaders))  // Set headers
+                .body(requestJson)  // Set the request body
+                .retrieve()  // Executes the request and retrieves the response
+                .onStatus(status -> status.value() != 200, (request, response) -> {
+                    // then we should get a 200 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                })
+                .toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        // then we should get a 200 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
     /**
@@ -175,17 +171,24 @@ public class UserProfileControllerTest {
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+        HttpHeaders httpHeaders = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // when - sending an update request
         String requestJson = objectMapper.writeValueAsString(updatedUserProfileTo);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestJson, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.PUT, requestEntity, String.class);
+        ResponseEntity<UserProfileTo> responseEntity = restClient.put()
+                .uri(Endpoint.USER_PROFILE.getPath())
+                .headers(headers -> headers.addAll(httpHeaders))  // Set headers
+                .body(requestJson)  // Set the request body
+                .retrieve()  // Executes the request and retrieves the response
+                .onStatus(status -> status.value() != 200, (request, response) -> {
+                    // then we should get a 200 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                })
+                .toEntity(UserProfileTo.class);  // Converts the response to a ResponseEntity
 
-        // then we should get a 200 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-        UserProfileTo retrievedUserProfileTo = objectMapper.readValue(responseEntity.getBody(), UserProfileTo.class);
+         UserProfileTo retrievedUserProfileTo = responseEntity.getBody();
 
+        // and should get a reminder within the profileTo
         assertThat("Missing reminder entry",
                 retrievedUserProfileTo.getMeasurementReminderTos().containsAll(updatedUserProfileTo.getMeasurementReminderTos()));
     }
@@ -206,13 +209,15 @@ public class UserProfileControllerTest {
 
         // and we need a valid authentication token for our mocked user
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // when - sending a retrieval request
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.USER_PROFILE.getPath(), HttpMethod.GET, requestEntity, String.class);
-
-        // then we should get a 200 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+        ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.USER_PROFILE.getPath())
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .onStatus(status -> status.value() != 200, (request, response) -> {
+                    // then we should get a 200 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                }).toEntity(String.class);
     }
 }

@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
@@ -17,20 +18,18 @@ import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.RestHelper;
-import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
@@ -38,9 +37,8 @@ import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -57,277 +55,284 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class TankControllerTest {
+public class TankControllerTest extends CommonTestController {
 // ------------------------------ FIELDS ------------------------------
 
-    final static String MOCKED_USER = "testsabi@bluewhale.de";
+	final static String MOCKED_USER = "testsabi@bluewhale.de";
 
-        /*
-     NOTICE This Testclass initializes a Testcontainer to satisfy the
-        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
-        Database level, as for test layer isolation we completely mock the repositories here.
-        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
-        In future this Testclass might be refactored to be able to run without spring context,
-        but for now we keep it as it is.
-    */
+	@MockBean
+	UserRepository userRepository;
 
-    @Container
-    @ServiceConnection
-    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+	@MockBean
+	AquariumRepository aquariumRepository;
 
-    @MockBean
-    UserRepository userRepository;
+	@Autowired
+	ObjectMapper objectMapper;  // json mapper
 
-    @MockBean
-    AquariumRepository aquariumRepository;
+	@Autowired
+	AquariumMapper aquariumMapper;
 
-    @Autowired
-    ObjectMapper objectMapper;  // json mapper
-
-    @Autowired
-    AquariumMapper aquariumMapper;
-
-    @Autowired
-    UserMapper userMapper;
-
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
-    @Autowired
-    private TestRestTemplate restTemplate;
+	@Autowired
+	UserMapper userMapper;
 
 // -------------------------- OTHER METHODS --------------------------
 
-    @Test
-    public void testListUsersTank() throws Exception {
-        // given some Testdata via mocking
+	@Test
+	public void testListUsersTank() throws Exception {
+		// given some Testdata via mocking
+
+		UserTo userTo = new UserTo(MOCKED_USER, "MockerUser", "pw123");
+		userTo.setId(1L);
+		UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
-        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
-        userTo.setId(1L);
-        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
+		given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
+
+		List<AquariumTo> testAquariums = new ArrayList<>(1);
+		AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+		testAquariums.add(aquariumTo);
 
-        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
+		List<AquariumEntity> testAquariumEntities = new ArrayList<>(1);
+		mapAquariumTOs2AquariumEntities(testAquariums, testAquariumEntities, userEntity);
 
-        List<AquariumTo> testAquariums = new ArrayList<>(1);
-        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        testAquariums.add(aquariumTo);
+		given(this.aquariumRepository.findAllByUser_IdIs(userTo.getId())).willReturn(testAquariumEntities);
 
-        List<AquariumEntity> testAquariumEntities = new ArrayList<>(1);
-        mapAquariumTOs2AquariumEntities(testAquariums, testAquariumEntities, userEntity);
+		// and we need a valid authentication token for our mocked user
+		String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        given(this.aquariumRepository.findAllByUser_IdIs(userTo.getId())).willReturn(testAquariumEntities);
+		// when this authorized user requests his aquarium list
+		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+		// Notice the that the controller defines a list, the restClient will get it as array.
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.TANKS.getPath()+"/list")
+				.headers(headers -> headers.addAll(authedHeader))
+				.retrieve()
+				.onStatus(status -> status.value() != 202, (request, response) -> {
+					// then we should get a 202 as result.
+					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+				}).toEntity(String.class);
+
+		// and we should get our test aquarium
+		AquariumTo[] myObjects = objectMapper.readValue(stringResponseEntity.getBody(), AquariumTo[].class);
+		boolean contained = false;
+		for (AquariumTo aquarium : myObjects) {
+			if (aquarium.equals(aquariumTo)) {
+				contained = true;
+				break;
+			}
+		}
+		assertTrue("Did not received mockd Aquarium", contained);
 
-        // when this authorized user requests his aquarium list
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+	}
 
-        // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list", HttpMethod.GET, requestEntity, String.class);
+	private void mapAquariumTOs2AquariumEntities(List<AquariumTo> testAquariums,
+												 List<AquariumEntity> testAquariumEntities,
+												 UserEntity pOwner) {
+		for (AquariumTo testAquarium : testAquariums) {
+			AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(testAquarium);
+			aquariumEntity.setUser(pOwner);
+			testAquariumEntities.add(aquariumEntity);
+		}
+	}
 
-        // then we should get a 202 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
+	@Test
+	public void testGetUsersTank() throws Exception {
+		// given some Testdata via mocking
 
-        // and our test aquarium
-        AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
-        boolean contained = false;
-        for (AquariumTo aquarium : myObjects) {
-            if (aquarium.equals(aquariumTo)) {
-                contained = true;
-                break;
-            }
-        }
-        assertTrue("Did not received mockd Aquarium",contained);
+		UserTo userTo = new UserTo(MOCKED_USER, "MockerUser", "pw123");
+		userTo.setId(1L);
 
-    }
+		UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
-    private void mapAquariumTOs2AquariumEntities(List<AquariumTo> testAquariums,
-                                                 List<AquariumEntity> testAquariumEntities,
-                                                 UserEntity pOwner) {
-        for (AquariumTo testAquarium : testAquariums) {
-            AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(testAquarium);
-            aquariumEntity.setUser(pOwner);
-            testAquariumEntities.add(aquariumEntity);
-        }
-    }
+		given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
-    @Test
-    public void testGetUsersTank() throws Exception {
-        // given some Testdata via mocking
+		AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+		AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
+		aquariumEntity.setUser(userEntity); // ToMappper does not Map the User
 
-        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
-        userTo.setId(1L);
+		given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
 
-        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
+		// and we need a valid authentication token for our mocked user
+		String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
+		// when this authorized user requests his aquarium list
+		HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity aquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
-        aquariumEntity.setUser(userEntity); // ToMappper does not Map the User
+		// Notice the that the controller defines a list, the restClient will get it as array.
+		ResponseEntity<String> stringResponseEntity = restClient.get().uri(Endpoint.TANKS.getPath()+"/"+aquariumTo.getId())
+				.headers(headers -> headers.addAll(authedHeader))
+				.retrieve()
+				.onStatus(status -> status.value() != 200, (request, response) -> {
+					// then we should get a 200 as result.
+					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+				}).toEntity(String.class);
 
-        given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(aquariumEntity);
+		// and we should get our test aquarium
+		AquariumTo myObject = objectMapper.readValue(stringResponseEntity.getBody(), AquariumTo.class);
+		assertEquals(myObject.getDescription(), aquariumTo.getDescription());
+	}
 
-        // and we need a valid authentication token for oure mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        // when this authorized user requests his aquarium list
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+	@Test
+	public void testCreateUsersTank() throws Exception {
+		// given some Testdata via mocking
 
-        // Notice the that the controller defines a list, the resttemplate will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/" + aquariumTo.getId(),
-                HttpMethod.GET, requestEntity, String.class);
+		UserTo userTo = new UserTo(MOCKED_USER, "MockerUser", "pw123");
+		userTo.setId(1L);
 
-        // then we should get a 202 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
+		UserEntity storedUserEntity = userMapper.mapUserTo2Entity(userTo);
 
-        // and our test aquarium
-        AquariumTo myObject = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        assertEquals(myObject.getDescription(), aquariumTo.getDescription());
-    }
+		given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(storedUserEntity);
 
+		AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+		AquariumEntity createdAquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
+		createdAquariumEntity.setUser(storedUserEntity);
 
-    @Test
-    public void testCreateUsersTank() throws Exception {
-        // given some Testdata via mocking
+		given(this.aquariumRepository.saveAndFlush(any())).willReturn(createdAquariumEntity);
 
-        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
-        userTo.setId(1L);
+		// and we need a valid authentication token for our mocked user
+		String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        UserEntity storedUserEntity = userMapper.mapUserTo2Entity(userTo);
+		// when this authorized user requests to create a aquarium
+		HttpHeaders authedHttpHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(storedUserEntity);
+		String requestJson = objectMapper.writeValueAsString(aquariumTo);
 
+		ResponseEntity<String> responseEntity = restClient.post()
+				.uri(Endpoint.TANKS.getPath()+"/create")
+				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
+				.body(requestJson)  // Set the request body
+				.retrieve()  // Executes the request and retrieves the response
+				.onStatus(status -> status.value() != 201, (request, response) -> {
+					// then we should get a 201 as result.
+					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+				})
+				.toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity createdAquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
-        createdAquariumEntity.setUser(storedUserEntity);
+		// and we should get our test aquarium
+		AquariumTo createdAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+		assertEquals(createdAquarium.getDescription(), aquariumTo.getDescription());
+	}
 
-        given(this.aquariumRepository.saveAndFlush(any())).willReturn(createdAquariumEntity);
+	@Test
+	public void testRemoveUsersTank() throws Exception {
+		// given some Testdata via mocking
 
-        // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+		UserTo userTo = new UserTo(MOCKED_USER, "MockerUser", "pw123");
+		userTo.setId(1L);
 
-        // when this authorized user requests to create a aquarium
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+		UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
-        String requestJson = objectMapper.writeValueAsString(aquariumTo);
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+		given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
+
+		AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
+		AquariumEntity existingAquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
+		existingAquariumEntity.setUser(userEntity);
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("/api/tank/create", entity, String.class);
+		given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(existingAquariumEntity);
 
-        // then we should get a 201 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.CREATED));
+		// and we need a valid authentication token for our mocked user
+		String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        // and our test aquarium
-        AquariumTo createdAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        assertEquals(createdAquarium.getDescription(), aquariumTo.getDescription());
-    }
+		// when this authorized user requests to create a aquarium
+		HttpHeaders authedHttpHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
-    @Test
-    public void testRemoveUsersTank() throws Exception {
-        // given some Testdata via mocking
+		ResponseEntity<String> responseEntity = restClient.delete()
+				.uri(Endpoint.TANKS.getPath()+"/" + aquariumTo.getId())
+				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
+				.retrieve()  // Executes the request and retrieves the response
+				.onStatus(status -> status.value() != 200, (request, response) -> {
+					// then we should get a 200 as result.
+					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+				})
+				.toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
-        userTo.setId(1L);
+	}
 
-        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
 
-        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
+	@Test
+	public void testUpdateUsersTank() throws Exception {
+		// given some Testdata via mocking
 
-        AquariumTo aquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity existingAquariumEntity = aquariumMapper.mapAquariumTo2Entity(aquariumTo);
-        existingAquariumEntity.setUser(userEntity);
+		UserTo userTo = new UserTo(MOCKED_USER, "MockerUser", "pw123");
+		userTo.setId(1L);
 
-        given(this.aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumTo.getId(), userTo.getId())).willReturn(existingAquariumEntity);
+		UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
+		given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
-        // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+		// This represents to TO/Entity bevore the update
+		AquariumTo updatableAquariumTo = testDataFactory.getTestAquariumFor(userTo);
+		AquariumEntity updatableAquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatableAquariumTo);
+		updatableAquariumEntity.setUser(userEntity);
 
-        // when this authorized user requests to create a aquarium
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+		// Here we prepare the updated Entity which will be returned after the update
+		AquariumEntity updatedAquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatableAquariumTo);
+		updatedAquariumEntity.setUser(userEntity);
+		String updateTestString = "Updated";
+		updatedAquariumEntity.setDescription(updateTestString); // we test only on description in this test
 
-        String requestJson = objectMapper.writeValueAsString(aquariumTo);
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+		// MockInit
+		// return the Entity as it was before the update
+		given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatableAquariumTo.getId(), userTo.getId())).willReturn(updatableAquariumEntity);
+		given(aquariumRepository.getOne(updatableAquariumTo.getId())).willReturn(updatableAquariumEntity);
+		// when saving return the prepared updated entity
+		given(aquariumRepository.saveAndFlush(any())).willReturn(updatedAquariumEntity);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/" + aquariumTo.getId(), HttpMethod.DELETE, entity, String.class);
+		// and we need a valid authentication token for our mocked user
+		String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
-        // then we should get a 201 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-    }
+		// when this authorized user requests to update an aquarium
+		HttpHeaders authedHttpHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
+		updatableAquariumTo.setDescription(updateTestString);
+		String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);
 
-    @Test
-    public void testUpdateUsersTank() throws Exception {
-        // given some Testdata via mocking
+		ResponseEntity<String> responseEntity = restClient.put()
+				.uri(Endpoint.TANKS.getPath())
+				.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
+				.body(requestJson)  // Set the request body
+				.retrieve()  // Executes the request and retrieves the response
+				.onStatus(status -> status.value() != 200, (request, response) -> {
+					// then we should get a 200 as result.
+					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+				})
+				.toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        UserTo userTo = new UserTo(MOCKED_USER,"MockerUser","pw123");
-        userTo.setId(1L);
+		// and we should get our test aquarium
+		AquariumTo updatedAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+		assertEquals(updatedAquarium.getDescription(), updatableAquariumTo.getDescription());
+	}
 
-        UserEntity userEntity = userMapper.mapUserTo2Entity(userTo);
-        given(this.userRepository.getByEmail(MOCKED_USER)).willReturn(userEntity);
 
-        // This represents to TO/Entity bevore the update
-        AquariumTo updatableAquariumTo = testDataFactory.getTestAquariumFor(userTo);
-        AquariumEntity updatableAquariumEntity =  aquariumMapper.mapAquariumTo2Entity(updatableAquariumTo);
-        updatableAquariumEntity.setUser(userEntity);
+	@Test
+	/**
+	 * Test to check that our WebSecurityConfig is effective.
+	 */
+	public void testUnauthorizedListUsersTankRequest() throws Exception {
 
-        // Here we prepare the updated Entity which will be returned after the update
-        AquariumEntity updatedAquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatableAquariumTo);
-        updatedAquariumEntity.setUser(userEntity);
-        String updateTestString = "Updated";
-        updatedAquariumEntity.setDescription(updateTestString); // we test only on description in this test
+		// Given User presentation by a faked auth token
+		String authToken = "faked";
 
-        // MockInit
-        // return the Entity as it was before the update
-        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatableAquariumTo.getId(), userTo.getId())).willReturn(updatableAquariumEntity);
-        given(aquariumRepository.getOne(updatableAquariumTo.getId())).willReturn(updatableAquariumEntity);
-        // when saving return the prepared updated entity
-        given(aquariumRepository.saveAndFlush(any())).willReturn(updatedAquariumEntity);
+		// when this authorized user requests his aquarium list
+		HttpHeaders authedHttpHeader = new HttpHeaders();
+		// headers.setContentType(MediaType.APPLICATION_JSON);
+		authedHttpHeader.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
 
-        // and we need a valid authentication token for our mocked user
-        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
+		try {
+			ResponseEntity<String> responseEntity = restClient.get()
+					.uri(Endpoint.TANKS.getPath()+"/list")
+					.headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
+					.retrieve()  // Executes the request and retrieves the response
+					.toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        // when this authorized user requests to update an aquarium
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+			// In case no exception is thrown, fail the test
+			fail("Expected HttpClientErrorException$Unauthorized to be thrown");
 
-        updatableAquariumTo.setDescription(updateTestString);
-        String requestJson = objectMapper.writeValueAsString(updatableAquariumTo);
-        HttpEntity<String> entity = new HttpEntity<String>(requestJson, headers);
+		} catch (HttpClientErrorException e) {
+			// then we should get a 401 as result because of invalid token
+			assertThat("Faked access token should produce an unauthorized status.", e.getStatusCode().equals(HttpStatus.UNAUTHORIZED));
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank", HttpMethod.PUT, entity, String.class);
+		}
 
-        // then we should get a 200 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.OK));
-
-        // and our test aquarium
-        AquariumTo updatedAquarium = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        assertEquals(updatedAquarium.getDescription(), updatableAquariumTo.getDescription());
-    }
-
-
-    @Test
-    /**
-     * Test to check that our WebSecurityConfig is effective.
-     */
-    public void testUnauthorizedListUsersTankRequest() throws Exception {
-
-        // Given User presentation by a faked auth token
-        String authToken = "faked";
-
-        // when this authorized user requests his aquarium list
-        HttpHeaders headers = new HttpHeaders();
-        // headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(AUTH_TOKEN, TOKEN_PREFIX + authToken);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/tank/list", HttpMethod.GET, requestEntity, String.class);
-
-        // then we should get a 401 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
-
-    }
+	}
 
 }

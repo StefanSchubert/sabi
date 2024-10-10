@@ -24,28 +24,22 @@ import de.bluewhale.sabi.persistence.repositories.UnitRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.RestHelper;
-import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -62,24 +56,10 @@ import static org.mockito.BDDMockito.given;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class UnitControllerTest {
+public class UnitControllerTest extends CommonTestController {
 // ------------------------------ FIELDS ------------------------------
 
     final static String MOCKED_USER = "testsabi@bluewhale.de";
-
-            /*
-     NOTICE This Testclass initializes a Testcontainer to satisfy the
-        Spring Boot Context Initialization of JPAConfig. In fact we don't rely here on the
-        Database level, as for test layer isolation we completely mock the repositories here.
-        The Testcontainer is just needed to satisfy the Spring Boot Context Initialization.
-        In future this Testclass might be refactored to be able to run without spring context,
-        but for now we keep it as it is.
-    */
-
-    @Container
-    @ServiceConnection
-    // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
 
     @MockBean
     UnitRepository unitRepository;
@@ -101,11 +81,6 @@ public class UnitControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;  // json mapper
-    TestDataFactory testDataFactory = TestDataFactory.getInstance();
-    @Autowired
-    private TokenAuthenticationService encryptionService;
-    @Autowired
-    private TestRestTemplate restTemplate;
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -139,16 +114,20 @@ public class UnitControllerTest {
         String authToken = TokenAuthenticationService.createAuthorizationTokenFor(MOCKED_USER);
 
         // when this authorized user requests the unit list
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        HttpHeaders authedHttpHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // Notice the that the controller defines a list, the rest-template will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/units/list/en", HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restClient.get()
+                .uri(Endpoint.UNITS +"/list/en")
+                .headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
+                .retrieve()  // Executes the request and retrieves the response
+                .onStatus(status -> status.value() != 202, (request, response) -> {
+                    // then we should get a 202 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                })
+                .toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        // then we should get a 202 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
-
-        // and our test measurement
+        // and we should get our test measurement
         UnitTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), UnitTo[].class);
         assertThat(Arrays.asList(myObjects), hasItem(unitTo));
     }
@@ -176,16 +155,20 @@ public class UnitControllerTest {
 
         // When this authorized user, requests detail parameter for a specific unit
 
-        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        HttpHeaders authedHttpHeader = RestHelper.prepareAuthedHttpHeader(authToken);
 
         // Notice the that the controller defines a list, the rest-template will get it as array.
-        ResponseEntity<String> responseEntity = restTemplate.exchange(Endpoint.UNITS + "/parameter/" + parameterEntity.getBelongingUnitId() + "/en", HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restClient.get()
+                .uri(Endpoint.UNITS + "/parameter/" + parameterEntity.getBelongingUnitId() + "/en")
+                .headers(headers -> headers.addAll(authedHttpHeader))  // Set headers
+                .retrieve()  // Executes the request and retrieves the response
+                .onStatus(status -> status.value() != 202, (request, response) -> {
+                    // then we should get a 202 as result.
+                    throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
+                })
+                .toEntity(String.class);  // Converts the response to a ResponseEntity
 
-        // Then
-        // then we should get a 202 as result.
-        assertThat(responseEntity.getStatusCode(), equalTo(HttpStatus.ACCEPTED));
-        // and our pre-stored test parameter
+        // and we should get our pre-stored test parameter
         ParameterTo storedParameter = objectMapper.readValue(responseEntity.getBody(), ParameterTo.class);
         assertThat("Prestored data changed?", storedParameter.getId().equals(parameterEntity.getId()));
     }
