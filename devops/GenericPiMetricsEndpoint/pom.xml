@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2025 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -14,7 +14,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -45,11 +45,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
-        <lombok.version>1.18.30</lombok.version>
-        <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
+        <java.version>22</java.version>
+        <lombok.version>1.18.36</lombok.version>
+        <micrometer.prometheus.version>1.14.2</micrometer.prometheus.version>
         <pimetric.version>1.0</pimetric.version>
-        <versions.maven.plugin.version>2.16.1</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
     </properties>
 
     <dependencies>

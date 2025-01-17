@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2025 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -13,13 +13,13 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-server</artifactId>
-    <version>1.3.7</version>
+    <version>1.3.8</version>
     <packaging>jar</packaging>
     <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration
     </description>
@@ -41,34 +41,34 @@
 
     <properties>
         <archunit.version>1.2.1</archunit.version>
-        <assertj-core.version>3.26.3</assertj-core.version>
+        <assertj-core.version>3.27.1</assertj-core.version>
         <auth0.jwt.version>4.4.0</auth0.jwt.version>
         <dumbster.version>1.6</dumbster.version>
         <eclipselink.version>4.0.2</eclipselink.version>
-        <flyway.version>10.19.0</flyway.version>
+        <flyway.version>11.1.0</flyway.version>
         <jakarta.xml.bind.version>4.0.2</jakarta.xml.bind.version>
         <java.version>22</java.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <jetbrains.annotation.version>25.0.0</jetbrains.annotation.version>
+        <jetbrains.annotation.version>26.0.1</jetbrains.annotation.version>
         <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
-        <junit-platform-suite-engine.version>1.11.1</junit-platform-suite-engine.version>
-        <junit-platform-suite-api.version>1.11.1</junit-platform-suite-api.version>
-        <junit.testcontainer.version>1.20.2</junit.testcontainer.version>
+        <junit-platform-suite-engine.version>1.11.4</junit-platform-suite-engine.version>
+        <junit-platform-suite-api.version>1.11.4</junit-platform-suite-api.version>
+        <junit.testcontainer.version>1.20.4</junit.testcontainer.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <lombok.version>1.18.34</lombok.version>
-        <mapstruct.version>1.6.2</mapstruct.version>
-        <mariadb.java.client.version>3.4.1</mariadb.java.client.version>
-        <mariadb.testcontainer.version>1.20.2</mariadb.testcontainer.version>
-        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
-        <micrometer.prometheus.version>1.13.5</micrometer.prometheus.version>
-        <owasp.plugin.version>10.0.3</owasp.plugin.version>
-        <passay.version>1.6.5</passay.version>
+        <lombok.version>1.18.36</lombok.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <mariadb.java.client.version>3.5.1</mariadb.java.client.version>
+        <mariadb.testcontainer.version>1.20.4</mariadb.testcontainer.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <micrometer.prometheus.version>1.14.2</micrometer.prometheus.version>
+        <owasp.plugin.version>11.1.1</owasp.plugin.version>
+        <passay.version>1.6.6</passay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sabi.boundary.version>1.2.9</sabi.boundary.version>
-        <spring.instrument.version>6.1.13</spring.instrument.version>
-        <springdoc.openapiv2.version>2.6.0</springdoc.openapiv2.version>
-        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
+        <spring.instrument.version>6.2.1</spring.instrument.version>
+        <springdoc.openapiv2.version>2.7.0</springdoc.openapiv2.version>
+        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
         <mapstruts-lombok-binding.version>0.2.0</mapstruts-lombok-binding.version>
     </properties>
 
@@ -122,6 +122,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- Required for OpenID Connect based authentication -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
         <!-- THE NEXT THREE DEPS ARE ONLY FOR JWT HANDLING, THIS SHOULD BE SIMPLYFIED, AS SOON AS

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2025 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -36,19 +36,19 @@
 
     <properties>
         <java.version>22</java.version>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.36</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <springdoc.openapiv2.version>2.6.0</springdoc.openapiv2.version>
-        <owasp.plugin.version>10.0.3</owasp.plugin.version>
+        <springdoc.openapiv2.version>2.7.0</springdoc.openapiv2.version>
+        <owasp.plugin.version>11.1.1</owasp.plugin.version>
         <maven.war.plugin.version>4.0.0-M2</maven.war.plugin.version>
         <maven.clean.plugin.version>3.3.2</maven.clean.plugin.version>
-        <maven.site.plugin.version>4.0.0-M13</maven.site.plugin.version>
+        <maven.site.plugin.version>4.0.0-M16</maven.site.plugin.version>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <buildhelper.maven.plugin.version>3.6.0</buildhelper.maven.plugin.version>
-        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>

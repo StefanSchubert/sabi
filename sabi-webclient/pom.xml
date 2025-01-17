@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2025 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -47,7 +47,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -57,13 +57,13 @@
         <java.version>22</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <jakarta.cdi.version>4.1.0</jakarta.cdi.version>
-        <micrometer.prometheus.version>1.13.5</micrometer.prometheus.version>
-        <joinfaces.version>5.2.2</joinfaces.version>
+        <micrometer.prometheus.version>1.14.2</micrometer.prometheus.version>
+        <joinfaces.version>5.4.1</joinfaces.version>
         <sabi.boundary.version>1.2.9</sabi.boundary.version>
-        <passay.version>1.6.5</passay.version>
-        <owasp.plugin.version>10.0.3</owasp.plugin.version>
-        <lombok.version>1.18.34</lombok.version>
-        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
+        <passay.version>1.6.6</passay.version>
+        <owasp.plugin.version>11.1.1</owasp.plugin.version>
+        <lombok.version>1.18.36</lombok.version>
+        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
