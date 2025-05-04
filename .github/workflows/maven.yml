@@ -12,7 +12,7 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: ubunto-latest
 
     env:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}    
@@ -43,7 +43,7 @@ jobs:
       run: cd devops/GenericPiMetricsEndpoint; mvn -B compile --file pom.xml
   test:
 
-    runs-on: macos-latest
+    runs-on: ubunto-latest
 
     steps:
       - uses: actions/checkout@v4
