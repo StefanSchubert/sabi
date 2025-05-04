@@ -11,14 +11,14 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>captcha-light</artifactId>
-    <version>1.2.6</version>
+    <version>1.2.7</version>
     <packaging>jar</packaging>
     <description>A REST-full microservice service for CAPTCHA running as spring boot application</description>
 
@@ -41,16 +41,22 @@
 
 
     <properties>
+        <spring-boot.version>3.4.5</spring-boot.version>
         <java.version>22</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>2.6.0</springdoc.openapiv2.version>
+        <!-- springdoc: higher up to 2.8.6 breaks with springboot 3.4.5 -->
+        <springdoc.openapiv2.version>2.8.6</springdoc.openapiv2.version>
         <micrometer.prometheus.version>1.13.5</micrometer.prometheus.version>
-        <lombok.version>1.18.34</lombok.version>
-        <owasp.plugin.version>10.0.4</owasp.plugin.version>
-        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
-        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
+        <lombok.version>1.18.38</lombok.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <!--
+          see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
+        <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
+        <owasp.plugin.version>12.1.1</owasp.plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
