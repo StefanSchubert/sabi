@@ -24,7 +24,7 @@ We then added BI concepts on top for being able to explore the data, mining for 
 insights driven by human curiosity. 
 
 The next step adds AI concepts to sabi. Imagine the following scenario: 
-You have a cyano bacterium plague in your tank and you are planning to add a new fish
+You have a cyano bacterium plague in your tank, and you are planning to add a new fish
 or fiddling around with increasing the carbonate level. Sabis KI might advise you that your
  plan will probably prolong the plague.
   
@@ -32,7 +32,7 @@ For being able to do so, sabis AI will compare your tank parameters and recent h
 with the data of other users tanks who have done something similar to anticipate the outcome.
  
 The AI challenge here is, that if the human provided data on a given problem context is bad for
- some reasons (e.g. missing of relevant parameters, inaccurate timelines and so on), then
+ some reason (e.g. missing of relevant parameters, inaccurate timelines and so on), then
  the AI starts to provide advises that will lead to false treatments. So if users starts to reports
  that advices were not successful the AI must revise the original training set and do some
   recalibration by its own.
@@ -44,7 +44,7 @@ I declare the Sabi Project climate-friendly because of:
 * The decision to use raspberry pis as an operation platform, which have a very low energy profile  (Have a look at my pis here: https://github.com/StefanSchubert/sabi/wiki/07.-Deployment-View )
   The alternative would be running in a public cloud, which would allow 99% availability but surly a much bigger CO2 footprint (as well as bigger costs).
 * The private cloud at my home-site is powered by a green electricity tariff of my power supply provider.
-  In future, I will generate my own electricity through solar-cells on the roof.
+  In the future, I will generate my own electricity through solar-cells on the roof.
 
 ## Project Planning
 
@@ -52,7 +52,7 @@ I declare the Sabi Project climate-friendly because of:
 
 Being able to collect the basic values and to display them in a rather static reporting manner. (**Reached**)
 
-**Next:** Transistion to Stage II. Precondition: at least 50 registered users.  
+**Next:** Transition to Stage II. Precondition: at least 50 registered users.  
 
 ### Stage II
 
@@ -75,7 +75,7 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 | Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 31th Dez 2023 | Introduced Support for fresh-water tanks.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 05th Nov 2023 | Service Release (Patchmanagement - e.g. Java 21)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 05th Nov 2023 | Service Release (Patch management - e.g. Java 21)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 09th Apr 2023 | Hotfix Release (i18n issues)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 18th Dez 2022 | Feature Release (Reminder Service) / Technical Migration to Spring-Boot 3  / Marks Sabi-Version 1.2.0                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | 7th Okt 2022  | Released Plague-Center. All required base workflows have been implemented. This marks version 1.0.0 of sabi.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |

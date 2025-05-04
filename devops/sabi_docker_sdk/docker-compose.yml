@@ -26,7 +26,7 @@ services:
     depends_on:
       - db
   flyway:
-    image: flyway/flyway:9.22
+    image: flyway/flyway:11
     platform: linux/amd64
     command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 baseline migrate
     volumes:
@@ -36,7 +36,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:11.3.2
+    image: mariadb:11.7.2
     platform: linux/amd64
     environment:
       - MYSQL_ROOT_PASSWORD=SuperDooper
@@ -49,7 +49,7 @@ services:
     ports:
       - "3306:3306"
   fakeSMTP:
-    image: gessnerfl/fake-smtp-server:2.1.2
+    image: gessnerfl/fake-smtp-server:2.4.2
     platform: linux/amd64
     environment:
       - server.port=5080
@@ -63,7 +63,7 @@ services:
       - "5080:5080"
 # Monitoring Sample with Prometheus Grafana
   grafana:
-    image: grafana/grafana:10.1.2
+    image: grafana/grafana:11.6.1
     platform: linux/amd64
     volumes:
      - ./grafanaData:/var/lib/grafana
@@ -74,7 +74,7 @@ services:
     depends_on:
       - prometheus
   prometheus:
-    image: prom/prometheus:v2.47.0
+    image: prom/prometheus:v3.3.1
     platform: linux/amd64
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
