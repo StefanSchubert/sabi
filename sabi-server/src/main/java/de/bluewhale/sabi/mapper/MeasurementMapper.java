@@ -16,7 +16,7 @@ import org.mapstruct.Mappings;
 import java.util.List;
 
 /**
- * Mappings for the Measurement Modell
+ * Mappings for the Measurement Model
  *
  * @author Stefan Schubert
  */

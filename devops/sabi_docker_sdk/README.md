@@ -6,7 +6,7 @@
 
 #### Enable Cross platform building
 
-You require to enable multiarch build support by registering a special builder
+You require to enable multi arch build support by registering a special builder
 
     docker buildx create --name mybuilder
     docker buildx use mybuilder

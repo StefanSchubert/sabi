@@ -20,11 +20,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>22</java.version>
-        <flyway.version>10.14.0</flyway.version>
-        <mariadb.client.version>3.4.0</mariadb.client.version>
+        <flyway.version>11.8.0</flyway.version>
+        <mariadb.client.version>3.5.3</mariadb.client.version>
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
-        <versions.maven.plugin.version>2.17.1</versions.maven.plugin.version>
-        <owasp.plugin.version>10.0.3</owasp.plugin.version>
+        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
+        <owasp.plugin.version>12.1.1</owasp.plugin.version>
         <!-- Uncomment those or place them into your maven settings.xml in an own profile as I won't
         checkin those secrets for stage and production
         <mariadb.schema>sabi</mariadb.schema>
@@ -147,6 +147,12 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${owasp.plugin.version}</version>
+                <configuration>
+                    <!-- You need to register yourself at https://nvd.nist.gov/
+to get an API-KEY, which you can store in the
+properties section of your local settings.xml -->
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>verify</phase>

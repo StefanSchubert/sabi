@@ -1,5 +1,11 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.8
+
+### Technical Maintenance
+
+* Common Patch-Management (JSpringBoot 3.4.5 / Java 22 / Primefaces 14 / Dependencies)
+
 ## Release 1.2.7
 
 ### Feature

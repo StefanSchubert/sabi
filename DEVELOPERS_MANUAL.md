@@ -1,21 +1,22 @@
 # Developers Manual
 
-The following helps new developers to setup the required local build environment.
+The following helps new developers to set up the required local build environment.
 
 ## Technology Stack
 
 ### Common
 
-* Java 21
+* Java 22
 * openAPI3 (Swagger) via springdoc-v2
 * ARM-Platform (raspberryPis)
 * IPv6 DynDNS (at least for the start)
 
 ### Client site
-As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. However to start with this project involves a
+As you desire, the server API will be open, so that everyone might develop their own client or interface their existing product against sabi. 
+However, to start with this project involves a
 
 * JSF2.3 based WebClient
-* Primefaces 13.x
+* Primefaces 14.x
 * Spring-Boot-3
 
 Why JSF and not some current modern framework like angular or VUE? In fact, it took me quite a while to came to a decision here.
@@ -23,7 +24,7 @@ The two main reasons for me are:
 
 (Please read also: https://github.com/StefanSchubert/sabi/wiki/09.-Design-Decisions#92-frontend-technology - as I changed my mind a bit on this in between)
 
-* I don't believe that the traffic will be that big, that the server (though a rasperryPi at the beginnig) can't handle it, so that I need to shift the resources (session, logic) rather to the client side.
+* I don't believe that the traffic will be that big, that the server (though a raspberryPi at the beginning) can't handle it, so that I need to shift the resources (session, logic) rather to the client side.
 * Though since 2014-2017 it became rather quiet around the mature JSF technology (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I decided to improve my skills in JSF again.
 
 ### Server side
@@ -53,9 +54,9 @@ With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki
 
 ### Preconditions
 
-* You have a JDK21 and current Maven installed
+* You have a JDK22 and current Maven installed
 * You have docker installed on your machine, and you know docker usage fairly well.
-* As we are using the org.owasp dependency check you will required to register yourself at https://nvd.nist.gov/
+* As we are using the org.owasp dependency check you will require to register yourself at https://nvd.nist.gov/
   to get an API-KEY, which you can store in the properties section of your local settings.xml like this:
 
         <properties>
@@ -131,7 +132,7 @@ are immutable to you, you require to add a new one for any changes.
 
 ##### Add the following profile to your maven settings.xml
 
-To ease the work with flyway you shoud add the following snippet to your maven profile or settings.xml:
+To ease the work with flyway you should add the following snippet to your maven profile or settings.xml:
 
 ```
    <profiles>
@@ -178,7 +179,7 @@ As we are using eclipselink you must add a specific javaagent, when running your
 Because of eclipselink we are using weaving at runtime which requires the following vm option:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.1.2/spring-instrument-6.1.2.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.2.6/spring-instrument-6.2.6.jar
 ```
 
 You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
