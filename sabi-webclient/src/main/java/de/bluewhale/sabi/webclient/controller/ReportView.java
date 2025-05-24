@@ -22,15 +22,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.line.LineChartDataSet;
-import org.primefaces.model.charts.line.LineChartModel;
-import org.primefaces.model.charts.line.LineChartOptions;
-import org.primefaces.model.charts.optionconfig.title.Title;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.RequestScope;
+import software.xdev.chartjs.model.charts.LineChart;
+import software.xdev.chartjs.model.color.Color;
+import software.xdev.chartjs.model.data.LineData;
+import software.xdev.chartjs.model.dataset.LineDataset;
+import software.xdev.chartjs.model.options.Legend;
+import software.xdev.chartjs.model.options.LineOptions;
+import software.xdev.chartjs.model.options.Plugins;
+import software.xdev.chartjs.model.options.Title;
+import software.xdev.chartjs.model.options.animation.Animation;
+import software.xdev.chartjs.model.options.animation.AnimationType;
+import software.xdev.chartjs.model.options.animation.Animations;
+import software.xdev.chartjs.model.options.elements.Fill;
+import software.xdev.chartjs.model.options.elements.Line;
+import software.xdev.chartjs.model.options.elements.LineElements;
+
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -68,9 +79,10 @@ public class ReportView extends AbstractControllerTools implements Serializable 
     private List<UnitTo> knownUnits;
     private Long selectedTankId;
     private Integer selectedUnitId;
-    private LineChartModel lineModel_recent_measuredPoints;
-    private LineChartModel lineModel90d;
-    private LineChartModel lineModel365d;
+    private String lineModelRecentDays;
+    private String lineModel90d;
+    private String lineModel365d;
+
     private List<MeasurementTo> measurementTos;
 
 
@@ -100,39 +112,21 @@ public class ReportView extends AbstractControllerTools implements Serializable 
             Comparator<MeasurementTo> measuredOnComperator = Comparator.comparing(MeasurementTo::getMeasuredOn);
             Collections.sort(measurementTos, measuredOnComperator);
 
-            // reinitialize lineModel, old Data free for GC
-            lineModel_recent_measuredPoints = new LineChartModel();
-            lineModel90d = new LineChartModel();
-            lineModel365d = new LineChartModel();
-
-            //Options
-            LineChartOptions options = new LineChartOptions();
-            Title title = new Title();
-            title.setDisplay(true);
-            String chartTitle = String.format(MessageUtil.getFromMessageProperties("reportview.chart.h", userSession.getLocale()),
-                    getTankNameForId(selectedTankId, tanks));
-            title.setText(chartTitle);
-            options.setTitle(title);
-
-            lineModel_recent_measuredPoints.setOptions(options);
-            lineModel90d.setOptions(options);
-            lineModel365d.setOptions(options);
-
-            LineChartDataSet dataSet_recent_measuredPoints = new LineChartDataSet();
-            List<Object> values_recent_measuredPoints = new ArrayList<>();
+            // Prepare the chart models
+            List<BigDecimal> values_recent_measuredPoints = new ArrayList<BigDecimal>();
             List<String> labels_recent_measuredPoints = new ArrayList<>();
 
-            LineChartDataSet dataSet_last90days = new LineChartDataSet();
-            List<Object> values_last90days = new ArrayList<>();
+            List<BigDecimal> values_last90days = new ArrayList<BigDecimal>();
             List<String> labels_last90days = new ArrayList<>();
 
-            LineChartDataSet dataSet_last365days = new LineChartDataSet();
-            List<Object> values_last365days = new ArrayList<>();
+            List<BigDecimal> values_last365days = new ArrayList<BigDecimal>();
             List<String> labels_last365days = new ArrayList<>();
 
-            // Slice available data to to display in charts. As the source set has been presorted we don't need to sort again.
+            // Slice available data to display in charts. As the source set has been presorted we don't need to sort again.
             List<MeasurementTo> measurementTos90d = measurementTos.stream().filter(item -> item.getMeasuredOn().isAfter(LocalDateTime.now().minusDays(90l))).collect(Collectors.toList());
             List<MeasurementTo> measurementTos365d = measurementTos.stream().filter(item -> item.getMeasuredOn().isAfter(LocalDateTime.now().minusDays(365l))).collect(Collectors.toList());
+
+            String label = getUnitSignForId(selectedUnitId, knownUnits);
 
             // =======================================================================================
             // Graph Modell for last recent MAX_GRAPH_RECORDS measured points, with interpolated lines
@@ -144,13 +138,13 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                     break;
                 }
                 if (size <= MAX_GRAPH_RECORDS) {
-                    values_recent_measuredPoints.add(measurement.getMeasuredValue());
+                    values_recent_measuredPoints.add(BigDecimal.valueOf(measurement.getMeasuredValue()));
                     labels_recent_measuredPoints.add(measurement.getMeasuredOn().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
                 }
                 size--;
             }
 
-            populteDataSet(dataSet_recent_measuredPoints,values_recent_measuredPoints,labels_recent_measuredPoints,lineModel_recent_measuredPoints,true);
+            lineModelRecentDays = generateJsonChartObject(values_recent_measuredPoints,labels_recent_measuredPoints,label,true);
 
             // =============================================================================
             // Graph Modell for last 90 days, lines not connected if we have null value gaps
@@ -176,13 +170,13 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 // Add a value if one exists for the day (we take only the first value for given date)
                 Optional<MeasurementTo> optMeasurementTo = measurementTos90d.stream().filter(item -> item.getMeasuredOn().toLocalDate().isEqual(date)).findFirst();
                 if (optMeasurementTo.isPresent()) {
-                    values_last90days.add(optMeasurementTo.get().getMeasuredValue());
+                    values_last90days.add(BigDecimal.valueOf(optMeasurementTo.get().getMeasuredValue()));
                 } else {
                     values_last90days.add(null);
                 }
             }
 
-            populteDataSet(dataSet_last90days,values_last90days,labels_last90days,lineModel90d, false);
+            lineModel90d = generateJsonChartObject(values_last90days,labels_last90days,label,true);
 
             // =============================================================================
             // Graph Modell for last 365 days, lines not connected if we have null value gaps
@@ -208,91 +202,140 @@ public class ReportView extends AbstractControllerTools implements Serializable 
                 // Add a value if one exists for the day (we take only the first value for given date)
                 Optional<MeasurementTo> optMeasurementTo = measurementTos365d.stream().filter(item -> item.getMeasuredOn().toLocalDate().isEqual(date)).findFirst();
                 if (optMeasurementTo.isPresent()) {
-                    values_last365days.add(optMeasurementTo.get().getMeasuredValue());
+                    values_last365days.add(BigDecimal.valueOf(optMeasurementTo.get().getMeasuredValue()));
                 } else {
                     values_last365days.add(null);
                 }
             }
 
-            populteDataSet(dataSet_last365days, values_last365days, labels_last365days, lineModel365d, false);
+            lineModel365d = generateJsonChartObject(values_last365days, labels_last365days, label, false);
 
         } catch (BusinessException e) {
             MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
-            e.printStackTrace();
+            log.error("Could not fetch measurements for tank {} and unit {}: {}", selectedTankId, selectedUnitId, e.getMessage());
         }
 
         return REPORT_VIEW_PAGE.getNavigationableAddress();
     }
 
-    private void populteDataSet(LineChartDataSet lineChartDataSet, List<Object> valuesList, List<String> labelsList, LineChartModel lineChartModel, boolean spanGAPs) {
-        lineChartDataSet.setData(valuesList);
-        lineChartDataSet.setFill(false);
-        lineChartDataSet.setLabel(getUnitSignForId(selectedUnitId, knownUnits));
-        lineChartDataSet.setBorderColor("rgb(75, 192, 192)");
-        lineChartDataSet.setTension(0.1);
+    private String generateJsonChartObject(List<BigDecimal> valuesList, List<String> labelsList, String graphLabel, boolean spanGAPs) {
+        LineChart chart = new LineChart();
+        LineData lineData = new LineData();
+        LineDataset lineDataset = new LineDataset();
 
-        // false = do not connect points if we got a null value. So if not daily measured this will result in a pointed graph
-        lineChartDataSet.setSpanGaps(spanGAPs);
+        // Setting Styling and Options
+        LineOptions options = buildLineOptions();
 
-        ChartData chartData = new ChartData();
-        chartData.setLabels(labelsList);
-        chartData.addChartDataSet(lineChartDataSet);
+        lineDataset.setData(valuesList);
+        lineDataset.setFill(new Fill<Boolean>(false));
+        lineDataset.setLabel(graphLabel);
+        lineDataset.setBorderColor(Color.DARK_TURQUOISE);
+        lineDataset.setSpanGaps(spanGAPs);
+        lineDataset.setLineTension(0.1f);
 
-        // Add Threshold Lines if threshold data is available
-        applyThresholdLineToLineChartModell(chartData, lineChartModel);
+        lineData.addDataset(lineDataset);
+        lineData.setLabels(labelsList);
+
+        // Add Threshold Lines if available
+        addThresholdLinesToLineDataModell(lineData, valuesList.size());
+
+        // Chart konfigurieren
+        chart.setData(lineData);
+        chart.setOptions(options);
+
+        return chart.toJson();
     }
 
-    private void applyThresholdLineToLineChartModell(@NotNull ChartData chartData, @NotNull LineChartModel lineChartModel) {
+    private LineOptions buildLineOptions() {
+        LineOptions options = new LineOptions();
 
+        // Legende
+        Legend legend = new Legend();
+        legend.setDisplay(true);
+        legend.setPosition(Legend.Position.TOP);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        String chartTitle = String.format(MessageUtil.getFromMessageProperties("reportview.chart.h", userSession.getLocale()),
+                getTankNameForId(selectedTankId, tanks));
+        title.setText(chartTitle);
+
+        options.setPlugins(new Plugins()
+                .setTitle(title)
+                .setLegend(legend));
+
+
+        // Linien-Konfiguration
+        LineElements lineElements = new LineElements();// Linien-Konfiguration
+        Line line = new Line();
+        line.setTension(0.1f);
+        line.setBorderWidth(2);
+        lineElements.setLine(line);
+        options.setElements(lineElements);
+
+
+        // Responsive Design
+        options.setResponsive(true);
+        options.setMaintainAspectRatio(true);
+
+        // Animations
+        options.setAnimations(new Animations(AnimationType.X, new Animation().setDuration(1000)));
+
+        return options;
+    }
+
+    private void addThresholdLinesToLineDataModell(@NotNull LineData lineData, @NotNull int dataPointsToThresholded) {
         ParameterTo parameterTo = null;
         try {
             parameterTo = measurementService.getParameterFor(selectedUnitId, userSession.getLanguage(),userSession.getSabiBackendToken());
         } catch (Exception e) {
             log.error("Could not Reach Backend to access detail parameter infos for unit {}", selectedUnitId);
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            return;
         }
 
         if (parameterTo != null) {
-
             if (log.isDebugEnabled()) {
                 log.debug("Found Threshold infos for {}. Add them to the chart for {}",
                         parameterTo, getUnitSignForId(selectedUnitId, knownUnits));
             }
 
-            LineChartDataSet minThresholdDataSet = new LineChartDataSet();
+            // Minimum Threshold Line
+            LineDataset minThresholdDataSet = new LineDataset();
             minThresholdDataSet.setLabel("min.");
-            minThresholdDataSet.setBorderColor("rgb(0, 192, 0)");
-            minThresholdDataSet.setTension(0.2);
-            minThresholdDataSet.setShowLine(true);
+            minThresholdDataSet.setBorderColor(Color.GREEN);
+            minThresholdDataSet.setLineTension(0f);  // Gerade Linie für Threshold
+            minThresholdDataSet.setBorderDash(Arrays.asList(5, 5));  // Gestrichelte Linie
+            minThresholdDataSet.setPointRadius(Collections.singletonList(0));  // Keine Punkte anzeigen
+            minThresholdDataSet.setFill(new Fill<Boolean>(false));
+            minThresholdDataSet.setBorderWidth(1);
 
-            LineChartDataSet maxThresholdDataSet = new LineChartDataSet();
+            // Maximum Threshold Line
+            LineDataset maxThresholdDataSet = new LineDataset();
             maxThresholdDataSet.setLabel("max.");
-            maxThresholdDataSet.setBorderColor("rgb(192, 0, 0)");
-            maxThresholdDataSet.setTension(0.2);
-            maxThresholdDataSet.setShowLine(true);
+            maxThresholdDataSet.setBorderColor(Color.RED);
+            maxThresholdDataSet.setLineTension(0f);  // Gerade Linie für Threshold
+            maxThresholdDataSet.setBorderDash(Arrays.asList(5, 5));  // Gestrichelte Linie
+            maxThresholdDataSet.setPointRadius(Collections.singletonList(0));  // Keine Punkte anzeigen
+            maxThresholdDataSet.setFill(new Fill<Boolean>(false));
+            maxThresholdDataSet.setBorderWidth(1);
 
-            List<Object> min_values = new ArrayList<>();
-            List<Object> max_values = new ArrayList<>();
+            // Threshold-Werte für jeden Datenpunkt generieren
+            List<BigDecimal> min_values = new ArrayList<BigDecimal>();
+            List<BigDecimal> max_values = new ArrayList<BigDecimal>();
 
-            LineChartDataSet chartDataSet = (LineChartDataSet) chartData.getDataSet().get(0);
-            int size = chartDataSet.getData().size();
-
-            if (log.isDebugEnabled()) {
-                log.debug("Generate {} dataPoints to draw threshold values", size);
-            }
-
-            for (int i = 0; i < size; i++) {
-                min_values.add(parameterTo.getMinThreshold());
-                max_values.add(parameterTo.getMaxThreshold());
+            for (int i = 0; i < dataPointsToThresholded; i++) {
+                min_values.add(BigDecimal.valueOf(parameterTo.getMinThreshold()));
+                max_values.add(BigDecimal.valueOf(parameterTo.getMaxThreshold()));
             }
 
             minThresholdDataSet.setData(min_values);
             maxThresholdDataSet.setData(max_values);
-            chartData.addChartDataSet(minThresholdDataSet);
-            chartData.addChartDataSet(maxThresholdDataSet);
-        }
 
-        lineChartModel.setData(chartData);
+            // Threshold Lines zum Chart hinzufügen
+            lineData.addDataset(minThresholdDataSet);
+            lineData.addDataset(maxThresholdDataSet);
+        }
     }
 
     @PostConstruct

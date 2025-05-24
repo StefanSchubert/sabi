@@ -31,8 +31,8 @@ INSERT INTO aquarium (id, size, size_unit, description, active, user_id, created
 VALUES (2, 200, 'LITER', 'Freshwater', 1, 1, CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO measurement (id, measured_on, measured_value, unit_id, aquarium_id, created_on, lastmod_on)
-VALUES (100, '2018-01-17 19:05:29', 27, 2, 1, CURRENT_DATE, CURRENT_DATE);
+VALUES (100, '2025-01-17 19:05:29', 27, 2, 1, CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO measurement (id, measured_on, measured_value, unit_id, aquarium_id, created_on, lastmod_on)
-VALUES (101, '2018-01-17 19:06:51', 1.512, 1, 1, CURRENT_DATE, CURRENT_DATE);
+VALUES (101, '2025-01-17 19:06:51', 1.512, 1, 1, CURRENT_DATE, CURRENT_DATE);
 
