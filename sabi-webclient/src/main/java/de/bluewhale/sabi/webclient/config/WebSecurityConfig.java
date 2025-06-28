@@ -53,6 +53,7 @@ public class WebSecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/index.xhtml")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern( "/register.xhtml")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern( "/gdpr.xhtml")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern( "/terms_of_usage.xhtml")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern( "/impressum.xhtml")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern( "/pwreset.xhtml")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern( "/preregistration.xhtml")).permitAll()
