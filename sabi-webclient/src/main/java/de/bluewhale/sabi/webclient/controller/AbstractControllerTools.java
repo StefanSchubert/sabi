@@ -28,7 +28,7 @@ public abstract class AbstractControllerTools {
      */
     @NotNull
     public String getUnitSignForId(Integer unitId, List<UnitTo> fromUnitList) {
-        // TODO STS (13.04.21): Improvment: instead of providing the list of known units those should be fetched here
+        // TODO STS (13.04.21): Improvement: instead of providing the list of known units those should be fetched here
         // wee need to change the auth scope on the api for this
         String result = "N/A";
         if (unitId != null) {

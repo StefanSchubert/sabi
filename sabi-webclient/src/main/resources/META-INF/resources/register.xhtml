@@ -24,7 +24,8 @@
 
         <ui:define name="content">
 
-            <p:panel id="welcome" header="#{msg['register.welcome.h']}" style="margin-bottom:20px">
+            <p:panel id="welcome" header="#{msg['register.welcome.h']}"
+                     toggleable="true" collapsed="false" style="margin-bottom:20px">
                 #{msg['register.welcome.t']}
                 <p>
                     #{msg['register.sabi_on_github.l']}
@@ -36,9 +37,15 @@
 
             <h:form id="register-form">
 
-                <p:panel id="gdpr" header="#{msg['register.gdpr.h']}" style="margin-bottom:20px">
+                <p:panel id="gdpr" header="#{msg['register.gdpr.h']}" style="margin-bottom:20px"
+                         collapsed="true" toggleable="true">
                     #{msg['register.gdpr.t']}
                 </p:panel>
+
+            <p:panel header="#{msg['register.terms_of_usage.h']}" style="margin-bottom:20px"
+                     toggleable="true" collapsed="true">
+                <p:outputLabel escape="false"    value="#{msg['register.terms_of_usage.t']}"/>
+            </p:panel>
 
                 <p:panel id="captcha" header="#{msg['register.captcha.h']}" style="margin-bottom:20px">
                     <p>#{msg['register.captcha.t']}</p>
@@ -89,6 +96,8 @@
                 </p:panelGrid>
 
                 <p:outputLabel style="font-style: italic" value="#{msg['register.password.policy.t']}"/>
+                <br/><br/>
+                <p:outputLabel value="#{msg['register.terms_of_usage.optin.t']}"/>
 
                 <p:panelGrid columns="2" cellpadding="20">
                     <p:commandButton action="#{registrationView.doRegister}"
