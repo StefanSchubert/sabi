@@ -11,7 +11,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -41,21 +41,21 @@
 
 
     <properties>
-        <spring-boot.version>3.5.4</spring-boot.version>
-        <java.version>22</java.version>
+        <spring-boot.version>3.5.6</spring-boot.version>
+        <java.version>25</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>2.8.10</springdoc.openapiv2.version>
         <micrometer.prometheus.version>1.15.0</micrometer.prometheus.version>
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <!--
           see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
         <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
-        <owasp.plugin.version>12.1.3</owasp.plugin.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
+        <owasp.plugin.version>12.1.6</owasp.plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <versions.maven.plugin.version>2.19.1</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -152,6 +152,13 @@
                 <configuration>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>

@@ -13,13 +13,13 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-server</artifactId>
-    <version>1.3.8</version>
+    <version>1.3.9</version>
     <packaging>jar</packaging>
     <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration
     </description>
@@ -45,31 +45,30 @@
         <auth0.jwt.version>4.5.0</auth0.jwt.version>
         <dumbster.version>1.6</dumbster.version>
         <eclipselink.version>4.0.2</eclipselink.version>
-        <flyway.version>11.11.2</flyway.version>
-        <jakarta.xml.bind.version>4.0.2</jakarta.xml.bind.version>
-        <java.version>22</java.version>
+        <flyway.version>11.13.3</flyway.version>
+        <jakarta.xml.bind.version>4.0.4</jakarta.xml.bind.version>
+        <java.version>25</java.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <jetbrains.annotation.version>26.0.2</jetbrains.annotation.version>
+        <jetbrains.annotation.version>26.0.2-1</jetbrains.annotation.version>
         <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
-        <junit-platform-suite-engine.version>1.13.1</junit-platform-suite-engine.version>
-        <junit-platform-suite-api.version>1.13.1</junit-platform-suite-api.version>
+        <junit-platform-suite-engine.version>6.0.0</junit-platform-suite-engine.version>
+        <junit-platform-suite-api.version>6.0.0</junit-platform-suite-api.version>
         <junit.testcontainer.version>1.21.3</junit.testcontainer.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <mariadb.java.client.version>3.5.5</mariadb.java.client.version>
-        <mariadb.testcontainer.version>1.21.1</mariadb.testcontainer.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <mariadb.java.client.version>3.5.6</mariadb.java.client.version>
+        <mariadb.testcontainer.version>1.21.3</mariadb.testcontainer.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <micrometer.prometheus.version>1.15.0</micrometer.prometheus.version>
         <owasp.plugin.version>12.1.3</owasp.plugin.version>
         <passay.version>1.6.6</passay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <sabi.boundary.version>1.2.10</sabi.boundary.version>
-        <spring.instrument.version>6.2.6</spring.instrument.version>
+        <sabi.boundary.version>1.2.11</sabi.boundary.version>
+        <spring.instrument.version>6.2.11</spring.instrument.version>
         <springdoc.openapiv2.version>2.8.10</springdoc.openapiv2.version>
-        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
-        <mapstruts-lombok-binding.version>0.2.0</mapstruts-lombok-binding.version>
+        <versions.maven.plugin.version>2.19.1</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -416,11 +415,6 @@
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${mapstruct.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>${mapstruts-lombok-binding.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

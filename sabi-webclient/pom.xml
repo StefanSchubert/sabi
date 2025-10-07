@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.2.8</version>
+    <version>1.2.9</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -47,23 +47,23 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>22</java.version>
+        <java.version>25</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <jakarta.cdi.version>4.1.0</jakarta.cdi.version>
         <micrometer.prometheus.version>1.15.0</micrometer.prometheus.version>
-        <joinfaces.version>5.5.4</joinfaces.version>
-        <sabi.boundary.version>1.2.10</sabi.boundary.version>
+        <joinfaces.version>5.5.6</joinfaces.version>
+        <sabi.boundary.version>1.2.11</sabi.boundary.version>
         <passay.version>1.6.6</passay.version>
         <owasp.plugin.version>12.1.3</owasp.plugin.version>
-        <lombok.version>1.18.38</lombok.version>
-        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
+        <lombok.version>1.18.42</lombok.version>
+        <versions.maven.plugin.version>2.19.1</versions.maven.plugin.version>
         <chart.js.javamodel.version>1.1.2</chart.js.javamodel.version>
     </properties>
 
