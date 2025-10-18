@@ -45,14 +45,12 @@
         <auth0.jwt.version>4.5.0</auth0.jwt.version>
         <dumbster.version>1.6</dumbster.version>
         <eclipselink.version>4.0.2</eclipselink.version>
-        <flyway.version>11.13.3</flyway.version>
+        <flyway.version>11.14.1</flyway.version>
         <jakarta.xml.bind.version>4.0.4</jakarta.xml.bind.version>
         <java.version>25</java.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <jetbrains.annotation.version>26.0.2-1</jetbrains.annotation.version>
-        <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
-        <junit-platform-suite-engine.version>6.0.0</junit-platform-suite-engine.version>
-        <junit-platform-suite-api.version>6.0.0</junit-platform-suite-api.version>
+        <junit.version>5.12.2</junit.version>
         <junit.testcontainer.version>1.21.3</junit.testcontainer.version>
         <log4j2.version>2.20.0</log4j2.version>
         <lombok.version>1.18.42</lombok.version>
@@ -128,7 +126,7 @@
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
-        <!-- THE NEXT THREE DEPS ARE ONLY FOR JWT HANDLING, THIS SHOULD BE SIMPLYFIED, AS SOON AS
+        <!-- THE NEXT THREE DEPS ARE ONLY FOR JWT HANDLING, THIS SHOULD BE SIMPLIYFIED, AS SOON AS
              SPRINGS OWN JWT IS COMPATIBLE WITH SPRIMG 6 -->
         <dependency>
             <!-- https://github.com/auth0/java-jwt -->
@@ -280,35 +278,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JUnit 5 Platform Suite -->
         <dependency>
             <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-engine</artifactId>
-            <version>${junit-platform-suite-engine.version}</version>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-api</artifactId>
-            <version>${junit-platform-suite-api.version}</version> <!-- oder eine neuere Version -->
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mariadb</artifactId>
-            <version>${mariadb.testcontainer.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-<!-- Already via Spring Boot Test included.
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit-jupiter-api.version}</version>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        -->
 
         <!-- AssertJ -->
         <dependency>
@@ -440,6 +423,7 @@
                     <argLine>
                         -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
                     </argLine>
+                    <useSystemClassLoader>true</useSystemClassLoader>
                 </configuration>
             </plugin>
             <plugin>

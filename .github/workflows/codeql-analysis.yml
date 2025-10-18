@@ -23,7 +23,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: macos-latest
+    runs-on: ubunto-latest
 
     env:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}    
@@ -39,10 +39,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Set up JDK 22
+    - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '22'
+        java-version: '25'
         distribution: 'corretto'
     # maven repo cache save and restore
     - uses: actions/cache@v4

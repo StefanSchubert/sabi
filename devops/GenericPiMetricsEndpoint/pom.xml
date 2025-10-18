@@ -14,7 +14,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -45,11 +45,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>22</java.version>
-        <lombok.version>1.18.38</lombok.version>
+        <java.version>25</java.version>
+        <lombok.version>1.18.42</lombok.version>
         <micrometer.prometheus.version>1.11.5</micrometer.prometheus.version>
         <pimetric.version>1.0</pimetric.version>
-        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.19.1</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
