@@ -1,0 +1,427 @@
+- hosts: myMonitoring
+  vars_files:
+    - ./group_vars/myMonitoring.yml
+  tasks:
+    # User Group Management for Backups
+    - name: Add pi user to prometheus group (for scp backups)
+      user:
+        name: "{{ ansible_user }}"
+        groups: prometheus
+        append: yes
+
+    - name: Add pi user to grafana group (for scp backups)
+      user:
+        name: "{{ ansible_user }}"
+        groups: grafana
+        append: yes
+
+    # NodeExporter Installation
+    - name: Create NodeExporter User
+      user:
+        name: nodeexporter
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "nodeexporter Service Account, no login possible."
+        expires: -1
+    - name: Create nodeexporter directory
+      file:
+        path: /var/nodeexporter
+        state: directory
+        owner: nodeexporter
+        group: nodeexporter
+    - name: Fetch nodeexporter version 1.10.2
+      # 64 Bit Version
+      command: wget https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-arm64.tar.gz
+      args:
+        chdir: /var/nodeexporter
+    - name: Unpack nodeexporter version
+      # 64 Bit Version
+      command: tar -xzf node_exporter-1.10.2.linux-arm64.tar.gz --strip-components=1
+      args:
+        chdir: /var/nodeexporter
+    - name: Cleanup old files
+      # 64 Bit Version
+      file: path=/var/nodeexporter/node_exporter-1.10.2.linux-arm64.tar.gz state=absent
+    - name: fix ownership of all files in /var/nodeexporter
+      command: chown -R nodeexporter:nodeexporter nodeexporter
+      args:
+        chdir: /var
+    - name: Copy systemd service file to server
+      copy:
+        src: nodeexporter.service
+        dest: /etc/systemd/system/nodeexporter.service
+        owner: root
+        group: root
+    - name: enforce daemon config reload
+      command: systemctl daemon-reload
+    - name: Enable service nodeexporter and ensure it is not masked
+      systemd:
+        name: nodeexporter
+        enabled: yes
+        masked: no
+    - name: Start nodeexporter service
+      systemd:
+        name: nodeexporter
+        state: restarted
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: Install prometheus via apt
+      apt:
+        name: prometheus
+        state: present
+    - name: Stop prometheus service for configuration
+      systemd:
+        name: prometheus
+        state: stopped
+    - name: Create prometheus config dir
+      file:
+        path: /var/prometheus_config
+        state: directory
+        owner: prometheus
+        group: prometheus
+    - name: Create prometheus data dir
+      file:
+        path: /var/prometheus_data
+        state: directory
+        owner: prometheus
+        group: prometheus
+    - name: Copy prometheus configuration
+      copy:
+        src: /Users/bluewhale/Documents/SABI_Config_Safe/prometheus/prometheus.yml
+        dest: /var/prometheus_config/prometheus.yml
+        owner: prometheus
+        group: prometheus
+        mode: '0644'
+        backup: yes
+    - name: Copy systemd service file to server
+      template:
+        src: templates/prometheus.service.j2
+        dest: /etc/systemd/system/prometheus.service
+        owner: root
+        group: root
+        mode: '0644'
+    - name: enforce daemon config reload
+      command: systemctl daemon-reload
+    - name: Enable service prometheus and ensure it is not masked
+      systemd:
+        name: prometheus
+        enabled: yes
+        masked: no
+    - name: Start prometheus service
+      systemd:
+        name: prometheus
+        state: started
+    # Grafana Installation via apt
+    - name: Install required dependencies for Grafana repository
+      apt:
+        name:
+          - gnupg
+          - wget
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Add Grafana GPG key
+      shell: |
+        wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/grafana-archive-keyring.gpg > /dev/null
+      args:
+        creates: /usr/share/keyrings/grafana-archive-keyring.gpg
+
+    - name: Add Grafana repository
+      copy:
+        dest: /etc/apt/sources.list.d/grafana.list
+        content: |
+          deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://apt.grafana.com stable main
+        owner: root
+        group: root
+        mode: '0644'
+      register: grafana_repo_added
+
+    - name: Update apt cache after adding Grafana repository
+      apt:
+        update_cache: yes
+      when: grafana_repo_added.changed
+
+    - name: Install Grafana via apt
+      apt:
+        name: grafana
+        state: present
+
+    - name: Stop Grafana service for configuration
+      systemd:
+        name: grafana-server
+        state: stopped
+
+    - name: Backup existing Grafana configuration
+      copy:
+        src: /etc/grafana/grafana.ini
+        dest: /etc/grafana/grafana.ini.backup
+        remote_src: yes
+        force: no
+
+    - name: Copy Grafana custom configuration (contains SMTP secrets - not in git)
+      copy:
+        src: /Users/bluewhale/Documents/SABI_Config_Safe/grafana/custom.ini
+        dest: /etc/grafana/grafana.ini
+        owner: root
+        group: grafana
+        mode: '0640'
+        backup: yes
+      notify: restart grafana
+
+    - name: Ensure [server] section exists in grafana.ini
+      lineinfile:
+        path: /etc/grafana/grafana.ini
+        line: '[server]'
+        create: no
+        insertbefore: BOF
+
+    - name: Configure Grafana [server] section for reverse proxy (after custom.ini copy)
+      lineinfile:
+        path: /etc/grafana/grafana.ini
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        insertafter: '^\[server\]'
+      loop:
+        - { regexp: '^;?\s*protocol\s*=', line: 'protocol = http' }
+        - { regexp: '^;?\s*domain\s*=', line: 'domain = {{ domain_name }}' }
+        - { regexp: '^;?\s*http_port\s*=', line: 'http_port = 3000' }
+        - { regexp: '^;?\s*root_url\s*=', line: 'root_url = https://{{ domain_name }}/grafana/' }
+        - { regexp: '^;?\s*serve_from_sub_path\s*=', line: 'serve_from_sub_path = true' }
+        - { regexp: '^;?\s*enable_gzip\s*=', line: 'enable_gzip = true' }
+      notify: restart grafana
+
+    - name: Restore Grafana database backup if exists
+      copy:
+        src: /Users/bluewhale/Documents/SABI_Config_Safe/grafana/grafana.db
+        dest: /var/lib/grafana/grafana.db
+        owner: grafana
+        group: grafana
+        mode: '0640'
+        force: no
+      ignore_errors: yes
+      notify: restart grafana
+      timeout: 300
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Enable service grafana-server and ensure it is not masked
+      systemd:
+        name: grafana-server
+        enabled: yes
+        masked: no
+
+    - name: Start grafana-server service
+      systemd:
+        name: grafana-server
+        state: started
+    # Nginx Reverse Proxy Setup
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Install Certbot and Nginx plugin
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+
+    - name: Copy SSL parameters configuration
+      copy:
+        dest: /etc/nginx/snippets/ssl-params.conf
+        content: |
+          ssl_protocols TLSv1.2 TLSv1.3;
+          ssl_prefer_server_ciphers on;
+          ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+          ssl_ecdh_curve secp384r1;
+          ssl_session_timeout 30m;
+          ssl_session_cache shared:SSL:20m;
+          ssl_session_tickets off;
+          resolver 8.8.8.8 8.8.4.4 valid=300s;
+          resolver_timeout 5s;
+          add_header X-Frame-Options DENY;
+          add_header X-Content-Type-Options nosniff;
+          add_header X-XSS-Protection "1; mode=block";
+        owner: root
+        group: root
+        mode: '0644'
+      notify: reload nginx
+
+    - name: Copy Nginx configuration template
+      template:
+        src: templates/nginx-deepspace9.conf
+        dest: /etc/nginx/sites-available/{{ nginx_conf_name }}
+        owner: root
+        group: root
+        mode: '0644'
+      notify: test nginx
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/{{ nginx_conf_name }}
+        dest: /etc/nginx/sites-enabled/{{ nginx_conf_name }}
+        state: link
+      notify: reload nginx
+
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: reload nginx
+
+    - name: Ensure Nginx is running
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Check if Let's Encrypt certificate exists
+      stat:
+        path: /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
+      register: cert_exists
+
+    - name: Display DNS challenge instructions
+      debug:
+        msg:
+          - "============================================"
+          - "  SSL-ZERTIFIKAT FEHLT - MANUELLE AKTION ERFORDERLICH"
+          - "============================================"
+          - ""
+          - "Aufgrund des DynDNS-Setups muss das Zertifikat manuell"
+          - "mit DNS-Challenge erstellt werden."
+          - ""
+          - "SCHRITT 1: SSH-Verbindung zum Server:"
+          - "  ssh {{ ansible_user }}@{{ domain_name }}"
+          - ""
+          - "SCHRITT 2: Certbot mit DNS-Challenge ausführen:"
+          - "  sudo certbot certonly --manual --preferred-challenges dns \\"
+          - "    -d {{ domain_name }} \\"
+          - "    --email {{ certbot_email }} \\"
+          - "    --agree-tos"
+          - ""
+          - "SCHRITT 3: TXT-Record hinzufügen:"
+          - "  Certbot wird Sie auffordern, einen TXT-Record zu erstellen:"
+          - "  _acme-challenge.{{ domain_name }} TXT \"generierter-token\""
+          - "  Fügen Sie diesen bei Ihrem DNS-Provider hinzu."
+          - ""
+          - "SCHRITT 4: DNS-Propagation prüfen:"
+          - "  dig _acme-challenge.{{ domain_name }} TXT"
+          - "  Warten Sie, bis der Record sichtbar ist (5-10 Minuten)."
+          - ""
+          - "SCHRITT 5: In Certbot bestätigen und Zertifikat erhalten."
+          - ""
+          - "SCHRITT 6: Dieses Playbook erneut ausführen:"
+          - "  ansible-playbook deployMyMonitoringSolution.yml"
+          - ""
+          - "============================================"
+      when: not cert_exists.stat.exists
+
+    - name: Fail if certificate does not exist
+      fail:
+        msg: |
+          SSL-Zertifikat nicht gefunden!
+          
+          Bitte führen Sie die DNS-Challenge manuell durch (siehe Anweisungen oben)
+          und starten Sie das Playbook dann erneut.
+          
+          Zertifikat wird erwartet in:
+          /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
+      when: not cert_exists.stat.exists
+
+    - name: Setup manual certificate renewal reminder
+      cron:
+        name: "Reminder: Renew Let's Encrypt certificate manually"
+        job: "echo 'Let''s Encrypt certificate renewal needed. Run: sudo certbot renew --manual --preferred-challenges dns' | logger -t certbot-reminder"
+        minute: "0"
+        hour: "3"
+        day: "1"
+        month: "*/2"
+
+    - name: Configure UFW for HTTP/HTTPS
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - "80"   # HTTP (for Let's Encrypt)
+        - "443"  # HTTPS
+      when: ansible_facts.services['ufw'] is defined
+
+    - name: Verify Nginx is serving HTTP (local check)
+      uri:
+        url: "http://localhost/health"
+        method: GET
+        status_code: [200, 301, 302]
+        follow_redirects: none
+      register: health_check_http
+      retries: 3
+      delay: 5
+      until: health_check_http.status in [200, 301, 302]
+      when: cert_exists.stat.exists
+      ignore_errors: yes
+
+    - name: Verify Nginx is serving HTTPS (local check with SNI)
+      shell: |
+        curl -sSf --retry 3 --retry-delay 5 \
+          --resolve "{{ domain_name }}:443:127.0.0.1" \
+          --cacert /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem \
+          "https://{{ domain_name }}/health"
+      register: health_check_https
+      retries: 3
+      delay: 5
+      until: health_check_https.rc == 0
+      changed_when: false
+      when: cert_exists.stat.exists
+      ignore_errors: yes
+
+    - name: Display health check result
+      debug:
+        msg:
+          - "Health check successful!"
+          - "HTTP Status: {{ health_check_http.status | default('N/A') }}"
+          - "HTTPS Response: {{ health_check_https.stdout | default('N/A') }}"
+          - ""
+          - "Note: External access via IPv6 from outside your network should work."
+          - "Internal access is blocked by FritzBox DNS rebind protection."
+      when: cert_exists.stat.exists
+
+    - name: Display setup summary
+      debug:
+        msg:
+          - "Monitoring setup complete!"
+          - "Domain: {{ domain_name }}"
+          - "Certificate: Let's Encrypt (manual DNS challenge)"
+          - ""
+          - "External access (HTTPS):"
+          - "  - Grafana: https://{{ domain_name }}/grafana/"
+          - "  - Health Check: https://{{ domain_name }}/health"
+          - ""
+          - "Local access only:"
+          - "  - Prometheus: http://deepspace-9:9090/prometheus/"
+          - "  - Prometheus (Pi): http://localhost:9090/prometheus/"
+          - "  - SSH Tunnel: ssh -L 9090:localhost:9090 {{ ansible_user }}@{{ domain_name }}"
+          - ""
+          - "Note: If certificate is missing, run on target server:"
+          - "  sudo certbot certonly --manual --preferred-challenges dns -d {{ domain_name }} --email {{ certbot_email }} --agree-tos"
+
+  handlers:
+    - name: test nginx
+      command: nginx -t
+      changed_when: false
+
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
+
+    - name: restart grafana
+      systemd:
+        name: grafana-server
+        state: restarted
+
