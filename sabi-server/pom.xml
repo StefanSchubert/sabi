@@ -41,7 +41,7 @@
 
     <properties>
         <archunit.version>1.2.1</archunit.version>
-        <assertj-core.version>3.26.3</assertj-core.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
         <auth0.jwt.version>4.5.0</auth0.jwt.version>
         <dumbster.version>1.6</dumbster.version>
         <eclipselink.version>4.0.2</eclipselink.version>
