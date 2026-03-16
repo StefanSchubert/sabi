@@ -5,9 +5,8 @@
 
 package de.bluewhale.sabi.rest.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
@@ -25,14 +24,12 @@ import de.bluewhale.sabi.util.RestHelper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -43,7 +40,7 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -56,8 +53,6 @@ import static org.mockito.BDDMockito.given;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MeasurementControllerTest extends CommonTestController {
@@ -66,10 +61,10 @@ public class MeasurementControllerTest extends CommonTestController {
 	final static String MOCKED_USER = "testsabi@bluewhale.de";
 
 
-	@MockBean
+	@MockitoBean
 	UserRepository userRepository;
 
-	@MockBean
+	@MockitoBean
 	AquariumRepository aquariumRepository;
 
 	@Autowired
@@ -81,10 +76,10 @@ public class MeasurementControllerTest extends CommonTestController {
 	@Autowired
 	UserMapper userMapper;
 
-	@MockBean
+	@MockitoBean
 	MeasurementRepository measurementRepository;
 	@Autowired
-	ObjectMapper objectMapper;  // json mapper
+	JsonMapper objectMapper;  // json mapper
 
 	@Autowired
 	private TokenAuthenticationService encryptionService;

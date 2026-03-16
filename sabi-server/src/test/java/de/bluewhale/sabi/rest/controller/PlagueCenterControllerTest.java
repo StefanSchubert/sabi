@@ -5,9 +5,8 @@
 
 package de.bluewhale.sabi.rest.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.model.UserTo;
@@ -19,13 +18,11 @@ import de.bluewhale.sabi.util.RestHelper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
@@ -41,8 +38,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class PlagueCenterControllerTest extends CommonTestController {
@@ -50,17 +45,17 @@ public class PlagueCenterControllerTest extends CommonTestController {
 
     final static String MOCKED_USER = "testsabi@bluewhale.de";
 
-    @MockBean
+    @MockitoBean
     UserRepository userRepository;
 
-    @MockBean
+    @MockitoBean
     PlagueCenterService plagueCenterService;
 
     @Autowired
     UserMapper userMapper;
 
     @Autowired
-    ObjectMapper objectMapper;  // json mapper
+    JsonMapper objectMapper;  // json mapper
 
 
 // -------------------------- OTHER METHODS --------------------------

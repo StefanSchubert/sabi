@@ -5,9 +5,8 @@
 
 package de.bluewhale.sabi.rest.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.IoTMeasurementTo;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.services.TankService;
@@ -15,20 +14,18 @@ import de.bluewhale.sabi.util.RestHelper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Behavioral test of the IoT APIs
@@ -37,8 +34,6 @@ import static org.junit.Assert.fail;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class AquariumIoTControllerTest extends CommonTestController {
@@ -48,12 +43,12 @@ public class AquariumIoTControllerTest extends CommonTestController {
 	private static final String SECRET_ASSUMED_AS_INVALID = "invalid api key";
 
 	@Autowired
-	ObjectMapper objectMapper;  // json mapper
+	JsonMapper objectMapper;  // json mapper
 
-	@MockBean
+	@MockitoBean
 	UserRepository userRepository;
 
-	@MockBean
+	@MockitoBean
 	TankService tankService;
 
 	@Test

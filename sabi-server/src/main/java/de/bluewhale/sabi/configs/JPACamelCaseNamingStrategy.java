@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.configs;
 
-import org.eclipse.persistence.config.SessionCustomizer;
+import org.eclipse.persistence.sessions.SessionCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.mappings.DatabaseMapping;
@@ -13,8 +13,8 @@ import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.tools.schemaframework.IndexDefinition;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 /**
  * THANKS GOES TO: http://stackoverflow.com/questions/19896352/customize-jpa-field-name-mapping-using-eclipselink
@@ -45,7 +45,7 @@ public class JPACamelCaseNamingStrategy implements SessionCustomizer {
                 for (IndexDefinition index : descriptor.getTables().get(0).getIndexes()) {
                     index.setTargetTable(tableName);
                 }
-                Vector<DatabaseMapping> mappings = descriptor.getMappings();
+                List<DatabaseMapping> mappings = descriptor.getMappings();
                 camelCaseToUnderscore(mappings);
             } else if (descriptor.isAggregateDescriptor() || descriptor.isChildDescriptor()) {
                 camelCaseToUnderscore(descriptor.getMappings());
@@ -53,7 +53,7 @@ public class JPACamelCaseNamingStrategy implements SessionCustomizer {
         }
     }
 
-    private void camelCaseToUnderscore(Vector<DatabaseMapping> mappings) {
+    private void camelCaseToUnderscore(List<DatabaseMapping> mappings) {
         for (DatabaseMapping mapping : mappings) {
             DatabaseField field = mapping.getField();
             if (mapping.isDirectToFieldMapping() && !mapping.isPrimaryKeyMapping()) {

@@ -5,9 +5,8 @@
 
 package de.bluewhale.sabi.rest.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.mapper.ParameterMapper;
 import de.bluewhale.sabi.mapper.UnitMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
@@ -27,13 +26,11 @@ import de.bluewhale.sabi.util.RestHelper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
@@ -52,8 +49,6 @@ import static org.mockito.BDDMockito.given;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ModuleTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UnitControllerTest extends CommonTestController {
@@ -61,13 +56,13 @@ public class UnitControllerTest extends CommonTestController {
 
     final static String MOCKED_USER = "testsabi@bluewhale.de";
 
-    @MockBean
+    @MockitoBean
     UnitRepository unitRepository;
-    @MockBean
+    @MockitoBean
     LocalizedUnitRepository localizedUnitRepository;
-    @MockBean
+    @MockitoBean
     ParameterRepository parameterRepository;
-    @MockBean
+    @MockitoBean
     UserRepository userRepository;
 
     @Autowired
@@ -80,7 +75,7 @@ public class UnitControllerTest extends CommonTestController {
     ParameterMapper parameterMapper;
 
     @Autowired
-    ObjectMapper objectMapper;  // json mapper
+    JsonMapper objectMapper;  // json mapper
 
 // -------------------------- OTHER METHODS --------------------------
 

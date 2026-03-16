@@ -78,7 +78,7 @@ public class UnitController {
         // and we can be sure that spring has injected a valid Principal object.
         ParameterTo parameterTo = measurementService.fetchParameterInfoFor(unitID,language);
         if (parameterTo == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         } else {
             return new ResponseEntity<>(parameterTo, HttpStatus.ACCEPTED);
         }

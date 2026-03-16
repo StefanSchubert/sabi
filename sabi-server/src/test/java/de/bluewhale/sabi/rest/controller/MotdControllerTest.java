@@ -5,19 +5,16 @@
 
 package de.bluewhale.sabi.rest.controller;
 
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.services.AppService;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.mockito.BDDMockito.given;
@@ -29,13 +26,11 @@ import static org.mockito.Mockito.reset;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("ModuleTest")
 public class MotdControllerTest extends CommonTestController {
 
-	@MockBean
+	@MockitoBean
 	AppService appService;
 
 	@AfterEach
@@ -82,7 +77,7 @@ public class MotdControllerTest extends CommonTestController {
 					throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
 				}).toEntity(String.class);
 
-		Assert.assertTrue(stringResponseEntity.toString().contains(motd));
+            Assertions.assertTrue(stringResponseEntity.toString().contains(motd));
 	}
 
 }

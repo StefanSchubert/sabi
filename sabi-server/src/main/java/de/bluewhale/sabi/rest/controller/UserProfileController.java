@@ -98,12 +98,12 @@ public class UserProfileController {
                 responseEntity = new ResponseEntity<>(existingUserProfileTo, HttpStatus.OK);
             } else {
                 log.error("Unexpected problem during accessing the userprofile occured.");
-                responseEntity = new ResponseEntity<>(null, HttpStatus.CONFLICT);
+                responseEntity = ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
         } catch (BusinessException e) {
             log.error("Userprofilaccess failed. {}", e.getMessage());
             e.printStackTrace();
-            responseEntity = new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            responseEntity = ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         return responseEntity;

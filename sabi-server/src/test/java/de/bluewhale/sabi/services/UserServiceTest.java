@@ -5,7 +5,6 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.model.ResultTo;
@@ -18,14 +17,12 @@ import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -45,8 +42,6 @@ import static org.mockito.Mockito.when;
  */
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("ServiceTest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserServiceTest {
@@ -75,7 +70,7 @@ public class UserServiceTest {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
-	@MockBean
+	@MockitoBean
 	UserRepository userRepository;
 
 // -------------------------- OTHER METHODS --------------------------
