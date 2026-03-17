@@ -5,13 +5,13 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -31,7 +31,7 @@ public class MiddlewareHealthIndicator implements HealthIndicator {
     private String sabiBackendUrl;
 
     @Autowired
-    private ObjectMapper objectMapper;  // json mapper
+    private JsonMapper objectMapper;  // json mapper
 
     private RestTemplate restTemplate = new RestTemplate();
 

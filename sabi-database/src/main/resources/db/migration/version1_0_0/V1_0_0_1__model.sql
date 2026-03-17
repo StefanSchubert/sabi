@@ -27,7 +27,7 @@ CREATE TABLE `aquarium` (
   `created_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (user_id) REFERENCES users (id)
+  CONSTRAINT `aquarium_ibfk_1` FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE SET NULL
 )
   ENGINE = InnoDB
@@ -56,7 +56,7 @@ CREATE TABLE `parameter` (
   `created_on`             TIMESTAMP        NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`             TIMESTAMP        NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (used_threshold_unit_id) REFERENCES unit (id)
+  CONSTRAINT `parameter_ibfk_1` FOREIGN KEY (used_threshold_unit_id) REFERENCES unit (id)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
@@ -71,8 +71,8 @@ CREATE TABLE `measurement` (
   `created_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`     TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (unit_id) REFERENCES unit (id),
-  FOREIGN KEY (aquarium_id) REFERENCES aquarium (id)
+  CONSTRAINT `measurement_ibfk_1` FOREIGN KEY (unit_id) REFERENCES unit (id),
+  CONSTRAINT `measurement_ibfk_2` FOREIGN KEY (aquarium_id) REFERENCES aquarium (id)
 )
   ENGINE = InnoDB
   AUTO_INCREMENT = 100
@@ -102,9 +102,9 @@ CREATE TABLE `treatment` (
   `created_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`  TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (unit_id) REFERENCES unit (id),
-  FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
-  FOREIGN KEY (remedy_id) REFERENCES remedy (id)
+  CONSTRAINT `treatment_ibfk_1` FOREIGN KEY (unit_id) REFERENCES unit (id),
+  CONSTRAINT `treatment_ibfk_2` FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
+  CONSTRAINT `treatment_ibfk_3` FOREIGN KEY (remedy_id) REFERENCES remedy (id)
 )
   ENGINE = InnoDB
   AUTO_INCREMENT = 100
@@ -135,8 +135,8 @@ CREATE TABLE `fish` (
   `created_on`        TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`        TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
-  FOREIGN KEY (fish_catalogue_id) REFERENCES fish_catalogue (id)
+  CONSTRAINT `fish_ibfk_1` FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
+  CONSTRAINT `fish_ibfk_2` FOREIGN KEY (fish_catalogue_id) REFERENCES fish_catalogue (id)
 )
   ENGINE = InnoDB
   AUTO_INCREMENT = 100
@@ -166,8 +166,8 @@ CREATE TABLE `coral` (
   `created_on`         TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   `lastmod_on`         TIMESTAMP           NOT NULL         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
-  FOREIGN KEY (coral_catalouge_id) REFERENCES coral_catalogue (id)
+  CONSTRAINT `coral_ibfk_1` FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
+  CONSTRAINT `coral_ibfk_2` FOREIGN KEY (coral_catalouge_id) REFERENCES coral_catalogue (id)
 )
   ENGINE = InnoDB
   AUTO_INCREMENT = 100

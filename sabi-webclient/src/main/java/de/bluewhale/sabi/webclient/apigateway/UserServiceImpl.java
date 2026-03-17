@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.api.HttpHeader;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
@@ -73,7 +73,7 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
         String requestJson = null;
         try {
             requestJson = objectMapper.writeValueAsString(loginData);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Object Mapper failed with Login Data - No Logins possible! {}", e);
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.BACKEND_TEMPORARILY_UNAVAILABLE));
         }

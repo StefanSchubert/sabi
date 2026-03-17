@@ -6,7 +6,7 @@ The following helps new developers to set up the required local build environmen
 
 ### Common
 
-* Java 22
+* Java 25
 * openAPI3 (Swagger) via springdoc-v2
 * ARM-Platform (raspberryPis)
 * IPv6 DynDNS (at least for the start)
@@ -16,8 +16,8 @@ As you desire, the server API will be open, so that everyone might develop their
 However, to start with this project involves a
 
 * JSF2.3 based WebClient
-* Primefaces 14.x
-* Spring-Boot-3
+* Primefaces 15.x
+* Spring-Boot-4
 
 Why JSF and not some current modern framework like angular or VUE? In fact, it took me quite a while to came to a decision here.
 The two main reasons for me are:
@@ -28,7 +28,7 @@ The two main reasons for me are:
 * Though since 2014-2017 it became rather quiet around the mature JSF technology (at least according the web barometers), I see today more JSF based applications in business life, that needs maintenance than writing new angular ones. So I decided to improve my skills in JSF again.
 
 ### Server side
-* Spring-Boot 3 Application
+* Spring-Boot 4 Application
 * REST
 * JPA 2.x (Eclipselink instead of Hibernate)
 * jUnit
@@ -54,7 +54,7 @@ With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki
 
 ### Preconditions
 
-* You have a JDK22 and current Maven installed
+* You have a JDK25 and current Maven installed
 * You have docker installed on your machine, and you know docker usage fairly well.
 * As we are using the org.owasp dependency check you will require to register yourself at https://nvd.nist.gov/
   to get an API-KEY, which you can store in the properties section of your local settings.xml like this:

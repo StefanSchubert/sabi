@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
@@ -46,7 +46,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService {
         try {
             PlagueTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueTo[].class);
             plagueToList = (myObjects == null ? Collections.emptyList() : Arrays.asList(myObjects));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s", listPlagueUri, e.getMessage()), e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -70,7 +70,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService {
         try {
             PlagueStatusTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueStatusTo[].class);
             plagueStatusToList = (myObjects == null ? Collections.emptyList() : Arrays.asList(myObjects));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s", listPlagueUri, e.getMessage()), e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -109,7 +109,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService {
         String requestJson;
         try {
             requestJson = objectMapper.writeValueAsString(plagueRecord);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't convert plage record object to json: {}",plagueRecord);
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -153,7 +153,7 @@ public class PlagueServiceImpl extends APIServiceImpl implements PlagueService {
         try {
             PlagueRecordTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), PlagueRecordTo[].class);
             plagueRecordTos = (myObjects == null ? Collections.emptyList() : Arrays.asList(myObjects));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s", listPlagueUri, e.getMessage()), e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);

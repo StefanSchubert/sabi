@@ -53,6 +53,8 @@ server:
       max: 100
     connection-timeout: 10s
 spring:
+  jackson:
+    use-jackson2-defaults: true
   # INTERNATIONALIZATION
   messages:
     basename: i18n/messages

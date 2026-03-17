@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -42,7 +42,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         try {
             AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
             tankList = Arrays.asList(myObjects);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s",listTankUri,e.getMessage()),e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -70,11 +70,11 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         }
 
         if (!responseEntity.getStatusCode().is2xxSuccessful()){
-            if (responseEntity.getStatusCodeValue()==409) {
+            if (responseEntity.getStatusCode().value()==409) {
                 log.warn("Tried to delete non existing tank {}",tankId);
                 throw new BusinessException(Message.error(TankMessageCodes.NO_SUCH_TANK));
             }
-            if (responseEntity.getStatusCodeValue()==401) {
+            if (responseEntity.getStatusCode().value()==401) {
                 log.warn("Invalid Token when trying to delete tank {}",tankId);
                 throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
             }
@@ -95,7 +95,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         AquariumTo myTankWithAPIKey;
         try {
             myTankWithAPIKey = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't parse servers response",e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
@@ -111,7 +111,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         String requestJson;
         try {
             requestJson = objectMapper.writeValueAsString(tank);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't convert tank object to json: {}",tank);
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -154,11 +154,11 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
             }
 
             if (!responseEntity.getStatusCode().is2xxSuccessful()){
-                if (responseEntity.getStatusCodeValue()==409) {
+                if (responseEntity.getStatusCode().value()==409) {
                     log.warn("Tried to update non existing tank or internal error. Tank ID: {}",tank.getId());
                     throw new BusinessException(Message.error(TankMessageCodes.NO_SUCH_TANK));
                 }
-                if (responseEntity.getStatusCodeValue()==401) {
+                if (responseEntity.getStatusCode().value()==401) {
                     log.warn("Invalid Token when trying to update tank: {}",tank.getId());
                     throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
                 }

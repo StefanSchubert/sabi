@@ -34,18 +34,18 @@ update treatment set user_id = (select user_id from aquarium where treatment.aqu
 -- tbd. set null or introducing a dummy user?
 
 alter table fish
-  add FOREIGN KEY (user_id) REFERENCES users (id)
+  add CONSTRAINT `fish_user_fk` FOREIGN KEY (user_id) REFERENCES users (id)
   ON DELETE SET NULL;
 
 alter table coral
-  add FOREIGN KEY (user_id) REFERENCES users (id)
+  add CONSTRAINT `coral_user_fk` FOREIGN KEY (user_id) REFERENCES users (id)
   ON DELETE SET NULL;
 
 alter table measurement
-  add FOREIGN KEY (user_id) REFERENCES users (id)
+  add CONSTRAINT `measurement_user_fk` FOREIGN KEY (user_id) REFERENCES users (id)
   ON DELETE SET NULL;
 
 alter table treatment
-  add FOREIGN KEY (user_id) REFERENCES users (id)
+  add CONSTRAINT `treatment_user_fk` FOREIGN KEY (user_id) REFERENCES users (id)
   ON DELETE SET NULL;
 

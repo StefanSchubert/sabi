@@ -10,8 +10,8 @@ CREATE TABLE `user_measurement_reminder`
     `optlock`         INT UNSIGNED        NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `UNQ_USER_UNIT` (`user_id`, `unit_id`),
-    FOREIGN KEY (unit_id) REFERENCES unit (id),
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    CONSTRAINT `umr_unit_fk` FOREIGN KEY (unit_id) REFERENCES unit (id),
+    CONSTRAINT `umr_user_fk` FOREIGN KEY (user_id) REFERENCES users (id)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 100

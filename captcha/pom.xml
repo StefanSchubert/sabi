@@ -11,14 +11,14 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>4.0.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>captcha-light</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.8</version>
     <packaging>jar</packaging>
     <description>A REST-full microservice service for CAPTCHA running as spring boot application</description>
 
@@ -41,21 +41,21 @@
 
 
     <properties>
-        <spring-boot.version>3.5.6</spring-boot.version>
+        <spring-boot.version>4.0.3</spring-boot.version>
         <java.version>25</java.version>
         <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>2.8.10</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>3.0.2</springdoc.openapiv2.version>
         <micrometer.prometheus.version>1.15.0</micrometer.prometheus.version>
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <!--
           see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
         <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
-        <owasp.plugin.version>12.1.6</owasp.plugin.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <versions.maven.plugin.version>2.19.1</versions.maven.plugin.version>
+        <owasp.plugin.version>12.2.0</owasp.plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -92,6 +92,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- favor log4j2 over logback -->
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Micrometer core dependency  -->
         <dependency>
@@ -179,17 +186,8 @@
                 </executions>
                 <dependencies/>
                 <configuration>
-                    <!-- Build a fully executable jar to use it via /etc/init.d
-                      see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
-                    -->
-                    <executable>true</executable>
-                    <!-- Tuning the required heap size / shrink it after analysing usage via grafana /
-                          revisit and readjust if necessary from time to time.
-
-                          Notice: This flag is being ignored by the plugin (Bug! 4/2019)
-                          As workaround/solution drop a YOUR-APP.conf aside the YOUR-APP.jar
-                          with the following content:
-                          export JAVA_OPTS="-Xmx128m -Xms64m"
+                    <!-- executable=true entfernt: SB4 unterstützt Launch Script (embedded shell header) nicht mehr.
+                         Der systemd Service startet die JAR nun explizit via 'java -jar'.
                     -->
                     <jvmArguments>-Xmx128m</jvmArguments>
                 </configuration>
