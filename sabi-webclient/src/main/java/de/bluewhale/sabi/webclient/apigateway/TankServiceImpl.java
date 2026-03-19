@@ -50,6 +50,24 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         return tankList;
     }
 
+    @Override
+    public @NotNull List<AquariumTo> getAllUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException {
+
+        String listAllTankUri = sabiBackendUrl + Endpoint.TANKS.getPath()+"/list/all";
+        List<AquariumTo> tankList;
+        ResponseEntity<String> responseEntity = getAPIResponseFor(listAllTankUri, pJWTBackendAuthtoken, HttpMethod.GET);
+
+        try {
+            AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
+            tankList = Arrays.asList(myObjects);
+        } catch (JacksonException e) {
+            log.error(String.format("Didn't understand response from %s got parsing exception %s",listAllTankUri,e.getMessage()),e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+        return tankList;
+    }
+
 
     @Override
     public void deleteTankById(@NotNull Long tankId, @NotNull String pJWTBackendAuthtoken) throws BusinessException {
