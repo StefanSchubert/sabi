@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.model.AquariumTo;
@@ -35,15 +35,33 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
     @Override
     public @NotNull List<AquariumTo> getUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException {
 
-        String listTankUri = sabiBackendUrl + "/api/tank/list";
+        String listTankUri = sabiBackendUrl + Endpoint.TANKS.getPath()+"/list";
         List<AquariumTo> tankList;
         ResponseEntity<String> responseEntity = getAPIResponseFor(listTankUri, pJWTBackendAuthtoken, HttpMethod.GET);
 
         try {
             AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
             tankList = Arrays.asList(myObjects);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s",listTankUri,e.getMessage()),e.getMessage());
+            e.printStackTrace();
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+        return tankList;
+    }
+
+    @Override
+    public @NotNull List<AquariumTo> getAllUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException {
+
+        String listAllTankUri = sabiBackendUrl + Endpoint.TANKS.getPath()+"/list/all";
+        List<AquariumTo> tankList;
+        ResponseEntity<String> responseEntity = getAPIResponseFor(listAllTankUri, pJWTBackendAuthtoken, HttpMethod.GET);
+
+        try {
+            AquariumTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), AquariumTo[].class);
+            tankList = Arrays.asList(myObjects);
+        } catch (JacksonException e) {
+            log.error(String.format("Didn't understand response from %s got parsing exception %s",listAllTankUri,e.getMessage()),e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
@@ -53,7 +71,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
 
     @Override
     public void deleteTankById(@NotNull Long tankId, @NotNull String pJWTBackendAuthtoken) throws BusinessException {
-        String tankUri = sabiBackendUrl + "/api/tank/"+tankId;
+        String tankUri = sabiBackendUrl + Endpoint.TANKS.getPath()+"/"+tankId;
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity;
@@ -70,11 +88,11 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         }
 
         if (!responseEntity.getStatusCode().is2xxSuccessful()){
-            if (responseEntity.getStatusCodeValue()==409) {
+            if (responseEntity.getStatusCode().value()==409) {
                 log.warn("Tried to delete non existing tank {}",tankId);
                 throw new BusinessException(Message.error(TankMessageCodes.NO_SUCH_TANK));
             }
-            if (responseEntity.getStatusCodeValue()==401) {
+            if (responseEntity.getStatusCode().value()==401) {
                 log.warn("Invalid Token when trying to delete tank {}",tankId);
                 throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
             }
@@ -83,7 +101,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
 
     @Override
     public String reCreateTemperatureAPIKey(Long tankID, String pJWTBackendAuthtoken) throws BusinessException {
-        String requestTempAPIKeyURI = sabiBackendUrl + "/api/tank/"+tankID+"/tempApiKey";
+        String requestTempAPIKeyURI = sabiBackendUrl + Endpoint.TANKS.getPath()+"/"+tankID+"/tempApiKey";
 
         ResponseEntity<String> responseEntity = getAPIResponseFor(requestTempAPIKeyURI,pJWTBackendAuthtoken,HttpMethod.GET);
 
@@ -95,7 +113,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         AquariumTo myTankWithAPIKey;
         try {
             myTankWithAPIKey = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't parse servers response",e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
@@ -111,7 +129,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
         String requestJson;
         try {
             requestJson = objectMapper.writeValueAsString(tank);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't convert tank object to json: {}",tank);
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -154,11 +172,11 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
             }
 
             if (!responseEntity.getStatusCode().is2xxSuccessful()){
-                if (responseEntity.getStatusCodeValue()==409) {
+                if (responseEntity.getStatusCode().value()==409) {
                     log.warn("Tried to update non existing tank or internal error. Tank ID: {}",tank.getId());
                     throw new BusinessException(Message.error(TankMessageCodes.NO_SUCH_TANK));
                 }
-                if (responseEntity.getStatusCodeValue()==401) {
+                if (responseEntity.getStatusCode().value()==401) {
                     log.warn("Invalid Token when trying to update tank: {}",tank.getId());
                     throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
                 }

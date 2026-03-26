@@ -72,10 +72,10 @@ CREATE TABLE `plague_record`
     `lastmod_on`             TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `optlock`                INT UNSIGNED                 DEFAULT 0,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (plague_id) REFERENCES plague (id),
-    FOREIGN KEY (observed_plague_status) REFERENCES plague_status (id),
-    FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    CONSTRAINT `plague_record_ibfk_1` FOREIGN KEY (plague_id) REFERENCES plague (id),
+    CONSTRAINT `plague_record_ibfk_2` FOREIGN KEY (observed_plague_status) REFERENCES plague_status (id),
+    CONSTRAINT `plague_record_ibfk_3` FOREIGN KEY (aquarium_id) REFERENCES aquarium (id),
+    CONSTRAINT `plague_record_ibfk_4` FOREIGN KEY (user_id) REFERENCES users (id)
 )
     ENGINE = InnoDB
     AUTO_INCREMENT = 100

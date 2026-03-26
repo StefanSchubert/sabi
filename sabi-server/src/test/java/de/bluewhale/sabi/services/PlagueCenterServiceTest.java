@@ -5,7 +5,6 @@
 
 package de.bluewhale.sabi.services;
 
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.model.PlagueStatusTo;
 import de.bluewhale.sabi.persistence.model.LocalizedPlagueStatusEntity;
 import de.bluewhale.sabi.persistence.model.PlagueStatusEntity;
@@ -16,12 +15,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -42,8 +39,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  */
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("ServiceTest")
@@ -62,7 +57,7 @@ public class PlagueCenterServiceTest {
     @Autowired
     private PlagueCenterService plagueCenterService;
 
-    @MockBean
+    @MockitoBean
     private PlagueStatusRepository plagueStatusRepository;
 
     @Autowired

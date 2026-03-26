@@ -7,7 +7,7 @@ package de.bluewhale.sabi.webclient;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
+import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration;
 
 // exclude here means using Custom Errorpage, spring will search resource/template for generic and
 // /resource/template/error/404.html for specific error codes

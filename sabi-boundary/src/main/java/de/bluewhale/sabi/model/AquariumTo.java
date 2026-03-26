@@ -22,13 +22,13 @@ public class AquariumTo implements Serializable {
     @Schema(description =  "ID this object for further reference.")
     private Long id;
 
-    @Schema(description =  "Tanks volume", required = true)
+    @Schema(description =  "Tanks volume", requiredProperties = {"size"})
     private Integer size;
 
-    @Schema(description =  "Unit of tanks volume size.", required = true)
+    @Schema(description =  "Unit of tanks volume size.", requiredProperties = {"sizeUnit"})
     private SizeUnit sizeUnit;
 
-    @Schema(description =  "Fresh, Sea- or other Water Type.", required = true)
+    @Schema(description =  "Fresh, Sea- or other Water Type.", requiredProperties = {"waterType"})
     private WaterType waterType;
 
     @Schema(description =  "Description or Name of the tank, so the user can distinguish them.", required = true)

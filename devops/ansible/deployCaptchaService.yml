@@ -2,16 +2,29 @@
   vars_files:
     - ./group_vars/sabiMiddleware.yml
   tasks:
+    - name: Create Captcha User
+      user:
+        name: captcha
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "captcha Service Account, no login possible."
+        expires: -1
+    - name: Create captcha directory
+      file:
+        path: /var/captcha
+        state: directory
+        owner: captcha
+        group: captcha
     - name: Copy new jar file
       copy:
-        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/captcha/target/captcha-service.jar
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi.git/captcha/target/captcha-service.jar
         dest: /var/captcha
         owner: captcha
         group: captcha
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/captcha/captcha-service.conf
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi.git/captcha/captcha-service.conf
         dest: /var/captcha
         owner: captcha
         group: captcha

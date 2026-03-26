@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
+  ~ Copyright (c) 2025 by Stefan Schubert under the MIT License (MIT).
   ~ See project LICENSE file for the detailed terms and conditions.
   -->
 
@@ -13,13 +13,13 @@
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>4.0.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-server</artifactId>
-    <version>1.3.8</version>
+    <version>1.3.9</version>
     <packaging>jar</packaging>
     <description>Backend consistent of internal CRUD services which will be used by the REST service orchestration
     </description>
@@ -40,36 +40,29 @@
     </developers>
 
     <properties>
-        <archunit.version>1.2.1</archunit.version>
+        <archunit.version>1.4.1</archunit.version>
         <assertj-core.version>3.27.7</assertj-core.version>
-        <auth0.jwt.version>4.5.0</auth0.jwt.version>
+        <auth0.jwt.version>4.5.1</auth0.jwt.version>
         <dumbster.version>1.6</dumbster.version>
-        <eclipselink.version>4.0.2</eclipselink.version>
-        <flyway.version>11.8.0</flyway.version>
-        <jakarta.xml.bind.version>4.0.2</jakarta.xml.bind.version>
-        <java.version>22</java.version>
+        <eclipselink.version>5.0.0-RC1</eclipselink.version>
+        <flyway.version>12.1.0</flyway.version>
+        <jakarta.xml.bind.version>4.0.5</jakarta.xml.bind.version>
+        <java.version>25</java.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-        <jetbrains.annotation.version>26.0.2</jetbrains.annotation.version>
-        <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
-        <junit-platform-suite-engine.version>1.11.1</junit-platform-suite-engine.version>
-        <junit-platform-suite-api.version>1.11.1</junit-platform-suite-api.version>
-        <junit.testcontainer.version>1.21.0</junit.testcontainer.version>
+        <jetbrains.annotation.version>26.1.0</jetbrains.annotation.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <mariadb.java.client.version>3.5.3</mariadb.java.client.version>
-        <mariadb.testcontainer.version>1.21.0</mariadb.testcontainer.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-        <micrometer.prometheus.version>1.13.5</micrometer.prometheus.version>
-        <owasp.plugin.version>12.1.1</owasp.plugin.version>
+        <mariadb.java.client.version>3.5.7</mariadb.java.client.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <micrometer.prometheus.version>1.15.0</micrometer.prometheus.version>
+        <owasp.plugin.version>12.1.3</owasp.plugin.version>
         <passay.version>1.6.6</passay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <sabi.boundary.version>1.2.10</sabi.boundary.version>
-        <spring.instrument.version>6.2.6</spring.instrument.version>
-        <springdoc.openapiv2.version>2.8.6</springdoc.openapiv2.version>
-        <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
-        <mapstruts-lombok-binding.version>0.2.0</mapstruts-lombok-binding.version>
+        <sabi.boundary.version>1.2.11</sabi.boundary.version>
+        <springdoc.openapiv2.version>3.0.2</springdoc.openapiv2.version>
+        <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -123,8 +116,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!-- Required for OpenID Connect based authentication -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
 
-        <!-- THE NEXT THREE DEPS ARE ONLY FOR JWT HANDLING, THIS SHOULD BE SIMPLYFIED, AS SOON AS
+        <!-- THE NEXT THREE DEPS ARE ONLY FOR JWT HANDLING, THIS SHOULD BE SIMPLIYFIED, AS SOON AS
              SPRINGS OWN JWT IS COMPATIBLE WITH SPRIMG 6 -->
         <dependency>
             <!-- https://github.com/auth0/java-jwt -->
@@ -271,40 +269,31 @@
 
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.testcontainer.version}</version>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-engine</artifactId>
-            <version>${junit-platform-suite-engine.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-api</artifactId>
-            <version>${junit-platform-suite-api.version}</version> <!-- oder eine neuere Version -->
-            <scope>test</scope>
-        </dependency>
-
+        <!-- MariaDB Testcontainer -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mariadb</artifactId>
-            <version>${mariadb.testcontainer.version}</version>
+            <artifactId>testcontainers-mariadb</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 
-<!-- Already via Spring Boot Test included.
+        <!-- JUnit 5/6 Platform Suite - version managed by Spring Boot BOM -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit-jupiter-api.version}</version>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
             <scope>test</scope>
         </dependency>
-        -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- AssertJ -->
         <dependency>
@@ -315,11 +304,13 @@
         </dependency>
 
         <!-- Using Flyway to populate testcontainer
-             this also tests our migration scripts for the database -->
+             this also tests our migration scripts for the database.
+             spring-boot-starter-flyway provides the Spring Boot 4.x auto-configuration
+             incl. FlywayMigrationInitializer (moved from spring-boot-autoconfigure to
+             org.springframework.boot.flyway.autoconfigure in SB4) -->
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flyway.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -412,11 +403,6 @@
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${mapstruct.version}</version>
                         </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>${mapstruts-lombok-binding.version}</version>
-                        </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
@@ -433,14 +419,15 @@
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-instrument</artifactId>
-                        <version>${spring.instrument.version}</version>
+                        <version>${spring-framework.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
                     <!--suppress UnresolvedMavenProperty -->
                     <argLine>
-                        -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
+                        -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar
                     </argLine>
+                    <useSystemClassLoader>true</useSystemClassLoader>
                 </configuration>
             </plugin>
             <plugin>
@@ -450,18 +437,17 @@
                     <dependency>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-instrument</artifactId>
-                        <version>${spring.instrument.version}</version>
+                        <version>${spring-framework.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
                     <!--suppress UnresolvedMavenProperty -->
                     <jvmArguments>
-                        -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.instrument.version}/spring-instrument-${spring.instrument.version}.jar
+                        -javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar
                     </jvmArguments>
-                    <!-- Build a fully executable jar to use it via /etc/init.d
-                         see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
+                    <!-- executable=true entfernt: SB4 unterstützt Launch Script (embedded shell header) nicht mehr.
+                         Der systemd Service startet die JAR nun explizit via 'java -jar' (sabiBE.service).
                     -->
-                    <executable>true</executable>
                 </configuration>
             </plugin>
             <plugin>

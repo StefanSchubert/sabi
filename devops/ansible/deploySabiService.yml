@@ -2,21 +2,35 @@
   vars_files:
     - ./group_vars/sabiMiddleware.yml
   tasks:
-    - name: Adding existing user "sabi" to group video for being able to use vcgencmd
+    - name: Create Sabi User
       user:
         name: sabi
-        groups: video
+        create_home: false
+        shell: /usr/sbin/nologin
+        comment: "sabi Service Account, no login possible."
+        expires: -1
+    - name: Create sabi directory
+      file:
+        path: /var/sabi
+        state: directory
+        owner: sabi
+        group: sabi
+    # User Group Management for Backups
+    - name: Add pi user to sabi group (for scp backups)
+      user:
+        name: "{{ ansible_user }}"
+        groups: sabi
         append: yes
     - name: Copy new jar file
       copy:
-        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/sabi-server/target/sabi-service.jar
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi.git/sabi-server/target/sabi-service.jar
         dest: /var/sabi/sabi-service.jar
         owner: sabi
         group: sabi
         mode: '0500'
     - name: Copy JVM config file
       copy:
-        src: /Users/bluewhale/dev/Intellij-wss/github/sabi/sabi-server/sabi-service.conf
+        src: /Users/bluewhale/dev/Intellij-wss/github/sabi.git/sabi-server/sabi-service.conf
         dest: /var/sabi
         owner: sabi
         group: sabi

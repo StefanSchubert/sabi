@@ -1,22 +1,23 @@
 [myPIs]
 esmeralda
-blackpearl
+blackpearl4u
 shangri-la
 atlantis
 
 [sabi]
 esmeralda
 blackpearl
+blackpearl4u
 shangri-la
 
 [sabiFrontend]
 shangri-la
 
 [sabiMiddleware]
-blackpearl
+blackpearl4u
 
 [sabiBackend]
 esmeralda
 
-[sabiMonitoring]
-shangri-la
+[myMonitoring]
+deepspace-9

@@ -5,23 +5,19 @@
 
 package de.bluewhale.sabi.persistence;
 
-import de.bluewhale.sabi.configs.AppConfig;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.util.TestContainerVersions;
-import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -40,8 +36,6 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  */
 @SpringBootTest
 @Testcontainers
-@ContextConfiguration(classes = AppConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("IntegrationTest")
 @Transactional
 @DirtiesContext
@@ -55,22 +49,14 @@ public class TankRepositoryTest implements TestContainerVersions {
     static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
 
     @Autowired
-    private Flyway flyway;
-
-    @Autowired
     AquariumRepository aquariumRepository;
 
     @Autowired
     UserRepository userRepository;
 
-
     @BeforeEach
     public void setUp() {
-
-        // flyway.clean(); // Optional: Clean DB before each single test
-        // org.flywaydb.core.api.FlywayException: Unable to execute clean as it has been disabled with the 'flyway.cleanDisabled' property.
-        flyway.migrate();
-
+        // Flyway migrates automatically on Spring context startup via FlywayMigrationInitializer
     }
 
     @AfterAll

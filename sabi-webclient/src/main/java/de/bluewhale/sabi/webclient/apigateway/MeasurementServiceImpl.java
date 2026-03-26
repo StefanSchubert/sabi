@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.AuthMessageCodes;
 import de.bluewhale.sabi.exception.BusinessException;
@@ -51,7 +51,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
         MeasurementReminderTo[] measurementReminderTos;
         try {
             measurementReminderTos = objectMapper.readValue(responseEntity.getBody(), MeasurementReminderTo[].class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error(String.format("Didn't understand response from %s got parsing exception %s", listMeasurementReminderUri, e.getMessage()), e.getMessage());
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -66,7 +66,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
         String requestJson;
         try {
             requestJson = objectMapper.writeValueAsString(measurementReminderTo);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't convert measurement object to json: {}", measurementReminderTo);
             e.printStackTrace();
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -89,10 +89,10 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
             throw BusinessException.with(CommonMessageCodes.BACKEND_API_PROBLEM);
         }
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-            if (responseEntity.getStatusCodeValue() == 409) {
+            if (responseEntity.getStatusCode().value() == 409) {
                 log.info("Tried to create the same measurement twice. Will be just ignored as we favour idempotent behavior. Measurement Unit was: {}", measurementReminderTo.getUnitName());
             }
-            if (responseEntity.getStatusCodeValue() == 401) {
+            if (responseEntity.getStatusCode().value() == 401) {
                 log.warn("Invalid Token when trying to add measurement reminder for userID: {}", measurementReminderTo.getUserId());
                 throw BusinessException.with(AuthMessageCodes.TOKEN_EXPIRED);
             }
@@ -113,7 +113,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                 try {
                     UnitTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), UnitTo[].class);
                     cachedAvailableMeasurementUnits.put(pLanguage, Arrays.asList(myObjects));
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     log.error(String.format("Didn't understand response from %s got parsing exception %s", listMeasurementUnitsUri, e.getMessage()), e.getMessage());
                     e.printStackTrace();
                     throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -142,7 +142,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                     if (parameterTo != null) cachedUnitParameterMap.put(selectedUnitId, parameterTo);
                     log.debug("Retrieved ParameterTo {}", parameterTo);
                     return parameterTo;
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     log.error(String.format("Didn't understand response from %s got parsing exception %s", listUnitsParameterUri, e.getMessage()), e.getMessage());
                     e.printStackTrace();
                     throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -163,7 +163,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
             try {
                 MeasurementTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), MeasurementTo[].class);
                 usersMeasurements = Arrays.asList(myObjects);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error(String.format("Didn't understand response from %s got parsing exception %s", listOfUsersMeasurements, e.getMessage()), e.getMessage());
                 e.printStackTrace();
                 throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -191,7 +191,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
             try {
                 MeasurementTo[] myObjects = objectMapper.readValue(responseEntity.getBody(), MeasurementTo[].class);
                 usersMeasurements = Arrays.asList(myObjects);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error("Didn't understand response from {} got parsing exception {}", apiURL, e.getLocalizedMessage());
                 e.printStackTrace();
                 throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -212,7 +212,7 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
             String requestJson;
             try {
                 requestJson = objectMapper.writeValueAsString(measurement);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 log.error("Couldn't convert measurement object to json: {}", measurement);
                 e.printStackTrace();
                 throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -237,10 +237,10 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                     throw BusinessException.with(CommonMessageCodes.BACKEND_API_PROBLEM);
                 }
                 if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-                    if (responseEntity.getStatusCodeValue() == 409) {
+                    if (responseEntity.getStatusCode().value() == 409) {
                         log.info("Tried to create the same measurement twice. Will be just ignored as we favour idempotent behavior. MeasurementID: {}", measurement.getId());
                     }
-                    if (responseEntity.getStatusCodeValue() == 401) {
+                    if (responseEntity.getStatusCode().value() == 401) {
                         log.warn("Invalid Token when trying to create measurement: {}", measurement.getId());
                         throw BusinessException.with(AuthMessageCodes.TOKEN_EXPIRED);
                     }
@@ -255,11 +255,11 @@ public class MeasurementServiceImpl extends APIServiceImpl implements Measuremen
                     throw BusinessException.with(CommonMessageCodes.NETWORK_PROBLEM);
                 }
                 if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-                    if (responseEntity.getStatusCodeValue() == 409) {
+                    if (responseEntity.getStatusCode().value() == 409) {
                         log.warn("Tried to update non existing measurement or internal error. Measurement ID: {}", measurement.getId());
                         throw BusinessException.with(MeasurementMessageCodes.NO_SUCH_MEAUREMENT);
                     }
-                    if (responseEntity.getStatusCodeValue() == 401) {
+                    if (responseEntity.getStatusCode().value() == 401) {
                         log.warn("Invalid Token when trying to update measurement: {}", measurement.getId());
                         throw BusinessException.with(AuthMessageCodes.TOKEN_EXPIRED);
                     }

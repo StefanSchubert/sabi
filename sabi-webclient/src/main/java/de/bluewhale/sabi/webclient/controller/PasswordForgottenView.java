@@ -5,8 +5,9 @@
 
 package de.bluewhale.sabi.webclient.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
+import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.model.RequestNewPasswordTo;
 import de.bluewhale.sabi.model.ResetPasswordTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
@@ -53,7 +54,7 @@ public class PasswordForgottenView implements Serializable {
     private String sabiBackendUrl;
 
     @Autowired
-    private ObjectMapper objectMapper;  // json mapper
+    private JsonMapper objectMapper;  // json mapper
 
     @Autowired
     private UserSession userSession;
@@ -109,7 +110,7 @@ public class PasswordForgottenView implements Serializable {
      */
     public String resetPassword() {
 
-        String pwResetURI = sabiBackendUrl + "/api/auth/pwd_reset";
+        String pwResetURI = sabiBackendUrl + Endpoint.PW_RESET.getPath();
 
         // reuse email from previews step
         pwResetModel.setEmailAddress(pwReqModel.getEmailAddress());
@@ -126,7 +127,7 @@ public class PasswordForgottenView implements Serializable {
         String requestJson = null;
         try {
             requestJson = objectMapper.writeValueAsString(pwResetModel);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't convert form data into JSON reprasentation. {}", e);
             MessageUtil.fatal("commonerror", "common.error.backend_unreachable.l", userSession.getLocale());
             return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();
@@ -174,7 +175,7 @@ public class PasswordForgottenView implements Serializable {
      */
     public String reqPasswordResetMail() {
 
-        String reqPWResetURI = sabiBackendUrl + "/api/auth/req_pwd_reset";
+        String reqPWResetURI = sabiBackendUrl + Endpoint.PW_RESET_REQUEST.getPath();
 
         // Preliminary checks before sending requests to the backend.
         String userAnswer = pwReqModel.getCaptchaToken();
@@ -189,7 +190,7 @@ public class PasswordForgottenView implements Serializable {
         String requestJson = null;
         try {
             requestJson = objectMapper.writeValueAsString(pwReqModel);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Coudn't convert form data into JSON reprasentation. {}", e);
             MessageUtil.fatal("commonerror", "common.error.backend_unreachable.l", userSession.getLocale());
             return PASSWORD_FORGOTTEN_PAGE.getNavigationableAddress();

@@ -24,13 +24,23 @@ public interface AquariumRepository extends JpaRepository<AquariumEntity, Long> 
      * @return List of Aquariums, that belong to the User.
      */
     @NotNull
-    List<AquariumEntity> findAllByUser_IdIs(@NotNull Long pUserId);
+    default List<AquariumEntity> findAllByUser_IdIs(@NotNull Long pUserId) {
+        // Default: only active aquariums
+        return findAllByUser_IdIsAndActiveIs(pUserId, true);
+    }
+
+    /**
+     * Same as {@link #findAllByUser_IdIs(Long)} but allows to filter by the entity's "active" flag.
+     * Implemented by Spring Data (derived query).
+     */
+    @NotNull
+    List<AquariumEntity> findAllByUser_IdIsAndActiveIs(@NotNull Long pUserId, boolean active);
 
     /**
      * Picks the aquarium of provided user.
      * The underlying query ensured, that the user (in second parameter) is indeed the owner of the aquarium.
-     * @param pPersistedTankId
-     * @param pUserId
+     * @param pPersistedTankId ID of the aquarium to fetch
+     * @param pUserId ID of the user (owner) to verify ownership
      * @return null if the aquarium does not belong to the user, or does not exists.
      */
      AquariumEntity getAquariumEntityByIdAndUser_IdIs(Long pPersistedTankId, Long pUserId);

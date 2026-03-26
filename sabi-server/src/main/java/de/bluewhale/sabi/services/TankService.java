@@ -33,13 +33,22 @@ public interface TankService {
 
 
     /**
-     * Lists tanks for a specific user.
+     * Lists all tanks for a specific user.
      *
      * @param pUserEmail identifies the owner of the tanks that will be returned.
      * @return List of tanks, maybe empty but never null.
      */
     @NotNull
     List<AquariumTo> listTanks(@NotNull String pUserEmail);
+
+    /**
+     * Lists active tanks for a specific user.
+     *
+     * @param pUserEmail identifies the owner of the tanks that will be returned.
+     * @return List of tanks, maybe empty but never null.
+     */
+    @NotNull
+    List<AquariumTo> listActiveTanks(@NotNull String pUserEmail);
 
     /**
      * Updates some Tank-Properties

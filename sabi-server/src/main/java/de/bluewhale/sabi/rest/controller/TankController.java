@@ -60,6 +60,21 @@ public class TankController {
         // If we come so far, the JWTAuthenticationFilter has already validated the token,
         // and we can be sure that spring has injected a valid Principal object.
         log.debug("Request Tank list for {}",principal.getName());
+        List<AquariumTo> aquariumToList = tankService.listActiveTanks(principal.getName());
+        return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
+    }
+
+    @Operation(method = "List all tanks (including inactive ones) belonging to calling user. Required e.g. for history views like PlagueCenter. You need to set the token issued by login or registration in the request header field 'Authorization'.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202",
+                    description = "Success - all tanks (active and inactive) returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - request did not contained a valid user token.")
+    })
+    @RequestMapping(value = {"/list/all"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<List<AquariumTo>> listAllUsersTanks(@RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
+        log.debug("Request all tanks (incl. inactive) for {}", principal.getName());
         List<AquariumTo> aquariumToList = tankService.listTanks(principal.getName());
         return new ResponseEntity<>(aquariumToList, HttpStatus.ACCEPTED);
     }

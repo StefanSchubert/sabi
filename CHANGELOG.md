@@ -1,5 +1,15 @@
 # History of changes (since 5/2022)
 
+## Release 1.2.9
+
+### Technical Maintenance
+
+* Common Patch-Management (JSpringBoot 4.0.3 / Java 25 / Primefaces 15 / Dependencies)
+
+### Feature
+* Preparation fpr sabi-150: usageterms
+* Inactive marked tanks no longer apear in the tank selection of the measurement view
+
 ## Release 1.2.8
 
 ### Technical Maintenance

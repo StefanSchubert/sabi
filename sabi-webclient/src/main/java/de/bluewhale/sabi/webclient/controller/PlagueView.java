@@ -61,7 +61,8 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     private PlagueRecordTo plagueRecordTo = new PlagueRecordTo();
 
-    private List<AquariumTo> tanks;
+    private List<AquariumTo> tanks;       // nur aktive Tanks (für Dropdown beim Erfassen neuer Plagen)
+    private List<AquariumTo> allTanks;    // alle Tanks inkl. inaktiver (für Name-Auflösung in Historien-Ansichten)
     private List<PlagueTo> knownPlagues;
 
     private List<PlagueStatusTo> plagueStatusToList;
@@ -74,7 +75,7 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
     @PostConstruct
     public void init() {
 
-        // Know Tanks of user
+        // Know Tanks of user (active only - for selecting tank when reporting a new plague)
         try {
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             if (tanks.size() == 1) {
@@ -85,6 +86,14 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
             tanks = Collections.emptyList();
             log.error(e.getLocalizedMessage());
             MessageUtil.error("troubleMsg", "common.token.expired.t", userSession.getLocale());
+        }
+
+        // All tanks incl. inactive - required to resolve tank names for past plague records
+        try {
+            allTanks = tankService.getAllUsersTanks(userSession.getSabiBackendToken());
+        } catch (BusinessException e) {
+            allTanks = tanks; // Fallback: aktive Tanks reichen für den Moment
+            log.warn("Could not load all tanks (incl. inactive) for name resolution: {}", e.getLocalizedMessage());
         }
 
         // Fetch i18n Plague Catalogue
@@ -228,13 +237,15 @@ public class PlagueView extends AbstractControllerTools implements Serializable 
 
     /**
      * Used to request the TankName, when all you have is a reference Id.
+     * Uses allTanks (incl. inactive) for lookup so that historical plague records
+     * from meanwhile deactivated tanks can still be displayed with their name.
      *
      * @param tankId technical key of the Tank.
      * @return "N/A" if tankId is unknown
      */
     @NotNull
     public String getTankNameForId(Long tankId) {
-        return getTankNameForId(tankId, tanks);
+        return getTankNameForId(tankId, allTanks);
     }
 
 

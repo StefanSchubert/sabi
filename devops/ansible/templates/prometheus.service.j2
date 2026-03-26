@@ -4,15 +4,18 @@ Documentation=https://prometheus.io/docs/introduction/overview/
 After=network-online.target
 
 [Service]
+Type=simple
 User=prometheus
 Restart=on-failure
 
-#Change this line if Prometheus is somewhere different
-ExecStart=/var/prometheus/prometheus \
+ExecStart=/usr/bin/prometheus \
   --config.file=/var/prometheus_config/prometheus.yml \
   --storage.tsdb.path=/var/prometheus_data \
   --storage.tsdb.retention.time=356d \
-  --storage.tsdb.retention.size=8GB
+  --storage.tsdb.retention.size=8GB \
+  --web.route-prefix=/prometheus \
+  --web.listen-address=0.0.0.0:9090 \
+  --web.external-url=http://deepspace-9.local:9090/prometheus
 
 [Install]
 WantedBy=multi-user.target

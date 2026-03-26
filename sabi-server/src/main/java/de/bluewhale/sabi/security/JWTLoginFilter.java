@@ -5,12 +5,13 @@
 
 package de.bluewhale.sabi.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.model.AccountCredentialsTo;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import java.io.IOException;
 
@@ -30,10 +31,9 @@ import java.io.IOException;
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public JWTLoginFilter(String url,AuthenticationManager authenticationManager) {
-        super(new AntPathRequestMatcher(url));
+    public JWTLoginFilter(String url, AuthenticationManager authenticationManager) {
+        super(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, url));
         setAuthenticationManager(authenticationManager);
-        // setAuthenticationFailureHandler();
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -52,7 +52,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     public Authentication attemptAuthentication(HttpServletRequest pRequest,
                                                 HttpServletResponse pResponse)
             throws AuthenticationException, IOException, ServletException {
-        AccountCredentialsTo loginData = new ObjectMapper()
+        AccountCredentialsTo loginData = new JsonMapper()
                 .readValue(pRequest.getInputStream(), AccountCredentialsTo.class);
 
         // This constructor leaves the authenticated property to false

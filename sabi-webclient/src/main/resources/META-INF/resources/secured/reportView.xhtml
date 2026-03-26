@@ -86,9 +86,9 @@
 
                 <p:panel header="#{msg['reportview.14mp.chart.h']}" toggleable="true">
                     <div class="card">
-                        <p:lineChart model="#{reportView.lineModel_recent_measuredPoints}"
-                                     style="width: 100%; height: 250px;"
-                                     rendered="#{reportView.lineModel_recent_measuredPoints != null}"/>
+                        <p:chart value="#{reportView.lineModelRecentDays}"
+                                style="width: 100%; height: 250px;"
+                                rendered="#{reportView.lineModelRecentDays != null}"/>
                     </div>
                 </p:panel>
 
@@ -96,9 +96,9 @@
 
                 <p:panel header="#{msg['reportview.90d.chart.h']}" toggleable="true">
                     <div class="card">
-                        <p:lineChart model="#{reportView.lineModel90d}"
-                                     style="width: 100%; height: 250px;"
-                                     rendered="#{reportView.lineModel90d != null}"/>
+                        <p:chart value="#{reportView.lineModel90d}"
+                                style="width: 100%; height: 250px;"
+                                rendered="#{reportView.lineModel90d != null}"/>
                     </div>
                 </p:panel>
 
@@ -106,9 +106,9 @@
 
                 <p:panel header="#{msg['reportview.365d.chart.h']}" toggleable="true">
                     <div class="card">
-                        <p:lineChart model="#{reportView.lineModel365d}"
-                                     style="width: 100%; height: 250px;"
-                                     rendered="#{reportView.lineModel365d != null}"/>
+                        <p:chart value="#{reportView.lineModel365d}"
+                                style="width: 100%; height: 250px;"
+                                rendered="#{reportView.lineModel365d != null}"/>
                     </div>
                 </p:panel>
 

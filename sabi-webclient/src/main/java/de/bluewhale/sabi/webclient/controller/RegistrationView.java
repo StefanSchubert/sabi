@@ -5,8 +5,8 @@
 
 package de.bluewhale.sabi.webclient.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.model.NewRegistrationTO;
 import de.bluewhale.sabi.model.UserTo;
@@ -56,7 +56,7 @@ public class RegistrationView implements Serializable {
     private String sabiBackendUrl;
 
     @Autowired
-    private ObjectMapper objectMapper;  // json mapper
+    private JsonMapper objectMapper;  // json mapper
 
     @Autowired
     private UserSession userSession;
@@ -121,7 +121,7 @@ public class RegistrationView implements Serializable {
         String requestJson = null;
         try {
             requestJson = objectMapper.writeValueAsString(model);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Couldn't convert form data into JSON representation. {}", e);
             String message = MessageUtil.getFromMessageProperties("common.error.backend_unreachable.l", userSession.getLocale());
             MessageUtil.fatal("captcha", message);

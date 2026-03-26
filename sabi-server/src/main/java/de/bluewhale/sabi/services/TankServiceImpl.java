@@ -108,6 +108,24 @@ public class TankServiceImpl implements TankService {
     }
 
     @Override
+    public List<AquariumTo> listActiveTanks(final String pUserEmail) {
+        UserEntity user = userRepository.getByEmail(pUserEmail);
+        if (user == null) {
+            return Collections.emptyList();
+        }
+
+        @NotNull List<AquariumEntity> usersAquariums = aquariumRepository.findAllByUser_IdIsAndActiveIs(user.getId(), true);
+
+        List<AquariumTo> aquariumTos = new ArrayList<>();
+        for (AquariumEntity aquariumEntity : usersAquariums) {
+            AquariumTo aquariumTo = aquariumMapper.mapAquariumEntity2To(aquariumEntity);
+            aquariumTos.add(aquariumTo);
+        }
+
+        return aquariumTos;
+    }
+
+    @Override
     public ResultTo<AquariumTo> updateTank(AquariumTo updatedAquariumTo, String pUsersEmail) {
 
         Message message;

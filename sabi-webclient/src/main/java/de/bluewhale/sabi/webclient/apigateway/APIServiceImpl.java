@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.webclient.apigateway;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
@@ -32,7 +32,7 @@ public abstract class APIServiceImpl {
     protected String sabiBackendUrl;
 
     @Autowired
-    protected ObjectMapper objectMapper;  // json mapper
+    protected JsonMapper objectMapper;  // json mapper
 
     @Autowired
     protected UserSession userSession;
@@ -59,7 +59,7 @@ public abstract class APIServiceImpl {
     }
 
     protected void renewBackendToken(ResponseEntity<String> responseEntity) {
-        if( responseEntity.getHeaders().containsKey(HttpHeaders.AUTHORIZATION) ) {
+        if( responseEntity.getHeaders().containsHeader(HttpHeaders.AUTHORIZATION) ) {
             userSession.setSabiBackendToken(responseEntity.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
         }
     }

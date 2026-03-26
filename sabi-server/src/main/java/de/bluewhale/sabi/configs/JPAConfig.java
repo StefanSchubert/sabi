@@ -8,6 +8,7 @@ package de.bluewhale.sabi.configs;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -44,6 +45,10 @@ public class JPAConfig {
 
 
     @Bean
+    @DependsOnDatabaseInitialization
+    // @DependsOnDatabaseInitialization ensures that Flyway migrations complete BEFORE
+    // EclipseLink initializes - but only if a database initializer (e.g. Flyway) is present.
+    // In production (Flyway is scope=test), this annotation has no effect.
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);

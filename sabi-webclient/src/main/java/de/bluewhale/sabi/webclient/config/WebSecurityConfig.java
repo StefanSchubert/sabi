@@ -13,9 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * Provides the configuration for our JWT Token based Security.
@@ -23,7 +22,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * Notice: This class was formerly an implementation of WebSecurityConfigurerAdapter as of < Spring-boot 2.7.0
  * With Spring-Boot 3 the security configuration has been reworked,
  * see: https://www.springcloud.io/post/2022-03/spring-security-without-the-websecurityconfigureradapter/#gsc.tab=0
- * for details.
+ * With Spring-Boot 4 / Spring Security 7: MvcRequestMatcher removed → PathPatternRequestMatcher,
+ * FilterSecurityInterceptor removed → AuthorizationFilter, authorizeRequests → authorizeHttpRequests.
  *
  * @author Stefan Schubert
  */
@@ -37,56 +37,59 @@ public class WebSecurityConfig {
     private CustomExceptionHandlerFilter customExceptionHandlerFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
-        
+        PathPatternRequestMatcher.Builder path = PathPatternRequestMatcher.withDefaults();
+
         http
                 // Add our sabi-113 required exception handler here
-                .addFilterAfter(customExceptionHandlerFilter, FilterSecurityInterceptor.class)
-                .authorizeRequests(authorize -> authorize
-                        .requestMatchers(mvcMatcherBuilder.pattern("/jakarta.faces.resource/**")).permitAll()
+                .addFilterAfter(customExceptionHandlerFilter, AuthorizationFilter.class)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(path.matcher("/jakarta.faces.resource/**")).permitAll()
                         // Allow Pages that don't require an auth context.
-                        .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern("/robots.txt")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern("/sitemap.xml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern("/index.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/register.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/pwreset.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/preregistration.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/logout.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/sessionExpired.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/credits.xhtml")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/static/error/**")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/.well-known/**")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/error")).permitAll() // Error Controller
-                        .requestMatchers(mvcMatcherBuilder.pattern( "/images/**")).permitAll() // Error Controller
+                        .requestMatchers(path.matcher("/")).permitAll()
+                        .requestMatchers(path.matcher("/robots.txt")).permitAll()
+                        .requestMatchers(path.matcher("/sitemap.xml")).permitAll()
+                        .requestMatchers(path.matcher("/index.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/register.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/gdpr.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/terms_of_usage.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/impressum.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/pwreset.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/preregistration.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/logout.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/sessionExpired.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/credits.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/static/error/**")).permitAll()
+                        .requestMatchers(path.matcher("/.well-known/**")).permitAll()
+                        .requestMatchers(path.matcher("/error")).permitAll() // Error Controller
+                        .requestMatchers(path.matcher("/images/**")).permitAll()
                         // Allow Monitoring Endpoint
-                        .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/actuator/**")).permitAll()
+                        .requestMatchers(path.matcher(HttpMethod.GET, "/actuator/**")).permitAll()
                         // all others require authentication
                         .anyRequest().authenticated()
-
                 )
 
                 // In Case of a session timeout don't go directly to the login page,
                 // use this page instead, for being able to notify the user what has happened.
-
                 .sessionManagement(session -> session.invalidSessionUrl("/sessionExpired.xhtml"))
 
                 // login - using this the browser redirect to this page if login is required and you are not logged in.
-                .formLogin().loginPage("/login.xhtml").permitAll()
-                .failureUrl("/login.xhtml?error=true").successForwardUrl("/secured/userportal.xhtml")
-
-                .and()
+                .formLogin(form -> form
+                        .loginPage("/login.xhtml").permitAll()
+                        .failureUrl("/login.xhtml?error=true")
+                        .successForwardUrl("/secured/userportal.xhtml")
+                )
 
                 // logout - back to login, you may specify a logout confirmation page with delayed redirect.
-                .logout().logoutSuccessUrl("/logout.xhtml")
-                .and()
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/logout.xhtml")
+                )
+
                 .authenticationProvider(this.sabiAuthenticationProvider)
 
                 // not needed as JSF 2.2 is implicitly protected against CSRF
-                .csrf(csrf -> csrf.disable())
-                ;
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

@@ -21,14 +21,24 @@ import java.util.List;
  */
 public interface TankService extends Serializable {
 
-    /**
-     * List Users tanks. Concrete user will be derived by the calling context
-     *
-     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
-     * @return List of tanks that belong to current user. List may be empty but never NULL.
-     * @throws BusinessException in case of backend auth failures.
-     */
+   /**
+    * List Users tanks. Concrete user will be derived by the calling context
+    *
+    * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+    * @return List of active tanks that belong to current user. List may be empty but never NULL.
+    * @throws BusinessException in case of backend auth failures.
+    */
    @NotNull List<AquariumTo> getUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
+
+   /**
+    * List ALL users tanks including inactive ones. Required for history views like PlagueCenter
+    * to resolve tank names for past records of meanwhile deactivated tanks.
+    *
+    * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+    * @return List of all tanks (active + inactive) that belong to current user. List may be empty but never NULL.
+    * @throws BusinessException in case of backend auth failures.
+    */
+   @NotNull List<AquariumTo> getAllUsersTanks(@NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
      * Request Tank deletion in Backend.
