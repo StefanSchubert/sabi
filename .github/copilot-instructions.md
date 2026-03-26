@@ -29,7 +29,11 @@
 
 ## Development Environment Setup
 
-- MacBook CLI (take care of special sed syntax etc.)
-- IntelliJ Copilot plugin for code generation
-- doccker for lokal testing
-- deplyment to pro via ansible playbook
+- MacBook CLI mit **BSD Unix Tools** (kein GNU) → abweichende Syntax!
+  - `sed -i ''` statt `sed -i` (BSD sed braucht leeres Extension-Argument)
+  - `grep` ohne `--line-buffered` etc. (BSD grep, nicht GNU grep)
+  - `find` ohne `-printf` (BSD find, nicht GNU find)
+  - Bei Zweifel: `gsed`, `ggrep`, `gfind` (Homebrew GNU-Tools) verwenden
+- IntelliJ Copilot Plugin für Code-Generierung
+- Docker für lokales Testen
+- Deployment nach Prod via Ansible Playbook
