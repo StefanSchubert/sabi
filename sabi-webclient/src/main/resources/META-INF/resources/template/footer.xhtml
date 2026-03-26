@@ -8,13 +8,13 @@
         xmlns:p="http://primefaces.org/ui">
     <p:separator/>
     <p:outputLabel>SABI #{applicationInfo.version}</p:outputLabel>
-    | <p:link outcome="/impressum" value="Impressum" id="impressumLink"/>
-    | <p:link outcome="/gdpr" value="#{msg['gdpr.menu.l']}" id="gdprLink"/>
-    | <p:link outcome="/terms_of_usage" value="#{msg['register.terms_of_usage.h']}" id="usageTermsLink"/>
+    &nbsp;|&nbsp;<p:link outcome="/impressum" value="Impressum" id="impressumLink"/>
+    &nbsp;|&nbsp;<p:link outcome="/gdpr" value="#{msg['gdpr.menu.l']}" id="gdprLink"/>
+    &nbsp;|&nbsp;<p:link outcome="/terms_of_usage" value="#{msg['register.terms_of_usage.h']}" id="usageTermsLink"/>
     <ui:remove>
         <!-- Prepared for later usage, and may be required to be reworked -->
-        | <p:link outcome="/CrowdFunding" value="CrowdFunding" id="crowdFundingLink"/>
+        &nbsp;|&nbsp;<p:link outcome="/CrowdFunding" value="CrowdFunding" id="crowdFundingLink"/>
     </ui:remove>
-    | <p:link outcome="/credits" value="Credits" id="creditLink"/>
-    | <p:link href="https://github.com/StefanSchubert/sabi/issues" value="Report Issues" id="issueLink"/>
+    &nbsp;|&nbsp;<p:link outcome="/credits" value="Credits" id="creditLink"/>
+    &nbsp;|&nbsp;<p:link href="https://github.com/StefanSchubert/sabi/issues" value="Report Issues" id="issueLink"/>
 </ui:composition>
