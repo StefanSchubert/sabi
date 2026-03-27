@@ -12,6 +12,7 @@ import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.OidcProviderLinkRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
+import de.bluewhale.sabi.services.GoogleIdTokenValidator;
 import de.bluewhale.sabi.services.OidcClaims;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,8 +51,8 @@ import java.util.Optional;
 @Slf4j
 public class OidcAuthController {
 
-    @Value("${google.oidc.client-id}")
-    private String googleClientId;
+    @Autowired
+    private GoogleIdTokenValidator googleIdTokenValidator;
 
     @Autowired
     private UserService userService;
@@ -77,31 +78,10 @@ public class OidcAuthController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> processOidcLogin(@Valid @RequestBody OidcLoginRequestTo request) {
 
-        // --- Step 1: Validate Google ID token ---
+        // --- Step 1: Validate Google ID token (signature, issuer, exp, aud) ---
         Jwt jwt;
         try {
-            NimbusJwtDecoder decoder = NimbusJwtDecoder
-                    .withJwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
-                    .build();
-            // Validate issuer and expiry
-            decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer("https://accounts.google.com"));
-            jwt = decoder.decode(request.getIdToken());
-
-            // Validate audience = our Google Client ID
-            Object aud = jwt.getClaim("aud");
-            boolean audMatch = false;
-            if (aud instanceof String s) {
-                audMatch = googleClientId.equals(s);
-            } else if (aud instanceof Iterable<?> list) {
-                for (Object entry : list) {
-                    if (googleClientId.equals(entry)) { audMatch = true; break; }
-                }
-            }
-            if (!audMatch) {
-                log.warn("OIDC_INVALID_TOKEN reason=aud_mismatch");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("error", "INVALID_ID_TOKEN"));
-            }
+            jwt = googleIdTokenValidator.validate(request.getIdToken());
         } catch (JwtException e) {
             log.warn("OIDC_INVALID_TOKEN reason={}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
