@@ -59,6 +59,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST, Endpoint.PW_RESET_REQUEST.getPath()).permitAll()
                         .requestMatchers(HttpMethod.POST, Endpoint.PW_RESET.getPath()).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/email/**").permitAll()
+                        // OIDC Login (sabi-150) – token validation is done inside the controller
+                        .requestMatchers(HttpMethod.POST, Endpoint.OIDC_GOOGLE_AUTH.getPath()).permitAll()
                         // Open statistics
                         .requestMatchers(HttpMethod.GET, Endpoint.HEALTH_STATS.getPath()).permitAll()
                         .requestMatchers(HttpMethod.GET, Endpoint.PARTICIPANT_STATS.getPath()).permitAll()

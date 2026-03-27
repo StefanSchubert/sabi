@@ -4,6 +4,13 @@ accessToken:
   # Valid duration of the access token in seconds. (The access token is used as session replacement)
   TTL: 600
 
+# OIDC / Google Login (sabi-150)
+# Provide the Google OAuth2 Client-ID via environment variable GOOGLE_OIDC_CLIENT_ID
+# The value is used to validate the 'aud' claim of incoming Google ID tokens.
+google:
+  oidc:
+    client-id: ${GOOGLE_OIDC_CLIENT_ID:changeme-set-GOOGLE_OIDC_CLIENT_ID-env-var}
+
 ## Connection parameter to the captcha service
 captcha:
   check:

@@ -78,5 +78,13 @@ public class UserEntity extends Auditable {
     @Basic
     @Column(name = "country", nullable = false, insertable = true, updatable = true, length = 2, precision = 0)
     private String country;
-    
+
+    /**
+     * Flag for auto-provisioned OIDC accounts (no local password).
+     * true = account was created via OIDC; false = standard account with local password.
+     */
+    @Basic
+    @Column(name = "oidc_managed", nullable = false)
+    private boolean oidcManaged = false;
+
 }

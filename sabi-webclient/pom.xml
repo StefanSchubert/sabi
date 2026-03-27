@@ -163,6 +163,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- OAuth2 Client for OIDC Login via Google (sabi-150) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
         <!-- For using jakarta.validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

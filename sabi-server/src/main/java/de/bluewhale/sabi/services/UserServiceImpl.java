@@ -13,8 +13,10 @@ import de.bluewhale.sabi.configs.HazelcastMapItem;
 import de.bluewhale.sabi.exception.*;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.persistence.model.OidcProviderLinkEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity;
+import de.bluewhale.sabi.persistence.repositories.OidcProviderLinkRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.security.PasswordPolicy;
 import jakarta.mail.MessagingException;
@@ -25,8 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -42,6 +46,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OidcProviderLinkRepository oidcProviderLinkRepository;
 
     @Autowired
     private CaptchaAdapter captchaAdapter;
@@ -323,6 +330,66 @@ public class UserServiceImpl implements UserService {
                 throw new BusinessException(AuthExceptionCodes.USER_LOCKED, Message.error(AuthMessageCodes.EMAIL_NOT_REGISTERED));
             }
         }
+    }
+
+    // -------------------------------------------------------
+    // OIDC support (sabi-150)
+    // -------------------------------------------------------
+
+    @Override
+    @Transactional
+    public UserEntity provisionOidcUser(OidcClaims claims) {
+        UserEntity newUser = new UserEntity();
+        newUser.setEmail(claims.email());
+        // Use display name from token, fall back to email-prefix if absent
+        String username = (claims.name() != null && !claims.name().isBlank())
+                ? claims.name() : claims.email().split("@")[0];
+        newUser.setUsername(username);
+        // OIDC-managed accounts have no local password
+        newUser.setPassword("");
+        newUser.setValidateToken("");
+        newUser.setValidated(true);   // Google already verified the email
+        newUser.setOidcManaged(true);
+        // Extract 2-char language from BCP-47 locale, default to "en"
+        String lang = "en";
+        if (claims.locale() != null && !claims.locale().isBlank()) {
+            lang = claims.locale().split("[-_]")[0].toLowerCase();
+            if (lang.length() > 2) lang = lang.substring(0, 2);
+        }
+        newUser.setLanguage(lang);
+        newUser.setCountry(lang.toUpperCase()); // best-effort default
+
+        UserEntity savedUser = userRepository.saveAndFlush(newUser);
+
+        OidcProviderLinkEntity link = new OidcProviderLinkEntity();
+        link.setUser(savedUser);
+        link.setProvider(claims.provider());
+        link.setProviderSubject(claims.sub());
+        link.setLinkedAt(LocalDateTime.now());
+        oidcProviderLinkRepository.save(link);
+
+        log.info("OIDC_PROVISIONED sub_hash={} provider={}", claims.sub().hashCode(), claims.provider());
+        return savedUser;
+    }
+
+    @Override
+    public Optional<UserEntity> findUserBySub(String provider, String sub) {
+        return oidcProviderLinkRepository
+                .findByProviderAndProviderSubject(provider, sub)
+                .map(OidcProviderLinkEntity::getUser);
+    }
+
+    @Override
+    @Transactional
+    public OidcProviderLinkEntity linkOidcIdentity(UserEntity existingUser, OidcClaims claims) {
+        OidcProviderLinkEntity link = new OidcProviderLinkEntity();
+        link.setUser(existingUser);
+        link.setProvider(claims.provider());
+        link.setProviderSubject(claims.sub());
+        link.setLinkedAt(LocalDateTime.now());
+        OidcProviderLinkEntity saved = oidcProviderLinkRepository.save(link);
+        log.info("OIDC_LINK_CREATED sub_hash={} provider={} user_id={}", claims.sub().hashCode(), claims.provider(), existingUser.getId());
+        return saved;
     }
 
 }
