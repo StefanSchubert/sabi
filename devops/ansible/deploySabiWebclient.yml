@@ -47,6 +47,23 @@
         owner: sabi
         group: sabi
         mode: '0444'
+    - name: Ensure /etc/sabi config directory exists
+      file:
+        path: /etc/sabi
+        state: directory
+        owner: root
+        group: sabi
+        mode: '0750'
+    - name: Deploy OIDC secrets env file (sabi-150)
+      copy:
+        content: |
+          GOOGLE_OIDC_CLIENT_ID={{ sabi_google_oidc_client_id }}
+          GOOGLE_OIDC_CLIENT_SECRET={{ sabi_google_oidc_client_secret }}
+        dest: /etc/sabi/sabi-frontend.env
+        owner: root
+        group: sabi
+        mode: '0640'
+      no_log: true
     - name: Copy systemd service file to server
       copy:
         src: sabiFE.service

@@ -2,3 +2,12 @@
 ansible_user: pi
 ansible_become: yes
 ansible_python_interpreter: /usr/bin/python3
+
+# OIDC / Google Login (sabi-150)
+# IMPORTANT: Replace placeholder values with real secrets using ansible-vault:
+#   ansible-vault encrypt_string 'YOUR_REAL_CLIENT_ID' --name 'sabi_google_oidc_client_id'
+#   ansible-vault encrypt_string 'YOUR_REAL_CLIENT_SECRET' --name 'sabi_google_oidc_client_secret'
+# Then paste the !vault output below, replacing the placeholder strings.
+sabi_google_oidc_client_id: "CHANGEME_USE_ANSIBLE_VAULT"
+sabi_google_oidc_client_secret: "CHANGEME_USE_ANSIBLE_VAULT"
+

@@ -3,3 +3,9 @@ ansible_user: pi
 ansible_become: yes
 ansible_python_interpreter: /usr/bin/python3
 
+# OIDC / Google Login (sabi-150)
+# The backend only needs the Client-ID (for aud-claim validation).
+# Replace with ansible-vault encrypted value:
+#   ansible-vault encrypt_string 'YOUR_REAL_CLIENT_ID' --name 'sabi_google_oidc_client_id'
+sabi_google_oidc_client_id: "CHANGEME_USE_ANSIBLE_VAULT"
+

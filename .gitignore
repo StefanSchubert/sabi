@@ -17,6 +17,7 @@ Assets/Thumbs.db
 /sabi-database/src/main/java/
 /sabi-database/src/test/
 /sabi-database/target
+/sabi-database/src/main/resources/target/
 
 /sabi-server/target
 /sabi-server/logs

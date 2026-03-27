@@ -7,6 +7,8 @@ After=network-online.target
 User=sabi
 Restart=on-failure
 WorkingDirectory=/var/sabi
+# OIDC Client-ID injected via EnvironmentFile (written by Ansible from vault variable)
+EnvironmentFile=-/etc/sabi/sabi-backend.env
 ExecStart=/usr/local/share/sdkman/candidates/java/current/bin/java \
     -Djava.io.tmpdir=/var/sabi/tmp \
     -XX:-UsePerfData \

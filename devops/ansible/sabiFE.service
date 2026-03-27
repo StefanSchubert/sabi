@@ -7,6 +7,8 @@ After=network-online.target
 User=sabi
 Restart=on-failure
 WorkingDirectory=/var/sabi
+# OIDC secrets are injected via EnvironmentFile (written by Ansible from vault variables)
+EnvironmentFile=-/etc/sabi/sabi-frontend.env
 ExecStart=/home/pi/.sdkman/candidates/java/current/bin/java \
     -Djava.io.tmpdir=/var/sabi/tmp \
     -XX:-UsePerfData \
