@@ -72,5 +72,20 @@
 
     </h:form>
 
+    <!-- OIDC Login (sabi-150): Social login separator -->
+    <div style="text-align: center; margin-top: 1rem;">
+        <p:separator/>
+        <h:outputLink value="/oauth2/authorization/google"
+                      styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+                      style="display:inline-block; margin-top: 0.5rem; padding: 0.5rem 1.5rem;"
+                      aria-label="#{msg['login.oidc.google.button']}">
+            <h:graphicImage library="images" name="btn_google_signin_dark_normal_web.png"
+                            alt="#{msg['login.oidc.google.button']}"
+                            style="height:1.2rem; vertical-align:middle; margin-right:0.5rem;"
+                            rendered="false"/>
+            #{msg['login.oidc.google.button']}
+        </h:outputLink>
+    </div>
+
 </h:body>
 </html>

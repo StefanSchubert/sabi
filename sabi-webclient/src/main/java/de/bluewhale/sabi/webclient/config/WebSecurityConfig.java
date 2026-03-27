@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.config;
 
 import de.bluewhale.sabi.webclient.security.CustomExceptionHandlerFilter;
 import de.bluewhale.sabi.webclient.security.SabiDoorKeeper;
+import de.bluewhale.sabi.webclient.security.SabiOidcSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,9 @@ public class WebSecurityConfig {
     @Autowired
     private CustomExceptionHandlerFilter customExceptionHandlerFilter;
 
+    @Autowired
+    private SabiOidcSuccessHandler sabiOidcSuccessHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -64,6 +68,9 @@ public class WebSecurityConfig {
                         .requestMatchers(path.matcher("/.well-known/**")).permitAll()
                         .requestMatchers(path.matcher("/error")).permitAll() // Error Controller
                         .requestMatchers(path.matcher("/images/**")).permitAll()
+                        // OIDC login flow (sabi-150): Spring Security OAuth2 redirect URIs
+                        .requestMatchers(path.matcher("/oauth2/**")).permitAll()
+                        .requestMatchers(path.matcher("/login/oauth2/**")).permitAll()
                         // Allow Monitoring Endpoint
                         .requestMatchers(path.matcher(HttpMethod.GET, "/actuator/**")).permitAll()
                         // all others require authentication
@@ -79,6 +86,13 @@ public class WebSecurityConfig {
                         .loginPage("/login.xhtml").permitAll()
                         .failureUrl("/login.xhtml?error=true")
                         .successForwardUrl("/secured/userportal.xhtml")
+                )
+
+                // OIDC Login via Google (sabi-150)
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login.xhtml")
+                        .successHandler(sabiOidcSuccessHandler)
+                        .failureUrl("/login.xhtml?error=oidc")
                 )
 
                 // logout - back to login, you may specify a logout confirmation page with delayed redirect.
