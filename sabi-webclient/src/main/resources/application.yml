@@ -59,16 +59,6 @@ spring:
       enabled: false
     # This will cause error occuring in DsipatcherServlet Context to be routed through the Controller listening on the /error Endpoint
     path: /error
-  servlet:
-    session:
-      # dev. setting for sessionExpired
-      timeout: 3m
-    context-path: /
-  tomcat:
-    threads:
-      max: 100
-    connection-timeout: 10s
-spring:
   jackson:
     use-jackson2-defaults: true
   # INTERNATIONALIZATION
@@ -76,6 +66,10 @@ spring:
     basename: i18n/messages
     encoding: UTF-8
   servlet:
+    session:
+      # dev. setting for sessionExpired
+      timeout: 3m
+    context-path: /
     encoding:
       # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
       charset: UTF-8
@@ -83,6 +77,10 @@ spring:
       enabled: true
       # Force the encoding to the configured charset on HTTP requests and responses.
       force: true
+  tomcat:
+    threads:
+      max: 100
+    connection-timeout: 10s
 
 # Disabling the /v3/api-docs endpoint
 springdoc:

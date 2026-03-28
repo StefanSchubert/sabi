@@ -13,7 +13,7 @@
 CREATE TABLE `oidc_provider_link`
 (
     `id`               BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `user_id`          BIGINT(20) NOT NULL,
+    `user_id`          BIGINT(20) UNSIGNED NOT NULL,
     `provider`         VARCHAR(20) NOT NULL COMMENT 'GOOGLE | APPLE | MICROSOFT',
     `provider_subject` VARCHAR(255) NOT NULL COMMENT 'Immutable sub claim from ID token',
     `linked_at`        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
