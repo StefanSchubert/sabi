@@ -37,3 +37,24 @@
 - IntelliJ Copilot Plugin für Code-Generierung
 - Docker für lokales Testen
 - Deployment nach Prod via Ansible Playbook
+
+---
+
+## i18n Message Bundle Handling (MANDATORY)
+
+**Encoding-Regel für `.properties`-Dateien:**
+- Spring Boot ist mit `spring.messages.encoding: UTF-8` konfiguriert → rohe UTF-8-Bytes sind gültig
+- `\uXXXX`-Escapes sind weiterhin erlaubt und bevorzugt für Konsistenz mit dem Bestand
+- **NIEMALS** rohe Latin-1-Bytes (`0x80`–`0xFF`) in properties-Dateien schreiben
+- **NIEMALS** U+FFFD Replacement Characters (`\xef\xbf\xbd`) einfügen
+
+**Python-Hilfsskripte für File-Operationen:**
+- Immer als echtes UTF-8 schreiben: `create_file`-Tool verwenden (nicht heredoc im Terminal)
+- Bei File-Writes explizit `encoding='utf-8'` angeben: `open(path, 'w', encoding='utf-8')`
+- Bei binären Byte-Operationen auf properties-Dateien: nur `\uXXXX`-Escape-Sequenzen als Ziel verwenden
+- Hilfsskripte nach `/tmp/` schreiben und mit `python3 /tmp/skriptname.py` aufrufen
+- **Kein heredoc** für Python-Code im Terminal – Shell-Escaping korrumpiert Sonderzeichen
+
+**Beim Bearbeiten von Message Bundles via Tools:**
+- `replace_string_in_file` schreibt in der Datei-Encoding des Tools → Sonderzeichen immer als `\uXXXX` angeben
+- Nach jeder Änderung Byte-Check durchführen: `python3 -c "open(path,'rb').read()"` auf bytes > 127 prüfen

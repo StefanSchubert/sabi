@@ -71,6 +71,8 @@ public class WebSecurityConfig {
                         // OIDC login flow (sabi-150): Spring Security OAuth2 redirect URIs
                         .requestMatchers(path.matcher("/oauth2/**")).permitAll()
                         .requestMatchers(path.matcher("/login/oauth2/**")).permitAll()
+                        // OIDC first-login T&C acceptance page (sabi-150)
+                        .requestMatchers(path.matcher("/oidc_welcome.xhtml")).permitAll()
                         // Allow Monitoring Endpoint
                         .requestMatchers(path.matcher(HttpMethod.GET, "/actuator/**")).permitAll()
                         // all others require authentication

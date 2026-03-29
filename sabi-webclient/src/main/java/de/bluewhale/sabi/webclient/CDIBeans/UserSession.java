@@ -39,6 +39,9 @@ public class UserSession implements Serializable {
 
     private Locale locale;
 
+    /** true wenn der Nutzer sich gerade erstmalig per OIDC angemeldet hat → T&C Zustimmung erforderlich */
+    private boolean oidcFirstLogin = false;
+
     private Character numberGroupingSign;
     private Character numberDecimalSeparator;
 
@@ -112,6 +115,14 @@ public class UserSession implements Serializable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public boolean isOidcFirstLogin() {
+        return oidcFirstLogin;
+    }
+
+    public void setOidcFirstLogin(boolean oidcFirstLogin) {
+        this.oidcFirstLogin = oidcFirstLogin;
     }
 
     /**
