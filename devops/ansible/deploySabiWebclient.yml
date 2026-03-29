@@ -57,6 +57,7 @@
     - name: Deploy OIDC secrets env file (sabi-150)
       copy:
         content: |
+          SPRING_PROFILES_ACTIVE={{ spring_profiles_active }}
           GOOGLE_OIDC_CLIENT_ID={{ sabi_google_oidc_client_id }}
           GOOGLE_OIDC_CLIENT_SECRET={{ sabi_google_oidc_client_secret }}
         dest: /etc/sabi/sabi-frontend.env

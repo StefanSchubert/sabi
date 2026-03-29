@@ -1,0 +1,36 @@
+# Prod-Profil für sabi-service (blackpearl4u).
+# Wird geladen wenn SPRING_PROFILES_ACTIVE=prod gesetzt ist (via EnvironmentFile).
+#
+# Secrets (DB-Passwort, SMTP, JWT) kommen NICHT hier rein –
+# sie werden über Ansible Vault als Umgebungsvariablen injiziert
+# und greifen über das ${SABI_XYZ}-Muster in application.yml.
+
+accessToken:
+  # Valid duration of the access token in seconds. (The access token is used as session replacement)
+  TTL: 2715
+
+# Captcha läuft auf demselben Middleware-Server (blackpearl4u)
+captcha:
+  check:
+    url: http://blackpearl4u:8081/captcha/api/check
+
+# Self-referential: Service validiert eigene Mail-Tokens
+# (Dev-application.yml hat fälschlicherweise "blackpearl" – wird hier korrigiert)
+sabi:
+  mailvalidation:
+    url: https://api.sabi-project.net/sabi/api/auth/
+
+# EclipseLink Logging in Produktion reduzieren
+eclipselink:
+  logging:
+    level: WARNING
+
+h2:
+  # false in production!
+  test:
+    mode: false
+
+spring:
+  # JPA Database configuration
+  datasource:
+    url: jdbc:mariadb://esmeralda:3306/sabi

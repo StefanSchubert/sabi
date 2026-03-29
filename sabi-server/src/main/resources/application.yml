@@ -1,6 +1,7 @@
 accessToken:
-  # Exchange all values to suite your productive needs, so DON'T WORRY this secret is only for local dev and completely different in production.
-  SECRET: p$vmb4*.UV51Ke7akjkjhkjhnbmn7687632jhkjhkj
+  # Dev-Default wird automatisch verwendet, wenn SABI_JWT_SECRET nicht gesetzt ist (Docker-Lokal).
+  # In Produktion kommt der echte Wert per EnvironmentFile (Ansible Vault).
+  SECRET: ${SABI_JWT_SECRET:p$vmb4*.UV51Ke7akjkjhkjhnbmn7687632jhkjhkj}
   # Valid duration of the access token in seconds. (The access token is used as session replacement)
   TTL: 600
 
@@ -58,7 +59,7 @@ management:
         include: metrics,health,info,prometheus
 sabi:
   mailvalidation:
-    url: http://blackpearl:8080/sabi/api/auth/
+    url: http://localhost:8080/sabi/api/auth/
 server:
   port: 8080
   servlet:
@@ -82,7 +83,7 @@ spring:
       connection-timeout: 3000
       maximum-pool-size: 50
       minimum-idle: 5
-    password: sabi123
+    password: ${SABI_DB_PASSWORD:sabi123}
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mariadb://localhost:3306/sabi
     username: sabiapp
@@ -93,12 +94,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
   ## To initialize the SMTP interface (used by spring mail auto-configuration)
-  # for local development I recommend to use fakeSMTP (under linux) or smtp4dev (under windows)
+  # for local development I recommend to use fakeSMTP (docker-compose)
   mail:
-    host: localhost
-    username: sabi@bluewhale.de
-    password: YouWillNeverKnow
-    port: 2525
+    host: ${SABI_SMTP_HOST:localhost}
+    username: ${SABI_SMTP_USER:sabi@bluewhale.de}
+    password: ${SABI_SMTP_PASSWORD:YouWillNeverKnow}
+    port: ${SABI_SMTP_PORT:2525}
     properties:
       mail:
         smtp:

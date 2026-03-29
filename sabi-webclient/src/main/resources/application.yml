@@ -79,7 +79,7 @@ spring:
       force: true
   tomcat:
     threads:
-      max: 100
+      max: 50
     connection-timeout: 10s
 
 # Disabling the /v3/api-docs endpoint

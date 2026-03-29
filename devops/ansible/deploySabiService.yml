@@ -73,7 +73,14 @@
     - name: Deploy OIDC client-id env file (sabi-150)
       copy:
         content: |
+          SPRING_PROFILES_ACTIVE={{ spring_profiles_active }}
           GOOGLE_OIDC_CLIENT_ID={{ sabi_google_oidc_client_id }}
+          SABI_DB_PASSWORD={{ sabi_db_password }}
+          SABI_JWT_SECRET={{ sabi_jwt_secret }}
+          SABI_SMTP_HOST={{ sabi_smtp_host }}
+          SABI_SMTP_PORT={{ sabi_smtp_port }}
+          SABI_SMTP_USER={{ sabi_smtp_user }}
+          SABI_SMTP_PASSWORD={{ sabi_smtp_password }}
         dest: /etc/sabi/sabi-backend.env
         owner: root
         group: sabi
