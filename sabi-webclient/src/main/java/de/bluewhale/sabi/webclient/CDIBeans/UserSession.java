@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.webclient.CDIBeans;
 
+import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -39,8 +40,11 @@ public class UserSession implements Serializable {
 
     private Locale locale;
 
-    /** true wenn der Nutzer sich gerade erstmalig per OIDC angemeldet hat → T&C Zustimmung erforderlich */
-    private boolean oidcFirstLogin = false;
+    /**
+     * Temporary storage for the tank currently being edited/created.
+     * Needs to survive the request boundary between tankView → tankEditor.
+     */
+    private AquariumTo selectedTank;
 
     private Character numberGroupingSign;
     private Character numberDecimalSeparator;
@@ -117,13 +121,6 @@ public class UserSession implements Serializable {
         this.userName = userName;
     }
 
-    public boolean isOidcFirstLogin() {
-        return oidcFirstLogin;
-    }
-
-    public void setOidcFirstLogin(boolean oidcFirstLogin) {
-        this.oidcFirstLogin = oidcFirstLogin;
-    }
 
     /**
      * Choosed Language of the User derived by browsers settings, if not explicit set before.
@@ -181,6 +178,18 @@ public class UserSession implements Serializable {
         requestedUserLocale = i18nUtil.getEnsuredSupportedLocale(language);
         facesContext.getCurrentInstance().getViewRoot().setLocale(requestedUserLocale);
         locale = requestedUserLocale;
+    }
+
+    /**
+     * The tank currently being edited or newly created.
+     * Stored in session scope to survive request boundaries (e.g. tankView -> tankEditor navigation).
+     */
+    public AquariumTo getSelectedTank() {
+        return selectedTank;
+    }
+
+    public void setSelectedTank(AquariumTo selectedTank) {
+        this.selectedTank = selectedTank;
     }
 
     /** Invalidates Frontend Session in case of logout. */

@@ -76,13 +76,9 @@ public class SabiOidcSuccessHandler implements AuthenticationSuccessHandler {
 
                 log.info("OIDC_LOGIN_SUCCESS username={} provisioned={}", sabiResponse.getUsername(), sabiResponse.isProvisioned());
 
-                if (sabiResponse.isProvisioned()) {
-                    // Neuer OIDC-Nutzer: T&C Zustimmung einholen bevor der Zugang gewährt wird
-                    userSession.setOidcFirstLogin(true);
-                    response.sendRedirect(request.getContextPath() + "/oidc_welcome.xhtml");
-                } else {
-                    response.sendRedirect(request.getContextPath() + "/secured/userportal.xhtml");
-                }
+                // Google zeigt T&C und Datenschutz bereits im OAuth-Consent-Dialog an –
+                // daher direkt zum Userportal, unabhängig ob provisioned oder nicht.
+                response.sendRedirect(request.getContextPath() + "/secured/userportal.xhtml");
             } else {
                 log.warn("OIDC backend returned non-2xx: {}", backendResponse.getStatusCode());
                 response.sendRedirect(request.getContextPath() + "/login.xhtml?error=oidc");

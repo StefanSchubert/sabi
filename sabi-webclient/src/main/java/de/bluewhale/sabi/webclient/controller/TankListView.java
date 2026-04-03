@@ -16,6 +16,7 @@ import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.RequestScope;
@@ -38,6 +39,7 @@ import static de.bluewhale.sabi.webclient.utils.PageRegister.TANK_VIEW_PAGE;
 @RequestScope
 @Slf4j
 @Getter
+@Setter
 public class TankListView implements Serializable {
 
     @Autowired
@@ -47,7 +49,7 @@ public class TankListView implements Serializable {
     UserSession userSession;
 
     private List<AquariumTo> tanks;
-    private AquariumTo selectedTank;
+    // selectedTank is stored in UserSession to survive request boundaries
     private Map<WaterType, String> translatedWaterType;
 
     @PostConstruct
@@ -75,13 +77,21 @@ public class TankListView implements Serializable {
         log.debug("Called predestroy on TankListView");
     }
 
+    /**
+     * Delegates to UserSession so that the selected tank survives the
+     * request boundary between tankView (action) and tankEditor (render).
+     */
+    public AquariumTo getSelectedTank() {
+        return userSession.getSelectedTank();
+    }
+
     public String edit(AquariumTo tank) {
-        selectedTank = tank;
+        userSession.setSelectedTank(tank);
         return TANK_EDITOR_PAGE.getNavigationableAddress();
     }
 
     public String addTank() {
-        selectedTank = new AquariumTo();
+        userSession.setSelectedTank(new AquariumTo());
         return TANK_EDITOR_PAGE.getNavigationableAddress();
     }
 
@@ -98,23 +108,25 @@ public class TankListView implements Serializable {
     }
 
     public void generateTemperatureApiKey(AquariumTo tank) {
-        selectedTank = tank;
+        userSession.setSelectedTank(tank);
         try {
             String apiKey = tankService.reCreateTemperatureAPIKey(tank.getId(), userSession.getSabiBackendToken());
             tank.setTemperatureApiKey(apiKey);
+            userSession.setSelectedTank(tank);
         } catch (BusinessException e) {
             log.error(e.getLocalizedMessage());
             MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
         }
     }
 
-
     public String save() {
+        AquariumTo selectedTank = userSession.getSelectedTank();
         if (selectedTank != null) {
             // Already stored
             try {
                 tankService.save(selectedTank, userSession.getSabiBackendToken());
                 tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
+                userSession.setSelectedTank(null);
             } catch (BusinessException e) {
                 e.printStackTrace();
                 MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
