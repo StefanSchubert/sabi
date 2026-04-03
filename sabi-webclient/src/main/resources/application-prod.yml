@@ -1,0 +1,30 @@
+## Connection parameter to the captcha service (prod: blackpearl4u)
+captcha:
+  backend:
+    url: http://blackpearl4u:8081/captcha/api
+
+# JSF/Primefaces Config – Prod-Stage aktivieren
+joinfaces:
+  jsf:
+    project-stage: Production
+  primefaces:
+    theme: saga
+
+# sabi backend on blackpearl4u (without /api on purpose)
+sabi:
+  backend:
+    url: http://blackpearl4u:8080/sabi
+
+# Session-Timeout für Produktion (dev: 3m)
+spring:
+  servlet:
+    session:
+      timeout: 45m
+  tomcat:
+    threads:
+      max: 150
+    connection-timeout: 30s
+
+# Allow shadowing of the delivered logging config
+logging:
+  config: config/log4j2-spring.xml

@@ -27,9 +27,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="PRAGMA" content="no-cache"/>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon"
-          type="image/png"
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="theme-color" content="#075985"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="SABI"/>
+    <link rel="apple-touch-icon"
+          href="#{resource['images:apple-touch-icon.jpg']}"/>
+    <link rel="icon" type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
     <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
@@ -44,7 +49,23 @@
     wired through Springs WebSecurity-Mechanisms. Have a look into the class WebSecurityConfig.
     -->
     </ui:remove>
-    <div style="height:50vh"/>
+
+    <ui:remove>
+        <!--
+          The welcome panel contains "About Sabi" information and is collapsed by default. It can be expanded by the user to read more about Sabi and to find the link to the GitHub repository.
+         -->
+    </ui:remove>
+    <p:panel id="welcome" header="#{msg['register.welcome.h']}"
+             toggleable="true" collapsed="true" style="margin-bottom:20px; max-width:700px; margin-left:auto; margin-right:auto;">
+        #{msg['register.welcome.t']}
+        <p>
+            #{msg['register.sabi_on_github.l']}
+            <h:outputLink value="https://github.com/StefanSchubert/sabi" target="_blank">
+                #{msg['register.homepage.l']}
+            </h:outputLink>
+        </p>
+    </p:panel>
+
     <h:form id="login-form" prependId="false">
 
             <p:panel header="#{msg['login.welcome.h']} (#{applicationInfo.version})">
@@ -60,7 +81,18 @@
                     <p:commandButton ajax="false" value="Login"/>
                     <p:link outcome="pwreset" value="#{msg['login.resetPW.b']}"/>
 
-                    <p:outputLabel value="#{msg['login.register.l']}" for="reglink"/>
+                    <ui:remove><!-- OIDC Login (sabi-150): linke Spalte, rechte Spalte bleibt leer --></ui:remove>
+                    <p:outputPanel>
+                        <h:outputLink value="/oauth2/authorization/google"
+                                      styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+                                      style="display:inline-block; padding: 0.5rem 1.5rem;"
+                                      aria-label="#{msg['login.oidc.google.button']}">
+                            #{msg['login.oidc.google.button']} (Experimental - WIP)
+                        </h:outputLink>
+                    </p:outputPanel>
+                    <p:outputPanel></p:outputPanel>
+
+                    <p:outputLabel value="#{msg['login.register.l']}" for="reglink" style="text-align: right; display: block;"/>
                     <p:link id="reglink" outcome="register" value="#{msg['welcome.but.register']}"/>
 
                 </p:panelGrid>

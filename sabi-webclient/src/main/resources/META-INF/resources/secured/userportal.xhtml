@@ -42,6 +42,11 @@
                     <p:autoUpdate/>
                 </p:messages>
 
+                <p:panel rendered="#{userProfileView.hasTanks == false}"
+                         styleClass="no-tank-hint">
+                    <h:outputText value="&#x1F41F; #{msg['userportal.notank.hint.t']}" escape="false"/>
+                </p:panel>
+
                 <p:spacer height="15px"/>
 
                 <p:panel header="#{msg['userportal.meassurement.reminder.h']}">

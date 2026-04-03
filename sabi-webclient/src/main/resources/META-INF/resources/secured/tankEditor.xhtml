@@ -27,43 +27,49 @@
                 <p:autoUpdate/>
             </p:messages>
 
-            <h:form id="tankform">
-                <p:panelGrid columns="2" style="border:2;">
-                    <p:outputLabel for="description" value="#{msg['tankview.description.l']}"/>
-                    <p:inputText id="description"
-                                 value="#{tankListView.selectedTank.description}"
-                                 size="12"/>
+            <p:panel header="#{msg['tankview.tanklist.h']}">
+                <h:form id="tankform">
+                    <p:panelGrid columns="2" style="width:100%; border:none;"
+                                 columnClasses="ui-grid-col-5,ui-grid-col-7">
 
-                    <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
-                    <p:inputText id="size"
-                                 value="#{tankListView.selectedTank.size}"
-                                 size="5"/>
+                        <p:outputLabel for="description" value="#{msg['tankview.description.l']}"/>
+                        <p:inputText id="description"
+                                     value="#{tankListView.selectedTank.description}"/>
 
-                    <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
-                    <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
-                        <f:selectItems value="#{units.sizeUnits}"/>
-                    </h:selectOneMenu>
+                        <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
+                        <p:inputText id="size"
+                                     value="#{tankListView.selectedTank.size}"/>
 
-                    <p:outputLabel for="type" value="#{msg['tankview.waterType.l']}"/>
-                    <h:selectOneMenu id="type" value="#{tankListView.selectedTank.waterType}">
-                        <f:selectItems value="#{units.waterTypes}"
-                                       var="n"
-                                       itemValue="#{n}"
-                                       itemLabel="#{tankListView.translatedWaterType[n]}"
-                        />
-                    </h:selectOneMenu>
+                        <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
+                        <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
+                            <f:selectItems value="#{units.sizeUnits}"/>
+                        </h:selectOneMenu>
 
-                    <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
-                    <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
-                                  pattern="dd.MM.yyyy"
-                                  showOtherMonths="true"
-                                  size="11"/>
+                        <p:outputLabel for="type" value="#{msg['tankview.waterType.l']}"/>
+                        <h:selectOneMenu id="type" value="#{tankListView.selectedTank.waterType}">
+                            <f:selectItems value="#{units.waterTypes}"
+                                           var="n"
+                                           itemValue="#{n}"
+                                           itemLabel="#{tankListView.translatedWaterType[n]}"/>
+                        </h:selectOneMenu>
 
-                    <p:button value="#{msg['common.cancel.b']}" outcome="tankView"/>
+                        <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
+                        <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
+                                      pattern="dd.MM.yyyy"
+                                      showOtherMonths="true"/>
 
-                    <p:commandButton value="#{msg['common.save.b']}" action="#{tankListView.save}" />
-                </p:panelGrid>
-            </h:form>
+                        <!-- Buttons -->
+                        <p:outputPanel>&#160;</p:outputPanel>
+                        <p:outputPanel style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                            <p:button value="#{msg['common.cancel.b']}" outcome="tankView" icon="pi pi-times"/>
+                            <p:commandButton value="#{msg['common.save.b']}"
+                                             action="#{tankListView.save}"
+                                             icon="pi pi-save"/>
+                        </p:outputPanel>
+
+                    </p:panelGrid>
+                </h:form>
+            </p:panel>
 
         </ui:define>
 

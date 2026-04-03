@@ -38,21 +38,27 @@ sabi:
     url: http://localhost:8080/sabi
 server:
   port: 8088
+
+# OIDC / Google Login (sabi-150)
+# Set GOOGLE_OIDC_CLIENT_ID and GOOGLE_OIDC_CLIENT_SECRET as environment variables – never commit real values!
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_OIDC_CLIENT_ID:changeme-set-GOOGLE_OIDC_CLIENT_ID-env-var}
+            client-secret: ${GOOGLE_OIDC_CLIENT_SECRET:changeme-set-GOOGLE_OIDC_CLIENT_SECRET-env-var}
+            scope: openid,email,profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
   error:
     whitelabel:
       enabled: false
     # This will cause error occuring in DsipatcherServlet Context to be routed through the Controller listening on the /error Endpoint
     path: /error
-  servlet:
-    session:
-      # dev. setting for sessionExpired
-      timeout: 3m
-    context-path: /
-  tomcat:
-    threads:
-      max: 100
-    connection-timeout: 10s
-spring:
   jackson:
     use-jackson2-defaults: true
   # INTERNATIONALIZATION
@@ -60,6 +66,10 @@ spring:
     basename: i18n/messages
     encoding: UTF-8
   servlet:
+    session:
+      # dev. setting for sessionExpired
+      timeout: 3m
+    context-path: /
     encoding:
       # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
       charset: UTF-8
@@ -67,6 +77,10 @@ spring:
       enabled: true
       # Force the encoding to the configured charset on HTTP requests and responses.
       force: true
+  tomcat:
+    threads:
+      max: 50
+    connection-timeout: 10s
 
 # Disabling the /v3/api-docs endpoint
 springdoc:

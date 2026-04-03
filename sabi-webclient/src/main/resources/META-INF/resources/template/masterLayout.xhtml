@@ -21,7 +21,13 @@
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="theme-color" content="#075985"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="SABI"/>
+    <link rel="apple-touch-icon"
+          href="#{resource['images:apple-touch-icon.jpg']}"/>
     <link rel="icon"
           type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
@@ -30,15 +36,15 @@
 
 <h:body styleClass="baselayout">
 
-    <div id="header">
+    <header id="header">
         <ui:include src="/template/header.xhtml"/>
-    </div>
-    <div id="content">
+    </header>
+    <main id="content">
         <ui:insert name="content">Sorry content is missing. Report to site owner.</ui:insert>
-    </div>
-    <div id="footer">
+    </main>
+    <footer id="footer">
         <ui:include src="/template/footer.xhtml"/>
-    </div>
+    </footer>
 
 </h:body>
 </html>

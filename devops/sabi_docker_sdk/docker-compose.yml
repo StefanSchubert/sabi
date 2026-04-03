@@ -17,6 +17,9 @@ services:
     platform: linux/amd64
     environment:
       - TZ=Europe/Berlin
+      # Aktiviert application-local.yml für lokale Google-OIDC-Tests.
+      # nicht im Repo, da **/application-local.yml in .gitignore steht) und aufgrund des secrets nicht committet werden darf.
+      - SPRING_PROFILES_ACTIVE=local
     networks:
       - sabinet
     ports:

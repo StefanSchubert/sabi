@@ -12,6 +12,7 @@ import de.bluewhale.sabi.model.UnitTo;
 import de.bluewhale.sabi.model.UserProfileTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
+import de.bluewhale.sabi.webclient.apigateway.TankService;
 import de.bluewhale.sabi.webclient.apigateway.UserService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import jakarta.annotation.PostConstruct;
@@ -51,6 +52,9 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
     @Autowired
     MeasurementService measurementService;
 
+    @Autowired
+    TankService tankService;
+
     public List<SupportedLocales> supportedLocales;
 
     public List<MeasurementReminderTo> measurementReminderTos;
@@ -59,6 +63,8 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
 
     public Locale selectedLocale;
     private Integer selectedUnitId;
+
+    private boolean hasTanks;
 
     @PostConstruct
     public void init() {
@@ -75,10 +81,21 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             log.error("Could not fetch users Profile. {}", e.getMessage());
             MessageUtil.warn("profileupdate", "common.error.internal_server_problem.t", userSession.getLocale());
         }
+
+        try {
+            hasTanks = !tankService.getUsersTanks(userSession.getSabiBackendToken()).isEmpty();
+        } catch (BusinessException e) {
+            hasTanks = false;
+            log.error("Could not fetch users tanks for portal hint. {}", e.getMessage());
+        }
     }
 
     public Boolean getHasMeasurementReminders() {
         return !measurementReminderTos.isEmpty();
+    }
+
+    public Boolean getHasTanks() {
+        return hasTanks;
     }
 
     /**

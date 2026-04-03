@@ -2,4 +2,3 @@
 ansible_user: pi
 ansible_become: yes
 ansible_python_interpreter: /usr/bin/python3
-

@@ -53,7 +53,8 @@
                 <p:panelGrid columns="2" style="border:2;">
 
                     <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
-                    <p:selectOneMenu id="tankselection" value="#{reportView.selectedTankId}">
+                    <p:selectOneMenu id="tankselection" value="#{reportView.selectedTankId}"
+                                     style="min-width:14rem; width:100%;">
                         <!-- todo when selectedTank has a value set this instead of the Select Entry -->
                         <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                         <f:selectItems value="#{reportView.tanks}"
@@ -64,7 +65,8 @@
                     </p:selectOneMenu>
 
                     <p:outputLabel for="unitselection" value="#{msg['common.unitchoise.l']}"/>
-                    <p:selectOneMenu id="unitselection" value="#{reportView.selectedUnitId}">
+                    <p:selectOneMenu id="unitselection" value="#{reportView.selectedUnitId}"
+                                     style="min-width:14rem; width:100%;">
                         <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                         <f:selectItems value="#{measurementListView.knownUnits}"
                                        var="m"

@@ -16,7 +16,7 @@ shangri-la
 [sabiMiddleware]
 blackpearl4u
 
-[sabiBackend]
+[DBNodeSupplements]
 esmeralda
 
 [myMonitoring]

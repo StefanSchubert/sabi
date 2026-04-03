@@ -11,6 +11,7 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.exception.Message.CATEGORY;
 import de.bluewhale.sabi.model.*;
+import de.bluewhale.sabi.persistence.model.UserEntity;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,4 +117,40 @@ public interface UserService {
     {@link AuthExceptionCodes#AUTHENTICATION_FAILED} in case of a missmatched principal
      */
     @NotNull ResultTo<UserProfileTo> getUserProfile(String principalName) throws BusinessException;
+
+    // -------------------------------------------------------
+    // OIDC support (sabi-150)
+    // -------------------------------------------------------
+
+    /**
+     * Auto-provisions a new Sabi account for a first-time OIDC user.
+     * The account has {@code oidcManaged = true} and no local password.
+     *
+     * @param claims verified claims from the Google ID token
+     * @return the newly created UserEntity
+     */
+    @Transactional
+    UserEntity provisionOidcUser(OidcClaims claims);
+
+    /**
+     * Looks up an existing Sabi user by OIDC provider sub claim.
+     * Returns empty if no link exists yet (first OIDC login).
+     *
+     * @param provider provider identifier, e.g. "GOOGLE"
+     * @param sub      immutable sub claim from the ID token
+     * @return the linked UserEntity, or empty
+     */
+    java.util.Optional<UserEntity> findUserBySub(String provider, String sub);
+
+    /**
+     * Links an existing Sabi account (matched by email) to an OIDC identity.
+     * The account's {@code oidcManaged} flag is NOT changed (CL-2: password login preserved).
+     *
+     * @param existingUser the existing Sabi UserEntity
+     * @param claims       verified claims from the Google ID token
+     * @return the created OidcProviderLinkEntity
+     */
+    @Transactional
+    de.bluewhale.sabi.persistence.model.OidcProviderLinkEntity linkOidcIdentity(
+            UserEntity existingUser, OidcClaims claims);
 }

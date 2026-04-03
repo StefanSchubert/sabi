@@ -8,6 +8,12 @@
 logs/
 Assets/Thumbs.db
 
+# Lokale Secrets – niemals einchecken!
+**/.env
+**/.env.*
+**/application-local.yml
+~/.vault_pass_sabi
+
 /captcha/src/main/webapp/
 /captcha/target/
 /captcha/logs/
@@ -17,6 +23,7 @@ Assets/Thumbs.db
 /sabi-database/src/main/java/
 /sabi-database/src/test/
 /sabi-database/target
+/sabi-database/src/main/resources/target/
 
 /sabi-server/target
 /sabi-server/logs

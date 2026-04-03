@@ -37,10 +37,18 @@
                     </div>
                 </p:dialog>
 
+                <!--
+                    Die ID des zu bearbeitenden Datensatzes muss als Hidden-Field mitgeschickt werden,
+                    damit MeasurementServiceImpl.save() zwischen POST (neu) und PUT (Update) unterscheiden kann.
+                    Die Bean ist @RequestScope – ohne Hidden-Field geht die ID nach editMeasurement() verloren.
+                -->
+                <h:inputHidden id="measurementId" value="#{measurementListView.measurement.id}"/>
+
                 <p:panelGrid columns="2" style="border:2;">
 
                     <p:outputLabel for="tankselection" value="#{msg['common.tankchoice.l']}"/>
-                    <p:selectOneMenu id="tankselection" value="#{measurementListView.measurement.aquariumId}">
+                    <p:selectOneMenu id="tankselection" value="#{measurementListView.measurement.aquariumId}"
+                                        style="min-width:14rem; width:100%;">
                         <!-- todo when selectedTank has a value set this instead of the Select Entry -->
                         <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                         <f:selectItems value="#{measurementListView.tanks}"
@@ -52,7 +60,8 @@
 
                     <p:outputLabel for="unitselection" value="#{msg['measureview.measurekind.l']}"/>
                     <p:column>
-                        <p:selectOneMenu id="unitselection" value="#{measurementListView.measurement.unitId}">
+                        <p:selectOneMenu id="unitselection" value="#{measurementListView.measurement.unitId}"
+                                             style="min-width:14rem; width:100%;">
                             <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                             <f:selectItems value="#{measurementListView.knownUnits}"
                                            var="m"

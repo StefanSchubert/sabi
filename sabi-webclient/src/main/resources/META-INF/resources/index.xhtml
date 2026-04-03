@@ -21,9 +21,14 @@
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon"
-          type="image/png"
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="theme-color" content="#075985"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="SABI"/>
+    <link rel="apple-touch-icon"
+          href="#{resource['images:apple-touch-icon.jpg']}"/>
+    <link rel="icon" type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
     <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
@@ -31,16 +36,18 @@
 <h:body styleClass="splashscreen">
 
     <h2>#{msg['login.welcome.h']}</h2>
-    <div style="height:15vh"/>
-    <p>
-        <p:outputLabel escape="false" value="#{msg['welcome.t.introduction']}"/>
-    </p>
-
-    <h:panelGrid columns="2" cellpadding="20">
-        <p:button outcome="login" value="#{msg['welcome.but.login']}"/>
-        <p:button outcome="register" value="#{msg['welcome.but.register']}"/>
-    </h:panelGrid>
-    <br/>
+    <div style="height:12vh; min-height:40px;"/>
+    <div style="background:rgba(255,255,255,0.88); border-radius:8px; padding:1.25rem 1.5rem;
+                max-width:500px; width:100%; margin:0 auto;
+                box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+        <p style="margin:0 0 1.2rem; color:#1e293b; font-size:0.97rem;">
+            <p:outputLabel escape="false" value="#{msg['welcome.t.introduction']}"/>
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center;">
+            <p:button outcome="login"    value="#{msg['welcome.but.login']}"    icon="pi pi-sign-in"/>
+            <p:button outcome="register" value="#{msg['welcome.but.register']}" icon="pi pi-user-plus"/>
+        </div>
+    </div>
     <p:messages id="msg1" for="additionalHint" showDetail="true" closable="true">
         <p:autoUpdate/>
     </p:messages>
