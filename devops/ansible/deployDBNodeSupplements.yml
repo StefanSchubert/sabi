@@ -1,7 +1,13 @@
-- hosts: sabiBackend
+- hosts: DBNodeSupplements
   vars_files:
-    - ./group_vars/sabiBackend.yml
+    - ./group_vars/DBNodeSupplements.yml
   tasks:
+    - name: Wait for Pi to become reachable (may need wakeup time)
+      wait_for_connection:
+        delay: 5
+        sleep: 5
+        timeout: 120
+
     - name: Create pimetric User
       user:
         name: pimetric

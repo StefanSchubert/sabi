@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                         .requestMatchers(path.matcher("/logout.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/sessionExpired.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/credits.xhtml")).permitAll()
+                        .requestMatchers(path.matcher("/ipv6info.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/static/error/**")).permitAll()
                         .requestMatchers(path.matcher("/.well-known/**")).permitAll()
                         .requestMatchers(path.matcher("/error")).permitAll() // Error Controller

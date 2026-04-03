@@ -1,3 +1,6 @@
 # Common to [sabi raspberrypi] Servers
 ansible_user: pi
 
+# Pi may need wakeup time – retry SSH connect up to 5 times before giving up
+ansible_ssh_retries: 5
+

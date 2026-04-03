@@ -12,9 +12,9 @@ EnvironmentFile=-/etc/sabi/sabi-frontend.env
 ExecStart=/home/pi/.sdkman/candidates/java/current/bin/java \
     -Djava.io.tmpdir=/var/sabi/tmp \
     -XX:-UsePerfData \
-    -Xmx128m \
-    -Xms64m \
-    -XX:MaxMetaspaceSize=128m \
+    -Xmx256m \
+    -Xms96m \
+    -XX:MaxMetaspaceSize=160m \
     -jar /var/sabi/sabi-webclient.jar
 
 [Install]

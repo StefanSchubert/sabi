@@ -34,3 +34,8 @@ spring:
   # JPA Database configuration
   datasource:
     url: jdbc:mariadb://esmeralda:3306/sabi
+
+# No API doc in production
+springdoc:
+  swagger-ui:
+    enabled: false

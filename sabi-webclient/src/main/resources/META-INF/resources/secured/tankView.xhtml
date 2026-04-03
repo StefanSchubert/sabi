@@ -31,47 +31,63 @@
                 <p:dataList value="#{tankListView.tanks}" var="tank" type="definition">
                     <f:facet name="header">#{msg['tankview.tanklist.h']}</f:facet>
 
-                    <p:panelGrid columns="2" layout="grid" style="border:2;">
+                    <p:panelGrid columns="2" layout="grid"
+                                 style="width:100%; border:none;"
+                                 columnClasses="ui-grid-col-5,ui-grid-col-7">
+
                         <p:outputLabel value="#{msg['tankview.description.l']}"/>
-                        <p:outputLabel value="#{tank.description}"
-                                      size="14"/>
+                        <p:outputLabel value="#{tank.description}" style="font-weight:600;"/>
 
                         <p:outputLabel value="#{msg['tankview.waterType.l']}"/>
-                        <p:outputLabel value="#{tankListView.translatedWaterType[tank.waterType]}"
-                                       size="20"/>
+                        <p:outputLabel value="#{tankListView.translatedWaterType[tank.waterType]}"/>
 
                         <p:outputLabel value="#{msg['tankview.volume.l']}"/>
-                        <p:outputLabel value="#{tank.size} #{tank.sizeUnit.unitSign}"
-                                      size="10"/>
+                        <p:outputLabel value="#{tank.size} #{tank.sizeUnit.unitSign}"/>
 
                         <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
-                        <p:outputLabel value="#{tank.inceptionDate}"
-                                      size="10">
+                        <p:outputLabel value="#{tank.inceptionDate}">
                             <!-- FIXME proper Timezone handling when we have the user profile -->
                             <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
                         </p:outputLabel>
 
                         <p:outputLabel value="#{msg['tankview.tempApiKey.l']}"/>
+                        <p:outputPanel>
+                            <p:outputLabel rendered="#{tank.temperatureApiKey != null}"
+                                           value="#{tank.temperatureApiKey}"
+                                           style="font-size:0.8rem; word-break:break-all;"/>
+                            <p:commandButton rendered="#{tank.temperatureApiKey == null}"
+                                             value="#{msg['tankview.tempApiKey.b']}"
+                                             action="#{tankListView.generateTemperatureApiKey(tank)}"
+                                             id="temKeyAction" icon="pi pi-key"
+                                             update=":master" title="#{msg['tankview.tempApiKey.b']}"/>
+                        </p:outputPanel>
 
-                        <p:outputLabel rendered="#{tank.temperatureApiKey != null}" value="#{tank.temperatureApiKey}"/>
-                        <p:commandButton rendered="#{tank.temperatureApiKey == null}" value="#{msg['tankview.tempApiKey.b']}" action="#{tankListView.generateTemperatureApiKey(tank)}"
-                                         id="temKeyAction" icon="pi pi-key"
-                                         update=":master" title="#{msg['tankview.tempApiKey.b']}"/>
-
-                        <p:commandButton value="#{msg['common.edit.b']}" action="#{tankListView.edit(tank)}"
-                                         id="editAction" icon="pi pi-pencil" title="#{msg['common.edit.b']}"/>
-
-                        <p:commandButton value="#{msg['common.delete.b']}" action="#{tankListView.delete(tank)}"
-                                         id="delAction" ajax="true"
-                                         update=":master" icon="pi pi-trash" title="#{msg['common.delete.b']}"/>
+                        <!-- Action Buttons -->
+                        <p:outputPanel>&#160;</p:outputPanel>
+                        <p:outputPanel style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                            <p:commandButton value="#{msg['common.edit.b']}"
+                                             action="#{tankListView.edit(tank)}"
+                                             id="editAction" icon="pi pi-pencil"
+                                             title="#{msg['common.edit.b']}"/>
+                            <p:commandButton value="#{msg['common.delete.b']}"
+                                             action="#{tankListView.delete(tank)}"
+                                             id="delAction" ajax="true"
+                                             update=":master" icon="pi pi-trash"
+                                             styleClass="ui-button-danger"
+                                             title="#{msg['common.delete.b']}"/>
+                        </p:outputPanel>
                     </p:panelGrid>
 
                     <p:separator/>
 
                 </p:dataList>
 
-                <p:commandButton value="#{msg['common.add.b']}" action="#{tankListView.addTank}"
-                                 id="addAction" icon="pi pi-plus" title="#{msg['common.add.b']}"/>
+                <div style="margin-top:0.75rem;">
+                    <p:commandButton value="#{msg['common.add.b']}"
+                                     action="#{tankListView.addTank}"
+                                     id="addAction" icon="pi pi-plus"
+                                     title="#{msg['common.add.b']}"/>
+                </div>
             </h:form>
 
         </ui:define>

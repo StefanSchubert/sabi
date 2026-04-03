@@ -58,3 +58,28 @@
 **Beim Bearbeiten von Message Bundles via Tools:**
 - `replace_string_in_file` schreibt in der Datei-Encoding des Tools → Sonderzeichen immer als `\uXXXX` angeben
 - Nach jeder Änderung Byte-Check durchführen: `python3 -c "open(path,'rb').read()"` auf bytes > 127 prüfen
+
+---
+
+## Barrierefreiheit / Accessibility (MANDATORY)
+
+**WCAG AA Kontrast-Mindestanforderungen:**
+- Normaler Text (< 18px / < 14px bold): **mindestens 4.5:1** Kontrast gegen Hintergrund
+- Großer Text (≥ 18px normal / ≥ 14px bold): **mindestens 3:1**
+- UI-Komponenten (Buttons, Inputs, Icons): **mindestens 3:1**
+
+**Verbotene Farb-Kombinationen:**
+- `color: lightblue` auf weißem/hellem Hintergrund → Kontrast ~1.4:1 → **VERBOTEN**
+- `color: yellow` auf weißem Hintergrund → **VERBOTEN**
+- Generell: Keine Pastellfarben als Textfarbe auf hellem Hintergrund
+
+**Empfohlene Farben (SABI Marine Theme):**
+- Links auf weißem/hellem Hintergrund: `#0369a1` (--sabi-primary, ~5.7:1) oder `#075985` (~7:1)
+- Links auf dunklem Hintergrund (Header/Footer): `#bae6fd` (--sabi-primary-light, ~5.2:1)
+- Fehlertexte (rot): `#b91c1c` (~5.5:1 auf weiß) statt `red` (4.5:1)
+
+**HTML in i18n-Properties:**
+- Inline-`style="color:..."` in Message-Bundle-HTML: **immer WCAG-konforme Farbe** verwenden
+- `<a>`-Tags in Properties **immer korrekt schließen**: `</a>` nicht `</>`
+- Links erkennbar machen: `text-decoration: underline` oder andere visuelle Unterscheidung
+

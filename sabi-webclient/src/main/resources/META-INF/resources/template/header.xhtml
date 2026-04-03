@@ -1,31 +1,44 @@
 <!--
-  - Copyright (c) 2024 by Stefan Schubert under the MIT License (MIT).
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
 
-    <h:form>
-        <!-- For Icons see: https://www.primefaces.org/showcase/ui/misc/primeicons.xhtml -->
-        <p:menuButton value="#{msg['menu.b']}">
-            <p:menuitem value="#{msg['menu.home.l']}" outcome="/secured/userportal" icon="pi pi-home"/>
-            <p:menuitem value="#{msg['menu.tankView.l']}" outcome="/secured/tankView" icon="pi pi-image"/>
-            <p:menuitem value="#{msg['menu.measureView.l']}" outcome="/secured/measureView" icon="pi pi-pencil"/>
-            <p:menuitem value="#{msg['menu.plagueView.l']}" outcome="/secured/plagueView" icon="pi pi-pencil"/>
-            <p:menuitem value="#{msg['menu.report.l']}" outcome="/secured/reportView" icon="pi pi-file-excel"/>
-            <p:menuitem value="#{msg['menu.userProfile.l']}" outcome="/secured/userProfile" icon="pi pi-user"/>
-            <p:menuitem value="#{msg['menu.statistics.l']}" outcome="/secured/projectStats" icon="pi pi-chart-bar"/>
-            <p:menuitem value="#{msg['menu.feedback.l']}" outcome="/secured/feedback" icon="pi pi-comment"/>
-            <p:separator/>
-            <p:menuitem value="Logout" action="#{menuView.logout}" icon="pi pi-sign-out"/>
-        </p:menuButton>
-    </h:form>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem;">
 
-    <p:separator/>
+        <!-- Branding -->
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-shrink:0;">
+            <img src="#{resource['images:icons8-crab-64.png']}"
+                 alt="SABI"
+                 style="width:32px; height:32px; filter:brightness(0) invert(1);"/>
+            <span style="color:#ffffff; font-weight:700; font-size:1.1rem; letter-spacing:0.06em;">SABI</span>
+        </div>
+
+        <!-- Navigation Menu -->
+        <h:form style="margin:0;">
+            <!-- For Icons see: https://www.primefaces.org/showcase/ui/misc/primeicons.xhtml -->
+            <p:menuButton value="#{msg['menu.b']}" icon="pi pi-bars">
+                <p:menuitem value="#{msg['menu.home.l']}"        outcome="/secured/userportal"  icon="pi pi-home"/>
+                <p:menuitem value="#{msg['menu.tankView.l']}"    outcome="/secured/tankView"    icon="pi pi-image"/>
+                <p:menuitem value="#{msg['menu.measureView.l']}" outcome="/secured/measureView" icon="pi pi-pencil"/>
+                <p:menuitem value="#{msg['menu.plagueView.l']}"  outcome="/secured/plagueView"  icon="pi pi-exclamation-triangle"/>
+                <p:menuitem value="#{msg['menu.report.l']}"      outcome="/secured/reportView"  icon="pi pi-file-excel"/>
+                <p:menuitem value="#{msg['menu.userProfile.l']}" outcome="/secured/userProfile" icon="pi pi-user"/>
+                <p:menuitem value="#{msg['menu.statistics.l']}"  outcome="/secured/projectStats" icon="pi pi-chart-bar"/>
+                <p:menuitem value="#{msg['menu.feedback.l']}"    outcome="/secured/feedback"    icon="pi pi-comment"/>
+                <p:separator/>
+                <p:menuitem value="Logout" action="#{menuView.logout}" icon="pi pi-sign-out"/>
+            </p:menuButton>
+        </h:form>
+
+    </div>
 
 </ui:composition>
+

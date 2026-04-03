@@ -2,6 +2,12 @@
   vars_files:
     - ./group_vars/sabiMiddleware.yml
   tasks:
+    - name: Wait for Pi to become reachable (may need wakeup time)
+      wait_for_connection:
+        delay: 5
+        sleep: 5
+        timeout: 120
+
     - name: Create Sabi User
       user:
         name: sabi
@@ -75,6 +81,7 @@
         content: |
           SPRING_PROFILES_ACTIVE={{ spring_profiles_active }}
           GOOGLE_OIDC_CLIENT_ID={{ sabi_google_oidc_client_id }}
+          GOOGLE_OIDC_CLIENT_SECRET={{ sabi_google_oidc_client_secret }}
           SABI_DB_PASSWORD={{ sabi_db_password }}
           SABI_JWT_SECRET={{ sabi_jwt_secret }}
           SABI_SMTP_HOST={{ sabi_smtp_host }}

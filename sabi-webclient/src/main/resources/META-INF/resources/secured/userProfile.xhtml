@@ -95,7 +95,8 @@
 
                                 <p:outputLabel for="addreminderSelection"
                                                value="#{msg['userprofile.meassurement.addreminder.l']}"/>
-                                <p:selectOneMenu id="addreminderSelection" value="#{userProfileView.selectedUnitId}">
+                                <p:selectOneMenu id="addreminderSelection" value="#{userProfileView.selectedUnitId}"
+                                                 style="min-width:14rem; width:100%;">
                                     <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
                                     <f:selectItems value="#{userProfileView.knownMeasurementUnits}"
                                                    var="m"

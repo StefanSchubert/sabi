@@ -29,16 +29,19 @@ Secret wird mit Vault-Passwort verschlüsselt
 
 Übersicht aller Secrets und ihr aktueller Verwaltungsstatus:
 
-| Secret | Service | Datei | Status |
-|--------|---------|-------|--------|
-| `GOOGLE_OIDC_CLIENT_ID` | sabi-webclient (FE) | `group_vars/sabiFrontend.yml` | ⚠️ Placeholder – **noch nicht vaulted** |
-| `GOOGLE_OIDC_CLIENT_SECRET` | sabi-webclient (FE) | `group_vars/sabiFrontend.yml` | ⚠️ Placeholder – **noch nicht vaulted** |
-| `GOOGLE_OIDC_CLIENT_ID` | sabi-service (BE) | `group_vars/sabiBackend.yml` | ⚠️ Placeholder – **noch nicht vaulted** |
-| DB-Password (`sabi123`) | sabi-service (BE) | `sabi-server/application.yml` + ext. Config | ⚠️ Extern manuell gepflegt |
-| SMTP-Password | sabi-service (BE) | extern auf Server | ⚠️ Extern manuell gepflegt |
-| JWT-Signing-Secret | sabi-service (BE) | extern auf Server | ⚠️ Extern manuell gepflegt |
-| Grafana SMTP-Password | Grafana | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
-| Grafana Secret Key | Grafana | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
+| Secret                           | Service | Datei | Status |
+|----------------------------------|---------|-------|--------|
+| `sabi_google_oidc_client_id`     | sabi-webclient (FE) | `group_vars/sabiFrontend.yml` | ✅ Vaulted |
+| `sabi_google_oidc_client_secret` | sabi-webclient (FE) | `group_vars/sabiFrontend.yml` | ✅ Vaulted |
+| `sabi_google_oidc_client_id`     | sabi-service / Middleware (blackpearl4u) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `sabi_google_oidc_client_secret` | sabi-service / Middleware (blackpearl4u) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `sabi_db_password`               | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `sabi_smtp_host`                 | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `sabi_smtp_user`                 | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `sabi_smtp_password`             | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `sabi_jwt_secret`                | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| Grafana SMTP-Password            | Grafana | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
+| Grafana Secret Key               | Grafana | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
 
 > **Hinweis Grafana:** Für Grafana existiert bereits ein separater Mechanismus
 > (`GRAFANA_CUSTOM_INI.md`). Die `custom.ini` liegt außerhalb des Repos.
@@ -67,7 +70,7 @@ sabi_google_oidc_client_secret: !vault |
 
 **2. Schritt – Chiffrat in `group_vars` eintragen:**
 Das `!vault |`-Block ersetzt den `"CHANGEME_USE_ANSIBLE_VAULT"`-Placeholder in
-`group_vars/sabiFrontend.yml` bzw. `group_vars/sabiBackend.yml`.
+`group_vars/sabiFrontend.yml` (FE) bzw. `group_vars/sabiMiddleware.yml` (Middleware/SabiService).
 
 **3. Schritt – Deployen mit Vault-Passwort:**
 ```bash
@@ -75,7 +78,7 @@ Das `!vault |`-Block ersetzt den `"CHANGEME_USE_ANSIBLE_VAULT"`-Placeholder in
 ansible-playbook deploySabiWebclient.yml --ask-vault-pass
 
 # Oder mit Passwort-Datei (bequemer):
-ansible-playbook deploySabiWebclient.yml --vault-password-file ~/.vault_pass_sabi
+ansible-playbook deploySabiWebclient.yml --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 ```
 
 **Was dann passiert:**
@@ -99,8 +102,8 @@ Spring Boot liest ${GOOGLE_OIDC_CLIENT_ID}
 
 ```bash
 # Passwort-Datei anlegen (außerhalb des Repos!)
-echo 'dein-vault-passwort' > ~/.vault_pass_sabi
-chmod 600 ~/.vault_pass_sabi
+echo 'dein-vault-passwort' > ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
+chmod 600 ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 ```
 
 > ⚠️ Diese Datei **niemals** ins Git einchecken.
@@ -114,12 +117,12 @@ cd /Users/bluewhale/dev/Intellij-wss/github/sabi.git/devops/ansible
 # Client-ID verschlüsseln:
 ansible-vault encrypt_string 'DEINE_ECHTE_GOOGLE_CLIENT_ID' \
   --name 'sabi_google_oidc_client_id' \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Client-Secret verschlüsseln:
 ansible-vault encrypt_string 'DEIN_ECHTES_GOOGLE_CLIENT_SECRET' \
   --name 'sabi_google_oidc_client_secret' \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 ```
 
 Die Ausgabe in `group_vars/sabiFrontend.yml` eintragen:
@@ -144,35 +147,42 @@ sabi_google_oidc_client_secret: !vault |
 ```bash
 ansible-vault encrypt_string 'DEINE_ECHTE_GOOGLE_CLIENT_ID' \
   --name 'sabi_google_oidc_client_id' \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 ```
 
-In `group_vars/sabiBackend.yml` eintragen.
+In `group_vars/sabiMiddleware.yml` eintragen (dort laeuft der SabiService auf blackpearl4u).
 
 ### 4. Deployment ausführen
 
 ```bash
 # Frontend deployen:
 ansible-playbook deploySabiWebclient.yml \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Backend deployen:
 ansible-playbook deploySabiService.yml \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Alles auf einmal (wenn alle Playbooks angepasst):
 ansible-playbook deploySabiWebclient.yml deploySabiService.yml \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 ```
 
 ---
 
 ## Migrationspfad: Was noch auf Vault umgestellt werden sollte
 
-### Phase 1 – OIDC-Secrets (jetzt umsetzen)
+### Phase 1 – OIDC-Secrets ✅ vollständig umgesetzt
 
-Die Placeholder in den `group_vars` durch echte Vault-Werte ersetzen,
-wie oben beschrieben.
+| Secret | Datei | Status |
+|--------|-------|--------|
+| `sabi_google_oidc_client_id` + `_secret` (FE) | `group_vars/sabiFrontend.yml` | ✅ Vaulted |
+| `sabi_google_oidc_client_id` (Middleware/SabiService) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+
+> **Hinweis:** In `sabiMiddleware.yml` existierte zusätzlich ein Key `sabi_google_oicd_client_id`
+> (Tippfehler: `oicd` statt `oidc`). Dieser Key wurde von keinem Playbook verwendet und wurde
+> entfernt. Der korrekte Key `sabi_google_oidc_client_id` liegt in `group_vars/sabiMiddleware.yml`
+> (dort laeuft der SabiService, provisioniert via `deploySabiService.yml`).
 
 ### Phase 2 – Spring Boot Applikations-Secrets ✅ umgesetzt
 
@@ -180,15 +190,16 @@ wie oben beschrieben.
 Docker-lokal greift weiterhin der Dev-Default, Produktion bekommt die
 echten Werte per EnvironmentFile aus Ansible Vault.
 
-| Variable | Ansible-Var | Datei |
-|----------|-------------|-------|
-| `SABI_DB_PASSWORD` | `sabi_db_password` | `group_vars/sabiMiddleware.yml` |
-| `SABI_JWT_SECRET` | `sabi_jwt_secret` | `group_vars/sabiMiddleware.yml` |
-| `SABI_SMTP_HOST` | `sabi_smtp_host` | `group_vars/sabiMiddleware.yml` |
-| `SABI_SMTP_PASSWORD` | `sabi_smtp_password` | `group_vars/sabiMiddleware.yml` |
+| Variable | Ansible-Var | Datei | Status |
+|----------|-------------|-------|--------|
+| `SABI_DB_PASSWORD` | `sabi_db_password` | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `SABI_JWT_SECRET` | `sabi_jwt_secret` | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `SABI_SMTP_HOST` | `sabi_smtp_host` | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `SABI_SMTP_USER` | `sabi_smtp_user` | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| `SABI_SMTP_PASSWORD` | `sabi_smtp_password` | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
 
-> Alle Placeholder in `group_vars/sabiMiddleware.yml` müssen noch durch
-> echte Vault-Werte ersetzt werden (siehe Schritt-für-Schritt-Anleitung oben).
+> ✅ Alle Vault-Werte in `group_vars/sabiMiddleware.yml` sind gesetzt.
+> SMTP-Host, SMTP-User, SMTP-Password, DB-Password und JWT-Secret sind verschlüsselt eingecheckt.
 
 ---
 
@@ -246,8 +257,8 @@ Ansible Vault intern:
 
 ```bash
 # EMPFOHLEN: Kryptografisch zufälliges Passwort erzeugen (256 Bit Entropie):
-openssl rand -base64 32 > ~/.vault_pass_sabi
-chmod 600 ~/.vault_pass_sabi
+openssl rand -base64 32 > ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
+chmod 600 ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Option 2: In einem Passwort-Manager (z.B. KeePass, Bitwarden)
 # → Zufälliges Passwort generieren lassen, vor dem Deploy in Datei kopieren
@@ -266,14 +277,14 @@ ansible-playbook deploy.yml \
 ```bash
 # Secret verschlüsseln:
 ansible-vault encrypt_string 'SECRET' --name 'var_name' \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Verschlüsselten Wert prüfen/entschlüsseln:
 echo '$ANSIBLE_VAULT;1.1;AES256...' | ansible-vault decrypt \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Playbook mit Vault ausführen:
-ansible-playbook playbook.yml --vault-password-file ~/.vault_pass_sabi
+ansible-playbook playbook.yml --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 
 # Vault-Passwort interaktiv eingeben (ohne Datei):
 ansible-playbook playbook.yml --ask-vault-pass
@@ -281,18 +292,19 @@ ansible-playbook playbook.yml --ask-vault-pass
 # Prüfen ob Vault-Wert korrekt in vars aufgelöst wird (debug, Ausgabe maskiert):
 ansible -i hosts sabiFrontend -m debug \
   -a "var=sabi_google_oidc_client_id" \
-  --vault-password-file ~/.vault_pass_sabi
+  --vault-password-file ~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi
 ```
 
 ---
 
 ## Zusammenfassung
 
-| Was | Verfahren |
-|-----|-----------|
-| OIDC Client-ID / Secret | Ansible Vault in `group_vars/*.yml` |
-| DB-Password, SMTP, JWT-Secret | ⚠️ Noch manuell – Migration geplant (Phase 2) |
-| Grafana SMTP / Secret Key | Lokale `custom.ini` außerhalb des Repos |
-| SSH-Key für Ansible | `~/.ssh/` – nie im Git |
-| Vault-Passwort selbst | Passwort-Manager / `~/.vault_pass_sabi` (chmod 600) |
+| Was | Verfahren | Status |
+|-----|-----------|--------|
+| OIDC Client-ID / Secret (FE) | Ansible Vault in `group_vars/sabiFrontend.yml` | ✅ Vaulted |
+| OIDC Client-ID (Middleware) | Ansible Vault in `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| DB-Password, SMTP, JWT-Secret | Ansible Vault in `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
+| Grafana SMTP / Secret Key | Lokale `custom.ini` außerhalb des Repos | ✅ Lokal isoliert |
+| SSH-Key für Ansible | `~/.ssh/` – nie im Git | ✅ |
+| Vault-Passwort selbst | `~/Documents/SABI_Config_Safe/.ansible_vault_pass_sabi` (chmod 600) | ✅ |
 

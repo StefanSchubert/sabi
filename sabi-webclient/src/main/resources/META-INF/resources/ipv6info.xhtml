@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI - IPv6 Info</title>
+</h:head>
+
+<h:body>
+
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <p:panel header="#{msg['ipv6info.title.h']}">
+
+                <p:outputLabel value="#{msg['ipv6info.intro.t']}" style="display:block; margin-bottom:1rem;"/>
+
+                <h:outputText value="&lt;h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.whatis.h']}"/>
+                <h:outputText value="&lt;/h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.whatis.t']}" style="display:block; margin-bottom:1rem;"/>
+
+                <h:outputText value="&lt;h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.why.h']}"/>
+                <h:outputText value="&lt;/h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.why.t']}" style="display:block; margin-bottom:1rem;"/>
+
+                <h:outputText value="&lt;h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.corporate.h']}"/>
+                <h:outputText value="&lt;/h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.corporate.t']}" style="display:block; margin-bottom:1rem;"/>
+
+                <h:outputText value="&lt;h3&gt;" escape="false"/>
+                <p:outputLabel value="#{msg['ipv6info.mobile.h']}"/>
+                <h:outputText value="&lt;/h3&gt;" escape="false"/>
+                <!-- mobile.t contains an HTML link -> escape="false" required -->
+                <h:outputText value="#{msg['ipv6info.mobile.t']}" escape="false"
+                              style="display:block; margin-bottom:1.5rem;"/>
+
+                <p:link outcome="/secured/userportal" value="#{msg['ipv6info.back.l']}"
+                        style="color:#0369a1; text-decoration:underline;" id="ipv6BackLinkAuth"
+                        rendered="#{not empty userSession.userName}"/>
+                <p:link outcome="/index" value="#{msg['ipv6info.back.l']}"
+                        style="color:#0369a1; text-decoration:underline;" id="ipv6BackLink"
+                        rendered="#{empty userSession.userName}"/>
+
+            </p:panel>
+
+        </ui:define>
+    </ui:composition>
+
+</h:body>
+</html>
+
