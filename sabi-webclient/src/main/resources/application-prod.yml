@@ -25,6 +25,13 @@ spring:
       max: 150
     connection-timeout: 30s
 
+# IMPORTANT: nginx terminates SSL and forwards to Spring Boot via HTTP.
+# Without this setting Spring Boot ignores X-Forwarded-Proto: https and
+# builds OAuth2 redirect-URIs as http:// → Google returns error 400.
+# NOTE: must be under "server:", NOT "spring:" – property is server.forward-headers-strategy
+server:
+  forward-headers-strategy: native
+
 # Allow shadowing of the delivered logging config
 logging:
   config: config/log4j2-spring.xml

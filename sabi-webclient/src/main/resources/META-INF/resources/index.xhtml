@@ -8,6 +8,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <f:metadata>
@@ -31,6 +32,7 @@
     <link rel="icon" type="image/png"
           href="#{resource['images:icons8-crab-64.png']}"/>
     <h:outputStylesheet library="css" name="sabistyle.css"/>
+    <meta name="google-site-verification" content="MGgXPd9KR8eEG4c2mPEtqtsoT0QxgO3cU6MAxvgYvEY"/>
 </h:head>
 
 <h:body styleClass="splashscreen">
@@ -48,11 +50,21 @@
             <p:button outcome="register" value="#{msg['welcome.but.register']}" icon="pi pi-user-plus"/>
         </div>
     </div>
-    <p:messages id="msg1" for="additionalHint" showDetail="true" closable="true">
-        <p:autoUpdate/>
-    </p:messages>
+    <ui:remove>
+        <!-- IPV6-Only-Announcement
+        <p:messages id="msg1" for="additionalHint" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+        -->
+    </ui:remove>
+
     <p:messages id="msg2" for="common" showDetail="true" closable="true">
         <p:autoUpdate/>
     </p:messages>
+
+    <footer id="footer" style="position:fixed; bottom:0; width:100%; padding:0.5rem 0; text-align:center; font-size:0.8rem;">
+        <ui:include src="/template/footer.xhtml"/>
+    </footer>
+
 </h:body>
 </html>

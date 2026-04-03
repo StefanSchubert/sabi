@@ -77,6 +77,40 @@
         dest: /etc/systemd/system/sabi.service
         owner: root
         group: root
+    - name: Backup existing nginx config (if present)
+      copy:
+        src: /etc/nginx/sites-available/sabi-project.net
+        dest: /etc/nginx/sites-available/sabi-project.net.bak
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: yes
+      ignore_errors: yes
+    - name: Deploy nginx reverse proxy config for sabi-project.net
+      copy:
+        src: templates/nginx-shangri-la.conf
+        dest: /etc/nginx/sites-available/sabi-project.net
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Enable nginx site (symlink)
+      file:
+        src: /etc/nginx/sites-available/sabi-project.net
+        dest: /etc/nginx/sites-enabled/sabi-project.net
+        state: link
+    - name: Test nginx configuration
+      command: nginx -t
+      register: nginx_test
+      changed_when: false
+    - name: Reload nginx (only if config test passed)
+      service:
+        name: nginx
+        state: reloaded
+      when: nginx_test.rc == 0
+    - name: Fail if nginx config test failed
+      fail:
+        msg: "nginx config test failed – old config backup at /etc/nginx/sites-available/sabi-project.net.bak"
+      when: nginx_test.rc != 0
     - name: enforce daemon config reload
       command: systemctl daemon-reload
     - name: Enable service sabi and ensure it is not masked

@@ -62,7 +62,6 @@ public class WebSecurityConfig {
                         .requestMatchers(path.matcher("/pwreset.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/preregistration.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/logout.xhtml")).permitAll()
-                        .requestMatchers(path.matcher("/sessionExpired.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/credits.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/ipv6info.xhtml")).permitAll()
                         .requestMatchers(path.matcher("/static/error/**")).permitAll()
@@ -78,9 +77,8 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // In Case of a session timeout don't go directly to the login page,
-                // use this page instead, for being able to notify the user what has happened.
-                .sessionManagement(session -> session.invalidSessionUrl("/sessionExpired.xhtml"))
+                // On session timeout redirect back to index (splash) page
+                .sessionManagement(session -> session.invalidSessionUrl("/"))
 
                 // login - using this the browser redirect to this page if login is required and you are not logged in.
                 .formLogin(form -> form
