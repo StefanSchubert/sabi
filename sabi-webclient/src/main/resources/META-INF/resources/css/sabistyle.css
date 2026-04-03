@@ -372,6 +372,13 @@ input[type="password"]:focus {
     padding: 0.65rem 1.4rem !important;
 }
 
+.splashscreen img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
 /* =====================================================================
    No-Tank Hint Panel
    ===================================================================== */
