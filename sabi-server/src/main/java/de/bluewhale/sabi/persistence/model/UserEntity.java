@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "users", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"aquariums","corals","fishes","measurements","treatments"},callSuper = false)
+@EqualsAndHashCode(exclude = {"aquariums","corals","fishes","measurements","treatments","oidcProviderLinks"},callSuper = false)
 public class UserEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -49,6 +49,10 @@ public class UserEntity extends Auditable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserMeasurementReminderEntity> userMeasurementReminders = new ArrayList<UserMeasurementReminderEntity>();
+
+    /** OIDC provider links – cascade REMOVE ensures JPA clears the link when the user is deleted (GDPR). */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<OidcProviderLinkEntity> oidcProviderLinks = new ArrayList<>();
 
     @Basic
     @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)

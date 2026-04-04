@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +77,11 @@ public class OidcProviderLinkRepositoryTest implements TestContainerVersions {
         link.setProvider(provider);
         link.setProviderSubject(sub);
         link.setLinkedAt(LocalDateTime.now());
-        return oidcProviderLinkRepository.saveAndFlush(link);
+        OidcProviderLinkEntity saved = oidcProviderLinkRepository.saveAndFlush(link);
+        // Bidirektionale Beziehung in Sync halten: EclipseLink benötigt die befüllte
+        // Collection für CascadeType.REMOVE (Lazy-Collection wäre sonst leer beim Delete).
+        user.getOidcProviderLinks().add(saved);
+        return saved;
     }
 
     @Test
@@ -136,7 +140,9 @@ public class OidcProviderLinkRepositoryTest implements TestContainerVersions {
         createLink(user1, "GOOGLE", "same-sub-value");
 
         // When / Then – same provider+sub for a different user must fail
-        assertThrows(DataIntegrityViolationException.class, () -> {
+        // Note: EclipseLink wraps constraint violations as JpaSystemException (not DataIntegrityViolationException
+        // like Hibernate does). Both are subclasses of DataAccessException → use the common parent.
+        assertThrows(DataAccessException.class, () -> {
             createLink(user2, "GOOGLE", "same-sub-value");
         });
     }

@@ -1,6 +1,12 @@
 accessToken:
   SECRET: p$vmb4*.UV51Ke7akjkjhkjhnbmn7687632jhkjhkj
   TTL: 600
+
+# Google OIDC – Dummy-Wert für Tests (keine echte OIDC-Validierung in Unit-Tests)
+google:
+  oidc:
+    client-id: test-google-client-id
+
 captcha:
   check:
     url: http://localhost:8081/captcha/api/check
