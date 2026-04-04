@@ -12,7 +12,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubunto-latest
+    runs-on: ubuntu-latest
 
     env:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}    
@@ -38,12 +38,12 @@ jobs:
     - name: SABI-Server App
       run: cd sabi-server; mvn -B compile --file pom.xml
     - name: SABI-Webclient App
-      run: cd sabi-server; mvn -B compile --file pom.xml
+      run: cd sabi-webclient; mvn -B compile --file pom.xml
     - name: GenericPiMetricsEndpoint Helper to measure PIs temperatures
       run: cd devops/GenericPiMetricsEndpoint; mvn -B compile --file pom.xml
   test:
 
-    runs-on: ubunto-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
