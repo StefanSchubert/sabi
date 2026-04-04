@@ -203,7 +203,18 @@
                     <!-- You need to register yourself at https://nvd.nist.gov/
                          to get an API-KEY, which you can store in the
                          properties section of your local settings.xml -->
-                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                    <!-- OSS Index authentifizieren -->
+                    <ossindexUsername>${env.OSSINDEX_USERNAME}</ossindexUsername>
+                    <ossindexPassword>${env.OSSINDEX_PASSWORD}</ossindexPassword>
+
+                    <!-- NVD API Key -->
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+
+                    <!-- Optional: Build nur bei hoher CVSS abbrechen -->
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
+
+                    <!-- Optional: Cache für CI beschleunigen -->
+                    <cveValidForHours>24</cveValidForHours>
                 </configuration>
                 <executions>
                     <execution>
