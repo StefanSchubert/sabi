@@ -68,13 +68,13 @@
                         <p:column headerText="#{msg['userportal.meassurement.duedate.l']}">
                             <p:outputLabel value="#{m.nextMeasureDate}"
                                            rendered="#{userProfileView.isOverdueMeasureDate(m.nextMeasureDate)}"
-                                           style="color: red">
+                                           styleClass="overdue-date">
                                 <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
                             </p:outputLabel>
 
                             <p:outputLabel value="#{m.nextMeasureDate}"
                                            rendered="#{userProfileView.isOverdueMeasureDate(m.nextMeasureDate) eq false}"
-                                           style="color: black">
+                                           styleClass="normal-date">
                                 <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
                             </p:outputLabel>
 

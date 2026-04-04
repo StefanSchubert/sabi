@@ -280,17 +280,23 @@ input[type="password"]:focus {
 
 /* =====================================================================
    Messages / Notifications
+   Nur im Light Mode – im Dark Mode übernimmt arya-blue die Farben.
    ===================================================================== */
-.ui-messages-info {
+body:not(.dark-mode) .ui-messages-info {
     background-color: var(--sabi-accent-light) !important;
     border-color: var(--sabi-accent) !important;
     color: var(--sabi-primary-dark) !important;
 }
 
-.ui-messages-warn {
+body:not(.dark-mode) .ui-messages-warn {
     background-color: var(--sabi-warning-bg) !important;
     border-color: var(--sabi-warning-border) !important;
 }
+
+/* Überfällige Messdaten – WCAG-konform in Light und Dark Mode */
+.overdue-date  { color: #b91c1c; }          /* 5.5:1 auf weiss */
+.dark-mode .overdue-date { color: #fca5a5 !important; }  /* 6.2:1 auf arya-dark-BG */
+.normal-date   { color: inherit; }
 
 /* =====================================================================
    Separator
@@ -478,113 +484,98 @@ input[type="password"]:focus {
 }
 
 /* =====================================================================
-   Dark Mode
-   Applied when body has class "dark-mode" (set via userSession.bodyStyleClass)
+   Dark Mode – SABI Custom Overrides
+   PrimeFaces-Komponenten werden durch das arya-blue Theme abgedeckt.
+   Hier nur noch SABI-eigene Elemente (Header, Footer, Body, Custom-Panels).
    ===================================================================== */
+body.dark-mode,
 .dark-mode {
+    /* SABI Marine Dark Palette */
     --sabi-bg:            #0f172a;
     --sabi-surface:       #1e293b;
     --sabi-text:          #e2e8f0;
     --sabi-text-muted:    #94a3b8;
     --sabi-border:        #334155;
-    --sabi-primary-light: #0284c7;
     --sabi-accent-light:  #164e63;
     --sabi-warning-bg:    #422006;
     --sabi-warning-border:#92400e;
     --sabi-shadow:        0 2px 8px rgba(0, 0, 0, 0.5);
     --sabi-shadow-lg:     0 4px 20px rgba(0, 0, 0, 0.6);
 
-    background-color: var(--sabi-bg);
-    color: var(--sabi-text);
+    background-color: #0f172a;
+    color: #e2e8f0;
 }
 
-.dark-mode .ui-panel .ui-panel-content {
-    background-color: var(--sabi-surface) !important;
-    color: var(--sabi-text) !important;
+/* Body-Hintergrund und Layout */
+body.dark-mode .baselayout {
+    background-color: #0f172a;
 }
 
-.dark-mode .ui-panel {
-    border-color: #334155 !important;
-}
+/* Überschriften */
+body.dark-mode h1, .dark-mode h1 { color: #bae6fd !important; }
+body.dark-mode h2, .dark-mode h2 { color: #7dd3fc !important; }
+body.dark-mode h3, .dark-mode h3 { color: #38bdf8 !important; }
 
-.dark-mode .ui-panelgrid td {
-    color: var(--sabi-text) !important;
-}
+/* Links (außerhalb PF-Komponenten) */
+body.dark-mode a,   .dark-mode a       { color: #7dd3fc; }
+body.dark-mode a:hover, .dark-mode a:hover { color: #bae6fd; }
 
-.dark-mode .ui-inputfield,
-.dark-mode .ui-inputtext,
-.dark-mode input[type="text"],
-.dark-mode input[type="password"],
-.dark-mode select {
-    background-color: #1e293b !important;
-    color: var(--sabi-text) !important;
-    border-color: var(--sabi-border) !important;
-}
-
-.dark-mode .ui-datatable thead th {
-    background-color: #1e3a5f !important;
+/* Footer – WCAG-Fix: #bae6fd (~5.2:1) auf #075985 */
+body.dark-mode #footer,
+.dark-mode #footer {
     color: #bae6fd !important;
-    border-bottom-color: #0369a1 !important;
+}
+body.dark-mode #footer a,
+body.dark-mode #footer .ui-link,
+.dark-mode #footer a,
+.dark-mode #footer .ui-link {
+    color: #bae6fd !important;
 }
 
-.dark-mode .ui-datatable tbody tr:nth-child(even) {
-    background-color: #1a2740 !important;
+/* No-Tank-Hint */
+body.dark-mode .no-tank-hint {
+    background-color: #422006 !important;
+    border-color: #92400e !important;
+    color: #fbbf24 !important;
 }
 
-.dark-mode .ui-datatable tbody tr:hover {
-    background-color: #1e3a5f !important;
+/* Splash Screen Panel */
+body.dark-mode .splashscreen .ui-panel {
+    background: rgba(15, 23, 42, 0.92) !important;
+    color: #e2e8f0 !important;
 }
 
-.dark-mode .ui-datatable tbody td {
-    color: var(--sabi-text) !important;
+/* SABI Panel-Titlebar-Gradient bleibt im Dark Mode erhalten */
+body.dark-mode .ui-panel .ui-panel-titlebar {
+    background: linear-gradient(90deg, var(--sabi-primary) 0%, var(--sabi-accent) 100%) !important;
+    color: #ffffff !important;
+}
+body.dark-mode .ui-panel.redColoredPanel .ui-panel-titlebar {
+    background: linear-gradient(90deg, #b91c1c 0%, #ef4444 100%) !important;
+}
+body.dark-mode .ui-panel.yellowColoredPanel .ui-panel-titlebar {
+    background: linear-gradient(90deg, #b45309 0%, #f59e0b 100%) !important;
+}
+body.dark-mode .ui-panel.greenColoredPanel .ui-panel-titlebar {
+    background: linear-gradient(90deg, #15803d 0%, #22c55e 100%) !important;
+}
+
+/* DataTable – Banding & Header im Dark Mode */
+body.dark-mode .ui-datatable thead th {
+    background-color: var(--sabi-primary-dark) !important;
+    color: #bae6fd !important;
+    border-bottom-color: var(--sabi-primary) !important;
+}
+
+body.dark-mode .ui-datatable tbody tr:nth-child(even) {
+    background-color: #253347 !important;
+}
+
+body.dark-mode .ui-datatable tbody td {
     border-color: #334155 !important;
 }
 
-.dark-mode .ui-outputlabel,
-.dark-mode label {
-    color: var(--sabi-text) !important;
+body.dark-mode .ui-datatable tbody tr:hover {
+    background-color: var(--sabi-accent-light) !important;
 }
 
-.dark-mode .ui-selectonemenu,
-.dark-mode .ui-selectonemenu .ui-selectonemenu-label {
-    background-color: #1e293b !important;
-    color: var(--sabi-text) !important;
-    border-color: var(--sabi-border) !important;
-}
-
-.dark-mode .ui-selectonemenu-panel {
-    background-color: #1e293b !important;
-    color: var(--sabi-text) !important;
-    border-color: var(--sabi-border) !important;
-}
-
-.dark-mode .ui-selectonemenu-item {
-    color: var(--sabi-text) !important;
-}
-
-.dark-mode .ui-selectonemenu-item:hover {
-    background-color: #1e3a5f !important;
-}
-
-.dark-mode .no-tank-hint {
-    background-color: var(--sabi-warning-bg);
-    border-color: var(--sabi-warning-border);
-    color: #fbbf24;
-}
-
-.dark-mode .splashscreen .ui-panel {
-    background: rgba(15, 23, 42, 0.92) !important;
-    color: var(--sabi-text) !important;
-}
-
-.dark-mode a {
-    color: #7dd3fc;
-}
-
-.dark-mode a:hover {
-    color: #bae6fd;
-}
-
-.dark-mode h1 { color: #bae6fd; }
-.dark-mode h2 { color: #7dd3fc; }
-.dark-mode h3 { color: #38bdf8; }

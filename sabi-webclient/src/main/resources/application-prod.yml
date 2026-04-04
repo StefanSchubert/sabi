@@ -8,7 +8,7 @@ joinfaces:
   jsf:
     project-stage: Production
   primefaces:
-    theme: saga
+    theme: none
 
 # sabi backend on blackpearl4u (without /api on purpose)
 sabi:

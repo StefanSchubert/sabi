@@ -27,6 +27,21 @@
 
 ---
 
+## Terminal-Ausgaben (MANDATORY)
+
+**Problem**: Mehrzeilige `python3 -c "..."` Befehle im Terminal können das Shell-Escaping korrumpieren und den Terminal-State brechen (zsh event-not-found, dquote-Loop etc.).
+
+**Regel: Skripte NIEMALS als inline `-c "..."` ausführen – immer via Datei:**
+1. Skript mit `create_file`-Tool nach `/tmp/skriptname.py` schreiben
+2. Im Terminal ausführen: `python3 /tmp/skriptname.py | tee /tmp/skriptname.out`
+3. Ausgabe einlesen: `read_file`-Tool auf `/tmp/skriptname.out`
+
+**Gilt auch für Shell-Einzeiler mit Sonderzeichen** (Klammern, Ausrufezeichen, Backticks):
+- Statt `command | grep "foo(bar)"` → Skript nach `/tmp/` schreiben
+- Bei komplexen grep/sed/awk: immer `/tmp/`-Skript bevorzugen
+
+---
+
 ## Development Environment Setup
 
 - MacBook CLI mit **BSD Unix Tools** (kein GNU) → abweichende Syntax!

@@ -10,7 +10,9 @@ joinfaces:
   jsf:
     project-stage: development
   primefaces:
-    theme: saga
+    # Kein automatisches Theme – wird dynamisch per Session in masterLayout.xhtml gesteuert
+    # Light: primefaces-saga-blue  /  Dark: primefaces-arya-blue
+    theme: none
 
 # Health check for cloud deployment
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready-endpoints-enabling-endpoints

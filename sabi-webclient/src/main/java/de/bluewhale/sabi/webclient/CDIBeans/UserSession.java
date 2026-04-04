@@ -148,6 +148,15 @@ public class UserSession implements Serializable {
         return darkModeEnabled ? "baselayout dark-mode" : "baselayout";
     }
 
+    /**
+     * Returns the PrimeFaces theme name based on the user's dark mode preference.
+     * Used by masterLayout.xhtml to load the correct PrimeFaces theme CSS dynamically.
+     * Light mode: saga-blue  /  Dark mode: arya-blue
+     */
+    public String getPrimeFacesThemeName() {
+        return darkModeEnabled ? "arya-blue" : "saga-blue";
+    }
+
 
     /**
      * Choosed Language of the User derived by browsers settings, if not explicit set before.
