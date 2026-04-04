@@ -23,7 +23,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubunto-latest
+    runs-on: ubuntu-latest
 
     env:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}    
