@@ -65,12 +65,14 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
     private Integer selectedUnitId;
 
     private boolean hasTanks;
+    private boolean darkModeActive;
 
     @PostConstruct
     public void init() {
         SupportedLocales[] values = SupportedLocales.values();
         supportedLocales = Arrays.asList(values);
         selectedLocale = userSession.getLocale();
+        darkModeActive = userSession.isDarkModeEnabled();
 
         try {
             measurementReminderTos = measurementService.getMeasurementRemindersForUser(userSession.getSabiBackendToken(),selectedLocale.getLanguage());
@@ -114,9 +116,11 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             try {
                 UserProfileTo userProfileTo = new UserProfileTo(selectedLocale.getLanguage(), selectedLocale.getCountry());
                 userProfileTo.setMeasurementReminderTos(measurementReminderTos);
+                userProfileTo.setDarkModeEnabled(darkModeActive);
                 userService.updateUsersProfile(userProfileTo, userSession.getSabiBackendToken());
                 userSession.setLocale(selectedLocale);
                 userSession.setLanguage(selectedLocale.getLanguage());
+                userSession.setDarkModeEnabled(darkModeActive);
                 LocaleContextHolder.setLocale(selectedLocale); // used by spring
                 MessageUtil.info("profileupdate", "userprofile.updateconfirmation.t", userSession.getLocale());
             } catch (BusinessException e) {

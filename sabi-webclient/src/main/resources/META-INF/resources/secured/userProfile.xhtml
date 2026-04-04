@@ -68,6 +68,18 @@
 
                         </p:panelGrid>
 
+                        <p:panelGrid columns="3" styleClass="ui-fluid center ui-noborder">
+
+                            <p:outputLabel for="darkModeToggle" value="#{msg['userprofile.darkmode.l']}"/>
+                            <p:selectBooleanCheckbox id="darkModeToggle"
+                                                     value="#{userProfileView.darkModeActive}"/>
+                            <p:commandButton id="saveDarkMode"
+                                             value="#{msg['common.save.b']}"
+                                             ajax="false"
+                                             action="#{userProfileView.save}"/>
+
+                        </p:panelGrid>
+
                         <p:messages id="msg1" for="profileupdate" showDetail="true" closable="true">
                             <p:autoUpdate/>
                         </p:messages>

@@ -116,6 +116,9 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
             LocaleContextHolder.setLocale(supportedLocale); // Used by spring
             userSession.setLocale(supportedLocale);
             userSession.setUserName(loginData.getUsername());
+            if (userProfileTo != null) {
+                userSession.setDarkModeEnabled(userProfileTo.isDarkModeEnabled());
+            }
 
             return new ResultTo<String>(pEmail, Message.info(AuthMessageCodes.SIGNIN_SUCCEEDED));
         } else {

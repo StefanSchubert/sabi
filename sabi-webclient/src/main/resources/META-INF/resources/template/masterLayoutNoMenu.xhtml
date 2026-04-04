@@ -34,7 +34,7 @@
     <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
 
-<h:body styleClass="baselayout">
+<h:body styleClass="#{userSession.bodyStyleClass}">
 
     <main id="content"><ui:insert name="content">Sorry content is missing. Report to site owner.</ui:insert></main>
     <footer id="footer"><ui:include src="/template/footer.xhtml"/></footer>

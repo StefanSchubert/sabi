@@ -28,6 +28,9 @@ public class UserProfileTo implements Serializable {
     @Schema(description = "Contains 'remind me to measure something' records.", required = false)
     private List<MeasurementReminderTo> measurementReminderTos = new ArrayList<>();
 
+    @Schema(description = "Flag to activate the dark mode in the UI.", required = false)
+    private boolean darkModeEnabled = false;
+
     public UserProfileTo(String pLanguage, String pCountry) {
         this.language = pLanguage;
         this.country = pCountry;

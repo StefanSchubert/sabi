@@ -87,4 +87,12 @@ public class UserEntity extends Auditable {
     @Column(name = "oidc_managed", nullable = false)
     private boolean oidcManaged = false;
 
+    /**
+     * Flag for user-activated dark mode in the UI.
+     * true = dark mode is active; false = normal (light) mode.
+     */
+    @Basic
+    @Column(name = "dark_mode", nullable = false)
+    private boolean darkMode = false;
+
 }

@@ -34,7 +34,7 @@
     <h:outputStylesheet library="css" name="sabistyle.css"/>
 </h:head>
 
-<h:body styleClass="baselayout">
+<h:body styleClass="#{userSession.bodyStyleClass}">
 
     <header id="header">
         <ui:include src="/template/header.xhtml"/>

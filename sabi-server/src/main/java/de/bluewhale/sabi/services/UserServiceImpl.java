@@ -124,6 +124,7 @@ public class UserServiceImpl implements UserService {
 
         Message info = Message.info(CommonMessageCodes.OK);
         userProfileTo = new UserProfileTo(userEntity.getLanguage(),userEntity.getCountry());
+        userProfileTo.setDarkModeEnabled(userEntity.isDarkMode());
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
         return userProfileResultTo;
     }
@@ -146,6 +147,7 @@ public class UserServiceImpl implements UserService {
         if (existingUser != null) {
             existingUser.setLanguage(userProfileTo.getLanguage());
             existingUser.setCountry(userProfileTo.getCountry());
+            existingUser.setDarkMode(userProfileTo.isDarkModeEnabled());
 
             List<UserMeasurementReminderEntity> userMeasurementReminders = existingUser.getUserMeasurementReminders();
             List<MeasurementReminderTo> updateReminderToList = userProfileTo.getMeasurementReminderTos();
