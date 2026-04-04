@@ -27,8 +27,8 @@ jobs:
 
     env:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-      OSSINDEX_USERNAME: ${{ secrets.OSSINDEX_USERNAME }}
-      OSSINDEX_PASSWORD: ${{ secrets.OSSINDEX_TOKEN }}
+      # OSS Index deaktiviert: Migration zu Sonatype Guide am 28.04.2026 noch ausstehend,
+      # OWASP Plugin unterstützt neuen Endpunkt noch nicht. NVD ist primäre CVE-Quelle.
 
     strategy:
       fail-fast: false

@@ -29,7 +29,19 @@
 
 ## Terminal-Ausgaben (MANDATORY)
 
-**Problem**: Mehrzeilige `python3 -c "..."` Befehle im Terminal können das Shell-Escaping korrumpieren und den Terminal-State brechen (zsh event-not-found, dquote-Loop etc.).
+**Problem**: Das IntelliJ Copilot Plugin zeigt Terminal-Ausgaben oft NICHT direkt an – die
+`run_in_terminal`-Ausgabe erscheint leer oder abgeschnitten, auch wenn der Befehl erfolgreich war.
+Zusätzlich kann Shell-Escaping bei Sonderzeichen den Terminal-State brechen (zsh event-not-found,
+dquote-Loop etc.).
+
+**Grundregel: JEDER Terminal-Befehl dessen Ausgabe ausgewertet wird, muss via `| tee` in eine
+Datei schreiben. Die Ausgabe wird ausschließlich über `read_file` eingelesen.**
+
+```zsh
+# Muster für alle Terminal-Befehle:
+some_command | tee /tmp/ausgabe.out
+# → danach: read_file /tmp/ausgabe.out
+```
 
 **Regel: Skripte NIEMALS als inline `-c "..."` ausführen – immer via Datei:**
 1. Skript mit `create_file`-Tool nach `/tmp/skriptname.py` schreiben
@@ -39,6 +51,10 @@
 **Gilt auch für Shell-Einzeiler mit Sonderzeichen** (Klammern, Ausrufezeichen, Backticks):
 - Statt `command | grep "foo(bar)"` → Skript nach `/tmp/` schreiben
 - Bei komplexen grep/sed/awk: immer `/tmp/`-Skript bevorzugen
+
+**Gilt auch für einfache Diagnose-Befehle** (env-Checks, grep, find, mvn, etc.):
+- `echo "VAR=$VAR" | tee /tmp/check.out` statt `echo "VAR=$VAR"` direkt lesen
+- `find ... | tee /tmp/find.out` statt Ausgabe im Terminal auswerten
 
 ---
 
@@ -72,7 +88,9 @@
 
 **Beim Bearbeiten von Message Bundles via Tools:**
 - `replace_string_in_file` schreibt in der Datei-Encoding des Tools → Sonderzeichen immer als `\uXXXX` angeben
-- Nach jeder Änderung Byte-Check durchführen: `python3 -c "open(path,'rb').read()"` auf bytes > 127 prüfen
+- Nach jeder Änderung Byte-Check durchführen: Python-Skript nach `/tmp/bytecheck.py` schreiben,
+  mit `python3 /tmp/bytecheck.py | tee /tmp/bytecheck.out` ausführen, dann `read_file` auf `/tmp/bytecheck.out`
+  (KEIN `python3 -c "..."` inline – Shell-Escaping korrumpiert Sonderzeichen!)
 
 ---
 
