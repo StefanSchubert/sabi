@@ -40,6 +40,9 @@ public class UserSession implements Serializable {
 
     private Locale locale;
 
+    /** Whether the user has activated dark mode in their profile. */
+    private boolean darkModeEnabled = false;
+
     /**
      * Temporary storage for the tank currently being edited/created.
      * Needs to survive the request boundary between tankView → tankEditor.
@@ -119,6 +122,30 @@ public class UserSession implements Serializable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    /**
+     * Whether the user has activated dark mode.
+     * @return true if dark mode is active
+     */
+    public boolean isDarkModeEnabled() {
+        return darkModeEnabled;
+    }
+
+    /**
+     * Activate or deactivate dark mode for this session.
+     * @param darkModeEnabled true to activate dark mode
+     */
+    public void setDarkModeEnabled(boolean darkModeEnabled) {
+        this.darkModeEnabled = darkModeEnabled;
+    }
+
+    /**
+     * Returns the body CSS class for dark mode support.
+     * Used by JSF templates to apply the dark-mode class.
+     */
+    public String getBodyStyleClass() {
+        return darkModeEnabled ? "baselayout dark-mode" : "baselayout";
     }
 
 
