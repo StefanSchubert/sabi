@@ -26,7 +26,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}    
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      OSSINDEX_USERNAME: ${{ secrets.OSSINDEX_USERNAME }}
+      OSSINDEX_PASSWORD: ${{ secrets.OSSINDEX_TOKEN }}
 
     strategy:
       fail-fast: false
