@@ -262,14 +262,19 @@ public class UserProfileControllerTest extends CommonTestController {
         // Given: no Authorization header
         HttpHeaders plainHeader = RestHelper.buildHttpHeader();
 
-        // When/Then
-        assertThrows(HttpClientErrorException.class, () -> {
+        // When
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
             restClient.get()
                     .uri(Endpoint.USER_PROFILE_EXPORT.getPath())
                     .headers(headers -> headers.addAll(plainHeader))
                     .retrieve()
                     .toEntity(String.class);
         });
+
+        // Then
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        assertTrue(exception.getResponseBodyAsString() == null || exception.getResponseBodyAsString().isEmpty(),
+                "Response body must be empty for unauthorized export requests");
     }
 
     // -----------------------------------------------------------------------
