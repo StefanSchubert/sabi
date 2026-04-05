@@ -133,7 +133,8 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         }
     }
 
-    private AquariumExportTo buildAquariumExport(AquariumEntity aquarium) {        AquariumExportTo ato = new AquariumExportTo();
+    private AquariumExportTo buildAquariumExport(AquariumEntity aquarium) {
+        AquariumExportTo ato = new AquariumExportTo();
         ato.setId(aquarium.getId());
         ato.setDescription(aquarium.getDescription());
         ato.setWaterType(aquarium.getWaterType() != null ? aquarium.getWaterType().name() : null);
