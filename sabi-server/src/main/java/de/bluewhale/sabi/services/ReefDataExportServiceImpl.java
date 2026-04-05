@@ -298,10 +298,10 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
 
             String unitName = null;
             if (t.getUnitId() != null) {
-                Optional<LocalizedUnitEntity> localizedUnitOpt =
-                        localizedUnitRepository.findByLanguageAndUnitId("en", t.getUnitId());
-                if (localizedUnitOpt.isPresent()) {
-                    unitName = localizedUnitOpt.get().getName();
+                LocalizedUnitEntity localizedUnit =
+                        localizedUnitRepository.findByLanguageAndUnitId(EXPORT_LANG, t.getUnitId());
+                if (localizedUnit != null) {
+                    unitName = localizedUnit.getDescription();
                 }
             }
             tto.setUnitName(unitName);
