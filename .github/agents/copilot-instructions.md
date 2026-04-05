@@ -8,9 +8,12 @@ Auto-generated from all feature plans. Last updated: 2026-04-04
 
 ## Project Structure
 
+Dieses Repository ist als Multi-Module-Projekt organisiert. Relevante Top-Level-Module sind u. a.:
+
 ```text
-src/
-tests/
+sabi-server/
+sabi-webclient/
+sabi-boundary/
 ```
 
 ## Commands
