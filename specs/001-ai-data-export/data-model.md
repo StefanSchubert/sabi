@@ -223,7 +223,7 @@ Calls `UserService.downloadReefDataExport(...)`, streams the bytes to the browse
 ### userProfile.xhtml — new panel section
 
 New `<p:panel>` below the existing reminder section with:
-- Explanatory text via i18n key `userprofile.aiexport.description.t` (DE/EN)
+- Explanatory text via i18n key `userprofile.aiexport.description.t` (DE, EN, ES, FR, IT)
 - `<p:commandButton>` calling `downloadReefData()` with `ajax="false"`
 - Disabled state + hint text when `!userProfileView.hasTanks` (reuses existing `hasTanks` field)
 
@@ -231,14 +231,14 @@ New `<p:panel>` below the existing reminder section with:
 
 ## i18n Message Keys
 
-New keys required in `messages_de.properties` and `messages_en.properties`:
+New keys required in all 6 bundle files (`messages_de.properties`, `messages_en.properties`, `messages_es.properties`, `messages_fr.properties`, `messages_it.properties`, `messages.properties`):
 
-| Key | DE | EN |
-|-----|----|----|
-| `userprofile.aiexport.header.h` | `KI-Chatbot Datenexport` | `AI Chatbot Data Export` |
-| `userprofile.aiexport.description.t` | (2–3 Sätze DE) | (2–3 sentences EN) |
-| `userprofile.aiexport.download.b` | `Riff-Daten herunterladen` | `Download reef data` |
-| `userprofile.aiexport.notanks.hint.t` | (Hint text DE) | (Hint text EN) |
+| Key | DE | EN | ES | FR | IT |
+|-----|----|----|----|----|-----|
+| `userprofile.aiexport.header.h` | `KI-Chatbot Datenexport` | `AI Chatbot Data Export` | `Exportación de datos para chatbot de IA` | `Export de données pour chatbot IA` | `Esportazione dati per chatbot IA` |
+| `userprofile.aiexport.description.t` | (2–3 Sätze DE) | (2–3 sentences EN) | (2–3 frases ES) | (2–3 phrases FR) | (2–3 frasi IT) |
+| `userprofile.aiexport.download.b` | `Riff-Daten herunterladen` | `Download reef data` | `Descargar datos del arrecife` | `Télécharger les données du récif` | `Scarica i dati della barriera` |
+| `userprofile.aiexport.notanks.hint.t` | (Hint text DE) | (Hint text EN) | (Hint text ES) | (Hint text FR) | (Hint text IT) |
 
 ---
 

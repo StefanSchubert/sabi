@@ -41,7 +41,7 @@ Provide a one-click "Download my data" button in the Sabi user profile page that
   - All coral entries for all tanks (species reference, observed behaviour)
   - All treatment records for all tanks
 - A metadata block in the JSON (export timestamp, Sabi version, data schema version) to help the AI understand the context
-- i18n support: explanatory text in all languages already supported by Sabi (currently DE and EN)
+- i18n support: explanatory text in all languages supported by Sabi (DE, EN, ES, FR, IT + fallback)
 - The download is triggered directly in the browser (file save dialog)
 - No personal identifying data (email address, username, password) is included in the export
 
@@ -120,7 +120,7 @@ A user pastes or uploads the downloaded JSON to an AI chatbot. The AI can unders
 ### Functional Requirements
 
 - **FR-001**: The user profile page MUST display a dedicated panel explaining the AI chatbot data export feature, visible to all authenticated users.
-- **FR-002**: The panel MUST contain explanatory text in the user's selected language (DE/EN) that describes the intended use with AI chatbots and motivates the user to try the feature.
+- **FR-002**: The panel MUST contain explanatory text in the user's selected language (DE, EN, ES, FR, IT) that describes the intended use with AI chatbots and motivates the user to try the feature.
 - **FR-003**: The panel MUST contain a clearly labelled "Download reef data" button.
 - **FR-004**: When a user has no aquariums, the download button MUST either be disabled or hidden, and a motivational hint to create the first aquarium MUST be displayed instead.
 - **FR-005**: Clicking the "Download reef data" button MUST trigger the download of a JSON file in the user's browser without navigating away from the profile page. During export generation the button MUST be disabled and display a loading indicator; it MUST re-enable automatically once the download has started or an error has occurred.

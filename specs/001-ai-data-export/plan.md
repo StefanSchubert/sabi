@@ -39,7 +39,7 @@ Nutzer können auf der Profil-Seite mit einem Klick alle ihre Riff-Daten (Aquari
 | I | Funktionale Eignung | 3 User Stories, 14 FRs, 7 SCs, Acceptance Scenarios vorhanden? | ✅ |
 | II | Leistungseffizienz | ARM-Impact bewertet: Datenmenge ~800 Records; synchrone DB-Abfrage, kein N+1 (Service lädt pro Aquarium eager); 3 s Budget akzeptiert | ✅ |
 | III | Kompatibilität | Bestehende `/api/userprofile` Endpoints unverändert; neuer `/export`-Subpfad additiv; OpenAPI via springdoc-v2 ergänzt; ARM+AMD64 | ✅ |
-| IV | Benutzbarkeit | i18n DE/EN; WCAG 2.1 AA (Button mit sinnvollem Label + disabled-State); max. 2 Klicks vom Profil-Menü | ✅ |
+| IV | Benutzbarkeit | i18n DE/EN/ES/FR/IT; WCAG 2.1 AA (Button mit sinnvollem Label + disabled-State); max. 2 Klicks vom Profil-Menü | ✅ |
 | V | Zuverlässigkeit | Fallback auf rohe IDs bei unauflösbaren Katalogreferenzen (FR-008); keine Transaktionsschreiboperation → kein Datenverlustrisiko | ✅ |
 | VI | Sicherheit | JWT-Auth zwingend (FR-011); User-Isolierung by design (FR-012); kein PII im Export (FR-010); anonymisiertes Audit-Log (FR-014); Secrets nicht im Code | ✅ |
 | VII | Wartbarkeit | Schema-Version im `_meta`-Block; keine Flyway-Migration; JUnit-Tests geplant (min. 2: Export-Endpoint + Audit-Log); Code in bestehenden Modulen | ✅ |
@@ -107,7 +107,11 @@ sabi-webclient/
     │   └── userProfile.xhtml                  [MODIFY] Add AI export panel + button
     └── i18n/
         ├── messages_de.properties              [MODIFY] Add 4 new keys
-        └── messages_en.properties              [MODIFY] Add 4 new keys
+        ├── messages_en.properties              [MODIFY] Add 4 new keys
+        ├── messages_es.properties              [MODIFY] Add 4 new keys
+        ├── messages_fr.properties              [MODIFY] Add 4 new keys
+        ├── messages_it.properties              [MODIFY] Add 4 new keys
+        └── messages.properties                 [MODIFY] Add 4 new keys (fallback/EN)
 ```
 
 **Structure Decision**: Existing multi-module web-service architecture (`sabi-boundary` → `sabi-server` + `sabi-webclient`). All changes are additive within existing modules. No new module required.
