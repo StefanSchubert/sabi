@@ -295,9 +295,16 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
                 }
             }
             tto.setUnitSign(unitSign);
-            // unitName for treatments (not required per spec fields, but included for completeness)
-            tto.setUnitName(null);
 
+            String unitName = null;
+            if (t.getUnitId() != null) {
+                Optional<LocalizedUnitEntity> localizedUnitOpt =
+                        localizedUnitRepository.findByLanguageAndUnitId("en", t.getUnitId());
+                if (localizedUnitOpt.isPresent()) {
+                    unitName = localizedUnitOpt.get().getName();
+                }
+            }
+            tto.setUnitName(unitName);
             // T016: remedy resolution
             String productName = null;
             String vendor = null;
