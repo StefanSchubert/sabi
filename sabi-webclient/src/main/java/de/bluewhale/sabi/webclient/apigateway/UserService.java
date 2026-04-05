@@ -74,4 +74,14 @@ public interface UserService extends Serializable {
      */
     void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
+    /**
+     * Downloads the full reef data export for the currently authenticated user from the backend.
+     * The returned byte array is a UTF-8 encoded JSON file ready for download.
+     *
+     * @param jwtBackendAuthToken Bearer Auth string, which identifies the user against the backend.
+     * @return JSON export as raw bytes
+     * @throws BusinessException on non-200 response or network error
+     */
+    byte[] downloadReefDataExport(@NotNull String jwtBackendAuthToken) throws BusinessException;
+
 }

@@ -7,20 +7,25 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.ReefDataExportTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.UserProfileTo;
+import de.bluewhale.sabi.services.ReefDataExportService;
 import de.bluewhale.sabi.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.security.Principal;
+import java.time.LocalDate;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 
@@ -33,6 +38,12 @@ public class UserProfileController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ReefDataExportService reefDataExportService;
+
+    @Autowired
+    JsonMapper objectMapper;
 
     @Operation(method = "Update an existing userProfile. Needs to be provided via json body.")
     @ApiResponses({
@@ -107,6 +118,36 @@ public class UserProfileController {
         }
 
         return responseEntity;
+    }
+
+    @Operation(summary = "Download complete reef data as JSON for AI chatbot consultations.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK \u2014 JSON file download initiated."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized \u2014 missing or invalid token.")
+    })
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> downloadReefDataExport(
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+
+        // If we come so far, the JWTAuthenticationFilter has already validated the token,
+        // and we can be sure that spring has injected a valid Principal object.
+
+        try {
+            ReefDataExportTo exportTo = reefDataExportService.buildExportForUser(principal.getName());
+            byte[] jsonBytes = objectMapper.writeValueAsBytes(exportTo);
+
+            String filename = "sabi-reef-data-" + LocalDate.now() + ".json";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+            headers.setContentLength(jsonBytes.length);
+
+            return new ResponseEntity<>(jsonBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Failed to generate reef data export for user. {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

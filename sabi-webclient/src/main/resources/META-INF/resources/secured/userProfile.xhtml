@@ -47,7 +47,7 @@
                                 <f:selectItems value="#{userProfileView.supportedLocales}"
                                                var="n"
                                                itemValue="#{n.locale}"
-                                               itemLabel="#{n.locale.getDisplayLanguage(n.locale)}"
+                                               itemLabel="#{n.locale.displayLanguage}"
                                 />
 
                                 <p:column>
@@ -56,7 +56,7 @@
                                          width="24px" height="24px"/>
                                 </p:column>
                                 <p:column>
-                                    <h:outputText value="#{c.getDisplayLanguage(c)}"/>
+                                    <h:outputText value="#{c.displayLanguage}"/>
                                 </p:column>
 
                             </p:selectOneMenu>
@@ -154,6 +154,27 @@
                             </p:messages>
 
                         </h:form>
+                    </p:panel>
+
+                    <p:divider align="center"/>
+                    <p:spacer width="10px"/>
+
+                    <!-- 001-ai-data-export: AI Export Panel (US2 / T027) -->
+                    <p:panel header="#{msg['userprofile.aiexport.header.h']}">
+
+                        <p:outputLabel value="#{msg['userprofile.aiexport.description.t']}"/>
+
+                        <h:form id="aiexportform">
+                            <p:commandButton ajax="false"
+                                             value="#{msg['userprofile.aiexport.download.b']}"
+                                             action="#{userProfileView.downloadReefData}"
+                                             disabled="#{!userProfileView.hasTanks}"
+                                             styleClass="ui-button-primary"/>
+
+                            <p:outputLabel rendered="#{!userProfileView.hasTanks}"
+                                           value="#{msg['userprofile.aiexport.notanks.hint.t']}"/>
+                        </h:form>
+
                     </p:panel>
 
                 </p:outputPanel>

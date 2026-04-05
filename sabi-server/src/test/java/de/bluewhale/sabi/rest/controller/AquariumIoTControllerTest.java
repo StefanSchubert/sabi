@@ -76,8 +76,9 @@ public class AquariumIoTControllerTest extends CommonTestController {
 		} catch (HttpClientErrorException e) {
 			// then we should get a 400 as result because of activated JSR303 Validation
 			assertThat(e.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-			// Optional: Check the error message or body if needed
-			assertThat(e.getResponseBodyAsString(), containsString("muss kleiner-gleich 35 sein"));
+			// Language-agnostic check: all locale variants of @Max(35) contain the value "35"
+			// e.g. de: "muss kleiner-gleich 35 sein", en: "must be less than or equal to 35"
+			assertThat(e.getResponseBodyAsString(), containsString("35"));
 		}
 
 	}
