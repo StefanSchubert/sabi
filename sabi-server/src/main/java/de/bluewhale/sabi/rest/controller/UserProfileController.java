@@ -140,7 +140,7 @@ public class UserProfileController {
             String filename = "sabi-reef-data-" + LocalDate.now() + ".json";
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", filename);
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
             headers.setContentLength(jsonBytes.length);
 
             return new ResponseEntity<>(jsonBytes, headers, HttpStatus.OK);
