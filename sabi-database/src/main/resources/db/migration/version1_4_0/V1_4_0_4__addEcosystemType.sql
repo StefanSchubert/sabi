@@ -1,0 +1,1 @@
+ALTER TABLE `aquarium` ADD COLUMN `ecosystem_type` VARCHAR(20) DEFAULT 'UNKNOWN';

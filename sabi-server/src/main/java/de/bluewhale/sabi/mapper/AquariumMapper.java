@@ -30,6 +30,7 @@ public interface AquariumMapper {
             @Mapping(target ="active", source="active"),
             @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),
             @Mapping(target ="inceptionDate", source="inceptionDate"),
+            @Mapping(target ="ecosystemType", source="ecosystemType"),
     })
     AquariumTo mapAquariumEntity2To(@NotNull final AquariumEntity pAquariumEntity);
 
@@ -42,6 +43,7 @@ public interface AquariumMapper {
             @Mapping(target ="active", source="active"),
             @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),
             @Mapping(target ="inceptionDate", source="inceptionDate"),
+            @Mapping(target ="ecosystemType", source="ecosystemType"),
             @Mapping(target ="user.id", source="userId"),
             @Mapping(target = "measurements", ignore = true),
             @Mapping(target = "plagueRecords", ignore = true)

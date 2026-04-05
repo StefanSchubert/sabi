@@ -26,6 +26,7 @@ public class AquariumExportTo implements Serializable {
     private String sizeUnit;
     private Boolean active;
     private String inceptionDate;
+    private String ecosystemType;
     private List<MeasurementExportTo> measurements = new ArrayList<>();
     private List<PlagueRecordExportTo> plagueRecords = new ArrayList<>();
     private List<FishExportTo> fish = new ArrayList<>();
