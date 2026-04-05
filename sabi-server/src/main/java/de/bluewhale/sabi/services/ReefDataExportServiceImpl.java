@@ -243,7 +243,6 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
             String scientificName = null;
             if (f.getFishCatalogueId() != null) {
                 Optional<FishCatalogueEntity> catOpt = fishCatalogueRepository.findById(f.getFishCatalogueId());
-                catOpt.ifPresent(cat -> {});
                 scientificName = catOpt.map(FishCatalogueEntity::getScientificName).orElse(null);
             }
             fto.setScientificName(scientificName);
