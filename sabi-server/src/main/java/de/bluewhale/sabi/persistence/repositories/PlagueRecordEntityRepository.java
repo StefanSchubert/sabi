@@ -36,4 +36,12 @@ public interface PlagueRecordEntityRepository extends JpaRepository<PlagueRecord
      */
     @NotNull List<PlagueRecordEntity> findByUserAndPlagueIntervallId(@NotNull UserEntity user, @NotNull Integer pPlagueIntervallId);
 
+    /**
+     * Fetches all plague records for a specific aquarium (used by the data export service).
+     *
+     * @param aquariumId identifies the aquarium
+     * @return list of plague records belonging to that aquarium
+     */
+    @NotNull List<PlagueRecordEntity> findByAquarium_Id(@NotNull Long aquariumId);
+
 }

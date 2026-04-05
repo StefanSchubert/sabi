@@ -16,6 +16,8 @@ import de.bluewhale.sabi.webclient.apigateway.TankService;
 import de.bluewhale.sabi.webclient.apigateway.UserService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Data;
@@ -24,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -175,6 +180,35 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             return false;
         } else {
             return (pLocalDateTime.toLocalDate().isBefore(LocalDateTime.now().toLocalDate()) ? true : false);
+        }
+    }
+
+    /**
+     * JSF action method for the AI export button (ajax="false").
+     * Streams the JSON export file to the browser as an attachment.
+     * Reuses the existing {@code hasTanks} field — no separate check needed.
+     */
+    public void downloadReefData() {
+        try {
+            byte[] data = userService.downloadReefDataExport(userSession.getSabiBackendToken());
+
+            FacesContext fc = FacesContext.getCurrentInstance();
+            ExternalContext ec = fc.getExternalContext();
+
+            ec.responseReset();
+            ec.setResponseContentType("application/octet-stream");
+            String filename = "sabi-reef-data-" + LocalDate.now() + ".json";
+            ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            ec.setResponseContentLength(data.length);
+
+            OutputStream out = ec.getResponseOutputStream();
+            out.write(data);
+            out.flush();
+
+            fc.responseComplete();
+        } catch (BusinessException | IOException e) {
+            log.error("Could not download reef data export. {}", e.getMessage());
+            MessageUtil.warn("messages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
     }
 }

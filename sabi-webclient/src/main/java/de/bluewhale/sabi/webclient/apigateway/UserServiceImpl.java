@@ -188,4 +188,26 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
 
     }
 
+    @Override
+    public byte[] downloadReefDataExport(@NotNull String jwtBackendAuthToken) throws BusinessException {
+        String exportURL = sabiBackendUrl + Endpoint.USER_PROFILE_EXPORT.getPath();
+        try {
+            HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(jwtBackendAuthToken);
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<byte[]> responseEntity = restTemplate.exchange(exportURL, HttpMethod.GET, requestEntity, byte[].class);
+
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                return responseEntity.getBody();
+            } else {
+                log.error("Backend returned non-200 status {} for export endpoint.", responseEntity.getStatusCode());
+                throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+            }
+        } catch (RestClientException e) {
+            log.error("Couldn't reach {} reason {}", exportURL, e.getMessage());
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+    }
+
 }

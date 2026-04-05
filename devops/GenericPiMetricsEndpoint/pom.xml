@@ -14,7 +14,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.4</version>
+        <version>4.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -110,12 +110,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!-- Build a fully executable jar to use it via /etc/init.d
-                         see https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html
-                    -->
-                    <executable>true</executable>
-                </configuration>
             </plugin>
             <plugin>
                 <!-- This will check for newer version on dependencies which are
