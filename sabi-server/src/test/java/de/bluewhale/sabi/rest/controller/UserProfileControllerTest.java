@@ -13,10 +13,9 @@ import tools.jackson.databind.json.JsonMapper;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.CommonMessageCodes;
 import de.bluewhale.sabi.exception.Message;
-import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.model.UserProfileTo;
-import de.bluewhale.sabi.model.UserTo;
+import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
+import de.bluewhale.sabi.services.ReefDataExportService;
 import de.bluewhale.sabi.services.UserService;
 import de.bluewhale.sabi.util.RestHelper;
 import de.bluewhale.sabi.util.TestDataFactory;
@@ -33,11 +32,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 
@@ -53,12 +54,16 @@ public class UserProfileControllerTest extends CommonTestController {
     @MockitoBean
     UserService userService;
 
+    @MockitoBean
+    ReefDataExportService reefDataExportService;
+
     @Autowired
     JsonMapper objectMapper;  // json mapper
 
     @AfterEach
     public void cleanUpMocks() {
         reset(userService);
+        reset(reefDataExportService);
     }
 
     /**
@@ -214,5 +219,188 @@ public class UserProfileControllerTest extends CommonTestController {
                     // then we should get a 200 as result.
                     throw new RuntimeException("Retrieved wrong status code: " + response.getStatusCode());
                 }).toEntity(String.class);
+    }
+
+    // -----------------------------------------------------------------------
+    // T019 — Authenticated GET /export returns HTTP 200 + valid JSON
+    // -----------------------------------------------------------------------
+
+    @Test
+    public void testAuthenticatedExportReturns200WithValidJson() throws Exception {
+        // Given: mock returns a minimal but complete export document
+        ReefDataExportTo exportTo = buildMinimalExport();
+        given(reefDataExportService.buildExportForUser(TestDataFactory.TESTUSER_EMAIL1))
+                .willReturn(exportTo);
+
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        // When
+        ResponseEntity<String> response = restClient.get()
+                .uri(Endpoint.USER_PROFILE_EXPORT.getPath())
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .toEntity(String.class);
+
+        // Then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        String body = response.getBody();
+        assertNotNull(body, "Response body must not be null");
+
+        // Must be parseable as JSON with top-level keys _meta and aquariums
+        tools.jackson.databind.JsonNode root = objectMapper.readTree(body);
+        assertNotNull(root.get("_meta"), "_meta key must be present");
+        assertNotNull(root.get("aquariums"), "aquariums key must be present");
+    }
+
+    // -----------------------------------------------------------------------
+    // T020 — Unauthenticated GET /export returns HTTP 401
+    // -----------------------------------------------------------------------
+
+    @Test
+    public void testUnauthenticatedExportReturns401() {
+        // Given: no Authorization header
+        HttpHeaders plainHeader = RestHelper.buildHttpHeader();
+
+        // When/Then
+        assertThrows(HttpClientErrorException.class, () -> {
+            restClient.get()
+                    .uri(Endpoint.USER_PROFILE_EXPORT.getPath())
+                    .headers(headers -> headers.addAll(plainHeader))
+                    .retrieve()
+                    .toEntity(String.class);
+        });
+    }
+
+    // -----------------------------------------------------------------------
+    // T029 — PII absence: export JSON must not contain "email", "password", "username"
+    // -----------------------------------------------------------------------
+
+    @Test
+    public void testExportContainsNoPii() throws Exception {
+        ReefDataExportTo exportTo = buildMinimalExport();
+        given(reefDataExportService.buildExportForUser(TestDataFactory.TESTUSER_EMAIL1))
+                .willReturn(exportTo);
+
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        ResponseEntity<String> response = restClient.get()
+                .uri(Endpoint.USER_PROFILE_EXPORT.getPath())
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .toEntity(String.class);
+
+        String body = response.getBody();
+        assertNotNull(body);
+        assertFalse(body.contains("\"email\""), "JSON must not contain key 'email' (SC-003)");
+        assertFalse(body.contains("\"password\""), "JSON must not contain key 'password' (SC-003)");
+        assertFalse(body.contains("\"username\""), "JSON must not contain key 'username' (SC-003)");
+    }
+
+    // -----------------------------------------------------------------------
+    // T030 — _meta completeness: sabiSchemaVersion, exportedAt, description
+    // -----------------------------------------------------------------------
+
+    @Test
+    public void testExportMetaBlockIsComplete() throws Exception {
+        ReefDataExportTo exportTo = buildMinimalExport();
+        given(reefDataExportService.buildExportForUser(TestDataFactory.TESTUSER_EMAIL1))
+                .willReturn(exportTo);
+
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        ResponseEntity<String> response = restClient.get()
+                .uri(Endpoint.USER_PROFILE_EXPORT.getPath())
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .toEntity(String.class);
+
+        tools.jackson.databind.JsonNode root = objectMapper.readTree(response.getBody());
+        tools.jackson.databind.JsonNode meta = root.get("_meta");
+        assertNotNull(meta, "_meta must be present");
+
+        // sabiSchemaVersion must equal "1.0"
+        assertEquals("1.0", meta.get("sabiSchemaVersion").asText(), "sabiSchemaVersion must be 1.0");
+
+        // exportedAt must match ISO-8601 UTC pattern
+        String exportedAt = meta.get("exportedAt").asText();
+        assertTrue(exportedAt.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z"),
+                "exportedAt must be ISO-8601 UTC: " + exportedAt);
+
+        // description must be non-blank
+        String description = meta.get("description").asText();
+        assertNotNull(description);
+        assertFalse(description.isBlank(), "description must be non-blank");
+    }
+
+    // -----------------------------------------------------------------------
+    // T031 — Aquarium structure: all five sub-array keys present
+    // -----------------------------------------------------------------------
+
+    @Test
+    public void testExportAquariumStructureContainsAllSubArrayKeys() throws Exception {
+        // Build export with one aquarium containing all five sub-arrays (may be empty)
+        ReefDataExportTo exportTo = buildMinimalExportWithAquarium();
+        given(reefDataExportService.buildExportForUser(TestDataFactory.TESTUSER_EMAIL1))
+                .willReturn(exportTo);
+
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(TestDataFactory.TESTUSER_EMAIL1);
+        HttpHeaders authedHeader = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        ResponseEntity<String> response = restClient.get()
+                .uri(Endpoint.USER_PROFILE_EXPORT.getPath())
+                .headers(headers -> headers.addAll(authedHeader))
+                .retrieve()
+                .toEntity(String.class);
+
+        tools.jackson.databind.JsonNode root = objectMapper.readTree(response.getBody());
+        tools.jackson.databind.JsonNode aquariums = root.get("aquariums");
+        assertNotNull(aquariums, "aquariums array must be present");
+        assertTrue(aquariums.isArray() && aquariums.size() > 0, "aquariums array must not be empty for this test");
+
+        tools.jackson.databind.JsonNode firstAquarium = aquariums.get(0);
+        assertNotNull(firstAquarium.get("measurements"), "measurements key must be present (SC-002)");
+        assertNotNull(firstAquarium.get("plagueRecords"), "plagueRecords key must be present (SC-002)");
+        assertNotNull(firstAquarium.get("fish"), "fish key must be present (SC-002)");
+        assertNotNull(firstAquarium.get("corals"), "corals key must be present (SC-002)");
+        assertNotNull(firstAquarium.get("treatments"), "treatments key must be present (SC-002)");
+    }
+
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+
+    /** Builds a minimal ReefDataExportTo with valid _meta block and empty aquariums list. */
+    private ReefDataExportTo buildMinimalExport() {
+        de.bluewhale.sabi.model.ExportMetaTo meta = new de.bluewhale.sabi.model.ExportMetaTo();
+        meta.setExportedAt(Instant.now().toString());
+        meta.setSabiSchemaVersion(ReefDataExportTo.SCHEMA_VERSION);
+        meta.setDescription("Sabi reef data export \u2014 test");
+
+        ReefDataExportTo exportTo = new ReefDataExportTo();
+        exportTo.setMeta(meta);
+        exportTo.setAquariums(new ArrayList<>());
+        return exportTo;
+    }
+
+    /** Builds a ReefDataExportTo with one aquarium that has all five sub-arrays (empty). */
+    private ReefDataExportTo buildMinimalExportWithAquarium() {
+        ReefDataExportTo exportTo = buildMinimalExport();
+        de.bluewhale.sabi.model.AquariumExportTo aquarium = new de.bluewhale.sabi.model.AquariumExportTo();
+        aquarium.setId(1L);
+        aquarium.setDescription("Test Tank");
+        aquarium.setWaterType("SEA_WATER");
+        aquarium.setSize(300);
+        aquarium.setSizeUnit("LITER");
+        aquarium.setActive(true);
+        aquarium.setMeasurements(new ArrayList<>());
+        aquarium.setPlagueRecords(new ArrayList<>());
+        aquarium.setFish(new ArrayList<>());
+        aquarium.setCorals(new ArrayList<>());
+        aquarium.setTreatments(new ArrayList<>());
+        exportTo.getAquariums().add(aquarium);
+        return exportTo;
     }
 }

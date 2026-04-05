@@ -26,6 +26,7 @@ public enum Endpoint {
     TANKS("/api/tank"),
     UNITS("/api/units"),
     USER_PROFILE("/api/userprofile"),
+    USER_PROFILE_EXPORT("/api/userprofile/export"),
     PLAGUE_CENTER_SERVICE("/api/plagues"),
     OIDC_GOOGLE_AUTH("/api/auth/oidc/google");
     ;

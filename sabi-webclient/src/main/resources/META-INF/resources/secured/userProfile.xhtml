@@ -156,6 +156,27 @@
                         </h:form>
                     </p:panel>
 
+                    <p:divider align="center"/>
+                    <p:spacer width="10px"/>
+
+                    <!-- 001-ai-data-export: AI Export Panel (US2 / T027) -->
+                    <p:panel header="#{msg['userprofile.aiexport.header.h']}">
+
+                        <p:outputLabel value="#{msg['userprofile.aiexport.description.t']}"/>
+
+                        <h:form id="aiexportform">
+                            <p:commandButton ajax="false"
+                                             value="#{msg['userprofile.aiexport.download.b']}"
+                                             action="#{userProfileView.downloadReefData}"
+                                             disabled="#{!userProfileView.hasTanks}"
+                                             styleClass="ui-button-primary"/>
+
+                            <p:outputLabel rendered="#{!userProfileView.hasTanks}"
+                                           value="#{msg['userprofile.aiexport.notanks.hint.t']}"/>
+                        </h:form>
+
+                    </p:panel>
+
                 </p:outputPanel>
 
             </p:panel>
