@@ -46,4 +46,7 @@ public class AquariumTo implements Serializable {
     @Schema(description =  "Date since when this tank is up and running.", required = false)
     private Date inceptionDate;
 
+    @Schema(description =  "Ecosystem type of a seawater aquarium (e.g. SPS, LPS, mixed).", required = false)
+    private EcosystemType ecosystemType;
+
 }

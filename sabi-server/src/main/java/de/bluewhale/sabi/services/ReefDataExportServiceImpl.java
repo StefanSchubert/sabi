@@ -141,6 +141,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         ato.setSize(aquarium.getSize());
         ato.setSizeUnit(aquarium.getSizeUnit() != null ? aquarium.getSizeUnit().name() : null);
         ato.setActive(aquarium.getActive());
+        ato.setEcosystemType(aquarium.getEcosystemType() != null ? aquarium.getEcosystemType().name() : null);
         if (aquarium.getInceptionDate() != null) {
             ato.setInceptionDate(new SimpleDateFormat("yyyy-MM-dd").format(aquarium.getInceptionDate()));
         }

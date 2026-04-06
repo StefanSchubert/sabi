@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.webclient.model;
 
+import de.bluewhale.sabi.model.EcosystemType;
 import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.model.WaterType;
 import jakarta.inject.Named;
@@ -24,5 +25,7 @@ public class Units {
     }
 
     public WaterType[] getWaterTypes() { return WaterType.values(); }
+
+    public EcosystemType[] getEcosystemTypes() { return EcosystemType.values(); }
 
 }

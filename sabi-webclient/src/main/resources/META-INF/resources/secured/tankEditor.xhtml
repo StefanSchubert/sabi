@@ -53,6 +53,14 @@
                                            itemLabel="#{tankListView.translatedWaterType[n]}"/>
                         </h:selectOneMenu>
 
+                        <p:outputLabel for="ecosystemType" value="#{msg['tankview.ecosystemType.l']}"/>
+                        <h:selectOneMenu id="ecosystemType" value="#{tankListView.selectedTank.ecosystemType}">
+                            <f:selectItems value="#{units.ecosystemTypes}"
+                                           var="e"
+                                           itemValue="#{e}"
+                                           itemLabel="#{tankListView.translatedEcosystemType[e]}"/>
+                        </h:selectOneMenu>
+
                         <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
                         <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
                                       pattern="dd.MM.yyyy"

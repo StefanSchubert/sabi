@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.persistence.model;
 
+import de.bluewhale.sabi.model.EcosystemType;
 import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.model.WaterType;
 import jakarta.persistence.*;
@@ -70,5 +71,9 @@ public class AquariumEntity extends Auditable {
     @Temporal(TemporalType.DATE)
     @Column(name = "inception_date", nullable = true, insertable = true, updatable = true)
     private Date inceptionDate;
+
+    @Column(name = "ecosystem_type", nullable = true, insertable = true, updatable = true, length = 20, precision = 0)
+    @Enumerated(EnumType.STRING)
+    private EcosystemType ecosystemType;
 
 }
