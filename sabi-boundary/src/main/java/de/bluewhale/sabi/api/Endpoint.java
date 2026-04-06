@@ -28,7 +28,11 @@ public enum Endpoint {
     USER_PROFILE("/api/userprofile"),
     USER_PROFILE_EXPORT("/api/userprofile/export"),
     PLAGUE_CENTER_SERVICE("/api/plagues"),
-    OIDC_GOOGLE_AUTH("/api/auth/oidc/google");
+    OIDC_GOOGLE_AUTH("/api/auth/oidc/google"),
+    // 002-fish-stock-catalogue
+    FISH_STOCK("/api/fish"),
+    FISH_CATALOGUE("/api/fish/catalogue"),
+    FISH_CATALOGUE_ADMIN("/api/admin/fish/catalogue");
     ;
 
 // ------------------------------ FIELDS ------------------------------

@@ -60,6 +60,12 @@ management:
 sabi:
   mailvalidation:
     url: http://localhost:8080/sabi/api/auth/
+  fish:
+    photo:
+      storage-dir: ${SABI_FISH_PHOTO_STORAGE_DIR:/var/sabi-data/fish-photos}
+      max-size-bytes: 5242880
+  admin:
+    users: ${SABI_ADMIN_USERS:admin@sabi-project.net}
 server:
   port: 8080
   servlet:

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  - Part of 002-fish-stock-catalogue — T036
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Fish Stock Tab Content — included by tankView.xhtml -->
+
+    <h:form id="fishStockForm">
+
+        <p:messages id="fishStockMessages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
+        <!-- Add Fish Button (disabled when no tank selected) -->
+        <div style="margin-bottom:0.75rem;">
+            <p:commandButton value="#{msg['fishstock.add.button']}"
+                             icon="pi pi-plus"
+                             actionListener="#{fishStockView.onAddFish()}"
+                             update=":fishEntryDialog"
+                             oncomplete="PF('fishEntryDialogWidget').show()"
+                             title="#{msg['fishstock.add.button']}"
+                             disabled="#{fishStockView.selectedAquariumId == null}"/>
+        </div>
+
+        <!-- Section: Currently in Tank -->
+        <p:panel header="#{msg['fishstock.current.section']}" styleClass="greenColoredPanel">
+
+            <p:outputLabel rendered="#{empty fishStockView.activeFish}"
+                           value="#{msg['fishstock.empty.hint']}"
+                           style="color:#065f46; font-style:italic;"/>
+
+            <p:dataTable id="activeFishTable"
+                         var="fish"
+                         value="#{fishStockView.activeFish}"
+                         rendered="#{not empty fishStockView.activeFish}"
+                         styleClass="p-mt-2">
+
+                <!-- Thumbnail -->
+                <p:column headerText="#{msg['fishstock.form.photo.label']}" style="width:3.5rem;">
+                    <p:graphicImage rendered="#{fish.hasPhoto}"
+                                    value="#{request.contextPath}/secured/fishPhoto?fishId=#{fish.id}"
+                                    style="max-width:48px; max-height:48px; border-radius:4px;"/>
+                    <i rendered="#{not fish.hasPhoto}"
+                       class="pi pi-image" style="color:#94a3b8; font-size:1.5rem;"/>
+                </p:column>
+
+                <!-- Common Name -->
+                <p:column headerText="#{msg['fishstock.form.commonname.label']}">
+                    <p:outputLabel value="#{fish.commonName}" style="font-weight:600;"/>
+                    <p:outputLabel rendered="#{fish.nickname != null and fish.nickname != ''}"
+                                   value=" (#{fish.nickname})"
+                                   style="color:#64748b; font-size:0.85rem;"/>
+                </p:column>
+
+                <!-- Scientific Name -->
+                <p:column headerText="#{msg['fishstock.form.scientificname.label']}">
+                    <p:outputLabel value="#{fish.scientificName}"
+                                   style="font-style:italic; color:#475569;"/>
+                </p:column>
+
+                <!-- Entry Date -->
+                <p:column headerText="#{msg['fishstock.form.entrydate.label']}">
+                    <p:outputLabel value="#{fish.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <!-- Actions -->
+                <p:column headerText="" style="width:9rem; text-align:center;">
+                    <p:commandButton icon="pi pi-pencil"
+                                     title="#{msg['common.edit.b']}"
+                                     actionListener="#{fishStockView.onEditFish(fish)}"
+                                     update=":fishEntryDialog"
+                                     oncomplete="PF('fishEntryDialogWidget').show()"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-arrow-right"
+                                     title="#{msg['fishstock.departure.title']}"
+                                     styleClass="ui-button-warning"
+                                     actionListener="#{fishStockView.onRecordDeparture(fish)}"
+                                     update=":fishDepartureDialog"
+                                     oncomplete="PF('fishDepartureDialogWidget').show()"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-trash"
+                                     title="#{msg['common.delete.b']}"
+                                     styleClass="ui-button-danger"
+                                     actionListener="#{fishStockView.onDeleteFish(fish)}"
+                                     update=":fishStockForm"/>
+                </p:column>
+
+            </p:dataTable>
+        </p:panel>
+
+        <p:spacer height="10px"/>
+
+        <!-- Section: Departed Fish (FR-007: collapsed by default) -->
+        <p:fieldset legend="#{msg['fishstock.departed.section']}"
+                    toggleable="true"
+                    collapsed="true">
+
+            <p:dataTable id="departedFishTable"
+                         var="fish"
+                         value="#{fishStockView.departedFish}"
+                         rendered="#{not empty fishStockView.departedFish}"
+                         styleClass="p-mt-2">
+
+                <p:column headerText="#{msg['fishstock.form.commonname.label']}">
+                    <p:outputLabel value="#{fish.commonName}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.form.scientificname.label']}">
+                    <p:outputLabel value="#{fish.scientificName}" style="font-style:italic;"/>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.form.entrydate.label']}">
+                    <p:outputLabel value="#{fish.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.departure.date.label']}">
+                    <p:outputLabel value="#{fish.exodusOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.departure.reason.label']}">
+                    <p:outputLabel value="#{fish.departureReason != null ? msg['fishstock.departure.reason.'.concat(fish.departureReason.toString().toLowerCase())] : ''}"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:outputLabel rendered="#{empty fishStockView.departedFish}"
+                           value="#{msg['fishstock.empty.hint']}"
+                           style="font-style:italic; color:#64748b;"/>
+        </p:fieldset>
+
+    </h:form>
+
+    <!-- Fish Entry Dialog (T039) -->
+    <ui:include src="/secured/fishStockEntryForm.xhtml"/>
+
+    <!-- Departure Dialog (T046) -->
+    <ui:include src="/secured/fishDepartureDialog.xhtml"/>
+
+</ui:composition>
+

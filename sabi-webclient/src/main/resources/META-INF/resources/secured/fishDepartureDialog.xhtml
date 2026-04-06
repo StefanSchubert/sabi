@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 002-fish-stock-catalogue — T046
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="fishDepartureDialog"
+              header="#{msg['fishstock.departure.title']}"
+              widgetVar="fishDepartureDialogWidget"
+              modal="true"
+              responsive="true"
+              width="420"
+              closeOnEscape="true">
+
+        <h:form id="fishDepartureForm">
+
+            <p:messages id="fishDepartureMessages" showDetail="true" closable="true"/>
+
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="departureDate"
+                               value="#{msg['fishstock.departure.date.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:datePicker id="departureDate"
+                              value="#{fishDepartureView.departureRecord.departureDate}"
+                              required="true"
+                              pattern="dd.MM.yyyy"
+                              showIcon="true"
+                              style="width:100%;"/>
+                <p:message for="departureDate"/>
+            </div>
+
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="departureReason"
+                               value="#{msg['fishstock.departure.reason.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:selectOneMenu id="departureReason"
+                                 value="#{fishDepartureView.departureRecord.departureReason}"
+                                 required="true"
+                                 style="width:100%;">
+                     <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="#{msg['fishstock.departure.reason.deceased']}" itemValue="DECEASED"/>
+                    <f:selectItem itemLabel="#{msg['fishstock.departure.reason.removed']}" itemValue="REMOVED_REHOMED"/>
+                    <f:selectItem itemLabel="#{msg['fishstock.departure.reason.unknown']}" itemValue="UNKNOWN"/>
+                </p:selectOneMenu>
+                <p:message for="departureReason"/>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                <p:commandButton value="#{msg['common.save.b']}"
+                                 icon="pi pi-check"
+                                 actionListener="#{fishDepartureView.onSave()}"
+                                 update=":fishStockForm :fishDepartureMessages"
+                                 oncomplete="if (!args.validationFailed) PF('fishDepartureDialogWidget').hide();"/>
+                <p:commandButton value="#{msg['common.cancel.b']}"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 onclick="PF('fishDepartureDialogWidget').hide(); return false;"/>
+            </div>
+
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

@@ -71,6 +71,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                         // Allow IOT Endpoints, they are checked internally based on specific API-Keys
                         .requestMatchers(HttpMethod.POST, Endpoint.IOT_API.getPath() + "/**").permitAll()
+                        // Admin endpoints require ADMIN role (T062 — 002-fish-stock-catalogue)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // all others require JWT authentication
                         .anyRequest().authenticated()
                 )

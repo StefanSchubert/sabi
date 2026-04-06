@@ -69,6 +69,31 @@ some_command | tee /tmp/ausgabe.out
 - Docker für lokales Testen
 - Deployment nach Prod via Ansible Playbook
 
+### JSF/Facelets Hot-Reload (WICHTIG)
+
+**XHTML-Änderungen erfordern IMMER einen Server-Neustart.** Es gibt keinen Hot-Reload für Facelets:
+
+- JoinFaces/Spring Boot erkennt **keine** Classpath-Ressourcen-Timestamps zur Laufzeit
+- Selbst mit `joinfaces.jsf.project-stage: development` werden kompilierte Facelets-Views **gecacht**
+- Das Kopieren geänderter XHTML-Dateien nach `target/classes/` hat **KEINEN Effekt** — der Server
+  muss vollständig durchgestartet werden
+- **Symptom bei veralteter View**: Auto-generierte JSF-IDs (z.B. `j_idt30`) statt explizit vergebener
+  IDs (`tankSelector`), oder AJAX-Updates die ins Leere gehen
+
+**Regel: Nach jeder XHTML-Änderung → Server neu starten → erst dann testen.**
+
+### Spring Security + JSF: Forward vs. Redirect
+
+**NIEMALS `successForwardUrl()` in Kombination mit JSF verwenden.**
+
+Ein Servlet-Forward nach erfolgreicher Authentifizierung trägt den `jakarta.faces.ViewState`
+POST-Parameter der Login-Seite in die Zielseite. JSF versucht dann, den ViewState der Login-Seite
+auf den Komponentenbaum der Zielseite anzuwenden → `ArrayIndexOutOfBoundsException` in
+`UIComponentBase.restoreState`.
+
+**Immer `defaultSuccessUrl(url, true)` verwenden** — das erzeugt einen HTTP 302 Redirect,
+der Browser macht einen frischen GET-Request, und JSF erstellt eine neue View ohne State-Konflikt.
+
 ---
 
 ## i18n Message Bundle Handling (MANDATORY)

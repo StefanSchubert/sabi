@@ -16,10 +16,12 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +44,13 @@ public class UserSession implements Serializable {
 
     /** Whether the user has activated dark mode in their profile. */
     private boolean darkModeEnabled = false;
+
+    /**
+     * Comma-separated list of admin emails — mirrors sabi-server's sabi.admin.users property.
+     * Used by #{userSession.admin} in header.xhtml (T066).
+     */
+    @Value("${sabi.admin.users:admin@sabi-project.net}")
+    private String adminUsers;
 
     /**
      * Temporary storage for the tank currently being edited/created.
@@ -226,6 +235,20 @@ public class UserSession implements Serializable {
 
     public void setSelectedTank(AquariumTo selectedTank) {
         this.selectedTank = selectedTank;
+    }
+
+    /**
+     * Returns true if the currently logged-in user is an admin.
+     * Admin users are defined by the sabi.admin.users property (comma-separated list of emails).
+     * Used in header.xhtml via #{userSession.admin} (T066).
+     */
+    public boolean isAdmin() {
+        if (userName == null || userName.isBlank() || adminUsers == null || adminUsers.isBlank()) {
+            return false;
+        }
+        return Arrays.stream(adminUsers.split(","))
+                .map(String::trim)
+                .anyMatch(email -> email.equalsIgnoreCase(userName));
     }
 
     /** Invalidates Frontend Session in case of logout. */

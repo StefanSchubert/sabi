@@ -38,6 +38,9 @@ name: sabi-webclient
 sabi:
   backend:
     url: http://localhost:8080/sabi
+  # Admin users — mirrors sabi-server's sabi.admin.users; used for frontend menu visibility (T066)
+  admin:
+    users: ${SABI_ADMIN_USERS:admin@sabi-project.net}
 server:
   port: 8088
 

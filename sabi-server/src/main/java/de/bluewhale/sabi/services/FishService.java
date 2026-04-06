@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Provides all required controller for use cases around the {@link de.bluewhale.sabi.persistence.model.FishEntity}
+ * @deprecated Use {@link FishStockService} instead (002-fish-stock-catalogue).
  */
+@Deprecated
 public interface FishService {
 
 

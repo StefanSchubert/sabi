@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  - Part of 002-fish-stock-catalogue — T039 + T052
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Fish Stock Entry Form Dialog (Add / Edit) -->
+    <p:dialog id="fishEntryDialog"
+              header="#{fishStockEntryView.edit ? msg['common.edit.b'] : msg['fishstock.add.button']}"
+              widgetVar="fishEntryDialogWidget"
+              modal="true"
+              responsive="true"
+              width="600"
+              closeOnEscape="true">
+
+        <h:form id="fishEntryForm">
+
+            <p:messages id="fishEntryMessages" showDetail="true" closable="true"/>
+
+            <!-- Common Name (mandatory FR-002) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="commonName" value="#{msg['fishstock.form.commonname.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:inputText id="commonName"
+                             value="#{fishStockEntryView.currentEntry.commonName}"
+                             required="true"
+                             requiredMessage="#{msg['fishstock.form.commonname.required']}"
+                             maxlength="255"
+                             style="width:100%;"/>
+                <p:message for="commonName"/>
+            </div>
+
+            <!-- Nickname (optional) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="nickname" value="#{msg['fishstock.form.nickname.label']}"
+                               style="display:block;"/>
+                <p:inputText id="nickname"
+                             value="#{fishStockEntryView.currentEntry.nickname}"
+                             maxlength="100"
+                             style="width:100%;"/>
+            </div>
+
+            <!-- Entry Date (mandatory FR-002, FR-003) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="addedOn" value="#{msg['fishstock.form.entrydate.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:datePicker id="addedOn"
+                              value="#{fishStockEntryView.currentEntry.addedOn}"
+                              required="true"
+                              requiredMessage="#{msg['fishstock.form.entrydate.required']}"
+                              pattern="dd.MM.yyyy"
+                              showIcon="true"
+                              style="width:100%;"/>
+                <p:message for="addedOn"/>
+            </div>
+
+            <!-- Catalogue Search / Link (T052 — p:autoComplete, FR-009) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel value="#{msg['fishstock.form.catalogue.link.label']}"
+                               style="display:block;"/>
+                <p:autoComplete id="catalogueSearch"
+                                completeMethod="#{fishStockEntryView.onSearchCatalogue}"
+                                var="result"
+                                itemLabel="#{result.commonName} (#{result.scientificName})"
+                                itemValue="#{result}"
+                                minQueryLength="2"
+                                placeholder="#{msg['fishstock.form.catalogue.search.placeholder']}"
+                                emptyMessage="#{msg['fishstock.form.catalogue.noresults']}"
+                                style="width:100%;">
+                    <p:ajax event="itemSelect"
+                            listener="#{fishStockEntryView.onSelectCatalogue}"
+                            update="scientificName externalRefUrl"/>
+                </p:autoComplete>
+                <div style="margin-top:0.25rem; font-size:0.85rem;">
+                    <h:outputLink value="#{request.contextPath}/secured/fishCatalogueProposalForm.xhtml"
+                                  style="color:#0369a1; text-decoration:underline;">
+                        #{msg['fishstock.form.catalogue.propose.link']}
+                    </h:outputLink>
+                </div>
+                <p:commandButton rendered="#{fishStockEntryView.currentEntry.fishCatalogueId != null}"
+                                 value="#{msg['fishstock.form.catalogue.unlink.button']}"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="margin-top:0.25rem;"
+                                 actionListener="#{fishStockEntryView.onRemoveCatalogueLink()}"
+                                 update="scientificName externalRefUrl catalogueSearch"/>
+            </div>
+
+            <!-- Scientific Name (auto-filled, user-editable FR-009) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="scientificName" value="#{msg['fishstock.form.scientificname.label']}"
+                               style="display:block; font-style:italic;"/>
+                <p:inputText id="scientificName"
+                             value="#{fishStockEntryView.currentEntry.scientificName}"
+                             maxlength="255"
+                             style="width:100%; font-style:italic;"/>
+            </div>
+
+            <!-- External Reference URL (optional) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="externalRefUrl" value="#{msg['fishstock.form.refurl.label']}"
+                               style="display:block;"/>
+                <p:inputText id="externalRefUrl"
+                             value="#{fishStockEntryView.currentEntry.externalRefUrl}"
+                             maxlength="512"
+                             style="width:100%;"/>
+            </div>
+
+            <!-- Observed Behaviour Notes (optional) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="observedBehavior" value="#{msg['fishstock.form.notes.label']}"
+                               style="display:block;"/>
+                <p:inputTextarea id="observedBehavior"
+                                 value="#{fishStockEntryView.currentEntry.observedBehavior}"
+                                 rows="4"
+                                 style="width:100%;"/>
+            </div>
+
+            <!-- Photo Upload (optional, FR-008, FR-025) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel value="#{msg['fishstock.form.photo.label']}"
+                               style="display:block;"/>
+                <p:fileUpload id="photoUpload"
+                              label="#{msg['fishstock.form.photo.upload.button']}"
+                              accept="image/jpeg,image/png,image/webp,image/gif"
+                              maxFileSize="5242880"
+                              invalidSizeMessage="#{msg['fishstock.form.photo.size.error']}"
+                              invalidFileMessage="#{msg['fishstock.form.photo.format.error']}"
+                              mode="simple"
+                              style="width:100%;"/>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                <p:commandButton value="#{msg['common.save.b']}"
+                                 icon="pi pi-check"
+                                 actionListener="#{fishStockEntryView.onSave()}"
+                                 update=":fishStockForm :fishEntryMessages"
+                                 oncomplete="if (!args.validationFailed) PF('fishEntryDialogWidget').hide();"/>
+                <p:commandButton value="#{msg['common.cancel.b']}"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 onclick="PF('fishEntryDialogWidget').hide(); return false;"/>
+            </div>
+
+        </h:form>
+    </p:dialog>
+
+</ui:composition>
+

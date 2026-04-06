@@ -76,6 +76,13 @@
         owner: root
         group: sabi
         mode: '0750'
+    - name: Create fish photo storage directory (T074 — 002-fish-stock-catalogue)
+      file:
+        path: "{{ sabi_fish_photo_dir | default('/var/sabi-data/fish-photos') }}"
+        state: directory
+        owner: sabi
+        group: sabi
+        mode: '0750'
     - name: Deploy OIDC client-id env file (sabi-150)
       copy:
         content: |

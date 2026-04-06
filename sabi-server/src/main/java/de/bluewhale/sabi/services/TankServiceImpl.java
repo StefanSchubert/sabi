@@ -13,6 +13,7 @@ import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.persistence.repositories.TankFishStockRepository;
 import jakarta.validation.constraints.NotNull;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -20,6 +21,7 @@ import org.passay.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +41,9 @@ public class TankServiceImpl implements TankService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TankFishStockRepository tankFishStockRepository;
 
     @Override
     public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final String pRegisteredUsersEmail) {
@@ -182,6 +187,8 @@ public class TankServiceImpl implements TankService {
             aquariumTo.setId(persistedTankId);
 
             if (usersAquarium != null) {
+                // T075 (R-5): Soft-delete all fish entries before physical aquarium deletion
+                tankFishStockRepository.softDeleteAllByAquariumId(persistedTankId, LocalDateTime.now());
                 aquariumRepository.delete(usersAquarium);
                 aquariumTo = aquariumMapper.mapAquariumEntity2To(usersAquarium);
                 resultTo = new ResultTo<>(aquariumTo, Message.info(TankMessageCodes.REMOVAL_SUCCEEDED));

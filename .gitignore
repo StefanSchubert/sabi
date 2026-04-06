@@ -44,3 +44,6 @@ Assets/Thumbs.db
 /devops/GenericPiMetricsEndpoint/target/
 /devops/sabi_docker_sdk/grafanaData/
 /devops/sabi_docker_sdk/grafanaData/grafana.db
+
+# Playwright Test-Results
+/e2e/test-results/

@@ -112,6 +112,33 @@ You may login with the following test user:
 
 or register a new one. 
 
+#### JSF/Facelets — No Hot-Reload
+
+**XHTML changes always require a full server restart.** There is no hot-reload for Facelets
+in JoinFaces/Spring Boot:
+
+- Even with `joinfaces.jsf.project-stage: development`, compiled Facelets views are **cached** at
+  startup and never reloaded from the classpath.
+- Copying changed XHTML files into `target/classes/` has **no effect** — the embedded Tomcat reads
+  from the classpath that was scanned at boot time.
+- **Symptom of a stale view**: auto-generated JSF component IDs (e.g. `j_idt30`) instead of
+  explicitly assigned IDs (e.g. `tankSelector`), or AJAX partial-updates silently failing because
+  the target component ID doesn't exist in the DOM.
+
+**Rule: After every XHTML change → restart the server → only then test.**
+
+#### Spring Security + JSF: Forward vs. Redirect
+
+**Never use `successForwardUrl()` in combination with JSF.**
+
+A servlet forward after successful authentication carries the login form's
+`jakarta.faces.ViewState` POST parameter into the target page. JSF then tries to apply the login
+page's saved state onto the target page's component tree, which leads to an
+`ArrayIndexOutOfBoundsException` in `UIComponentBase.restoreState`.
+
+**Always use `defaultSuccessUrl(url, true)`** — this issues an HTTP 302 redirect so that the
+browser makes a fresh GET request and JSF builds a new view without any state conflict.
+
 ### Dev-Environment for a backend engineer to work on sabi-server.
 
 #### Preparations
