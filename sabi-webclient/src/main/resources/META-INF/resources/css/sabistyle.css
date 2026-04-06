@@ -484,6 +484,26 @@ body:not(.dark-mode) .ui-messages-warn {
 }
 
 /* =====================================================================
+   iOS / Android Webapp Mode (Standalone) – Notch / Safe Area Handling
+   When launched from the home screen the status bar overlaps the
+   sticky header.  We push the header content down by the device-
+   reported safe-area-inset-top so that nothing is hidden under the
+   notch or Dynamic Island.
+   ===================================================================== */
+@media (display-mode: standalone) {
+    #header {
+        /* 0.6rem = the base top padding defined in the #header rule above.
+           env(safe-area-inset-top) adds the device-reported inset so that
+           the header content clears the notch / Dynamic Island. */
+        padding-top: calc(0.6rem + env(safe-area-inset-top, 0px));
+        /* 1rem = the base left/right padding defined in the #header rule above.
+           env(safe-area-inset-left/right) handles landscape orientation notches. */
+        padding-left:  calc(1rem + env(safe-area-inset-left,  0px));
+        padding-right: calc(1rem + env(safe-area-inset-right, 0px));
+    }
+}
+
+/* =====================================================================
    Dark Mode – SABI Custom Overrides
    PrimeFaces-Komponenten werden durch das arya-blue Theme abgedeckt.
    Hier nur noch SABI-eigene Elemente (Header, Footer, Body, Custom-Panels).
