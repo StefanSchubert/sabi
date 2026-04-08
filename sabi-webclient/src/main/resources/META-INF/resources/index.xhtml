@@ -45,10 +45,32 @@
         <p style="margin:0 0 1.2rem; color:#1e293b; font-size:0.97rem;">
             <p:outputLabel escape="false" value="#{msg['welcome.t.introduction']}"/>
         </p>
-        <div style="display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center;">
-            <p:button outcome="login"    value="#{msg['welcome.but.login']}"    icon="pi pi-sign-in"/>
-            <p:button outcome="register" value="#{msg['welcome.but.register']}" icon="pi pi-user-plus"/>
-        </div>
+        <p style="margin:0.75rem 0 0.5rem; color:#1e293b; font-size:0.97rem; text-align:center;">
+            #{msg['welcome.countdown.prefix.t']}
+            <strong><span id="countdown">10</span></strong>
+            #{msg['welcome.countdown.suffix.t']}
+        </p>
+        <p style="margin:0.5rem 0 0; text-align:center;">
+            <a href="login.xhtml" style="color:#0369a1; text-decoration:underline; font-size:0.97rem;">#{msg['welcome.proceed.l']}</a>
+        </p>
+        <script type="text/javascript">
+            //<![CDATA[
+            (function() {
+                var seconds = 10;
+                var el = document.getElementById('countdown');
+                function tick() {
+                    seconds--;
+                    if (seconds <= 0) {
+                        window.location.href = 'login.xhtml';
+                    } else {
+                        el.textContent = seconds;
+                        setTimeout(tick, 1000);
+                    }
+                }
+                setTimeout(tick, 1000);
+            })();
+            //]]>
+        </script>
     </div>
     <ui:remove>
         <!-- IPV6-Only-Announcement

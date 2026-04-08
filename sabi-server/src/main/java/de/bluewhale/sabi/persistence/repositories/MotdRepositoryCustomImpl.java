@@ -7,6 +7,7 @@ package de.bluewhale.sabi.persistence.repositories;
 
 import de.bluewhale.sabi.persistence.model.MotdEntity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,11 @@ public class MotdRepositoryCustomImpl implements MotdRepositoryCustom {
         MotdEntity modt = null;
         try {
             modt = (MotdEntity) query.getSingleResult();
+        } catch (NoResultException e) {
+            // Expected: no active MOTD in database - treat as "no message available"
+            log.debug("No active MOTD record found (publishDate/vanishDate filter returned no result).");
         } catch (Exception e) {
-            log.error("Please check motd records or query impl. {}",e.getMessage());
+            log.error("Please check motd records or query impl. {}", e.getMessage());
             // we handle this as no motd to be resilient.
         }
 
