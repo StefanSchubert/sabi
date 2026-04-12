@@ -8,6 +8,7 @@ package de.bluewhale.sabi.persistence.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Localized fields for a fish catalogue entry.
@@ -19,7 +20,8 @@ import lombok.EqualsAndHashCode;
         uniqueConstraints = @UniqueConstraint(columnNames = {"catalogue_id", "language_code"}))
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"catalogueEntry"})
+@ToString(exclude = {"catalogueEntry"})
 public class FishCatalogueI18nEntity extends Auditable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

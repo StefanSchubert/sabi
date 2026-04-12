@@ -179,25 +179,35 @@ test.describe('Fish Stock View', () => {
     const dialog = await openAddFishDialog(page);
 
     // 2. Pflichtfelder ausfüllen
-    await dialog.locator('[id$="commonName"]').fill(fishName);
+    const commonNameInput = dialog.locator('[id$="commonName"]');
+    await commonNameInput.fill(fishName);
 
+    // DatePicker: Wert direkt setzen (pressSequentially funktioniert nicht mit PF-Mask)
     const dateInput = dialog.locator('[id$="addedOn_input"]');
-    await dateInput.click();
-    await dateInput.clear();
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yyyy = today.getFullYear();
-    await dateInput.fill(`${dd}.${mm}.${yyyy}`);
-    // Fokus weg vom DatePicker → Overlay schließen
-    await dialog.locator('[id$="commonName"]').click();
-    await page.waitForTimeout(500);
+    const dateStr = `${dd}.${mm}.${yyyy}`;
+    // fill() setzt den Wert direkt, dann blur um PrimeFaces Change-Event auszulösen
+    await dateInput.fill(dateStr);
+    // Klick auf den Artname-Feld, um DatePicker-Overlay zu schließen + blur auszulösen
+    await commonNameInput.click();
+    await page.waitForTimeout(300);
 
-    // 3. Speichern via PrimeFaces Widget-API (Button kann hinter DatePicker-Overlay liegen)
-    await page.evaluate(() => {
-      const btn = document.querySelector('[id$="fishEntryForm"] button[class*="ui-button"]:not([class*="secondary"])') as HTMLElement;
-      if (btn) btn.click();
-    });
+    // 3. Speichern — Playwright click mit force (falls Overlay-Rest noch überlappt)
+    const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
+    await saveButton.scrollIntoViewIfNeeded();
+
+    // Warte auf die AJAX-Response des Save-Requests
+    const [saveResponse] = await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 15_000 },
+      ),
+      saveButton.click({ force: true }),
+    ]);
     await page.waitForLoadState('networkidle');
 
     // 4. Dialog sollte sich geschlossen haben
@@ -206,10 +216,124 @@ test.describe('Fish Stock View', () => {
     // 5. Fisch-Name in der "Aktuell im Becken"-Tabelle sichtbar
     await expect(page.locator('#fishStockForm')).toContainText(fishName, { timeout: 10_000 });
 
-    // ── Cleanup: Fisch löschen ──
+    // ── 6. Edit-Dialog öffnen und vorausgefüllte Felder prüfen ──
     const fishRow = page.locator('tr').filter({ hasText: fishName }).first();
-    if (await fishRow.isVisible()) {
-      await fishRow.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+    await expect(fishRow).toBeVisible({ timeout: 5_000 });
+
+    // Edit-Button (Pencil-Icon) klicken
+    const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 10_000 },
+      ),
+      editButton.click(),
+    ]);
+
+    // Dialog muss sichtbar sein
+    const editDialog = page.locator('.ui-dialog').filter({ hasText: /bearbeiten|edit/i }).first();
+    await expect(editDialog).toBeVisible({ timeout: 10_000 });
+
+    // Artname (commonName) muss vorausgefüllt sein
+    const editCommonName = editDialog.locator('[id$="commonName"]');
+    await expect(editCommonName).toHaveValue(fishName);
+
+    // Einzugsdatum muss vorausgefüllt sein (dd.MM.yyyy Format)
+    const editDateInput = editDialog.locator('[id$="addedOn_input"]');
+    await expect(editDateInput).toHaveValue(dateStr);
+
+    // Dialog schließen
+    await page.keyboard.press('Escape');
+    await expect(editDialog).not.toBeVisible({ timeout: 5_000 });
+
+    // ── Cleanup: Fisch löschen ──
+    const fishRowCleanup = page.locator('tr').filter({ hasText: fishName }).first();
+    if (await fishRowCleanup.isVisible()) {
+      await fishRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+      await page.waitForLoadState('networkidle');
+      await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
+    }
+  });
+
+  // ── Edit-Save: kein Duplikat (Bug 3 Regression-Test) ───────
+
+  test('Fisch bearbeiten — Speichern aktualisiert den Eintrag, erstellt kein Duplikat', async ({ page }) => {
+    const fishName = `E2E-EditTest-${Date.now()}`;
+
+    // 1. Fisch anlegen
+    const dialog = await openAddFishDialog(page);
+    const commonNameInput = dialog.locator('[id$="commonName"]');
+    await commonNameInput.fill(fishName);
+
+    const dateInput = dialog.locator('[id$="addedOn_input"]');
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const dateStr = `${dd}.${mm}.${yyyy}`;
+    await dateInput.fill(dateStr);
+    await commonNameInput.click();
+    await page.waitForTimeout(300);
+
+    const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
+    await saveButton.scrollIntoViewIfNeeded();
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 15_000 },
+      ),
+      saveButton.click({ force: true }),
+    ]);
+    await page.waitForLoadState('networkidle');
+    await expect(dialog).not.toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('#fishStockForm')).toContainText(fishName, { timeout: 10_000 });
+
+    // 2. Anzahl der Zeilen mit diesem Fischnamen zählen (sollte exakt 1 sein)
+    const rowsBefore = await page.locator('tr').filter({ hasText: fishName }).count();
+    expect(rowsBefore).toBe(1);
+
+    // 3. Edit-Dialog öffnen
+    const fishRow = page.locator('tr').filter({ hasText: fishName }).first();
+    const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 10_000 },
+      ),
+      editButton.click(),
+    ]);
+
+    const editDialog = page.locator('.ui-dialog').filter({ hasText: /bearbeiten|edit/i }).first();
+    await expect(editDialog).toBeVisible({ timeout: 10_000 });
+
+    // 4. Nickname hinzufügen und speichern
+    const nicknameInput = editDialog.locator('[id$="nickname"]');
+    await nicknameInput.fill('Nemo-Edit-Test');
+
+    const editSaveButton = editDialog.locator('button').filter({ hasText: /speicher|save/i });
+    await editSaveButton.scrollIntoViewIfNeeded();
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 15_000 },
+      ),
+      editSaveButton.click({ force: true }),
+    ]);
+    await page.waitForLoadState('networkidle');
+    await expect(editDialog).not.toBeVisible({ timeout: 10_000 });
+
+    // 5. KERN-ASSERTION: Es darf KEIN Duplikat entstanden sein — immer noch genau 1 Zeile
+    const rowsAfter = await page.locator('tr').filter({ hasText: fishName }).count();
+    expect(rowsAfter).toBe(1);
+
+    // 6. Cleanup: Fisch löschen
+    const fishRowCleanup = page.locator('tr').filter({ hasText: fishName }).first();
+    if (await fishRowCleanup.isVisible()) {
+      await fishRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
       await page.waitForLoadState('networkidle');
       await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
     }
@@ -267,6 +391,61 @@ test.describe('Fish Stock View', () => {
     // i18n-Tabs (DE/EN/ES/FR/IT) = 5 Tabs
     const tabs = page.locator('.ui-tabs-nav li');
     await expect(tabs).toHaveCount(5, { timeout: 5_000 });
+  });
+
+  test('Katalog-Vorschlag: Formular ausfüllen und speichern', async ({ page }) => {
+    const uniqueName = `E2E-Testspecies-${Date.now()}`;
+
+    // 1. Direkt zur Proposal-Seite navigieren
+    await page.goto('/secured/fishCatalogueProposalForm.xhtml', { waitUntil: 'networkidle' });
+    await expect(page.locator('[id$="proposalForm"]')).toBeAttached({ timeout: 10_000 });
+
+    // 2. Pflichtfeld: Wissenschaftlicher Name ausfüllen
+    const scientificNameInput = page.locator('[id$="scientificName"]');
+    await expect(scientificNameInput).toBeVisible();
+    await scientificNameInput.fill(uniqueName);
+    // Blur auslösen, um den onScientificNameBlur-AJAX zu triggern
+    await page.locator('[id$="proposalForm"]').click();
+    await page.waitForTimeout(500);
+
+    // 3. Erster i18n-Tab (DE): Allgemeinname ausfüllen
+    // Erster Tab sollte schon aktiv sein (DE)
+    const firstTabCommonName = page.locator('.ui-tabs-panel').first().locator('input').first();
+    await expect(firstTabCommonName).toBeVisible({ timeout: 5_000 });
+    await firstTabCommonName.fill(`E2E-Testfisch-DE-${Date.now()}`);
+
+    // 4. Kein ???-Platzhalter auf der Seite (i18n-Keys korrekt aufgelöst)
+    await expect(page.locator('body')).not.toContainText('???common.chars.remaining.l???');
+
+    // 5. Speichern klicken
+    const saveButton = page.locator('[id$="proposalForm"] button').filter({ hasText: /speicher|save/i }).first();
+    await expect(saveButton).toBeVisible();
+
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishCatalogueProposalForm') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 15_000 },
+      ),
+      saveButton.click(),
+    ]);
+    await page.waitForLoadState('networkidle');
+
+    // 6. Erfolgsmeldung prüfen — MUSS eine Info-Nachricht sein, KEINE Fehlermeldung
+    const messagesArea = page.locator('[id$="proposalMessages"]');
+    await expect(messagesArea).toBeAttached({ timeout: 5_000 });
+
+    // Prüfe, dass kein ???-Platzhalter in der Nachricht steht
+    const messagesText = await messagesArea.textContent();
+    expect(messagesText).not.toContain('???');
+
+    // Es darf KEINE Fehlermeldung sein (weder i18n-Key noch resolved Error-Text)
+    const errorMsg = page.locator('[id$="proposalMessages"] .ui-messages-error');
+    await expect(errorMsg).not.toBeVisible({ timeout: 2_000 });
+
+    // Es MUSS eine Info/Success-Nachricht sichtbar sein
+    const infoMsg = page.locator('[id$="proposalMessages"] .ui-messages-info');
+    await expect(infoMsg).toBeVisible({ timeout: 3_000 });
   });
 
   // ── Katalog-Suche (AutoComplete) ────────────────────────────

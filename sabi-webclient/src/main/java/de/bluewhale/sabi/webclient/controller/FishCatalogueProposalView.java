@@ -97,19 +97,28 @@ public class FishCatalogueProposalView implements Serializable {
 
     /** Submit the proposal (new or edit). */
     public void onSubmit() {
+        String token = userSession.getSabiBackendToken();
+        log.info("onSubmit: token prefix='{}', editMode={}",
+                token != null && token.length() > 10 ? token.substring(0, 10) + "..." : token,
+                editMode);
+        if (token == null || "N/A".equals(token) || !token.startsWith("Bearer ")) {
+            log.error("onSubmit: invalid backend token='{}' — user needs to re-login", token);
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
+            return;
+        }
         try {
             if (editMode) {
                 fishCatalogueService.updateEntry(proposal, userSession.getSabiBackendToken());
-                MessageUtil.info(null, "fishcatalogue.admin.approve.button");
+                MessageUtil.info(null, "fishcatalogue.admin.approve.button", userSession.getLocale());
             } else {
                 fishCatalogueService.propose(proposal, userSession.getSabiBackendToken());
-                MessageUtil.info(null, "fishcatalogue.propose.title");
+                MessageUtil.info(null, "fishcatalogue.propose.title", userSession.getLocale());
                 // Reset form for potential next entry
                 init();
             }
         } catch (BusinessException e) {
             log.error("Failed to submit catalogue proposal", e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 

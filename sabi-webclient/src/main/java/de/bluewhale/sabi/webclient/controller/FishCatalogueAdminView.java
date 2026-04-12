@@ -49,7 +49,7 @@ public class FishCatalogueAdminView implements Serializable {
                     userSession.getSabiBackendToken());
         } catch (BusinessException e) {
             log.error("Failed to load pending proposals", e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 
@@ -68,10 +68,10 @@ public class FishCatalogueAdminView implements Serializable {
                     userSession.getSabiBackendToken());
             pendingProposals.remove(selectedProposal);
             selectedProposal = null;
-            MessageUtil.info(null, "fishcatalogue.status.public");
+            MessageUtil.info(null, "fishcatalogue.status.public", userSession.getLocale());
         } catch (BusinessException e) {
             log.error("Failed to approve catalogue entry {}", selectedProposal.getId(), e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 
@@ -85,10 +85,10 @@ public class FishCatalogueAdminView implements Serializable {
                     userSession.getSabiBackendToken());
             pendingProposals.remove(selectedProposal);
             selectedProposal = null;
-            MessageUtil.info(null, "fishcatalogue.status.rejected");
+            MessageUtil.info(null, "fishcatalogue.status.rejected", userSession.getLocale());
         } catch (BusinessException e) {
             log.error("Failed to reject catalogue entry {}", selectedProposal.getId(), e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 }

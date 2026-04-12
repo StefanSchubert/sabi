@@ -8,6 +8,7 @@ package de.bluewhale.sabi.persistence.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ import java.util.List;
 @Table(name = "fish_catalogue", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {"i18nEntries", "proposer"})
+@ToString(exclude = {"i18nEntries", "proposer"})
 public class FishCatalogueEntryEntity extends Auditable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -49,7 +49,7 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
     }
 
     @Override
-    public ResultTo addFish(FishStockEntryTo entry, String token) throws BusinessException {
+    public ResultTo<FishStockEntryTo> addFish(FishStockEntryTo entry, String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.FISH_STOCK.getPath() + "/";
         RestTemplate restTemplate = new RestTemplate();
         try {
@@ -58,7 +58,13 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            // Parse the response body to obtain the server-generated ID
+            if (response.getBody() != null) {
+                tools.jackson.core.type.TypeReference<ResultTo<FishStockEntryTo>> typeRef =
+                        new tools.jackson.core.type.TypeReference<>() {};
+                return objectMapper.readValue(response.getBody(), typeRef);
+            }
+            return new ResultTo<>(entry, null);
         } catch (Exception e) {
             log.error("Failed to add fish", e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -75,7 +81,7 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            return new ResultTo<>(entry, null);
         } catch (Exception e) {
             log.error("Failed to update fish {}", entry.getId(), e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -92,7 +98,7 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            return new ResultTo<>(record, null);
         } catch (Exception e) {
             log.error("Failed to record departure for fish {}", fishId, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -127,7 +133,7 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.DELETE, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            return new ResultTo<>(null, null);
         } catch (Exception e) {
             log.error("Failed to remove catalogue link for fish {}", fishId, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
@@ -140,9 +146,17 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
         RestTemplate restTemplate = new RestTemplate();
         try {
             HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token, MediaType.MULTIPART_FORM_DATA);
+            // Wrap byte[] in ByteArrayResource so RestTemplate creates a proper multipart file part
+            org.springframework.core.io.ByteArrayResource resource =
+                    new org.springframework.core.io.ByteArrayResource(bytes) {
+                        @Override
+                        public String getFilename() {
+                            return "photo" + extensionFor(contentType);
+                        }
+                    };
             org.springframework.util.MultiValueMap<String, Object> parts =
                     new org.springframework.util.LinkedMultiValueMap<>();
-            parts.add("file", bytes);
+            parts.add("file", resource);
             parts.add("contentType", contentType);
             HttpEntity<org.springframework.util.MultiValueMap<String, Object>> requestEntity =
                     new HttpEntity<>(parts, headers);
@@ -152,6 +166,16 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             log.error("Failed to upload photo for fish {}", fishId, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
+    }
+
+    private String extensionFor(String contentType) {
+        if (contentType == null) return ".jpg";
+        return switch (contentType) {
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> ".jpg";
+        };
     }
 
     @Override

@@ -116,16 +116,25 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
         entity.setProposerUserId(user.getId());
         entity.setProposalDate(LocalDate.now());
 
-        // Set i18n entries' catalogueId reference
-        syncI18nCatalogueIds(entity);
+        // Two-step save: parent first (to get ID), then add i18n entries with catalogueId
+        List<FishCatalogueI18nEntity> pendingI18n = new ArrayList<>(entity.getI18nEntries());
+        entity.getI18nEntries().clear();
+        FishCatalogueEntryEntity saved = fishCatalogueEntryRepository.saveAndFlush(entity);
 
-        FishCatalogueEntryEntity saved = fishCatalogueEntryRepository.save(entity);
+        // Set catalogueId on each i18n entry and re-add to parent
+        for (FishCatalogueI18nEntity i18n : pendingI18n) {
+            i18n.setCatalogueId(saved.getId());
+            i18n.setCatalogueEntry(saved);
+        }
+        saved.getI18nEntries().addAll(pendingI18n);
+        saved = fishCatalogueEntryRepository.saveAndFlush(saved);
+        final Long savedId = saved.getId();
         FishCatalogueEntryTo savedTo = fishCatalogueMapper.mapEntity2To(saved);
 
         // FR-015: Non-blocking duplicate warning
         boolean isDuplicate = isDuplicateScientificName(entryTo.getScientificName())
-                && !saved.getId().equals(
-                fishCatalogueEntryRepository.findById(saved.getId()).map(FishCatalogueEntryEntity::getId).orElse(-1L));
+                && !savedId.equals(
+                fishCatalogueEntryRepository.findById(savedId).map(FishCatalogueEntryEntity::getId).orElse(-1L));
 
         if (isDuplicateScientificName(entryTo.getScientificName())) {
             // Count entries with same name excluding the one just saved
@@ -135,7 +144,7 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
             List<FishCatalogueEntryEntity> existing = fishCatalogueEntryRepository
                     .searchByQueryAndLang(entryTo.getScientificName(), "en", user.getId());
             long othersCount = existing.stream()
-                    .filter(e -> !e.getId().equals(saved.getId()))
+                    .filter(e -> !e.getId().equals(savedId))
                     .count();
             if (othersCount > 0) {
                 return new ResultTo<>(savedTo,
@@ -145,7 +154,7 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
         }
 
         return new ResultTo<>(savedTo,
-                Message.info(FishCatalogueMessageCodes.CATALOGUE_ENTRY_PROPOSED, saved.getId()));
+                Message.info(FishCatalogueMessageCodes.CATALOGUE_ENTRY_PROPOSED, savedId));
     }
 
     @Override

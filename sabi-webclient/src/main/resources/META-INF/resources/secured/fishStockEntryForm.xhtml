@@ -21,6 +21,10 @@
 
         <h:form id="fishEntryForm">
 
+            <!-- Preserve IDs across RequestScope boundary (same pattern as measureView.xhtml) -->
+            <h:inputHidden id="dialogAquariumId" value="#{fishStockEntryView.currentEntry.aquariumId}"/>
+            <h:inputHidden id="fishEntryId" value="#{fishStockEntryView.currentEntry.id}"/>
+
             <p:messages id="fishEntryMessages" showDetail="true" closable="true"/>
 
             <!-- Common Name (mandatory FR-002) -->
@@ -127,12 +131,14 @@
                 <p:outputLabel value="#{msg['fishstock.form.photo.label']}"
                                style="display:block;"/>
                 <p:fileUpload id="photoUpload"
+                              value="#{fishStockEntryView.uploadedFile}"
                               label="#{msg['fishstock.form.photo.upload.button']}"
                               accept="image/jpeg,image/png,image/webp,image/gif"
-                              maxFileSize="5242880"
+                              sizeLimit="5242880"
                               invalidSizeMessage="#{msg['fishstock.form.photo.size.error']}"
                               invalidFileMessage="#{msg['fishstock.form.photo.format.error']}"
                               mode="simple"
+                              skinSimple="true"
                               style="width:100%;"/>
             </div>
 

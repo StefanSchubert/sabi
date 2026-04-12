@@ -131,9 +131,20 @@ dass kein Key in einer der Sprachdateien fehlt.
 
 **Beim Bearbeiten von Message Bundles via Tools:**
 - `replace_string_in_file` schreibt in der Datei-Encoding des Tools → Sonderzeichen immer als `\uXXXX` angeben
-- Nach jeder Änderung Byte-Check durchführen: Python-Skript nach `/tmp/bytecheck.py` schreiben,
+- **ACHTUNG: `replace_string_in_file` versagt lautlos** wenn `oldString` rohe UTF-8-Zeichen (ö, ü, è …)
+  enthält, die Datei aber `\uXXXX`-Escape-Sequenzen verwendet (oder umgekehrt). Das Tool meldet
+  "Erfolg", schreibt aber nichts.
+- **ACHTUNG: `insert_edit_into_file` versagt ebenfalls lautlos** bei `.properties`-Dateien — das Tool
+  meldet "Erfolg" und zeigt sogar den Datei-Inhalt inklusive der neuen Keys an, aber die Keys werden
+  oft NICHT tatsächlich auf die Disk geschrieben (beobachtet in 5 von 6 Dateien).
+- **Zuverlässigste Methode: Python-Hilfsskript.** Für neue i18n-Keys ein Skript nach `/tmp/append_keys.py`
+  schreiben (via `create_file`), das die Keys per `open(path, 'r+', encoding='utf-8')` anfügt, dann
+  mit `python3 /tmp/append_keys.py | tee /tmp/append_keys.out` ausführen.
+- **IMMER nach jeder Änderung Byte-Check durchführen**: Python-Skript nach `/tmp/bytecheck.py` schreiben,
   mit `python3 /tmp/bytecheck.py | tee /tmp/bytecheck.out` ausführen, dann `read_file` auf `/tmp/bytecheck.out`
   (KEIN `python3 -c "..."` inline – Shell-Escaping korrumpiert Sonderzeichen!)
+- Dem Byte-Check **MEHR vertrauen als der Tool-Ausgabe** — nur der Byte-Check zeigt, was wirklich
+  auf der Disk steht.
 
 ---
 

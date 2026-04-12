@@ -47,6 +47,9 @@ public class FishStockView implements Serializable {
     @Inject
     TankListView tankListView;
 
+    @Inject
+    FishStockEntryView fishStockEntryView;
+
     /** Active fish (no exodusOn). */
     private List<FishStockEntryTo> activeFish = new ArrayList<>();
 
@@ -97,6 +100,13 @@ public class FishStockView implements Serializable {
             departedFish.clear();
             return;
         }
+        // Persist selected tank in session so it survives RequestScope boundaries
+        if (tankListView.getTanks() != null) {
+            tankListView.getTanks().stream()
+                    .filter(t -> selectedAquariumId.equals(t.getId()))
+                    .findFirst()
+                    .ifPresent(t -> userSession.setSelectedTank(t));
+        }
         loadFishForTank(selectedAquariumId);
     }
 
@@ -113,18 +123,22 @@ public class FishStockView implements Serializable {
                     .collect(Collectors.toList());
         } catch (BusinessException e) {
             log.error("Failed to load fish for tank {}", tankId, e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 
     public void onAddFish() {
         selectedFish = new FishStockEntryTo();
-        selectedFish.setAquariumId(userSession.getSelectedTank() != null
-                ? userSession.getSelectedTank().getId() : null);
+        selectedFish.setAquariumId(selectedAquariumId);
+        // Prepare the entry-view for a new fish with the selected aquarium
+        fishStockEntryView.getCurrentEntry().setAquariumId(selectedAquariumId);
+        fishStockEntryView.getCurrentEntry().setAddedOn(java.time.LocalDate.now());
     }
 
     public void onEditFish(FishStockEntryTo fish) {
         this.selectedFish = fish;
+        // Populate the entry-view so the dialog shows pre-filled fields
+        fishStockEntryView.init(fish);
     }
 
     public void onDeleteFish(FishStockEntryTo fish) {
@@ -134,7 +148,7 @@ public class FishStockView implements Serializable {
             departedFish.remove(fish);
         } catch (BusinessException e) {
             log.warn("Could not delete fish {}: {}", fish.getId(), e.getMessage());
-            MessageUtil.error(null, "fishstock.delete.denied.label");
+            MessageUtil.error(null, "fishstock.delete.denied.label", userSession.getLocale());
         }
     }
 
@@ -149,7 +163,7 @@ public class FishStockView implements Serializable {
             fish.setScientificName(null);
         } catch (BusinessException e) {
             log.error("Failed to remove catalogue link for fish {}", fish.getId(), e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 }

@@ -14,6 +14,9 @@
 
     <h:form id="fishStockForm">
 
+        <!-- Preserve selectedAquariumId across RequestScope boundary (different form than tankSelectorForm) -->
+        <h:inputHidden id="selectedAquariumIdHidden" value="#{fishStockView.selectedAquariumId}"/>
+
         <p:messages id="fishStockMessages" showDetail="true" closable="true">
             <p:autoUpdate/>
         </p:messages>

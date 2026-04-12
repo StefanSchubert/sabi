@@ -56,13 +56,20 @@ public class FishCatalogueServiceImpl extends APIServiceImpl implements FishCata
         RestTemplate restTemplate = new RestTemplate();
         try {
             String body = objectMapper.writeValueAsString(entry);
+            log.debug("POST {} body={}", uri, body);
+            log.info("propose: token prefix='{}', length={}",
+                    token != null && token.length() > 10 ? token.substring(0, 10) + "..." : token,
+                    token != null ? token.length() : -1);
             HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+            log.debug("POST {} status={} responseBody={}", uri, response.getStatusCode(), response.getBody());
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            // Return simple success ResultTo — full deserialization fails because
+            // MessageCode is an interface that Jackson cannot instantiate.
+            return new ResultTo<>(entry, null);
         } catch (Exception e) {
-            log.error("Failed to propose catalogue entry", e);
+            log.error("Failed to propose catalogue entry to {}: {}", uri, e.getMessage(), e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
     }
@@ -77,7 +84,9 @@ public class FishCatalogueServiceImpl extends APIServiceImpl implements FishCata
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            // Return simple success ResultTo — full deserialization fails because
+            // MessageCode is an interface that Jackson cannot instantiate.
+            return new ResultTo<>(entry, null);
         } catch (Exception e) {
             log.error("Failed to update catalogue entry {}", entry.getId(), e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);

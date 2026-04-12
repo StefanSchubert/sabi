@@ -59,19 +59,18 @@ public class FishDepartureView implements Serializable {
     public void onSave() {
         // Client-side validation: departureDate >= fishAddedOn (FR-006)
         if (departureRecord.getDepartureDate() == null) {
-            MessageUtil.error(null, "fishstock.departure.date.required");
+            MessageUtil.error(null, "fishstock.departure.date.required", userSession.getLocale());
             return;
         }
         if (fishAddedOn != null && departureRecord.getDepartureDate().isBefore(fishAddedOn)) {
-            MessageUtil.error(null, "fishstock.departure.date.after.error");
+            MessageUtil.error(null, "fishstock.departure.date.after.error", userSession.getLocale());
             return;
         }
         try {
             fishStockService.recordDeparture(fishId, departureRecord, userSession.getSabiBackendToken());
         } catch (BusinessException e) {
             log.error("Failed to record departure for fish {}", fishId, e);
-            MessageUtil.error(null, "common.error.backend_unreachable.l");
+            MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
 }
-
