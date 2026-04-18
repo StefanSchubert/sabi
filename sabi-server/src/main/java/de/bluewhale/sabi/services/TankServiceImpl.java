@@ -15,9 +15,9 @@ import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.persistence.repositories.TankFishStockRepository;
 import jakarta.validation.constraints.NotNull;
-import org.passay.CharacterRule;
-import org.passay.EnglishCharacterData;
-import org.passay.PasswordGenerator;
+import org.passay.data.EnglishCharacterData;
+import org.passay.generate.PasswordGenerator;
+import org.passay.rule.CharacterRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -252,7 +252,7 @@ public class TankServiceImpl implements TankService {
     private static String generateNewApiKey() {
         CharacterRule digits = new CharacterRule(EnglishCharacterData.Digit);
         CharacterRule alphabets = new CharacterRule(EnglishCharacterData.Alphabetical);
-        PasswordGenerator passwordGenerator = new PasswordGenerator();
-        return passwordGenerator.generatePassword(30, digits, alphabets);
+        PasswordGenerator passwordGenerator = new PasswordGenerator(30, digits, alphabets);
+        return passwordGenerator.generate().toString();
     }
 }

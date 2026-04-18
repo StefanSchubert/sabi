@@ -148,13 +148,60 @@ a:hover { color: var(--sabi-accent); text-decoration: underline; }
     border: none !important;
 }
 
+.ui-panel .ui-panel-titlebar {
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.ui-panel .ui-panel-titlebar .ui-panel-title {
+    flex: 1;
+}
+
 .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon {
     color: rgba(255,255,255,0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+    position: relative !important;
+}
+
+.ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon .ui-icon {
+    display: block !important;
+    width: 16px !important;
+    height: 16px !important;
+    /* jQuery UI Sprite deaktivieren, Symbol via ::before auf dem <a> */
+    background-image: none !important;
+    visibility: hidden !important;
+}
+
+/* Plus-Symbol (eingeklappt) – direkt auf dem <a> */
+.ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon::before {
+    content: "＋";
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+    color: rgba(255, 255, 255, 0.95);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Minus-Symbol (aufgeklappt) via :has() */
+.ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon:has(.ui-icon-minusthick)::before {
+    content: "－";
 }
 
 .ui-panel .ui-panel-content {
     padding: 1rem !important;
     background-color: var(--sabi-surface) !important;
+    /* Explizite Textfarbe, damit splashscreen-Weiß nicht vererbt wird */
+    color: var(--sabi-text) !important;
 }
 
 /* Colored panel variants */

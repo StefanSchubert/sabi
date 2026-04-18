@@ -60,11 +60,11 @@
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
-        <passay.version>1.6.6</passay.version>
+        <passay.version>2.0.0</passay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sabi.boundary.version>1.2.12</sabi.boundary.version>
-        <springdoc.openapiv2.version>3.0.2</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>3.0.3</springdoc.openapiv2.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
     </properties>
 

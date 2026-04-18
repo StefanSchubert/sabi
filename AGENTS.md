@@ -170,3 +170,58 @@ dass kein Key in einer der Sprachdateien fehlt.
 - `<a>`-Tags in Properties **immer korrekt schließen**: `</a>` nicht `</>`
 - Links erkennbar machen: `text-decoration: underline` oder andere visuelle Unterscheidung
 
+---
+
+## Playwright E2E-Tests: Qualitätsregeln (MANDATORY)
+
+### Kein `force: true` und kein `page.evaluate(() => el.click())` als Standard-Click
+
+**Problem**: `page.evaluate(() => el.click())` und `.click({ force: true })` umgehen CSS-Sichtbarkeit
+und Layout-Prüfungen vollständig. Ein Test kann damit **grün** sein, obwohl das Element für echte
+Nutzer **unsichtbar oder unklickbar** ist (z.B. `width: 0px`, `visibility: hidden`,
+`overflow: hidden`, überdeckt durch ein anderes Element).
+
+**Gelernte Lektion (April 2026)**: Ein PrimeFaces Toggle-Button hatte `width: 0px; height: 0px`
+durch fehlende CSS-Regeln. Der Test wurde mit `page.evaluate(() => el.click())` grün geschrieben —
+der echte Nutzer konnte das Element aber nie sehen oder klicken.
+
+**Regeln:**
+- **Standard**: Immer echten Playwright-Click ohne `force` verwenden: `await locator.click()`
+- **Vor dem Click**: Sichtbarkeit explizit prüfen: `await expect(locator).toBeVisible()`
+- **`force: true` / `page.evaluate click`**: NUR als letztes Mittel bei echten technischen
+  Hindernissen (z.B. transienter Overlay), und dann mit erklärendem Kommentar **warum**
+- **Nach einem Workaround**: Den eigentlichen CSS/Layout-Bug fixen statt den Workaround
+  dauerhaft im Test zu belassen
+
+### CSS-Sichtbarkeit von Elementen validieren
+
+Wenn ein Element gefunden wird aber nicht klickbar scheint, immer die **computed styles** prüfen:
+
+```javascript
+// Diagnoseskript: computed styles eines Elements prüfen
+const styles = await page.evaluate((sel) => {
+  const el = document.querySelector(sel);
+  if (!el) return { error: 'not found' };
+  const cs = window.getComputedStyle(el);
+  return { width: cs.width, height: cs.height, display: cs.display,
+           visibility: cs.visibility, overflow: cs.overflow };
+}, '.mein-selektor');
+```
+
+Elemente mit `width: 0px` oder `height: 0px` sind effektiv unsichtbar — das ist ein **Bug**,
+kein Testproblem.
+
+### Screenshot-basierte Verifikation bei UI-Bugs
+
+Bei visuellen Problemen (Icon unsichtbar, Text unsichtbar) immer Screenshots machen und
+**visuell bestätigen** bevor der Test als grün gilt:
+
+```typescript
+await page.screenshot({ path: '/tmp/debug_before.png' });
+// ... Aktion ...
+await page.screenshot({ path: '/tmp/debug_after.png' });
+// Screenshots in IDE öffnen und visuell prüfen!
+```
+
+Ein grüner Test allein ist kein Beweis für korrekte Darstellung.
+
