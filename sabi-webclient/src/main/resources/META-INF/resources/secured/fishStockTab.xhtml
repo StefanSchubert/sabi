@@ -17,6 +17,12 @@
         <!-- Preserve selectedAquariumId across RequestScope boundary (different form than tankSelectorForm) -->
         <h:inputHidden id="selectedAquariumIdHidden" value="#{fishStockView.selectedAquariumId}"/>
 
+        <!-- Remote command to refresh fish table after JS photo upload (called by sabiUploadPhotoThenClose) -->
+        <p:remoteCommand name="sabiRefreshFishTable"
+                         actionListener="#{fishStockView.onTankSelected}"
+                         update=":fishStockForm"
+                         process=":fishStockForm:selectedAquariumIdHidden"/>
+
         <p:messages id="fishStockMessages" showDetail="true" closable="true">
             <p:autoUpdate/>
         </p:messages>
@@ -50,8 +56,9 @@
                     <p:graphicImage rendered="#{fish.hasPhoto}"
                                     value="#{request.contextPath}/secured/fishPhoto?fishId=#{fish.id}"
                                     style="max-width:48px; max-height:48px; border-radius:4px;"/>
-                    <i rendered="#{not fish.hasPhoto}"
-                       class="pi pi-image" style="color:#94a3b8; font-size:1.5rem;"/>
+                    <h:outputText rendered="#{not fish.hasPhoto}"
+                                  styleClass="pi pi-image"
+                                  style="color:#94a3b8; font-size:1.5rem;"/>
                 </p:column>
 
                 <!-- Common Name -->

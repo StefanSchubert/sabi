@@ -99,7 +99,9 @@ public class FishStockServiceImpl implements FishStockService {
             });
         }
 
-        TankFishStockEntity saved = tankFishStockRepository.save(entity);
+        // saveAndFlush() forces EclipseLink to execute the INSERT immediately so that
+        // the IDENTITY-generated ID is populated in the returned entity before we map it.
+        TankFishStockEntity saved = tankFishStockRepository.saveAndFlush(entity);
         FishStockEntryTo savedTo = fishStockMapper.mapEntity2To(saved);
         return new ResultTo<>(savedTo, Message.info(FishStockMessageCodes.FISH_CREATED, saved.getId()));
     }

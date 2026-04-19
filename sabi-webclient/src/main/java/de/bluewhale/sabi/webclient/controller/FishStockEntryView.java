@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.FishCatalogueSearchResultTo;
+import org.primefaces.event.SelectEvent;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
@@ -121,7 +122,8 @@ public class FishStockEntryView implements Serializable {
     }
 
     /** Called when user selects a catalogue entry from the autocomplete dropdown. */
-    public void onSelectCatalogue(FishCatalogueSearchResultTo result) {
+    public void onSelectCatalogue(SelectEvent<FishCatalogueSearchResultTo> event) {
+        FishCatalogueSearchResultTo result = event.getObject();
         if (result != null) {
             currentEntry.setScientificName(result.getScientificName());
             currentEntry.setExternalRefUrl(result.getReferenceUrl());

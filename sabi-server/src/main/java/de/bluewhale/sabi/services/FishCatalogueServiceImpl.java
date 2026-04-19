@@ -221,6 +221,19 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
     }
 
     @Override
+    public List<FishCatalogueSearchResultTo> listAll(String userEmail, String languageCode) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        Long userId = user != null ? user.getId() : -1L;
+        List<FishCatalogueEntryEntity> entities =
+                fishCatalogueEntryRepository.findAllPublicAndOwnPending(userId);
+        List<FishCatalogueSearchResultTo> results = new ArrayList<>();
+        for (FishCatalogueEntryEntity entity : entities) {
+            results.add(fishCatalogueMapper.mapEntity2SearchResult(entity, languageCode));
+        }
+        return results;
+    }
+
+    @Override
     @Transactional
     public ResultTo<FishCatalogueEntryTo> updateEntry(FishCatalogueEntryTo entryTo, String userEmail) {
         UserEntity user = userRepository.getByEmail(userEmail);

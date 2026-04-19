@@ -51,6 +51,20 @@ public class FishCatalogueServiceImpl extends APIServiceImpl implements FishCata
     }
 
     @Override
+    public List<FishCatalogueSearchResultTo> listAll(String lang, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE.getPath() + "?lang=" + lang;
+        ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
+        try {
+            FishCatalogueSearchResultTo[] items =
+                    objectMapper.readValue(response.getBody(), FishCatalogueSearchResultTo[].class);
+            return Arrays.asList(items);
+        } catch (JacksonException e) {
+            log.error("Failed to parse catalogue listAll results", e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+    }
+
+    @Override
     public ResultTo propose(FishCatalogueEntryTo entry, String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE.getPath() + "/";
         RestTemplate restTemplate = new RestTemplate();

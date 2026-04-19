@@ -19,6 +19,9 @@
 
         <h:form id="fishDepartureForm">
 
+            <!-- Preserve fishId across RequestScope boundary -->
+            <h:inputHidden id="fishDepartureId" value="#{fishDepartureView.fishId}"/>
+
             <p:messages id="fishDepartureMessages" showDetail="true" closable="true"/>
 
             <div class="p-field p-mb-2">

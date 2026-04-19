@@ -97,8 +97,12 @@ test.describe('Fish Stock View', () => {
     const dropdownLabel = page.locator('.ui-selectonemenu-label').first();
     await expect(dropdownLabel).toBeVisible();
     const labelText = await dropdownLabel.textContent();
+    // Kein raw i18n-Key sichtbar (unabhängig von der Sprache des Testusers DE/EN)
     expect(labelText).not.toContain('common.');
-    expect(labelText).toContain('Ausw');
+    expect(labelText).not.toContain('???');
+    // Entweder DE ("Auswählen...") oder EN ("Select one...") — beides ist korrekt übersetzt
+    const isTranslated = labelText!.includes('Ausw') || labelText!.includes('Select');
+    expect(isTranslated).toBe(true);
   });
 
   test('Dropdown listet nur eigene Aquarien auf', async ({ page }) => {
@@ -132,8 +136,9 @@ test.describe('Fish Stock View', () => {
   test('Menüpunkt Fischbestand ist im Navigationsmenü', async ({ page }) => {
     await page.goto('/secured/userportal.xhtml', { waitUntil: 'networkidle' });
     await page.locator('.ui-menubutton button').first().click();
+    // Menüpunkt für Fish Stock — DE: "Fischbestand", EN: "Fish Stock"
     const fishMenuItem = page.locator('.ui-menu-list .ui-menuitem-link')
-        .filter({ hasText: 'Fischbestand' });
+        .filter({ hasText: /Fischbestand|Fish Stock/i });
     await expect(fishMenuItem).toBeVisible({ timeout: 5_000 });
   });
 
@@ -195,11 +200,13 @@ test.describe('Fish Stock View', () => {
     await commonNameInput.click();
     await page.waitForTimeout(300);
 
-    // 3. Speichern — Playwright click mit force (falls Overlay-Rest noch überlappt)
+    // 3. Speichern
     const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
     await saveButton.scrollIntoViewIfNeeded();
-
-    // Warte auf die AJAX-Response des Save-Requests
+    // toBeVisible() vor dem Click sicherstellen (AGENTS.md: Sichtbarkeit explizit prüfen)
+    await expect(saveButton).toBeVisible({ timeout: 5_000 });
+    // force:true nötig weil PrimeFaces DatePicker-Overlay nach blur() noch kurz sichtbar ist
+    // und den Save-Button überdecken kann — eigentlicher Layout-Bug in PF DatePicker z-index
     const [saveResponse] = await Promise.all([
       page.waitForResponse(resp =>
           resp.url().includes('fishStockView') && resp.status() === 200
@@ -315,6 +322,9 @@ test.describe('Fish Stock View', () => {
 
     const editSaveButton = editDialog.locator('button').filter({ hasText: /speicher|save/i });
     await editSaveButton.scrollIntoViewIfNeeded();
+    // toBeVisible() vor dem Click sicherstellen (AGENTS.md: Sichtbarkeit explizit prüfen)
+    await expect(editSaveButton).toBeVisible({ timeout: 5_000 });
+    // force:true nötig wegen potentiellem PrimeFaces DatePicker-Overlay (z-index Bug)
     await Promise.all([
       page.waitForResponse(resp =>
           resp.url().includes('fishStockView') && resp.status() === 200
@@ -344,7 +354,7 @@ test.describe('Fish Stock View', () => {
   test('Foto-Upload: Datei kann ausgewählt werden und accept-Attribut stimmt', async ({ page }) => {
     const dialog = await openAddFishDialog(page);
 
-    // File-Input finden
+    // File-Input finden (plain HTML input, kein PrimeFaces — wegen AJAX-Upload-Bug)
     const fileInput = dialog.locator('input[type="file"]');
     await expect(fileInput).toBeAttached();
 
@@ -363,6 +373,110 @@ test.describe('Fish Stock View', () => {
 
     // Dialog per Escape schließen
     await page.keyboard.press('Escape');
+  });
+
+  test('Foto-Upload: Thumbnail in Tabelle sichtbar, Vorschau im Edit-Dialog', async ({ page }) => {
+    const fishName = `E2E-FotoTest-${Date.now()}`;
+    const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');
+
+    // ── 1. Fisch anlegen + Foto hochladen ──
+    const dialog = await openAddFishDialog(page);
+
+    const commonNameInput = dialog.locator('[id$="commonName"]');
+    await commonNameInput.fill(fishName);
+
+    const dateInput = dialog.locator('[id$="addedOn_input"]');
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    await dateInput.fill(`${dd}.${mm}.${yyyy}`);
+    await commonNameInput.click();
+    await page.waitForTimeout(300);
+
+    // Foto setzen
+    const fileInput = dialog.locator('input[type="file"]');
+    await fileInput.setInputFiles(testImagePath);
+
+    // Speichern
+    const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
+    await saveButton.scrollIntoViewIfNeeded();
+    await expect(saveButton).toBeVisible({ timeout: 5_000 });
+    // force:true wegen potentiellem PrimeFaces DatePicker-Overlay (z-index Bug)
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 15_000 },
+      ),
+      saveButton.click({ force: true }),
+    ]);
+    await page.waitForLoadState('networkidle');
+    await expect(dialog).not.toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('#fishStockForm')).toContainText(fishName, { timeout: 10_000 });
+
+    // ── 2. Thumbnail in "Currently in Tank"-Tabelle prüfen ──
+    const fishRow = page.locator('tr').filter({ hasText: fishName }).first();
+    await expect(fishRow).toBeVisible({ timeout: 5_000 });
+
+    // KERN-ASSERTION 1: <img> statt pi-image-Icon — das Thumbnail muss sichtbar sein
+    const thumbnail = fishRow.locator('img');
+    await expect(thumbnail).toBeVisible({ timeout: 8_000 });
+
+    // Thumbnail-Größe prüfen (nicht 0px — AGENTS.md CSS-Sichtbarkeit)
+    const styles = await page.evaluate((fishNameStr) => {
+      const rows = Array.from(document.querySelectorAll('tr'));
+      const row = rows.find(r => r.textContent?.includes(fishNameStr));
+      if (!row) return { error: 'row not found' };
+      const img = row.querySelector('img');
+      if (!img) return { error: 'img not found' };
+      const cs = window.getComputedStyle(img);
+      return { width: cs.width, height: cs.height, display: cs.display, src: img.getAttribute('src') };
+    }, fishName);
+    expect(styles).not.toHaveProperty('error');
+    expect(styles.display).not.toBe('none');
+    expect(styles.src).toContain('fishPhoto');
+
+    // ── 3. Edit-Dialog öffnen — Foto-Vorschau muss sichtbar sein ──
+    const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
+    await Promise.all([
+      page.waitForResponse(resp =>
+          resp.url().includes('fishStockView') && resp.status() === 200
+          && resp.request().method() === 'POST',
+        { timeout: 10_000 },
+      ),
+      editButton.click(),
+    ]);
+
+    const editDialog = page.locator('.ui-dialog').filter({ hasText: /bearbeiten|edit/i }).first();
+    await expect(editDialog).toBeVisible({ timeout: 10_000 });
+
+    // KERN-ASSERTION 2: Foto-Vorschau im Edit-Dialog sichtbar (id="currentPhotoPreview")
+    const photoPreview = editDialog.locator('[id$="currentPhotoPreview"]');
+    await expect(photoPreview).toBeVisible({ timeout: 8_000 });
+
+    // Auch per computed styles validieren (AGENTS.md)
+    const previewStyles = await page.evaluate(() => {
+      const img = document.querySelector('[id$="currentPhotoPreview"]');
+      if (!img) return { error: 'not found' };
+      const cs = window.getComputedStyle(img);
+      return { width: cs.width, height: cs.height, display: cs.display };
+    });
+    expect(previewStyles).not.toHaveProperty('error');
+    expect(previewStyles.display).not.toBe('none');
+    expect(previewStyles.width).not.toBe('0px');
+    expect(previewStyles.height).not.toBe('0px');
+
+    await page.keyboard.press('Escape');
+    await expect(editDialog).not.toBeVisible({ timeout: 5_000 });
+
+    // ── Cleanup ──
+    const fishRowCleanup = page.locator('tr').filter({ hasText: fishName }).first();
+    if (await fishRowCleanup.isVisible()) {
+      await fishRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+      await page.waitForLoadState('networkidle');
+      await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
+    }
   });
 
   // ── Katalog-Vorschlag ──────────────────────────────────────

@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
@@ -217,13 +218,15 @@ public class FishStockController {
     @PostMapping(value = "/{fishId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadPhoto(
             @PathVariable Long fishId,
-            @RequestParam("file") byte[] fileBytes,
+            @RequestParam("file") MultipartFile file,
             @RequestParam(value = "contentType", defaultValue = "image/jpeg") String contentType,
             @RequestHeader(name = AUTH_TOKEN, required = true) String token,
             Principal principal) {
         log.debug("POST /api/fish/{}/photo for {}", fishId, principal.getName());
         try {
-            fishStockService.uploadPhoto(fishId, fileBytes, contentType, principal.getName());
+            String resolvedContentType = (file.getContentType() != null) ? file.getContentType() : contentType;
+            byte[] fileBytes = file.getBytes();
+            fishStockService.uploadPhoto(fishId, fileBytes, resolvedContentType, principal.getName());
         } catch (Exception e) {
             log.warn("Photo upload failed for fish {}: {}", fishId, e.getMessage());
             return ResponseEntity.badRequest().build();

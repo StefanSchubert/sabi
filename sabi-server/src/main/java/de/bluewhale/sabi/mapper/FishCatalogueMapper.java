@@ -58,18 +58,18 @@ public interface FishCatalogueMapper {
         }
         // Try requested language
         return entity.getI18nEntries().stream()
-                .filter(i -> lang.equals(i.getLanguageCode()) && i.getCommonName() != null)
+                .filter(i -> lang.equals(i.getLanguageCode()) && i.getCommonName() != null && !i.getCommonName().isBlank())
                 .map(FishCatalogueI18nEntity::getCommonName)
                 .findFirst()
                 // Fallback to EN
                 .orElseGet(() -> entity.getI18nEntries().stream()
-                        .filter(i -> "en".equals(i.getLanguageCode()) && i.getCommonName() != null)
+                        .filter(i -> "en".equals(i.getLanguageCode()) && i.getCommonName() != null && !i.getCommonName().isBlank())
                         .map(FishCatalogueI18nEntity::getCommonName)
                         .findFirst()
-                        // Fallback to first available
+                        // Fallback to first available non-blank
                         .orElseGet(() -> entity.getI18nEntries().stream()
                                 .map(FishCatalogueI18nEntity::getCommonName)
-                                .filter(n -> n != null)
+                                .filter(n -> n != null && !n.isBlank())
                                 .findFirst()
                                 .orElse(null)));
     }

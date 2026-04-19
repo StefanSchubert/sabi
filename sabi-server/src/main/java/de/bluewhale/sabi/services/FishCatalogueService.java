@@ -78,6 +78,17 @@ public interface FishCatalogueService {
     List<FishCatalogueEntryTo> listPendingProposals(@NotNull String adminEmail);
 
     /**
+     * List all catalogue entries visible to the user: PUBLIC entries + own PENDING entries (FR-018).
+     * Used for the catalogue overview after a proposal is submitted.
+     *
+     * @param userEmail    authenticated user email
+     * @param languageCode language for i18n fields (de/en/es/fr/it)
+     * @return list of entries (never null)
+     */
+    @NotNull
+    List<FishCatalogueSearchResultTo> listAll(@NotNull String userEmail, @NotNull String languageCode);
+
+    /**
      * Update an existing catalogue entry (FR-019).
      * REJECTED → read-only; PENDING: only creator; PUBLIC: creator + Admin.
      */

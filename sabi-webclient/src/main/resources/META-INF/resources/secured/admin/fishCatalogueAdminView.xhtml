@@ -25,6 +25,12 @@
             <h:form id="adminForm">
                 <p:messages id="adminMessages" showDetail="true" closable="true"/>
 
+                <!-- Reload proposals on every page visit (SessionScope bean caches list) -->
+                <p:remoteCommand name="sabiLoadProposals"
+                                 actionListener="#{fishCatalogueAdminView.refreshProposals()}"
+                                 update="pendingTable"
+                                 autoRun="true"/>
+
                 <!-- Pending Proposals Table (FR-021) -->
                 <p:dataTable id="pendingTable"
                              var="proposal"
@@ -50,70 +56,70 @@
                         <p:commandButton icon="pi pi-search"
                                          title="#{msg['common.edit.b']}"
                                          actionListener="#{fishCatalogueAdminView.onOpenProposal(proposal)}"
-                                         update=":proposalDetailDialog"
+                                         update=":adminForm:proposalDetailDialog"
                                          oncomplete="PF('proposalDetailWidget').show()"/>
                     </p:column>
 
                 </p:dataTable>
 
-                <!-- Detail Dialog -->
+                <!-- Detail Dialog — inside adminForm so update=":adminForm" works from approve/reject buttons -->
                 <p:dialog id="proposalDetailDialog"
-                          header="#{fishCatalogueAdminView.selectedProposal.scientificName}"
+                          header="#{fishCatalogueAdminView.selectedProposal != null ? fishCatalogueAdminView.selectedProposal.scientificName : ''}"
                           widgetVar="proposalDetailWidget"
                           modal="true"
                           responsive="true"
                           width="700"
-                          closeOnEscape="true">
+                          closeOnEscape="true"
+                          dynamic="true">
 
-                    <h:form id="proposalDetailForm">
-                        <p:messages id="detailMessages" showDetail="true" closable="true"/>
+                    <!-- NO nested h:form — buttons submit via parent adminForm -->
+                    <p:messages id="detailMessages" showDetail="true" closable="true"/>
 
-                        <p:tabView rendered="#{fishCatalogueAdminView.selectedProposal != null}">
-                            <p:tab title="#{msg['fishcatalogue.tab.de']}">
-                                <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[0].commonName}" style="display:block;"/>
-                                <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[0].description}" style="display:block;"/>
-                                <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[0].referenceUrl}" style="display:block;"/>
-                            </p:tab>
-                            <p:tab title="#{msg['fishcatalogue.tab.en']}">
-                                <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[1].commonName}" style="display:block;"/>
-                                <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[1].description}" style="display:block;"/>
-                                <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[1].referenceUrl}" style="display:block;"/>
-                            </p:tab>
-                        </p:tabView>
+                    <p:tabView rendered="#{fishCatalogueAdminView.selectedProposal != null}">
+                        <p:tab title="#{msg['fishcatalogue.tab.de']}">
+                            <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[0].commonName}" style="display:block;"/>
+                            <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[0].description}" style="display:block;"/>
+                            <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[0].referenceUrl}" style="display:block;"/>
+                        </p:tab>
+                        <p:tab title="#{msg['fishcatalogue.tab.en']}">
+                            <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[1].commonName}" style="display:block;"/>
+                            <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[1].description}" style="display:block;"/>
+                            <p:outputLabel value="#{fishCatalogueAdminView.selectedProposal.i18nEntries[1].referenceUrl}" style="display:block;"/>
+                        </p:tab>
+                    </p:tabView>
 
-                        <!-- Rejection reason -->
-                        <div class="p-field p-mb-2" style="margin-top:1rem;">
-                            <p:outputLabel for="rejectionReason"
-                                           value="#{msg['fishcatalogue.admin.rejection.reason.label']}"
-                                           style="display:block;"/>
-                            <p:inputTextarea id="rejectionReason"
-                                             value="#{fishCatalogueAdminView.rejectionReason}"
-                                             rows="3"
-                                             style="width:100%;"/>
-                        </div>
+                    <!-- Rejection reason -->
+                    <div class="p-field p-mb-2" style="margin-top:1rem;">
+                        <p:outputLabel for="rejectionReason"
+                                       value="#{msg['fishcatalogue.admin.rejection.reason.label']}"
+                                       style="display:block;"/>
+                        <p:inputTextarea id="rejectionReason"
+                                         value="#{fishCatalogueAdminView.rejectionReason}"
+                                         rows="3"
+                                         style="width:100%;"/>
+                    </div>
 
-                        <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-                            <!-- Approve (style: green #065f46 on #d1fae5 = WCAG 7:1) -->
-                            <p:commandButton value="#{msg['fishcatalogue.admin.approve.button']}"
-                                             icon="pi pi-check"
-                                             style="background:#065f46; border-color:#065f46; color:#ffffff;"
-                                             actionListener="#{fishCatalogueAdminView.onApprove()}"
-                                             update=":adminForm :detailMessages"
-                                             oncomplete="PF('proposalDetailWidget').hide();"/>
-                            <!-- Reject (style: red #991b1b on white = WCAG ~6:1) -->
-                            <p:commandButton value="#{msg['fishcatalogue.admin.reject.button']}"
-                                             icon="pi pi-times"
-                                             style="background:#991b1b; border-color:#991b1b; color:#ffffff;"
-                                             actionListener="#{fishCatalogueAdminView.onReject()}"
-                                             update=":adminForm :detailMessages"
-                                             oncomplete="PF('proposalDetailWidget').hide();"/>
-                            <p:commandButton value="#{msg['common.cancel.b']}"
-                                             icon="pi pi-ban"
-                                             styleClass="ui-button-secondary"
-                                             onclick="PF('proposalDetailWidget').hide(); return false;"/>
-                        </div>
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                        <!-- Approve (style: green #065f46 on #d1fae5 = WCAG 7:1) -->
+                        <p:commandButton value="#{msg['fishcatalogue.admin.approve.button']}"
+                                         icon="pi pi-check"
+                                         style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                         actionListener="#{fishCatalogueAdminView.onApprove()}"
+                                         update=":adminForm"
+                                         oncomplete="PF('proposalDetailWidget').hide();"/>
+                        <!-- Reject (style: red #991b1b on white = WCAG ~6:1) -->
+                        <p:commandButton value="#{msg['fishcatalogue.admin.reject.button']}"
+                                         icon="pi pi-times"
+                                         style="background:#991b1b; border-color:#991b1b; color:#ffffff;"
+                                         actionListener="#{fishCatalogueAdminView.onReject()}"
+                                         update=":adminForm"
+                                         oncomplete="PF('proposalDetailWidget').hide();"/>
+                        <p:commandButton value="#{msg['common.cancel.b']}"
+                                         icon="pi pi-ban"
+                                         styleClass="ui-button-secondary"
+                                         onclick="PF('proposalDetailWidget').hide(); return false;"/>
+                    </div>
 
-                    </h:form>
                 </p:dialog>
 
             </h:form>

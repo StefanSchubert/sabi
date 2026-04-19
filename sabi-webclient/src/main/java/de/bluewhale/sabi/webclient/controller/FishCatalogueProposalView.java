@@ -21,7 +21,9 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import de.bluewhale.sabi.model.FishCatalogueSearchResultTo;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,6 +49,8 @@ public class FishCatalogueProposalView implements Serializable {
     private boolean editMode = false;
     private boolean duplicateWarningShown = false;
     private String duplicateWarningMessage = "";
+    private boolean submittedSuccessfully = false;
+    private List<FishCatalogueSearchResultTo> catalogueEntries = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -113,6 +117,15 @@ public class FishCatalogueProposalView implements Serializable {
             } else {
                 fishCatalogueService.propose(proposal, userSession.getSabiBackendToken());
                 MessageUtil.info(null, "fishcatalogue.propose.title", userSession.getLocale());
+                // Load full catalogue to show status overview
+                try {
+                    catalogueEntries = fishCatalogueService.listAll(
+                            userSession.getLanguage(), userSession.getSabiBackendToken());
+                } catch (BusinessException ex) {
+                    log.warn("Could not load catalogue list after proposal: {}", ex.getMessage());
+                    catalogueEntries = Collections.emptyList();
+                }
+                submittedSuccessfully = true;
                 // Reset form for potential next entry
                 init();
             }
@@ -124,6 +137,13 @@ public class FishCatalogueProposalView implements Serializable {
 
     public String onCancel() {
         return "/secured/fishStockView?faces-redirect=true";
+    }
+
+    /** Reset to form mode for entering another proposal. */
+    public void onNewProposal() {
+        submittedSuccessfully = false;
+        catalogueEntries = new ArrayList<>();
+        init();
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

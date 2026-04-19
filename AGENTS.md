@@ -225,3 +225,77 @@ await page.screenshot({ path: '/tmp/debug_after.png' });
 
 Ein grüner Test allein ist kein Beweis für korrekte Darstellung.
 
+---
+
+## Backend REST-API: Auth-Token-Pattern (MANDATORY)
+
+### Wie das JWT-Token durch den Stack fließt
+
+**Sabi verwendet einen eigenen HTTP-Header `Authorization` mit `Bearer`-Präfix** — kein Standard-OAuth2-Flow,
+sondern ein selbst implementiertes JWT-Schema:
+
+1. **Login** → Backend gibt `Authorization: Bearer <jwt>` im Response-Header zurück
+2. **Webclient** liest diesen Header und speichert ihn in `UserSession.sabiBackendToken`
+   - Token enthält bereits das `Bearer`-Präfix
+3. **Alle Backend-Calls** setzen diesen Token über `RestHelper.prepareAuthedHttpHeader(token)`
+   als `Authorization`-Header
+4. **`JWTAuthorizationFilter`** prüft: `token.startsWith("Bearer ")` → setzt Authentication im SecurityContext
+   - Wenn Token fehlt oder kein Bearer-Präfix → Filter lässt Request **ohne Authentication** durch
+   - Spring Security's `anyRequest().authenticated()` liefert dann **403**
+
+**Wichtig: Auth-Fehler manifestieren sich als 403, nicht als 401!**
+Der Filter gibt bei fehlendem/ungültigem Token 401 zurück, aber wenn der Request die Security-Config
+erreicht ohne gesetzten SecurityContext → 403 Forbidden.
+
+### Multipart-Endpunkte: `MultipartFile` statt `byte[]`
+
+**NIEMALS `@RequestParam("file") byte[] fileBytes` für Multipart-Uploads verwenden.**
+
+Spring kann `MultipartFile` nicht automatisch in `byte[]` konvertieren — das führt zu
+`MethodArgumentTypeMismatchException` (400), die sich aber manchmal als 403 am Client manifestiert.
+
+**Richtig:**
+```java
+// Backend Controller
+@PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<Void> upload(
+        @PathVariable Long id,
+        @RequestParam("file") MultipartFile file,  // ← MultipartFile, NICHT byte[]
+        @RequestHeader(name = AUTH_TOKEN) String token,
+        Principal principal) {
+    byte[] bytes = file.getBytes();
+    String ct = file.getContentType() != null ? file.getContentType() : "image/jpeg";
+    // ...
+}
+```
+
+**Webclient-seitig** (RestTemplate mit ByteArrayResource):
+```java
+ByteArrayResource resource = new ByteArrayResource(bytes) {
+    @Override public String getFilename() { return "photo.jpg"; }
+};
+MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+parts.add("file", resource);
+HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token, MediaType.MULTIPART_FORM_DATA);
+restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(parts, headers), String.class);
+```
+
+### Docker-Backend neu deployen (Checkliste)
+
+Nach Änderungen am Backend (`sabi-server`):
+```bash
+# 1. JAR bauen
+cd sabi-server && mvn package -DskipTests
+
+# 2. JAR in Docker-Assets kopieren
+cd devops/sabi_docker_sdk && bash copyjars.sh
+
+# 3. Container stoppen, Image neu bauen, starten (ARM Mac!)
+docker compose -f docker-compose-arm.yml stop sabi-backend
+docker compose -f docker-compose-arm.yml up --build -d sabi-backend
+
+# 4. Auf Start warten (~20-30 Sekunden), dann testen
+```
+
+**Für AMD64-Server** `docker-compose.yml` verwenden; für ARM-Entwicklung (MacBook M1/M2/M3/M4)
+immer `docker-compose-arm.yml` mit `Dockerfile_ARM`.

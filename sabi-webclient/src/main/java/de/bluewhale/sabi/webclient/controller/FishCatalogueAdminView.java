@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import java.util.List;
  * JSF CDI-Bean for the admin catalogue management view (FR-016, FR-017, FR-021).
  */
 @Named
-@RequestScope
+@SessionScope
 @Getter
 @Setter
 @Slf4j
@@ -44,6 +44,11 @@ public class FishCatalogueAdminView implements Serializable {
 
     @PostConstruct
     public void init() {
+        refreshProposals();
+    }
+
+    /** Reload pending proposals from backend. */
+    public void refreshProposals() {
         try {
             pendingProposals = fishCatalogueAdminService.getPendingProposals(
                     userSession.getSabiBackendToken());
@@ -66,11 +71,11 @@ public class FishCatalogueAdminView implements Serializable {
                     selectedProposal.getId(),
                     selectedProposal,
                     userSession.getSabiBackendToken());
-            pendingProposals.remove(selectedProposal);
             selectedProposal = null;
             MessageUtil.info(null, "fishcatalogue.status.public", userSession.getLocale());
+            refreshProposals();
         } catch (BusinessException e) {
-            log.error("Failed to approve catalogue entry {}", selectedProposal.getId(), e);
+            log.error("Failed to approve catalogue entry", e);
             MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }
@@ -83,11 +88,11 @@ public class FishCatalogueAdminView implements Serializable {
                     selectedProposal.getId(),
                     rejectionReason,
                     userSession.getSabiBackendToken());
-            pendingProposals.remove(selectedProposal);
             selectedProposal = null;
             MessageUtil.info(null, "fishcatalogue.status.rejected", userSession.getLocale());
+            refreshProposals();
         } catch (BusinessException e) {
-            log.error("Failed to reject catalogue entry {}", selectedProposal.getId(), e);
+            log.error("Failed to reject catalogue entry", e);
             MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
         }
     }

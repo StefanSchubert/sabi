@@ -40,6 +40,24 @@ public class FishCatalogueController {
     @Autowired
     FishCatalogueService fishCatalogueService;
 
+    // ---- List all (FR-018, catalogue overview after proposal) ----
+
+    @Operation(summary = "List all PUBLIC entries plus own PENDING entries (FR-018).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Catalogue list returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FishCatalogueSearchResultTo>> listAll(
+            @RequestParam(value = "lang", defaultValue = "en") String lang,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("GET /api/fish/catalogue?lang={} for {}", lang, principal.getName());
+        List<FishCatalogueSearchResultTo> results =
+                fishCatalogueService.listAll(principal.getName(), lang);
+        return ResponseEntity.ok(results);
+    }
+
     // ---- Search (T049, US3) ----
 
     @Operation(summary = "Search fish catalogue (PUBLIC + own PENDING). Requires min 2 chars (FR-020).")

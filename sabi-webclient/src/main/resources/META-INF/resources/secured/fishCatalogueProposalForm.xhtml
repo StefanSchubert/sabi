@@ -27,6 +27,58 @@
 
                 <p:messages id="proposalMessages" showDetail="true" closable="true"/>
 
+                <!-- ═══════════════════════════════════════════════════════════
+                     Catalogue overview — shown after successful proposal submit
+                     ═══════════════════════════════════════════════════════════ -->
+                <p:panel id="catalogueOverviewPanel"
+                         rendered="#{fishCatalogueProposalView.submittedSuccessfully}"
+                         style="margin-bottom:1.5rem;">
+
+                    <h3 style="color:#075985; margin-top:0;">#{msg['fishcatalogue.overview.title']}</h3>
+
+                    <p:dataTable var="entry"
+                                 value="#{fishCatalogueProposalView.catalogueEntries}"
+                                 emptyMessage="#{msg['common.no.data.l']}"
+                                 styleClass="sabi-catalogue-table"
+                                 style="width:100%;">
+
+                        <p:column headerText="#{msg['fishcatalogue.scientificname.label']}" style="font-style:italic;">
+                            <p:outputLabel value="#{entry.scientificName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['fishcatalogue.commonname.label']}">
+                            <p:outputLabel value="#{entry.commonName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['fishcatalogue.status.label']}" style="width:10rem; text-align:center;">
+                            <!-- PENDING = "in review", PUBLIC = "freigegeben" -->
+                            <p:tag rendered="#{entry.status.name() == 'PUBLIC'}"
+                                   value="#{msg['fishcatalogue.status.public']}"
+                                   severity="success"/>
+                            <p:tag rendered="#{entry.status.name() == 'PENDING'}"
+                                   value="#{msg['fishcatalogue.status.pending']}"
+                                   severity="warn"/>
+                            <p:tag rendered="#{entry.status.name() == 'REJECTED'}"
+                                   value="#{msg['fishcatalogue.status.rejected']}"
+                                   severity="danger"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <div style="margin-top:1rem;">
+                        <p:commandButton value="#{msg['fishcatalogue.propose.another.b']}"
+                                         icon="pi pi-plus"
+                                         actionListener="#{fishCatalogueProposalView.onNewProposal()}"
+                                         update="proposalForm"/>
+                    </div>
+                </p:panel>
+
+                <!-- ═══════════════════════════════════════════════════════════
+                     Proposal form — hidden after successful submit
+                     ═══════════════════════════════════════════════════════════ -->
+                <h:panelGroup id="proposalFormGroup"
+                              rendered="#{not fishCatalogueProposalView.submittedSuccessfully}">
+
                 <!-- Duplicate Warning Panel -->
                 <p:panel rendered="#{fishCatalogueProposalView.duplicateWarningShown}"
                          style="background:#fef3c7; border:1px solid #d97706; padding:0.75rem; border-radius:4px; margin-bottom:1rem; color:#92400e;">
@@ -89,6 +141,8 @@
                                      styleClass="ui-button-secondary"
                                      action="#{fishCatalogueProposalView.onCancel()}"/>
                 </div>
+
+                </h:panelGroup>
 
             </h:form>
         </ui:define>

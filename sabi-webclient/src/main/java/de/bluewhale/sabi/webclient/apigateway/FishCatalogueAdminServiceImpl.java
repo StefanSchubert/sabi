@@ -32,8 +32,9 @@ import java.util.Map;
 @Named
 @RequestScope
 @Slf4j
-public class FishCatalogueAdminServiceImpl extends APIServiceImpl {
+public class FishCatalogueAdminServiceImpl extends APIServiceImpl implements FishCatalogueAdminService {
 
+    @Override
     public List<FishCatalogueEntryTo> getPendingProposals(String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE_ADMIN.getPath() + "/pending";
         ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
@@ -46,7 +47,8 @@ public class FishCatalogueAdminServiceImpl extends APIServiceImpl {
         }
     }
 
-    public ResultTo approveEntry(Long id, FishCatalogueEntryTo edits, String token) throws BusinessException {
+    @Override
+    public FishCatalogueEntryTo approveEntry(Long id, FishCatalogueEntryTo edits, String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE_ADMIN.getPath() + "/" + id + "/approve";
         RestTemplate restTemplate = new RestTemplate();
         try {
@@ -55,14 +57,15 @@ public class FishCatalogueAdminServiceImpl extends APIServiceImpl {
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
+            return edits;
         } catch (Exception e) {
             log.error("Failed to approve entry {}", id, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
     }
 
-    public ResultTo rejectEntry(Long id, String reason, String token) throws BusinessException {
+    @Override
+    public void rejectEntry(Long id, String reason, String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE_ADMIN.getPath() + "/" + id + "/reject";
         RestTemplate restTemplate = new RestTemplate();
         try {
@@ -71,11 +74,9 @@ public class FishCatalogueAdminServiceImpl extends APIServiceImpl {
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, String.class);
             renewBackendToken(response);
-            return objectMapper.readValue(response.getBody(), ResultTo.class);
         } catch (Exception e) {
             log.error("Failed to reject entry {}", id, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
     }
 }
-

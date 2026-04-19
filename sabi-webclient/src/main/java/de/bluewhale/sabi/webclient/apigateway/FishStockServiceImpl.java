@@ -58,11 +58,18 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
             renewBackendToken(response);
-            // Parse the response body to obtain the server-generated ID
+            // ResultTo JSON structure: {"value": {...}, "message": {...}}
+            // Key is "value" (matches ResultTo.getValue()), NOT "resultObject"
             if (response.getBody() != null) {
-                tools.jackson.core.type.TypeReference<ResultTo<FishStockEntryTo>> typeRef =
-                        new tools.jackson.core.type.TypeReference<>() {};
-                return objectMapper.readValue(response.getBody(), typeRef);
+                try {
+                    tools.jackson.databind.JsonNode root = objectMapper.readTree(response.getBody());
+                    tools.jackson.databind.JsonNode idNode = root.path("value").path("id");
+                    if (!idNode.isMissingNode() && !idNode.isNull()) {
+                        entry.setId(idNode.asLong());
+                    }
+                } catch (Exception parseEx) {
+                    log.warn("Could not extract id from addFish response: {}", parseEx.getMessage());
+                }
             }
             return new ResultTo<>(entry, null);
         } catch (Exception e) {

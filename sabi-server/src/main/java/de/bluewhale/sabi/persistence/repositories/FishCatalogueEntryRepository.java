@@ -40,6 +40,14 @@ public interface FishCatalogueEntryRepository extends JpaRepository<FishCatalogu
     List<FishCatalogueEntryEntity> findAllByStatusOrderByProposalDateAsc(String status);
 
     /**
+     * List all PUBLIC entries plus own PENDING entries for a given user (FR-018, catalogue overview).
+     */
+    @Query("SELECT DISTINCT c FROM FishCatalogueEntryEntity c " +
+           "WHERE c.status = 'PUBLIC' OR (c.status = 'PENDING' AND c.proposerUserId = :userId) " +
+           "ORDER BY c.scientificName ASC")
+    List<FishCatalogueEntryEntity> findAllPublicAndOwnPending(@Param("userId") Long userId);
+
+    /**
      * Duplicate check for scientific name among PENDING and PUBLIC entries (FR-015, FR-012).
      */
     boolean existsByScientificNameAndStatusIn(String scientificName, List<String> statuses);

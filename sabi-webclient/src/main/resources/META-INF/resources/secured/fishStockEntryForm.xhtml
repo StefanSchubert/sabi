@@ -71,8 +71,9 @@
                 <p:autoComplete id="catalogueSearch"
                                 completeMethod="#{fishStockEntryView.onSearchCatalogue}"
                                 var="result"
-                                itemLabel="#{result.commonName} (#{result.scientificName})"
+                                itemLabel="#{empty result.commonName ? result.scientificName : result.commonName.concat(' (').concat(result.scientificName).concat(')')}"
                                 itemValue="#{result}"
+                                converter="fishCatalogueSearchResultConverter"
                                 minQueryLength="2"
                                 placeholder="#{msg['fishstock.form.catalogue.search.placeholder']}"
                                 emptyMessage="#{msg['fishstock.form.catalogue.noresults']}"
@@ -126,20 +127,21 @@
                                  style="width:100%;"/>
             </div>
 
-            <!-- Photo Upload (optional, FR-008, FR-025) -->
+            <!-- Photo Upload (optional, FR-008, FR-025)
+                 NOTE: p:fileUpload mode="simple" does NOT transmit file bytes via PrimeFaces AJAX.
+                 We use a plain HTML file input; JS fetch() uploads after the AJAX save returns the fish ID. -->
             <div class="p-field p-mb-2">
                 <p:outputLabel value="#{msg['fishstock.form.photo.label']}"
                                style="display:block;"/>
-                <p:fileUpload id="photoUpload"
-                              value="#{fishStockEntryView.uploadedFile}"
-                              label="#{msg['fishstock.form.photo.upload.button']}"
-                              accept="image/jpeg,image/png,image/webp,image/gif"
-                              sizeLimit="5242880"
-                              invalidSizeMessage="#{msg['fishstock.form.photo.size.error']}"
-                              invalidFileMessage="#{msg['fishstock.form.photo.format.error']}"
-                              mode="simple"
-                              skinSimple="true"
-                              style="width:100%;"/>
+                <!-- Current photo preview when editing a fish that already has a photo -->
+                <p:graphicImage id="currentPhotoPreview"
+                                rendered="#{fishStockEntryView.edit and fishStockEntryView.currentEntry.hasPhoto}"
+                                value="#{request.contextPath}/secured/fishPhoto?fishId=#{fishStockEntryView.currentEntry.id}"
+                                style="max-width:120px; max-height:120px; border-radius:4px; display:block; margin-bottom:0.5rem;"
+                                alt="#{msg['fishstock.form.photo.label']}"/>
+                <input type="file" id="photoFileInput"
+                       accept="image/jpeg,image/png,image/webp,image/gif"
+                       style="width:100%;"/>
             </div>
 
             <!-- Action Buttons -->
@@ -147,8 +149,8 @@
                 <p:commandButton value="#{msg['common.save.b']}"
                                  icon="pi pi-check"
                                  actionListener="#{fishStockEntryView.onSave()}"
-                                 update=":fishStockForm :fishEntryMessages"
-                                 oncomplete="if (!args.validationFailed) PF('fishEntryDialogWidget').hide();"/>
+                                 update=":fishStockForm :fishEntryMessages :fishEntryForm:fishEntryId"
+                                 oncomplete="if (!args.validationFailed) sabiUploadPhotoThenClose();"/>
                 <p:commandButton value="#{msg['common.cancel.b']}"
                                  icon="pi pi-times"
                                  styleClass="ui-button-secondary"
@@ -156,6 +158,52 @@
             </div>
 
         </h:form>
+
+        <script>
+        //<![CDATA[
+        /**
+         * After AJAX save: reads the server-assigned fish ID from the hidden field,
+         * uploads the selected photo via fetch(FormData) to the Spring MVC proxy,
+         * refreshes the fish table, then closes the dialog.
+         *
+         * Background: PrimeFaces AJAX does not transmit file bytes from mode="simple"
+         * p:fileUpload. We therefore use a plain HTML file input and upload separately.
+         */
+        function sabiUploadPhotoThenClose() {
+            var fileInput = document.getElementById('photoFileInput');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                PF('fishEntryDialogWidget').hide();
+                return;
+            }
+            // Fish ID is stored in the hidden input bound to fishStockEntryView.currentEntry.id
+            var fishIdEl = document.querySelector('[id$="fishEntryId"]');
+            var fishId = fishIdEl ? fishIdEl.value : null;
+            if (!fishId || fishId === '0' || fishId === '') {
+                PF('fishEntryDialogWidget').hide();
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            fetch('/secured/fishPhoto?fishId=' + fishId, { method: 'POST', body: formData })
+                .then(function(resp) {
+                    if (!resp.ok) {
+                        console.warn('Photo upload returned status ' + resp.status);
+                    }
+                    fileInput.value = '';
+                })
+                .catch(function(err) {
+                    console.error('Photo upload failed:', err);
+                })
+                .finally(function() {
+                    // Close dialog first, then refresh table so hasPhoto=true is reflected
+                    PF('fishEntryDialogWidget').hide();
+                    if (typeof sabiRefreshFishTable === 'function') {
+                        setTimeout(sabiRefreshFishTable, 200);
+                    }
+                });
+        }
+        //]]>
+        </script>
     </p:dialog>
 
 </ui:composition>
