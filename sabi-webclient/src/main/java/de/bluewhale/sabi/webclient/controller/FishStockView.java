@@ -47,6 +47,9 @@ public class FishStockView implements Serializable {
     @Inject
     TankListView tankListView;
 
+    @Autowired
+    FishDepartureView fishDepartureView;
+
     @Inject
     FishStockEntryView fishStockEntryView;
 
@@ -154,6 +157,7 @@ public class FishStockView implements Serializable {
 
     public void onRecordDeparture(FishStockEntryTo fish) {
         this.selectedFish = fish;
+        fishDepartureView.init(fish);
     }
 
     public void onRemoveCatalogueLink(FishStockEntryTo fish) {

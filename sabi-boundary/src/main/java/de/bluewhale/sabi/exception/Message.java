@@ -5,6 +5,8 @@
 
 package de.bluewhale.sabi.exception;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.io.Serializable;
 
 /**
@@ -15,6 +17,7 @@ import java.io.Serializable;
 public class Message implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
+    @JsonDeserialize(using = MessageCodeDeserializer.class)
     private MessageCode code;
 
     private CATEGORY type;

@@ -90,6 +90,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Jackson Databind (@JsonDeserialize, StdDeserializer) – provided, wird vom Consumer bereitgestellt -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

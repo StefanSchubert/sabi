@@ -155,16 +155,11 @@ test.describe('Fish Departure Workflow', () => {
 
     // Seite neu laden: stellt sicher dass Server-seitige Aktualisierung reflektiert wird
     await page.reload({ waitUntil: 'networkidle' });
-    // Aquarium wieder auswählen nach Reload
+    // Aquarium wieder auswählen nach Reload (mit Promise.all Pattern)
     await Promise.all([
-      page.waitForResponse(resp =>
-        resp.url().includes('fishStockView') && resp.status() === 200
-        && resp.request().method() === 'POST',
-        { timeout: 15_000 }
-      ),
+      waitForFishStockAjax(page),
       selectPrimeFacesOption(page, 'Nano-Reef'),
     ]);
-    await page.waitForLoadState('networkidle');
 
     // ─── 5. Fisch NICHT mehr in "Currently in Tank" ───────────
     await expect(
