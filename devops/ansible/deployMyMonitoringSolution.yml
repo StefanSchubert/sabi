@@ -29,19 +29,19 @@
         state: directory
         owner: nodeexporter
         group: nodeexporter
-    - name: Fetch nodeexporter version 1.10.2
+    - name: Fetch nodeexporter version 1.11.1
       # 64 Bit Version
-      command: wget https://github.com/prometheus/node_exporter/releases/download/v1.10.2/node_exporter-1.10.2.linux-arm64.tar.gz
+      command: wget https://github.com/prometheus/node_exporter/releases/download/v1.11.1/node_exporter-1.11.1.linux-arm64.tar.gz
       args:
         chdir: /var/nodeexporter
     - name: Unpack nodeexporter version
       # 64 Bit Version
-      command: tar -xzf node_exporter-1.10.2.linux-arm64.tar.gz --strip-components=1
+      command: tar -xzf node_exporter-1.11.1.linux-arm64.tar.gz --strip-components=1
       args:
         chdir: /var/nodeexporter
     - name: Cleanup old files
       # 64 Bit Version
-      file: path=/var/nodeexporter/node_exporter-1.10.2.linux-arm64.tar.gz state=absent
+      file: path=/var/nodeexporter/node_exporter-1.11.1.linux-arm64.tar.gz state=absent
     - name: fix ownership of all files in /var/nodeexporter
       command: chown -R nodeexporter:nodeexporter nodeexporter
       args:
