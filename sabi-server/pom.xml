@@ -88,6 +88,11 @@
                     <artifactId>hibernate-entitymanager</artifactId>
                     <groupId>org.hibernate</groupId>
                 </exclusion>
+                <!-- Exclude the default Logback-based starter so Log4j2 is used exclusively -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
