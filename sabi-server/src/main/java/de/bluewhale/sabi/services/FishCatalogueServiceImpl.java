@@ -297,6 +297,18 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
                 Message.info(FishCatalogueMessageCodes.CATALOGUE_ENTRY_UPDATED, saved.getId()));
     }
 
+    @Override
+    public List<FishCatalogueEntryTo> listAllForAdmin(String adminEmail) {
+        if (!isAdmin(adminEmail)) return new ArrayList<>();
+        List<FishCatalogueEntryEntity> entities =
+                fishCatalogueEntryRepository.findAllByOrderByScientificNameAsc();
+        List<FishCatalogueEntryTo> result = new ArrayList<>();
+        for (FishCatalogueEntryEntity entity : entities) {
+            result.add(fishCatalogueMapper.mapEntity2To(entity));
+        }
+        return result;
+    }
+
     // ---- Helpers ----
 
     private boolean isAdmin(String userEmail) {

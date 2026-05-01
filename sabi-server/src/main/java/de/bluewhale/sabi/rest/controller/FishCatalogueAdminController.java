@@ -60,6 +60,27 @@ public class FishCatalogueAdminController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(pending);
     }
 
+    // ---- List ALL entries (admin catalogue browser) ----
+
+    @Operation(summary = "List all catalogue entries regardless of status (Admin only).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "All catalogue entries returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized."),
+            @ApiResponse(responseCode = "403", description = "Admin role required.")
+    })
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FishCatalogueEntryTo>> listAll(
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("GET /api/admin/fish/catalogue for {}", principal.getName());
+        List<FishCatalogueEntryTo> entries = fishCatalogueService.listAllForAdmin(principal.getName());
+        // Service returns empty list for non-admins; treat same as 403 for non-admins
+        if (entries.isEmpty() && !isAdminAccess(principal.getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(entries);
+    }
+
     // ---- Approve proposal (T061, US5) ----
 
     @Operation(summary = "Approve a pending proposal (Admin only, FR-016).")

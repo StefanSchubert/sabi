@@ -95,5 +95,15 @@ public interface FishCatalogueService {
     @NotNull
     @Transactional
     ResultTo<FishCatalogueEntryTo> updateEntry(@NotNull FishCatalogueEntryTo entryTo, @NotNull String userEmail);
+
+    /**
+     * List ALL catalogue entries regardless of status (Admin only).
+     * Used for the full catalogue browser in the admin view.
+     *
+     * @param adminEmail authenticated admin email
+     * @return list of all entries sorted alphabetically by scientific name (never null)
+     */
+    @NotNull
+    List<FishCatalogueEntryTo> listAllForAdmin(@NotNull String adminEmail);
 }
 

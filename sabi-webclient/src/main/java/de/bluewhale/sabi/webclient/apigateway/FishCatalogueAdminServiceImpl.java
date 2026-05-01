@@ -48,6 +48,19 @@ public class FishCatalogueAdminServiceImpl extends APIServiceImpl implements Fis
     }
 
     @Override
+    public List<FishCatalogueEntryTo> getAllEntries(String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE_ADMIN.getPath();
+        ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
+        try {
+            FishCatalogueEntryTo[] items = objectMapper.readValue(response.getBody(), FishCatalogueEntryTo[].class);
+            return Arrays.asList(items);
+        } catch (JacksonException e) {
+            log.error("Failed to parse all catalogue entries", e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+    }
+
+    @Override
     public FishCatalogueEntryTo approveEntry(Long id, FishCatalogueEntryTo edits, String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.FISH_CATALOGUE_ADMIN.getPath() + "/" + id + "/approve";
         RestTemplate restTemplate = new RestTemplate();
