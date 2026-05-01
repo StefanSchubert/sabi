@@ -61,6 +61,7 @@
         <joinfaces.version>6.0.3</joinfaces.version>
         <sabi.boundary.version>1.2.12</sabi.boundary.version>
         <passay.version>2.0.0</passay.version>
+        <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>12.1.3</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
@@ -285,6 +286,22 @@
                             <!--                            <goal>display-dependency-updates</goal>-->
                             <!--                            <goal>display-plugin-updates</goal>-->
                             <goal>display-property-updates</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Generates a Software Bill of Materials (SBOM) in CycloneDX format
+                     during the package phase. The SBOM is written to target/bom.xml and
+                     target/bom.json and lists all runtime dependencies. -->
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+                <version>${cyclonedx.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>makeBom</goal>
                         </goals>
                     </execution>
                 </executions>
