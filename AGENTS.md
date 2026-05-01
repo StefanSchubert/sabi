@@ -1,5 +1,8 @@
 # Agentic Guidelines for Sabi
 
+Maintain this file in english. If you find sections in 
+german from previous contributions, please translate them to english.
+
 ## Communication Preferences
 **Language & Tone**: German (Deutsch), informal "Du" form
 - User preference: Direct, peer-to-peer communication
@@ -7,7 +10,7 @@
 - Keep responses concise and action-oriented
 - Technical discussions on equal footing
 
-## Session Management (MANDATORY)
+## Context Management (MANDATORY)
 **Token Status Reporting**: ALWAYS end your response with token count in format:
 ```
 [XXXk tokens used]
@@ -226,6 +229,15 @@ await page.screenshot({ path: '/tmp/debug_after.png' });
 Ein grüner Test allein ist kein Beweis für korrekte Darstellung.
 
 ---
+
+## Frontend-REST Design preferred
+
+Favor RequestScoped Beans for REST Controllers to ensure statelessness 
+and thread safety. Avoid using @SessionScope or @Component for REST controllers,
+as they can lead to shared state issues in a multi-threaded environment. 
+Always inject dependencies via constructor injection and keep REST controllers
+focused on handling HTTP requests and responses without maintaining any
+internal state.
 
 ## Backend REST-API: Auth-Token-Pattern (MANDATORY)
 

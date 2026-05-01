@@ -54,6 +54,9 @@ public class FishStockEntryTo implements Serializable {
     @Schema(description = "Reason for departure (null if still present).")
     private DepartureReason departureReason;
 
+    @Schema(description = "Optional remark recorded at departure time.")
+    private String departureNote;
+
     @Schema(description = "Optional behaviour observations by the owner.")
     private String observedBehavior;
 

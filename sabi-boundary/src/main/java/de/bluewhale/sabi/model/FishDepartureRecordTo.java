@@ -25,5 +25,8 @@ public class FishDepartureRecordTo implements Serializable {
     @NotNull
     private DepartureReason departureReason;
 
+    /** Optional free-text remark / note about the departure. */
+    private String remark;
+
 }
 

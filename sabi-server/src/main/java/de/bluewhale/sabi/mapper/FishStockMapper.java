@@ -25,13 +25,15 @@ public interface FishStockMapper {
             @Mapping(target = "deletedAt", ignore = true),
             @Mapping(target = "addedOn", source = "addedOn"),
             @Mapping(target = "exodusOn", source = "exodusOn"),
-            @Mapping(target = "departureReason", expression = "java(to.getDepartureReason() != null ? to.getDepartureReason().name() : null)")
+            @Mapping(target = "departureReason", expression = "java(to.getDepartureReason() != null ? to.getDepartureReason().name() : null)"),
+            @Mapping(target = "departureNote", ignore = true)
     })
     TankFishStockEntity mapTo2Entity(FishStockEntryTo to);
 
     @Mappings({
             @Mapping(target = "hasPhoto", ignore = true),
-            @Mapping(target = "departureReason", expression = "java(entity.getDepartureReason() != null ? de.bluewhale.sabi.model.DepartureReason.valueOf(entity.getDepartureReason()) : null)")
+            @Mapping(target = "departureReason", expression = "java(entity.getDepartureReason() != null ? de.bluewhale.sabi.model.DepartureReason.valueOf(entity.getDepartureReason()) : null)"),
+            @Mapping(target = "departureNote", source = "departureNote")
     })
     FishStockEntryTo mapEntity2To(TankFishStockEntity entity);
 

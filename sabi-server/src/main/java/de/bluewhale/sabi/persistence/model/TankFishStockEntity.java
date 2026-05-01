@@ -75,6 +75,10 @@ public class TankFishStockEntity extends Auditable {
     @Basic
     private String departureReason;
 
+    @Column(name = "departure_note", nullable = true, columnDefinition = "TEXT")
+    @Basic
+    private String departureNote;
+
     @Column(name = "observed_behavior", nullable = true, columnDefinition = "TEXT")
     @Basic
     private String observedBehavior;

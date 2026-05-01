@@ -20,7 +20,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>25</java.version>
-        <flyway.version>12.4.0</flyway.version>
+        <flyway.version>12.5.0</flyway.version>
         <mariadb.client.version>3.5.8</mariadb.client.version>
         <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>

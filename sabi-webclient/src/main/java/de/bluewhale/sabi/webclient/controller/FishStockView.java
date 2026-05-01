@@ -47,7 +47,7 @@ public class FishStockView implements Serializable {
     @Inject
     TankListView tankListView;
 
-    @Autowired
+    @Inject
     FishDepartureView fishDepartureView;
 
     @Inject
@@ -83,6 +83,10 @@ public class FishStockView implements Serializable {
                 && tankListView.getTanks().size() == 1) {
             selectedAquariumId = tankListView.getTanks().get(0).getId();
             log.debug("Auto-preselected single aquarium id={}", selectedAquariumId);
+            // Persist in session so subsequent RequestScope instances can find the tank
+            if (userSession.getSelectedTank() == null) {
+                userSession.setSelectedTank(tankListView.getTanks().get(0));
+            }
         }
 
         // Use selectedAquariumId from dropdown if set, otherwise fall back to session tank

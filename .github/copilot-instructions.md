@@ -1,5 +1,3 @@
 # Agentic Guidelines for Sabi
 
-> ⚠️ **DEPRECATED** – Agentic Guidelines have been moved into  **`AGENTS.md`** 
-
-
+Please read [AGENTS.md](../AGENTS.md)

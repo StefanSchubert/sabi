@@ -156,6 +156,7 @@ public class FishStockServiceImpl implements FishStockService {
 
         entity.setExodusOn(departureRecord.getDepartureDate());
         entity.setDepartureReason(departureRecord.getDepartureReason().name());
+        entity.setDepartureNote(departureRecord.getRemark());
         TankFishStockEntity saved = tankFishStockRepository.save(entity);
         return new ResultTo<>(fishStockMapper.mapEntity2To(saved),
                 Message.info(FishStockMessageCodes.FISH_DEPARTURE_RECORDED, saved.getId()));

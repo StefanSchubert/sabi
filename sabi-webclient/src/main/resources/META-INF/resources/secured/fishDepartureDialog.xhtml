@@ -53,6 +53,18 @@
                 <p:message for="departureReason"/>
             </div>
 
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="departureRemark"
+                               value="#{msg['fishstock.departure.remark.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:inputTextarea id="departureRemark"
+                                 value="#{fishDepartureView.departureRecord.remark}"
+                                 rows="3"
+                                 style="width:100%;"
+                                 autoResize="false"
+                                 placeholder="#{msg['fishstock.departure.remark.label']}"/>
+            </div>
+
             <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
                 <p:commandButton value="#{msg['common.save.b']}"
                                  icon="pi pi-check"

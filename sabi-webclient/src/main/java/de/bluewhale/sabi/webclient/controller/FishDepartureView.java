@@ -57,6 +57,12 @@ public class FishDepartureView implements Serializable {
     }
 
     public void onSave() {
+        // Safety net: fishId must be known (restored from hidden field or set via init)
+        if (fishId == null) {
+            log.error("onSave() called with null fishId - cannot record departure");
+            MessageUtil.error(null, "fishstock.departure.fishid.missing", userSession.getLocale());
+            return;
+        }
         // Client-side validation: departureDate >= fishAddedOn (FR-006)
         if (departureRecord.getDepartureDate() == null) {
             MessageUtil.error(null, "fishstock.departure.date.required", userSession.getLocale());
