@@ -52,5 +52,10 @@ public interface FishCatalogueEntryRepository extends JpaRepository<FishCatalogu
      */
     boolean existsByScientificNameAndStatusIn(String scientificName, List<String> statuses);
 
+    /**
+     * Admin: all entries regardless of status, sorted alphabetically by scientific name.
+     */
+    List<FishCatalogueEntryEntity> findAllByOrderByScientificNameAsc();
+
 }
 
