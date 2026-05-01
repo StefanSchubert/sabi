@@ -317,11 +317,23 @@
 
                                 </p:tabView>
 
-                                <!-- Save / Cancel buttons -->
+                                <!-- Save / Cancel buttons.
+                                     Save is only enabled for PUBLIC entries (admin can always edit those).
+                                     PENDING entries are handled via the pending proposals dialog above.
+                                     REJECTED entries are read-only per FR-019. -->
+                                <p:panel rendered="#{fishCatalogueAdminView.selectedEntry.status.name() != 'PUBLIC'}"
+                                         style="background:#fef3c7; border:1px solid #d97706; padding:0.5rem; border-radius:4px; margin-top:1rem; color:#92400e;">
+                                    <p:outputLabel rendered="#{fishCatalogueAdminView.selectedEntry.status.name() == 'PENDING'}"
+                                                   value="#{msg['fishcatalogue.admin.editor.pending.hint']}"/>
+                                    <p:outputLabel rendered="#{fishCatalogueAdminView.selectedEntry.status.name() == 'REJECTED'}"
+                                                   value="#{msg['fishcatalogue.admin.editor.rejected.hint']}"/>
+                                </p:panel>
+
                                 <div style="display:flex; gap:0.5rem; margin-top:1rem; justify-content:flex-end;">
                                     <p:commandButton value="#{msg['common.save.b']}"
                                                      icon="pi pi-check"
                                                      style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                                     rendered="#{fishCatalogueAdminView.selectedEntry.status.name() == 'PUBLIC'}"
                                                      actionListener="#{fishCatalogueAdminView.onSaveEntry()}"
                                                      update=":adminForm:adminMessages :adminForm:catalogueBrowserPanel"/>
                                     <p:commandButton value="#{msg['common.cancel.b']}"
