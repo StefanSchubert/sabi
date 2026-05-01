@@ -16,6 +16,9 @@ public interface FishCatalogueAdminService {
 
     List<FishCatalogueEntryTo> getPendingProposals(String token) throws BusinessException;
 
+    /** Fetch ALL catalogue entries (any status) for the admin catalogue browser. */
+    List<FishCatalogueEntryTo> getAllEntries(String token) throws BusinessException;
+
     FishCatalogueEntryTo approveEntry(Long id, FishCatalogueEntryTo edits, String token) throws BusinessException;
 
     void rejectEntry(Long id, String reason, String token) throws BusinessException;

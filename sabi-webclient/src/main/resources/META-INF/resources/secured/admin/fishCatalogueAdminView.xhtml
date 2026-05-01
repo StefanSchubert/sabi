@@ -20,47 +20,55 @@
         <ui:define name="content">
 
             <h2 style="color:#075985;">#{msg['fishcatalogue.admin.title']}</h2>
-            <h3 style="color:#374151;">#{msg['fishcatalogue.admin.pending.list.title']}</h3>
 
             <h:form id="adminForm">
                 <p:messages id="adminMessages" showDetail="true" closable="true"/>
 
-                <!-- Reload proposals on every page visit (SessionScope bean caches list) -->
-                <p:remoteCommand name="sabiLoadProposals"
-                                 actionListener="#{fishCatalogueAdminView.refreshProposals()}"
-                                 update="pendingTable"
-                                 autoRun="true"/>
+                <!-- ═══════════════════════════════════════════════════
+                     SECTION 1 — Pending Proposals (FR-021)
+                     ═══════════════════════════════════════════════════ -->
+                <p:panel id="pendingPanel" style="margin-bottom:2rem;">
+                    <f:facet name="header">
+                        <span style="font-weight:600;">#{msg['fishcatalogue.admin.pending.list.title']}</span>
+                    </f:facet>
 
-                <!-- Pending Proposals Table (FR-021) -->
-                <p:dataTable id="pendingTable"
-                             var="proposal"
-                             value="#{fishCatalogueAdminView.pendingProposals}"
-                             emptyMessage="#{msg['common.no.data.l']}">
+                    <!-- Reload proposals on every page visit (SessionScope bean caches list) -->
+                    <p:remoteCommand name="sabiLoadProposals"
+                                     actionListener="#{fishCatalogueAdminView.refreshProposals()}"
+                                     update="pendingPanel"
+                                     autoRun="true"/>
 
-                    <p:column headerText="#{msg['fishcatalogue.scientificname.label']}">
-                        <p:outputLabel value="#{proposal.scientificName}" style="font-style:italic;"/>
-                    </p:column>
+                    <!-- Pending Proposals Table (FR-021) -->
+                    <p:dataTable id="pendingTable"
+                                 var="proposal"
+                                 value="#{fishCatalogueAdminView.pendingProposals}"
+                                 emptyMessage="#{msg['common.no.data.l']}">
 
-                    <p:column headerText="#{msg['fishcatalogue.admin.submissiondate.label']}">
-                        <p:outputLabel value="#{proposal.proposalDate}">
-                            <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
-                        </p:outputLabel>
-                    </p:column>
+                        <p:column headerText="#{msg['fishcatalogue.scientificname.label']}">
+                            <p:outputLabel value="#{proposal.scientificName}" style="font-style:italic;"/>
+                        </p:column>
 
-                    <p:column headerText="#{msg['fishcatalogue.admin.proposer.label']}">
-                        <!-- anonymised: show only user ID fragment -->
-                        <p:outputLabel value="User ##{proposal.proposerUserId}"/>
-                    </p:column>
+                        <p:column headerText="#{msg['fishcatalogue.admin.submissiondate.label']}">
+                            <p:outputLabel value="#{proposal.proposalDate}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </p:outputLabel>
+                        </p:column>
 
-                    <p:column headerText="" style="width:5rem; text-align:center;">
-                        <p:commandButton icon="pi pi-search"
-                                         title="#{msg['common.edit.b']}"
-                                         actionListener="#{fishCatalogueAdminView.onOpenProposal(proposal)}"
-                                         update=":adminForm:proposalDetailDialog"
-                                         oncomplete="PF('proposalDetailWidget').show()"/>
-                    </p:column>
+                        <p:column headerText="#{msg['fishcatalogue.admin.proposer.label']}">
+                            <!-- anonymised: show only user ID fragment -->
+                            <p:outputLabel value="User ##{proposal.proposerUserId}"/>
+                        </p:column>
 
-                </p:dataTable>
+                        <p:column headerText="" style="width:5rem; text-align:center;">
+                            <p:commandButton icon="pi pi-search"
+                                             title="#{msg['common.edit.b']}"
+                                             actionListener="#{fishCatalogueAdminView.onOpenProposal(proposal)}"
+                                             update=":adminForm:proposalDetailDialog"
+                                             oncomplete="PF('proposalDetailWidget').show()"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:panel>
 
                 <!-- Detail Dialog — inside adminForm so update=":adminForm" works from approve/reject buttons -->
                 <p:dialog id="proposalDetailDialog"
@@ -121,6 +129,215 @@
                     </div>
 
                 </p:dialog>
+
+                <!-- ═══════════════════════════════════════════════════
+                     SECTION 2 — Full Catalogue Browser + Inline Editor
+                     ═══════════════════════════════════════════════════ -->
+                <p:panel id="catalogueBrowserPanel">
+                    <f:facet name="header">
+                        <span style="font-weight:600;">#{msg['fishcatalogue.admin.catalogue.browser.title']}</span>
+                    </f:facet>
+
+                    <p:remoteCommand name="sabiLoadCatalogue"
+                                     actionListener="#{fishCatalogueAdminView.refreshCatalogue()}"
+                                     update="catalogueBrowserPanel"
+                                     autoRun="true"/>
+
+                    <!-- Two-column layout: left = entry list, right = editor -->
+                    <p:panelGrid columns="2"
+                                 style="width:100%; border:none;"
+                                 columnClasses="ui-g-4,ui-g-8">
+
+                        <!-- LEFT: entry list -->
+                        <p:panel id="entryListPanel"
+                                 style="height:600px; overflow-y:auto; border-right:1px solid #e5e7eb; padding-right:0.5rem;">
+                            <p:dataTable id="catalogueTable"
+                                         var="entry"
+                                         value="#{fishCatalogueAdminView.catalogueEntries}"
+                                         emptyMessage="#{msg['common.no.data.l']}"
+                                         rowStyleClass="#{fishCatalogueAdminView.selectedEntry != null and entry.id eq fishCatalogueAdminView.selectedEntry.id ? 'sabi-selected-row' : ''}"
+                                         style="width:100%;">
+
+                                <p:column headerText="#{msg['fishcatalogue.scientificname.label']}">
+                                    <p:commandLink value="#{entry.scientificName}"
+                                                   style="font-style:italic; color:#0369a1; text-decoration:underline;"
+                                                   actionListener="#{fishCatalogueAdminView.onSelectEntry(entry)}"
+                                                   update=":adminForm:editorPanel"/>
+                                </p:column>
+
+                                <p:column headerText="#{msg['fishcatalogue.status.label']}" style="width:7rem; text-align:center;">
+                                    <p:tag rendered="#{entry.status.name() == 'PUBLIC'}"
+                                           value="#{msg['fishcatalogue.status.public']}"
+                                           severity="success"/>
+                                    <p:tag rendered="#{entry.status.name() == 'PENDING'}"
+                                           value="#{msg['fishcatalogue.status.pending']}"
+                                           severity="warn"/>
+                                    <p:tag rendered="#{entry.status.name() == 'REJECTED'}"
+                                           value="#{msg['fishcatalogue.status.rejected']}"
+                                           severity="danger"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panel>
+
+                        <!-- RIGHT: inline editor -->
+                        <p:panel id="editorPanel" style="padding-left:1rem;">
+
+                            <!-- Placeholder when nothing selected -->
+                            <p:panel rendered="#{fishCatalogueAdminView.selectedEntry == null}"
+                                     style="color:#6b7280; font-style:italic; padding:2rem; text-align:center;">
+                                <p:outputLabel value="#{msg['fishcatalogue.admin.editor.select.hint']}"/>
+                            </p:panel>
+
+                            <!-- Editor for selected entry -->
+                            <h:panelGroup rendered="#{fishCatalogueAdminView.selectedEntry != null}">
+
+                                <h3 style="color:#075985; margin-top:0;">#{msg['fishcatalogue.admin.editor.title']}</h3>
+
+                                <!-- Scientific Name -->
+                                <div class="p-field p-mb-2">
+                                    <p:outputLabel for="editorScientificName"
+                                                   value="#{msg['fishcatalogue.scientificname.label']}"
+                                                   style="display:block; font-weight:600;"/>
+                                    <p:inputText id="editorScientificName"
+                                                 value="#{fishCatalogueAdminView.selectedEntry.scientificName}"
+                                                 required="true"
+                                                 maxlength="255"
+                                                 style="width:100%;"/>
+                                    <p:message for="editorScientificName"/>
+                                </div>
+
+                                <!-- Status display (read-only) -->
+                                <div class="p-field p-mb-2">
+                                    <p:outputLabel value="#{msg['fishcatalogue.status.label']}"
+                                                   style="display:block; font-weight:600;"/>
+                                    <p:tag rendered="#{fishCatalogueAdminView.selectedEntry.status.name() == 'PUBLIC'}"
+                                           value="#{msg['fishcatalogue.status.public']}"
+                                           severity="success"/>
+                                    <p:tag rendered="#{fishCatalogueAdminView.selectedEntry.status.name() == 'PENDING'}"
+                                           value="#{msg['fishcatalogue.status.pending']}"
+                                           severity="warn"/>
+                                    <p:tag rendered="#{fishCatalogueAdminView.selectedEntry.status.name() == 'REJECTED'}"
+                                           value="#{msg['fishcatalogue.status.rejected']}"
+                                           severity="danger"/>
+                                </div>
+
+                                <!-- i18n Tabs: DE / EN / ES / FR / IT -->
+                                <p:tabView style="margin-top:1rem;">
+
+                                    <p:tab title="#{msg['fishcatalogue.tab.de']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[0].commonName}"
+                                                         maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[0].description}"
+                                                             maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[0].referenceUrl}"
+                                                         maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+
+                                    <p:tab title="#{msg['fishcatalogue.tab.en']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[1].commonName}"
+                                                         maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[1].description}"
+                                                             maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[1].referenceUrl}"
+                                                         maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+
+                                    <p:tab title="#{msg['fishcatalogue.tab.es']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[2].commonName}"
+                                                         maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[2].description}"
+                                                             maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[2].referenceUrl}"
+                                                         maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+
+                                    <p:tab title="#{msg['fishcatalogue.tab.fr']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[3].commonName}"
+                                                         maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[3].description}"
+                                                             maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[3].referenceUrl}"
+                                                         maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+
+                                    <p:tab title="#{msg['fishcatalogue.tab.it']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[4].commonName}"
+                                                         maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[4].description}"
+                                                             maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{fishCatalogueAdminView.selectedEntry.i18nEntries[4].referenceUrl}"
+                                                         maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+
+                                </p:tabView>
+
+                                <!-- Save / Cancel buttons -->
+                                <div style="display:flex; gap:0.5rem; margin-top:1rem; justify-content:flex-end;">
+                                    <p:commandButton value="#{msg['common.save.b']}"
+                                                     icon="pi pi-check"
+                                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                                     actionListener="#{fishCatalogueAdminView.onSaveEntry()}"
+                                                     update=":adminForm:adminMessages :adminForm:catalogueBrowserPanel"/>
+                                    <p:commandButton value="#{msg['common.cancel.b']}"
+                                                     icon="pi pi-ban"
+                                                     styleClass="ui-button-secondary"
+                                                     actionListener="#{fishCatalogueAdminView.onCancelEdit()}"
+                                                     update=":adminForm:editorPanel"
+                                                     immediate="true"/>
+                                </div>
+
+                            </h:panelGroup>
+                        </p:panel>
+
+                    </p:panelGrid>
+
+                </p:panel>
 
             </h:form>
         </ui:define>
