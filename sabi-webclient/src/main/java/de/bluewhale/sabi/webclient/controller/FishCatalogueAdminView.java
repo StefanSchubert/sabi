@@ -125,6 +125,9 @@ public class FishCatalogueAdminView implements Serializable {
         if (selectedEntry == null) return;
         try {
             Long idToReSelect = selectedEntry.getId();
+            // Use the user-facing catalogue service for updates — it already contains
+            // admin authorization logic: admins may edit PUBLIC entries (FR-019).
+            // PENDING entries are handled via the pending-proposals dialog above.
             fishCatalogueService.updateEntry(selectedEntry, userSession.getSabiBackendToken());
             MessageUtil.info(null, "common.save.confirmation.t", userSession.getLocale());
             refreshCatalogue();

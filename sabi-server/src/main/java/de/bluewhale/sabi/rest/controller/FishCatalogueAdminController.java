@@ -74,7 +74,8 @@ public class FishCatalogueAdminController {
             Principal principal) {
         log.debug("GET /api/admin/fish/catalogue for {}", principal.getName());
         List<FishCatalogueEntryTo> entries = fishCatalogueService.listAllForAdmin(principal.getName());
-        if (entries == null) {
+        // Service returns empty list for non-admins; treat same as 403 for non-admins
+        if (entries.isEmpty() && !isAdminAccess(principal.getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(entries);
