@@ -141,7 +141,11 @@
                                 alt="#{msg['fishstock.form.photo.label']}"/>
                 <input type="file" id="photoFileInput"
                        accept="image/jpeg,image/png,image/webp,image/gif"
-                       style="width:100%;"/>
+                       style="width:100%;"
+                       onchange="sabiValidatePhotoSize(this)"/>
+                <small style="color:#6b7280;">#{msg['fishstock.form.photo.hint']}</small>
+                <span id="photoUploadError"
+                      style="display:none; color:#b91c1c; font-size:0.875rem;"/>
             </div>
 
             <!-- Action Buttons -->
@@ -161,19 +165,48 @@
 
         <script>
         //<![CDATA[
+        /** Maximum photo file size in bytes (must match sabi.fish.photo.max-size-bytes on the backend). */
+        var SABI_MAX_PHOTO_BYTES = 5242880;
+        var SABI_PHOTO_SIZE_ERROR_MSG = '#{msg["fishstock.form.photo.size.error"]}';
+
+        /**
+         * Validates the selected file size immediately on change.
+         * Shows an inline error and clears the input if the file is too large.
+         */
+        function sabiValidatePhotoSize(input) {
+            var errorEl = document.getElementById('photoUploadError');
+            if (!errorEl) return;
+            if (input.files && input.files.length > 0 && input.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG;
+                errorEl.style.display = 'block';
+                input.value = '';
+            } else {
+                errorEl.style.display = 'none';
+            }
+        }
+
         /**
          * After AJAX save: reads the server-assigned fish ID from the hidden field,
-         * uploads the selected photo via fetch(FormData) to the Spring MVC proxy,
-         * refreshes the fish table, then closes the dialog.
+         * validates the file size, uploads the selected photo via fetch(FormData) to
+         * the Spring MVC proxy, refreshes the fish table, then closes the dialog.
+         *
+         * If the file is too large or the server rejects it, the dialog stays open
+         * and an inline error message is shown.
          *
          * Background: PrimeFaces AJAX does not transmit file bytes from mode="simple"
          * p:fileUpload. We therefore use a plain HTML file input and upload separately.
          */
         function sabiUploadPhotoThenClose() {
             var fileInput = document.getElementById('photoFileInput');
+            var errorEl = document.getElementById('photoUploadError');
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
                 PF('fishEntryDialogWidget').hide();
                 return;
+            }
+            // Client-side size check before even attempting the upload
+            if (fileInput.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                if (errorEl) { errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                return; // Keep dialog open so user can choose a smaller file
             }
             // Fish ID is stored in the hidden input bound to fishStockEntryView.currentEntry.id
             var fishIdEl = document.querySelector('[id$="fishEntryId"]');
@@ -187,19 +220,22 @@
             fetch('/secured/fishPhoto?fishId=' + fishId, { method: 'POST', body: formData })
                 .then(function(resp) {
                     if (!resp.ok) {
+                        // Server rejected the upload (e.g. file too large) — show error, keep dialog open
+                        if (errorEl) { errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
                         console.warn('Photo upload returned status ' + resp.status);
+                    } else {
+                        fileInput.value = '';
+                        if (errorEl) errorEl.style.display = 'none';
+                        // Close dialog, then refresh table so hasPhoto=true is reflected
+                        PF('fishEntryDialogWidget').hide();
+                        if (typeof sabiRefreshFishTable === 'function') {
+                            setTimeout(sabiRefreshFishTable, 200);
+                        }
                     }
-                    fileInput.value = '';
                 })
                 .catch(function(err) {
                     console.error('Photo upload failed:', err);
-                })
-                .finally(function() {
-                    // Close dialog first, then refresh table so hasPhoto=true is reflected
                     PF('fishEntryDialogWidget').hide();
-                    if (typeof sabiRefreshFishTable === 'function') {
-                        setTimeout(sabiRefreshFishTable, 200);
-                    }
                 });
         }
         //]]>
