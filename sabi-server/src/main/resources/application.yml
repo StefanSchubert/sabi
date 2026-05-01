@@ -77,6 +77,14 @@ server:
 spring:
   application:
     name: sabi-service
+  servlet:
+    multipart:
+      enabled: true
+      # Must be >= sabi.fish.photo.max-size-bytes (5 MB, defined in this file below)
+      # so Spring accepts the multipart request before the service-layer size check runs.
+      # Keeping it at 6 MB leaves headroom while still enforcing the 5 MB business limit.
+      max-file-size: 6MB
+      max-request-size: 12MB
   # JPA Database configuration
   threads:
     virtual:
