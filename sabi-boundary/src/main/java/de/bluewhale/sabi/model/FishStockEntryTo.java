@@ -14,6 +14,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Transfer object representing a fish stock entry in a user's tank.
@@ -65,6 +67,9 @@ public class FishStockEntryTo implements Serializable {
 
     @Schema(description = "True if a photo has been uploaded for this fish entry.")
     private boolean hasPhoto;
+
+    @Schema(description = "IDs of fish roles assigned to this fish entry.")
+    private List<Integer> fishRoleIds = new ArrayList<>();
 
 }
 

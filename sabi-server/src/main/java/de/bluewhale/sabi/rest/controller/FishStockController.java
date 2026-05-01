@@ -7,11 +7,13 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
+import de.bluewhale.sabi.model.FishRoleTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.FishStockExceptionCodes;
 import de.bluewhale.sabi.services.FishStockMessageCodes;
 import de.bluewhale.sabi.services.FishStockService;
+import de.bluewhale.sabi.services.FishRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -43,6 +45,25 @@ public class FishStockController {
 
     @Autowired
     FishStockService fishStockService;
+
+    @Autowired
+    FishRoleService fishRoleService;
+
+    // ---- List fish roles (localized) ----
+
+    @Operation(summary = "List all available fish roles with localized names and descriptions.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Role list returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @GetMapping(value = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FishRoleTo>> getFishRoles(
+            @RequestParam(value = "lang", defaultValue = "en") String lang,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token) {
+        log.debug("GET /api/fish/roles?lang={}", lang);
+        List<FishRoleTo> roles = fishRoleService.getFishRoles(lang);
+        return ResponseEntity.ok(roles);
+    }
 
     // ---- List fish for a tank ----
 

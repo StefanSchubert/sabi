@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
+import de.bluewhale.sabi.model.FishRoleTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import jakarta.validation.constraints.NotNull;
@@ -36,5 +37,14 @@ public interface FishStockService {
     void uploadPhoto(@NotNull Long fishId, @NotNull byte[] bytes, @NotNull String contentType, @NotNull String token) throws BusinessException;
 
     byte[] getPhoto(@NotNull Long fishId, @NotNull String token) throws BusinessException;
+
+    /**
+     * Returns all available fish roles with localized names/descriptions.
+     *
+     * @param language ISO 639-1 language code (e.g. "de", "en")
+     * @param token    backend auth token
+     * @return list of fish roles; empty list on error
+     */
+    @NotNull List<FishRoleTo> getFishRoles(@NotNull String language, @NotNull String token) throws BusinessException;
 }
 

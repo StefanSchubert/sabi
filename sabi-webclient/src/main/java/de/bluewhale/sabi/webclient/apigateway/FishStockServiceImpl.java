@@ -10,6 +10,7 @@ import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
+import de.bluewhale.sabi.model.FishRoleTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
@@ -183,6 +184,19 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             case "image/gif" -> ".gif";
             default -> ".jpg";
         };
+    }
+
+    @Override
+    public List<FishRoleTo> getFishRoles(String language, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.FISH_ROLES.getPath() + "?lang=" + language;
+        ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
+        try {
+            FishRoleTo[] roles = objectMapper.readValue(response.getBody(), FishRoleTo[].class);
+            return Arrays.asList(roles);
+        } catch (JacksonException e) {
+            log.error("Failed to parse fish roles from {}", uri, e);
+            return Collections.emptyList();
+        }
     }
 
     @Override

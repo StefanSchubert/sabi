@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.FishCatalogueSearchResultTo;
+import de.bluewhale.sabi.model.FishRoleTo;
 import org.primefaces.event.SelectEvent;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
@@ -54,6 +55,7 @@ public class FishStockEntryView implements Serializable {
     private FishStockEntryTo currentEntry = new FishStockEntryTo();
     private byte[] previewPhoto;
     private UploadedFile uploadedFile;
+    private List<FishRoleTo> availableRoles = Collections.emptyList();
 
     /**
      * Derived from currentEntry.id — survives RequestScope via hidden field.
@@ -71,6 +73,15 @@ public class FishStockEntryView implements Serializable {
             this.currentEntry.setAquariumId(
                     userSession.getSelectedTank() != null ? userSession.getSelectedTank().getId() : null);
             this.currentEntry.setAddedOn(LocalDate.now());
+        }
+        // Load available fish roles for the current user's language
+        try {
+            this.availableRoles = fishStockService.getFishRoles(
+                    userSession.getLocale().getLanguage(),
+                    userSession.getSabiBackendToken());
+        } catch (BusinessException e) {
+            log.warn("Could not load fish roles", e);
+            this.availableRoles = Collections.emptyList();
         }
     }
 

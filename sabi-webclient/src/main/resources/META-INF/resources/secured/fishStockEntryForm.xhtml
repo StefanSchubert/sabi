@@ -127,6 +127,23 @@
                                  style="width:100%;"/>
             </div>
 
+            <!-- Fish Roles (optional, multi-select checkboxes) -->
+            <div class="p-field p-mb-2" rendered="#{not empty fishStockEntryView.availableRoles}">
+                <p:outputLabel value="#{msg['fishstock.form.roles.label']}"
+                               style="display:block; margin-bottom:0.35rem;"/>
+                <p:selectManyCheckbox id="fishRoles"
+                                      value="#{fishStockEntryView.currentEntry.fishRoleIds}"
+                                      layout="responsive"
+                                      columns="2"
+                                      style="width:100%;">
+                    <f:selectItems value="#{fishStockEntryView.availableRoles}"
+                                   var="role"
+                                   itemLabel="#{role.localizedName}"
+                                   itemValue="#{role.id}"/>
+                    <f:converter converterId="javax.faces.Integer"/>
+                </p:selectManyCheckbox>
+            </div>
+
             <!-- Photo Upload (optional, FR-008, FR-025)
                  NOTE: p:fileUpload mode="simple" does NOT transmit file bytes via PrimeFaces AJAX.
                  We use a plain HTML file input; JS fetch() uploads after the AJAX save returns the fish ID. -->
