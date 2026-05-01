@@ -80,7 +80,7 @@ public class FishStockEntryView implements Serializable {
                     userSession.getLocale().getLanguage(),
                     userSession.getSabiBackendToken());
         } catch (BusinessException e) {
-            log.warn("Could not load fish roles: {}", e.getMessage());
+            log.warn("Could not load fish roles", e);
             this.availableRoles = Collections.emptyList();
         }
     }

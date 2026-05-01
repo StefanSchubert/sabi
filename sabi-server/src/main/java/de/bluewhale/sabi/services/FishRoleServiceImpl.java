@@ -49,7 +49,15 @@ public class FishRoleServiceImpl implements FishRoleService {
 
         // Build a map: roleId → localized entry for O(1) lookup
         Map<Integer, LocalizedFishRoleEntity> localizedByRoleId = localizedEntries.stream()
-                .collect(Collectors.toMap(LocalizedFishRoleEntity::getRoleId, e -> e, (a, b) -> a));
+                .collect(Collectors.toMap(
+                        LocalizedFishRoleEntity::getRoleId,
+                        e -> e,
+                        (a, b) -> {
+                            log.warn("Duplicate localized_fish_role entry for roleId={}, lang={} — keeping first",
+                                    a.getRoleId(), a.getLanguageCode());
+                            return a;
+                        }
+                ));
 
         List<FishRoleTo> result = new ArrayList<>();
         for (FishRoleEntity role : allRoles) {
