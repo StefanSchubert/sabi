@@ -32,8 +32,8 @@ public enum Endpoint {
     // 002-fish-stock-catalogue
     FISH_STOCK("/api/fish"),
     FISH_CATALOGUE("/api/fish/catalogue"),
-    FISH_CATALOGUE_ADMIN("/api/admin/fish/catalogue");
-    ;
+    FISH_CATALOGUE_ADMIN("/api/admin/fish/catalogue"),
+    FISH_ROLES("/api/fish/roles");
 
 // ------------------------------ FIELDS ------------------------------
 

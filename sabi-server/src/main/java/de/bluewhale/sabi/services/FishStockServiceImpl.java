@@ -14,11 +14,13 @@ import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.FishCatalogueEntryEntity;
 import de.bluewhale.sabi.persistence.model.FishPhotoEntity;
+import de.bluewhale.sabi.persistence.model.FishRoleEntity;
 import de.bluewhale.sabi.persistence.model.TankFishStockEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.FishCatalogueEntryRepository;
 import de.bluewhale.sabi.persistence.repositories.FishPhotoRepository;
+import de.bluewhale.sabi.persistence.repositories.FishRoleRepository;
 import de.bluewhale.sabi.persistence.repositories.TankFishStockRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link FishStockService}.
@@ -56,6 +62,9 @@ public class FishStockServiceImpl implements FishStockService {
 
     @Autowired
     private FishPhotoRepository fishPhotoRepository;
+
+    @Autowired
+    private FishRoleRepository fishRoleRepository;
 
     @Autowired
     private FishStockMapper fishStockMapper;
@@ -99,6 +108,9 @@ public class FishStockServiceImpl implements FishStockService {
             });
         }
 
+        // Resolve and assign fish roles
+        entity.setFishRoles(resolveFishRoles(entry.getFishRoleIds()));
+
         // saveAndFlush() forces EclipseLink to execute the INSERT immediately so that
         // the IDENTITY-generated ID is populated in the returned entity before we map it.
         TankFishStockEntity saved = tankFishStockRepository.saveAndFlush(entity);
@@ -127,6 +139,7 @@ public class FishStockServiceImpl implements FishStockService {
         entity.setAddedOn(entry.getAddedOn());
         entity.setObservedBehavior(entry.getObservedBehavior());
         entity.setFishCatalogueId(entry.getFishCatalogueId());
+        entity.setFishRoles(resolveFishRoles(entry.getFishRoleIds()));
 
         TankFishStockEntity saved = tankFishStockRepository.save(entity);
         FishStockEntryTo savedTo = fishStockMapper.mapEntity2To(saved);
@@ -314,6 +327,20 @@ public class FishStockServiceImpl implements FishStockService {
         return aquariumRepository.findById(aquariumId)
                 .map(a -> a.getUser().getId().equals(userId))
                 .orElse(false);
+    }
+
+    /**
+     * Resolves a list of role IDs to their corresponding FishRoleEntity instances.
+     * Unknown IDs are silently ignored.
+     */
+    private Set<FishRoleEntity> resolveFishRoles(List<Integer> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            return new HashSet<>();
+        }
+        return roleIds.stream()
+                .map(id -> fishRoleRepository.findById(id).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 }
 

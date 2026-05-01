@@ -12,6 +12,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a fish entry in a user's tank stock.
@@ -30,7 +32,7 @@ import java.time.LocalDateTime;
 @Entity
 @SQLRestriction("deleted_at IS NULL")
 @Data
-@EqualsAndHashCode(exclude = "user", callSuper = false)
+@EqualsAndHashCode(exclude = {"user", "fishRoles"}, callSuper = false)
 public class TankFishStockEntity extends Auditable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,6 +95,18 @@ public class TankFishStockEntity extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    /**
+     * Fish roles assigned to this fish entry (many-to-many via fish_role_assignment join table).
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "fish_role_assignment",
+            schema = "sabi",
+            joinColumns = @JoinColumn(name = "fish_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<FishRoleEntity> fishRoles = new HashSet<>();
 
 }
 
