@@ -58,7 +58,7 @@
         <log4j2.version>2.20.0</log4j2.version>
         <jakarta.cdi.version>4.1.0</jakarta.cdi.version>
         <micrometer.prometheus.version>1.16.4</micrometer.prometheus.version>
-        <joinfaces.version>6.0.3</joinfaces.version>
+        <joinfaces.version>6.0.5</joinfaces.version>
         <sabi.boundary.version>1.2.12</sabi.boundary.version>
         <passay.version>2.0.0</passay.version>
         <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
@@ -66,7 +66,7 @@
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
-        <lombok.version>1.18.44</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
         <chart.js.javamodel.version>1.1.2</chart.js.javamodel.version>
     </properties>

@@ -36,12 +36,12 @@
 
     <properties>
         <java.version>25</java.version>
-        <lombok.version>1.18.44</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <swagger.annotations.version>2.2.31</swagger.annotations.version>
+        <swagger.annotations.version>2.2.49</swagger.annotations.version>
         <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <jackson.annotations.version>2.19.0</jackson.annotations.version>
         <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
