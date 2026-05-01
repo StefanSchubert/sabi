@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -162,6 +163,26 @@ public class FishStockView implements Serializable {
     public void onRecordDeparture(FishStockEntryTo fish) {
         this.selectedFish = fish;
         fishDepartureView.init(fish);
+    }
+
+    /**
+     * Creates a copy of the given fish entry and opens the entry dialog pre-filled with
+     * the duplicated data. The new entry has no ID (so a new record is created on save),
+     * no photo, no departure data, and its addedOn date is reset to today.
+     */
+    public void onDuplicateFish(FishStockEntryTo fish) {
+        FishStockEntryTo copy = new FishStockEntryTo();
+        copy.setAquariumId(fish.getAquariumId());
+        copy.setCommonName(fish.getCommonName());
+        copy.setScientificName(fish.getScientificName());
+        copy.setNickname(fish.getNickname());
+        copy.setExternalRefUrl(fish.getExternalRefUrl());
+        copy.setObservedBehavior(fish.getObservedBehavior());
+        copy.setFishCatalogueId(fish.getFishCatalogueId());
+        copy.setAddedOn(LocalDate.now());
+        // id, exodusOn, departureReason, hasPhoto intentionally left blank
+        this.selectedFish = copy;
+        fishStockEntryView.init(copy);
     }
 
     public void onRemoveCatalogueLink(FishStockEntryTo fish) {

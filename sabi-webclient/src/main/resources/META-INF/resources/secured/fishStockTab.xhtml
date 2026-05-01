@@ -83,10 +83,17 @@
                 </p:column>
 
                 <!-- Actions -->
-                <p:column headerText="" style="width:9rem; text-align:center;">
+                <p:column headerText="" style="width:12rem; text-align:center;">
                     <p:commandButton icon="pi pi-pencil"
                                      title="#{msg['common.edit.b']}"
                                      actionListener="#{fishStockView.onEditFish(fish)}"
+                                     update=":fishEntryDialog"
+                                     oncomplete="PF('fishEntryDialogWidget').show()"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-copy"
+                                     title="#{msg['fishstock.duplicate.button']}"
+                                     styleClass="ui-button-secondary"
+                                     actionListener="#{fishStockView.onDuplicateFish(fish)}"
                                      update=":fishEntryDialog"
                                      oncomplete="PF('fishEntryDialogWidget').show()"
                                      style="margin-right:0.25rem;"/>
