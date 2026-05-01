@@ -25,6 +25,31 @@
 4. Summarize: "✅ Key rules refreshed: [list top 3 critical rules]"
 5. Continue work
 
+## Technical Context: SBOM (Software Bill of Materials)
+
+**MANDATORY: Before starting work on any module, read the SBOM to understand the current dependency landscape.**
+
+Each Maven module generates a CycloneDX SBOM during `mvn package`. The SBOM files are located at:
+
+| Module           | SBOM Location                          |
+|------------------|----------------------------------------|
+| `sabi-server`    | `sabi-server/target/bom.json`          |
+| `sabi-webclient` | `sabi-webclient/target/bom.json`       |
+| `captcha`        | `captcha/target/bom.json`              |
+| `sabi-boundary`  | `sabi-boundary/target/bom.json`        |
+
+**Why read the SBOM:**
+- Understand which libraries and versions are actually in use (including transitive dependencies)
+- Identify relevant frameworks before suggesting dependency changes
+- Avoid suggesting libraries that are already present under a different artifact ID
+- Check the exact versions of key components (Spring Boot, PrimeFaces, EclipseLink, etc.)
+
+**How to generate (if not yet present):**
+```bash
+cd <module-dir> && mvn package -DskipTests
+# SBOM written to target/bom.xml and target/bom.json
+```
+
 ---
 
 ## Terminal-Ausgaben (MANDATORY)
