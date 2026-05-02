@@ -16,10 +16,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
@@ -224,5 +226,75 @@ public class TankController {
             responseEntity = new ResponseEntity<>(aquariumTo, HttpStatus.CONFLICT);
         }
         return responseEntity;
+    }
+
+    // ---- Photo upload ----
+
+    @Operation(summary = "Upload a photo for an aquarium (max 5 MB, JPEG/PNG/WebP/GIF).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Photo uploaded."),
+            @ApiResponse(responseCode = "400", description = "Invalid format or file too large."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> uploadPhoto(
+            @PathVariable String id,
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("POST /api/tank/{}/photo for {}", id, principal.getName());
+        try {
+            String resolvedContentType = (file.getContentType() != null) ? file.getContentType() : "image/jpeg";
+            byte[] fileBytes = file.getBytes();
+            tankService.uploadPhoto(Long.valueOf(id), fileBytes, resolvedContentType, principal.getName());
+        } catch (Exception e) {
+            log.warn("Photo upload failed for aquarium {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    // ---- Photo download ----
+
+    @Operation(summary = "Download the photo of an aquarium (ownership check).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Photo bytes returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized."),
+            @ApiResponse(responseCode = "404", description = "No photo for this aquarium.")
+    })
+    @GetMapping(value = "/{id}/photo")
+    public ResponseEntity<byte[]> getPhoto(
+            @PathVariable String id,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("GET /api/tank/{}/photo for {}", id, principal.getName());
+        byte[] bytes = tankService.getPhotoBytes(Long.valueOf(id), principal.getName());
+        if (bytes.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CACHE_CONTROL, "max-age=3600");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"tank-" + id + ".jpg\"");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
+    }
+
+    // ---- Photo delete ----
+
+    @Operation(summary = "Delete the photo of an aquarium.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Photo deleted."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @DeleteMapping(value = "/{id}/photo")
+    public ResponseEntity<Void> deletePhoto(
+            @PathVariable String id,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("DELETE /api/tank/{}/photo for {}", id, principal.getName());
+        tankService.deletePhoto(Long.valueOf(id), principal.getName());
+        return ResponseEntity.noContent().build();
     }
 }

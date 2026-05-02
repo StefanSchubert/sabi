@@ -1,4 +1,6 @@
-# Welcome to Open Science at the SABI-Project - Seawater Aquarium Business Intelligence
+# Welcome to Open Science at the SABI-Project <br/> Seawater Aquarium Business Intelligence
+
+![Sabi_Badge_Small.png](Assets/Sabi_Badge_Small.png)
 
 This is a semi-scientific (or open-science) project that aims to gain insights from aquarium hobbyist for aquarium
 hobbyist according seawater ecosystems.

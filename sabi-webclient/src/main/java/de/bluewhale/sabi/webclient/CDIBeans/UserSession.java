@@ -40,6 +40,12 @@ public class UserSession implements Serializable {
 
     private String userName = "";
 
+    /**
+     * The authenticated user's email address — distinct from userName which may be a display name.
+     * Used for admin role checks (sabi.admin.users is a list of emails).
+     */
+    private String userEmail = "";
+
     private Locale locale;
 
     /** Whether the user has activated dark mode in their profile. */
@@ -136,6 +142,22 @@ public class UserSession implements Serializable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    /**
+     * Returns the authenticated user's email address.
+     * Explicitly set during login (direct or OIDC).
+     */
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    /**
+     * Sets the authenticated user's email address.
+     * Must be called during both direct login and OIDC login flows.
+     */
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail != null ? userEmail.trim() : "";
     }
 
     /**
@@ -245,15 +267,21 @@ public class UserSession implements Serializable {
     /**
      * Returns true if the currently logged-in user is an admin.
      * Admin users are defined by the sabi.admin.users property (comma-separated list of emails).
+     * Uses userEmail (explicit) with fallback to userName (legacy direct-login path stores email there).
      * Used in header.xhtml via #{userSession.admin} (T066).
      */
     public boolean isAdmin() {
-        if (userName == null || userName.isBlank() || adminUsers == null || adminUsers.isBlank()) {
+        if (adminUsers == null || adminUsers.isBlank()) {
+            return false;
+        }
+        // Primary check: use the dedicated email field (set by both login paths)
+        String candidate = (userEmail != null && !userEmail.isBlank()) ? userEmail : userName;
+        if (candidate == null || candidate.isBlank()) {
             return false;
         }
         return Arrays.stream(adminUsers.split(","))
                 .map(String::trim)
-                .anyMatch(email -> email.equalsIgnoreCase(userName));
+                .anyMatch(email -> email.equalsIgnoreCase(candidate));
     }
 
     /** Invalidates Frontend Session in case of logout. */

@@ -24,6 +24,16 @@
             <h:form id="adminForm">
                 <p:messages id="adminMessages" showDetail="true" closable="true"/>
 
+                <!-- remoteCommands OUTSIDE the panels they update — prevents autoRun infinite loop -->
+                <p:remoteCommand name="sabiLoadProposals"
+                                 actionListener="#{fishCatalogueAdminView.refreshProposals()}"
+                                 update="pendingPanel"
+                                 autoRun="true"/>
+                <p:remoteCommand name="sabiLoadCatalogue"
+                                 actionListener="#{fishCatalogueAdminView.refreshCatalogue()}"
+                                 update="catalogueBrowserPanel"
+                                 autoRun="true"/>
+
                 <!-- ═══════════════════════════════════════════════════
                      SECTION 1 — Pending Proposals (FR-021)
                      ═══════════════════════════════════════════════════ -->
@@ -32,11 +42,6 @@
                         <span style="font-weight:600;">#{msg['fishcatalogue.admin.pending.list.title']}</span>
                     </f:facet>
 
-                    <!-- Reload proposals on every page visit (SessionScope bean caches list) -->
-                    <p:remoteCommand name="sabiLoadProposals"
-                                     actionListener="#{fishCatalogueAdminView.refreshProposals()}"
-                                     update="pendingPanel"
-                                     autoRun="true"/>
 
                     <!-- Pending Proposals Table (FR-021) -->
                     <p:dataTable id="pendingTable"
@@ -138,10 +143,6 @@
                         <span style="font-weight:600;">#{msg['fishcatalogue.admin.catalogue.browser.title']}</span>
                     </f:facet>
 
-                    <p:remoteCommand name="sabiLoadCatalogue"
-                                     actionListener="#{fishCatalogueAdminView.refreshCatalogue()}"
-                                     update="catalogueBrowserPanel"
-                                     autoRun="true"/>
 
                     <!-- Two-column layout: left = entry list, right = editor -->
                     <p:panelGrid columns="2"

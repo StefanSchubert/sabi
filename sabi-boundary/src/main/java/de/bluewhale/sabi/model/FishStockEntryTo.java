@@ -71,5 +71,8 @@ public class FishStockEntryTo implements Serializable {
     @Schema(description = "IDs of fish roles assigned to this fish entry.")
     private List<Integer> fishRoleIds = new ArrayList<>();
 
+    @Schema(description = "Size history for this fish (date + cm), ordered by date descending.")
+    private List<FishSizeHistoryTo> sizeHistory = new ArrayList<>();
+
 }
 

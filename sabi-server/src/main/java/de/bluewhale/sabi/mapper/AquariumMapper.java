@@ -31,6 +31,7 @@ public interface AquariumMapper {
             @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),
             @Mapping(target ="inceptionDate", source="inceptionDate"),
             @Mapping(target ="ecosystemType", source="ecosystemType"),
+            @Mapping(target ="hasPhoto", ignore = true),
     })
     AquariumTo mapAquariumEntity2To(@NotNull final AquariumEntity pAquariumEntity);
 

@@ -11,6 +11,7 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
 import de.bluewhale.sabi.model.FishRoleTo;
+import de.bluewhale.sabi.model.FishSizeHistoryTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
@@ -45,6 +46,21 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
             return Arrays.asList(items);
         } catch (JacksonException e) {
             log.error("Failed to parse fish list from {}", uri, e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+    }
+
+    @Override
+    public FishStockEntryTo getFishById(Long fishId, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.FISH_STOCK.getPath() + "/" + fishId;
+        ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
+        if (response.getBody() == null || response.getBody().isBlank()) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(response.getBody(), FishStockEntryTo.class);
+        } catch (JacksonException e) {
+            log.error("Failed to parse fish entry {} from {}", fishId, uri, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
     }
@@ -212,6 +228,36 @@ public class FishStockServiceImpl extends APIServiceImpl implements FishStockSer
         } catch (Exception e) {
             log.warn("Could not load photo for fish {}: {}", fishId, e.getMessage());
             return new byte[0];
+        }
+    }
+
+    @Override
+    public List<FishSizeHistoryTo> getSizeHistory(Long fishId, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.FISH_STOCK.getPath() + "/" + fishId + "/size";
+        ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
+        try {
+            FishSizeHistoryTo[] items = objectMapper.readValue(response.getBody(), FishSizeHistoryTo[].class);
+            return Arrays.asList(items);
+        } catch (JacksonException e) {
+            log.error("Failed to parse size history for fish {}", fishId, e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public ResultTo<FishSizeHistoryTo> addSizeRecord(Long fishId, FishSizeHistoryTo record, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.FISH_STOCK.getPath() + "/" + fishId + "/size";
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            String body = objectMapper.writeValueAsString(record);
+            HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
+            HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+            renewBackendToken(response);
+            return new ResultTo<>(record, null);
+        } catch (Exception e) {
+            log.error("Failed to add size record for fish {}", fishId, e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
     }
 }

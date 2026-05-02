@@ -10,7 +10,9 @@ import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.AquariumPhotoEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.AquariumPhotoRepository;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
 import de.bluewhale.sabi.persistence.repositories.TankFishStockRepository;
@@ -19,8 +21,10 @@ import org.passay.data.EnglishCharacterData;
 import org.passay.generate.PasswordGenerator;
 import org.passay.rule.CharacterRule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +48,13 @@ public class TankServiceImpl implements TankService {
 
     @Autowired
     private TankFishStockRepository tankFishStockRepository;
+
+    @Autowired
+    private AquariumPhotoRepository aquariumPhotoRepository;
+
+    @Autowired
+    @Qualifier("aquariumPhotoStorage")
+    private PhotoStorageService photoStorageService;
 
     @Override
     public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final String pRegisteredUsersEmail) {
@@ -106,6 +117,7 @@ public class TankServiceImpl implements TankService {
         List<AquariumTo> aquariumTos = new ArrayList<>();
         for (AquariumEntity aquariumEntity : usersAquariums) {
             AquariumTo aquariumTo = aquariumMapper.mapAquariumEntity2To(aquariumEntity);
+            aquariumTo.setHasPhoto(aquariumPhotoRepository.findByAquariumId(aquariumEntity.getId()).isPresent());
             aquariumTos.add(aquariumTo);
         }
 
@@ -124,6 +136,7 @@ public class TankServiceImpl implements TankService {
         List<AquariumTo> aquariumTos = new ArrayList<>();
         for (AquariumEntity aquariumEntity : usersAquariums) {
             AquariumTo aquariumTo = aquariumMapper.mapAquariumEntity2To(aquariumEntity);
+            aquariumTo.setHasPhoto(aquariumPhotoRepository.findByAquariumId(aquariumEntity.getId()).isPresent());
             aquariumTos.add(aquariumTo);
         }
 
@@ -171,6 +184,7 @@ public class TankServiceImpl implements TankService {
             AquariumEntity usersAquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
             if (usersAquarium != null) {
                 aquariumTo = aquariumMapper.mapAquariumEntity2To(usersAquarium);
+                aquariumTo.setHasPhoto(aquariumPhotoRepository.findByAquariumId(aquariumId).isPresent());
             }
         }
 
@@ -254,5 +268,52 @@ public class TankServiceImpl implements TankService {
         CharacterRule alphabets = new CharacterRule(EnglishCharacterData.Alphabetical);
         PasswordGenerator passwordGenerator = new PasswordGenerator(30, digits, alphabets);
         return passwordGenerator.generate().toString();
+    }
+
+    @Override
+    public void uploadPhoto(Long aquariumId, byte[] bytes, String contentType, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return;
+
+        String relativePath = photoStorageService.store(user.getId(), aquariumId, bytes, contentType);
+
+        java.util.Optional<AquariumPhotoEntity> existing = aquariumPhotoRepository.findByAquariumId(aquariumId);
+        AquariumPhotoEntity photoEntity = existing.orElseGet(() -> {
+            AquariumPhotoEntity p = new AquariumPhotoEntity();
+            p.setAquariumId(aquariumId);
+            return p;
+        });
+        photoEntity.setFilePath(relativePath);
+        photoEntity.setContentType(contentType);
+        photoEntity.setFileSize((long) bytes.length);
+        photoEntity.setUploadDate(LocalDate.now());
+        aquariumPhotoRepository.save(photoEntity);
+    }
+
+    @Override
+    public byte[] getPhotoBytes(Long aquariumId, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return new byte[0];
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return new byte[0];
+
+        return aquariumPhotoRepository.findByAquariumId(aquariumId)
+                .map(photo -> photoStorageService.load(photo.getFilePath()))
+                .orElse(new byte[0]);
+    }
+
+    @Override
+    public void deletePhoto(Long aquariumId, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return;
+
+        aquariumPhotoRepository.findByAquariumId(aquariumId).ifPresent(photo -> {
+            photoStorageService.delete(photo.getFilePath());
+            aquariumPhotoRepository.delete(photo);
+        });
     }
 }

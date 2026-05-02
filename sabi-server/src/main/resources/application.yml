@@ -64,6 +64,10 @@ sabi:
     photo:
       storage-dir: ${SABI_FISH_PHOTO_STORAGE_DIR:/var/sabi-data/fish-photos}
       max-size-bytes: 5242880
+  aquarium:
+    photo:
+      storage-dir: ${SABI_AQUARIUM_PHOTO_STORAGE_DIR:/var/sabi-data/aquarium-photos}
+      max-size-bytes: 5242880
   admin:
     users: ${SABI_ADMIN_USERS:admin@sabi-project.net}
 server:

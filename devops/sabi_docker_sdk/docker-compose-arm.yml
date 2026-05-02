@@ -21,18 +21,19 @@ services:
     platform: linux/arm64
     environment:
       - TZ=Europe/Berlin
-      # Fish photo storage (T073 — 002-fish-stock-catalogue)
       - SABI_FISH_PHOTO_STORAGE_DIR=/var/sabi-data/fish-photos
+      - SABI_FISH_AQUARIUM_STORAGE_DIR=/var/sabi-data/aquarium-photos
     volumes:
-      # Fish photo persistent storage volume (FR-008, C-4, FR-025)
       - sabi-fish-photos:/var/sabi-data/fish-photos
+      - sabi-aquarium-photos:/var/sabi-data/aquarium-photos
     networks:
       - sabinet
     ports:
       - "8080:8080"
       - "8880:8880"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   flyway:
     image: flyway/flyway:12.1.0-alpine
     platform: linux/arm64
@@ -42,7 +43,8 @@ services:
     networks:
       - sabinet
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: mariadb:12.2.2
     platform: linux/arm64/v8
@@ -52,6 +54,12 @@ services:
       - MYSQL_USER=sabiapp
       - MYSQL_PASSWORD=sabi123
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 20s
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - sabinet
     ports:

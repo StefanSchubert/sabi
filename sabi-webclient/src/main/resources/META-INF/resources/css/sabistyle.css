@@ -433,6 +433,262 @@ body:not(.dark-mode) .ui-messages-warn {
 }
 
 /* =====================================================================
+   Back Navigation Link (used on all input / detail pages)
+   ===================================================================== */
+.sabi-back-link {
+    color: var(--sabi-primary);
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+.sabi-back-link:hover {
+    color: var(--sabi-accent);
+}
+
+body.dark-mode .sabi-back-link {
+    color: #7dd3fc;
+}
+
+body.dark-mode .sabi-back-link:hover {
+    color: #bae6fd;
+}
+
+/* =====================================================================
+   Two-column responsive form layout
+   ===================================================================== */
+.sabi-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media screen and (max-width: 640px) {
+    .sabi-two-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Role row: checkbox + label + info icon in one line */
+.sabi-role-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0;
+}
+
+.sabi-role-row .ui-chkbox {
+    flex-shrink: 0;
+}
+
+/* p:datePicker with showIcon="true": keep input + icon on one line.
+   PrimeFaces renders the wrapper as .ui-trigger-calendar (not .ui-calendar-w-btn) */
+.ui-calendar.ui-trigger-calendar,
+.ui-calendar.ui-calendar-w-btn {
+    display: inline-flex !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    width: 100%;
+}
+
+.ui-calendar.ui-trigger-calendar input,
+.ui-calendar.ui-trigger-calendar .ui-inputtext,
+.ui-calendar.ui-calendar-w-btn .ui-inputtext {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+}
+
+.ui-calendar.ui-trigger-calendar button,
+.ui-calendar.ui-calendar-w-btn .ui-datepicker-trigger {
+    flex: 0 0 auto !important;
+}
+
+/* Role row: align info-icon button vertically with label text */
+.sabi-role-row .ui-button.ui-button-text {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+}
+
+/* Photo upload: hidden native input + styled label button */
+#photoFileInput {
+    display: none;
+    position: absolute;
+    left: -9999px;
+}
+
+/* =====================================================================
+   Fish photo placeholder (no photo uploaded yet)
+   Shows a fish emoji with a ? badge overlay.
+   ===================================================================== */
+.sabi-fish-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #f1f5f9;
+    border: 1px dashed var(--sabi-border);
+    border-radius: var(--sabi-radius);
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.sabi-fish-placeholder::before {
+    content: '🐟';
+    opacity: 0.5;
+}
+
+.sabi-fish-placeholder::after {
+    content: '?';
+    position: absolute;
+    background: #94a3b8;
+    color: #ffffff;
+    border-radius: 50%;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Small variant: 48×48 px for table thumbnail column */
+.sabi-fish-placeholder-sm {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+}
+
+.sabi-fish-placeholder-sm::before {
+    font-size: 1.5rem;
+}
+
+.sabi-fish-placeholder-sm::after {
+    width: 14px;
+    height: 14px;
+    font-size: 0.55rem;
+    line-height: 14px;
+    bottom: 2px;
+    right: 2px;
+}
+
+/* Large variant: for the photo preview area in the entry form */
+.sabi-fish-placeholder-lg {
+    width: 100%;
+    max-width: 200px;
+    height: 120px;
+    border-radius: 6px;
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.sabi-fish-placeholder-lg::before {
+    font-size: 3.5rem;
+}
+
+.sabi-fish-placeholder-lg::after {
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
+    line-height: 24px;
+    bottom: 6px;
+    right: 6px;
+}
+
+.sabi-file-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    margin-bottom: 0.2rem;
+}
+
+.sabi-file-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--sabi-surface);
+    color: var(--sabi-primary-dark);
+    border: 1px solid var(--sabi-border);
+    border-radius: var(--sabi-radius);
+    padding: 0.22rem 0.65rem;
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition: background var(--sabi-transition), border-color var(--sabi-transition);
+}
+
+.sabi-file-btn:hover {
+    background: var(--sabi-primary-light);
+    border-color: var(--sabi-primary);
+}
+
+.sabi-file-name {
+    font-size: 0.8rem;
+    color: var(--sabi-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+/* Catalogue inline actions: both link-style, same size */
+.sabi-catalogue-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem 0.8rem;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+}
+
+.sabi-catalogue-actions a,
+.sabi-catalogue-actions .ui-button.ui-button-link {
+    font-size: 0.85rem !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    vertical-align: baseline !important;
+    line-height: 1.4 !important;
+}
+
+.sabi-catalogue-actions a {
+    color: #0369a1;
+    text-decoration: underline;
+}
+
+.sabi-catalogue-actions a:hover {
+    color: var(--sabi-accent);
+}
+
+/* Unlink button: red link-style */
+.sabi-unlink-btn.ui-button.ui-button-link .ui-button-text,
+.sabi-unlink-btn .ui-button-text {
+    color: #dc2626 !important;
+}
+
+.sabi-unlink-btn.ui-button.ui-button-link .ui-button-icon,
+.sabi-unlink-btn .ui-button-icon {
+    color: #dc2626 !important;
+}
+
+/* Size history table compact style */
+.sabi-size-history-table .ui-datatable thead th {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 0.85rem !important;
+}
+
+.sabi-size-history-table .ui-datatable tbody td {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 0.85rem !important;
+}
+
+/* =====================================================================
    No-Tank Hint Panel
    ===================================================================== */
 .no-tank-hint {

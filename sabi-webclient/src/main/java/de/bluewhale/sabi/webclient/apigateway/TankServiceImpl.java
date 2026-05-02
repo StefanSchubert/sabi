@@ -122,7 +122,7 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
     }
 
     @Override
-    public void save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException {
+    public AquariumTo save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException {
 
         String updateTankURI = sabiBackendUrl + Endpoint.TANKS; // PUT here
         String createTankURI = sabiBackendUrl + Endpoint.TANKS + "/create"; // POST here
@@ -160,6 +160,15 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
                     throw new BusinessException(Message.error(AuthMessageCodes.TOKEN_EXPIRED));
                 }
             }
+            // Parse response to get server-assigned ID
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                try {
+                    AquariumTo created = objectMapper.readValue(responseEntity.getBody(), AquariumTo.class);
+                    return created;
+                } catch (JacksonException e) {
+                    log.warn("Could not parse create response for tank", e);
+                }
+            }
 
         } else {
             // update case
@@ -182,6 +191,58 @@ public class TankServiceImpl extends APIServiceImpl implements TankService {
                 }
             }
 
+        }
+        return tank;
+    }
+
+    @Override
+    public void uploadPhoto(Long aquariumId, byte[] bytes, String contentType, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.TANKS.getPath() + "/" + aquariumId + "/photo";
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token, org.springframework.http.MediaType.MULTIPART_FORM_DATA);
+            org.springframework.core.io.ByteArrayResource resource =
+                    new org.springframework.core.io.ByteArrayResource(bytes) {
+                        @Override
+                        public String getFilename() {
+                            return "photo" + extensionFor(contentType);
+                        }
+                    };
+            org.springframework.util.MultiValueMap<String, Object> parts =
+                    new org.springframework.util.LinkedMultiValueMap<>();
+            parts.add("file", resource);
+            HttpEntity<org.springframework.util.MultiValueMap<String, Object>> requestEntity =
+                    new HttpEntity<>(parts, headers);
+            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, String.class);
+            renewBackendToken(response);
+        } catch (Exception e) {
+            log.error("Failed to upload photo for aquarium {}", aquariumId, e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
+        }
+    }
+
+    private String extensionFor(String contentType) {
+        if (contentType == null) return ".jpg";
+        return switch (contentType) {
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> ".jpg";
+        };
+    }
+
+    @Override
+    public byte[] getPhoto(Long aquariumId, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.TANKS.getPath() + "/" + aquariumId + "/photo";
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+            ResponseEntity<byte[]> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, byte[].class);
+            return response.getBody() != null ? response.getBody() : new byte[0];
+        } catch (Exception e) {
+            log.warn("Could not load photo for aquarium {}: {}", aquariumId, e.getMessage());
+            return new byte[0];
         }
     }
 

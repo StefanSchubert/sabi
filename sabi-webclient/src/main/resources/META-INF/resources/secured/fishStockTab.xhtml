@@ -27,13 +27,12 @@
             <p:autoUpdate/>
         </p:messages>
 
-        <!-- Add Fish Button (disabled when no tank selected) -->
+        <!-- Add Fish Button — navigates to standalone entry page -->
         <div style="margin-bottom:0.75rem;">
             <p:commandButton value="#{msg['fishstock.add.button']}"
                              icon="pi pi-plus"
-                             actionListener="#{fishStockView.onAddFish()}"
-                             update=":fishEntryDialog"
-                             oncomplete="PF('fishEntryDialogWidget').show()"
+                             ajax="false"
+                             action="#{fishStockView.onAddFish()}"
                              title="#{msg['fishstock.add.button']}"
                              disabled="#{fishStockView.selectedAquariumId == null}"/>
         </div>
@@ -55,10 +54,9 @@
                 <p:column headerText="#{msg['fishstock.form.photo.label']}" style="width:3.5rem;">
                     <p:graphicImage rendered="#{fish.hasPhoto}"
                                     value="#{request.contextPath}/secured/fishPhoto?fishId=#{fish.id}"
-                                    style="max-width:48px; max-height:48px; border-radius:4px;"/>
-                    <h:outputText rendered="#{not fish.hasPhoto}"
-                                  styleClass="pi pi-image"
-                                  style="color:#94a3b8; font-size:1.5rem;"/>
+                                    style="max-width:48px; max-height:48px; border-radius:4px; display:block;"/>
+                    <h:panelGroup layout="inline" rendered="#{not fish.hasPhoto}"
+                                  styleClass="sabi-fish-placeholder sabi-fish-placeholder-sm"/>
                 </p:column>
 
                 <!-- Common Name -->
@@ -82,20 +80,18 @@
                     </p:outputLabel>
                 </p:column>
 
-                <!-- Actions -->
+                <!-- Actions — navigate to entry page -->
                 <p:column headerText="" style="width:12rem; text-align:center;">
                     <p:commandButton icon="pi pi-pencil"
                                      title="#{msg['common.edit.b']}"
-                                     actionListener="#{fishStockView.onEditFish(fish)}"
-                                     update=":fishEntryDialog"
-                                     oncomplete="PF('fishEntryDialogWidget').show()"
+                                     ajax="false"
+                                     action="#{fishStockView.onEditFish(fish)}"
                                      style="margin-right:0.25rem;"/>
                     <p:commandButton icon="pi pi-copy"
                                      title="#{msg['fishstock.duplicate.button']}"
                                      styleClass="ui-button-secondary"
-                                     actionListener="#{fishStockView.onDuplicateFish(fish)}"
-                                     update=":fishEntryDialog"
-                                     oncomplete="PF('fishEntryDialogWidget').show()"
+                                     ajax="false"
+                                     action="#{fishStockView.onDuplicateFish(fish)}"
                                      style="margin-right:0.25rem;"/>
                     <p:commandButton icon="pi pi-arrow-right"
                                      title="#{msg['fishstock.departure.title']}"
@@ -160,11 +156,10 @@
 
     </h:form>
 
-    <!-- Fish Entry Dialog (T039) -->
-    <ui:include src="/secured/fishStockEntryForm.xhtml"/>
-
-    <!-- Departure Dialog (T046) -->
+    <!-- Departure Dialog (T046) — stays as dialog (simple, mobile-ok) -->
     <ui:include src="/secured/fishDepartureDialog.xhtml"/>
+
+    <!-- Note: fishStockEntryForm.xhtml is now a standalone page (fishStockEntryPage.xhtml) -->
 
 </ui:composition>
 

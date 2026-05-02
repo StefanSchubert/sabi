@@ -129,8 +129,29 @@
 
             <!-- Fish Roles (optional, multi-select checkboxes) -->
             <div class="p-field p-mb-2" rendered="#{not empty fishStockEntryView.availableRoles}">
-                <p:outputLabel value="#{msg['fishstock.form.roles.label']}"
-                               style="display:block; margin-bottom:0.35rem;"/>
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+                    <p:outputLabel value="#{msg['fishstock.form.roles.label']}" style="display:inline;"/>
+                    <p:commandButton id="rolesInfoBtn"
+                                     icon="pi pi-info-circle"
+                                     styleClass="ui-button-text ui-button-rounded"
+                                     style="width:1.5rem; height:1.5rem; padding:0; color:#0369a1;"
+                                     type="button"
+                                     title="#{msg['fishstock.form.roles.info.title']}"
+                                     onclick="PF('rolesOverlayWidget').toggle(this); return false;"/>
+                </div>
+                <p:overlayPanel id="rolesInfoPanel"
+                                widgetVar="rolesOverlayWidget"
+                                showCloseIcon="true"
+                                style="max-width:350px;">
+                    <p:dataTable value="#{fishStockEntryView.availableRoles}" var="roleInfo"
+                                 style="width:100%;" showGridlines="false">
+                        <p:column>
+                            <p:outputLabel value="#{roleInfo.localizedName}"
+                                           style="font-weight:600; display:block;"/>
+                            <small style="color:#64748b;">#{roleInfo.localizedDescription}</small>
+                        </p:column>
+                    </p:dataTable>
+                </p:overlayPanel>
                 <p:selectManyCheckbox id="fishRoles"
                                       value="#{fishStockEntryView.currentEntry.fishRoleIds}"
                                       layout="responsive"
@@ -140,7 +161,7 @@
                                    var="role"
                                    itemLabel="#{role.localizedName}"
                                    itemValue="#{role.id}"/>
-                    <f:converter converterId="javax.faces.Integer"/>
+                    <f:converter converterId="jakarta.faces.Integer"/>
                 </p:selectManyCheckbox>
             </div>
 
@@ -175,7 +196,8 @@
                 <p:commandButton value="#{msg['common.cancel.b']}"
                                  icon="pi pi-times"
                                  styleClass="ui-button-secondary"
-                                 onclick="PF('fishEntryDialogWidget').hide(); return false;"/>
+                                 type="button"
+                                 onclick="PF('fishEntryDialogWidget').hide();"/>
             </div>
 
         </h:form>

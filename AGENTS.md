@@ -46,91 +46,133 @@ Each Maven module generates a CycloneDX SBOM during `mvn package`. The SBOM file
 - Identify relevant frameworks before suggesting dependency changes
 - Avoid suggesting libraries that are already present under a different artifact ID
 - Check the exact versions of key components (Spring Boot, PrimeFaces, EclipseLink, etc.)
+- Determine correct API namespaces (e.g. `jakarta.*` vs `javax.*` — Jakarta EE 9+ uses `jakarta.*`)
+
+**When the SBOM is stale (regenerate before use):**
+- After any `pom.xml` dependency change
+- After a fresh `git clone` / branch switch
+- When `target/` does not exist or is older than `pom.xml`
 
 **How to generate (if not yet present):**
 ```bash
-cd <module-dir> && mvn package -DskipTests
+cd <module-dir> && mvn package -DskipTests | tee /tmp/mvn-build.out
 # SBOM written to target/bom.xml and target/bom.json
+# Then read: read_file target/bom.json (grep for "name" + "version" fields)
+```
+
+**How to read efficiently (key components to extract):**
+```bash
+# Extract name+version pairs from bom.json
+python3 -c "
+import json, sys
+bom = json.load(open('target/bom.json'))
+for c in bom.get('components', []):
+    print(c.get('name',''), c.get('version',''))
+" | grep -E "spring-boot|primefaces|eclipselink|joinfaces|jakarta" | tee /tmp/sbom-key-deps.out
 ```
 
 ---
 
-## Terminal-Ausgaben (MANDATORY)
+## Terminal Output (MANDATORY)
 
-**Problem**: Das IntelliJ Copilot Plugin zeigt Terminal-Ausgaben oft NICHT direkt an – die
-`run_in_terminal`-Ausgabe erscheint leer oder abgeschnitten, auch wenn der Befehl erfolgreich war.
-Zusätzlich kann Shell-Escaping bei Sonderzeichen den Terminal-State brechen (zsh event-not-found,
-dquote-Loop etc.).
+**Problem**: The IntelliJ Copilot Plugin often does NOT display terminal output directly — the
+`run_in_terminal` output appears empty or truncated even when the command succeeded.
+Additionally, shell escaping of special characters can break the terminal state (zsh
+event-not-found, dquote loop, etc.).
 
-**Grundregel: JEDER Terminal-Befehl dessen Ausgabe ausgewertet wird, muss via `| tee` in eine
-Datei schreiben. Die Ausgabe wird ausschließlich über `read_file` eingelesen.**
+**Core rule: EVERY terminal command whose output needs to be evaluated must write via `| tee`
+to a file. Output is read exclusively via `read_file`.**
 
 ```zsh
-# Muster für alle Terminal-Befehle:
-some_command | tee /tmp/ausgabe.out
-# → danach: read_file /tmp/ausgabe.out
+# Pattern for all terminal commands:
+some_command | tee /tmp/output.out
+# → then: read_file /tmp/output.out
 ```
 
-**Regel: Skripte NIEMALS als inline `-c "..."` ausführen – immer via Datei:**
-1. Skript mit `create_file`-Tool nach `/tmp/skriptname.py` schreiben
-2. Im Terminal ausführen: `python3 /tmp/skriptname.py | tee /tmp/skriptname.out`
-3. Ausgabe einlesen: `read_file`-Tool auf `/tmp/skriptname.out`
+**Rule: NEVER run scripts as inline `-c "..."` — always via file:**
+1. Write the script using the `create_file` tool to `/tmp/scriptname.py`
+2. Run in terminal: `python3 /tmp/scriptname.py | tee /tmp/scriptname.out`
+3. Read output: use `read_file` tool on `/tmp/scriptname.out`
 
-**Gilt auch für Shell-Einzeiler mit Sonderzeichen** (Klammern, Ausrufezeichen, Backticks):
-- Statt `command | grep "foo(bar)"` → Skript nach `/tmp/` schreiben
-- Bei komplexen grep/sed/awk: immer `/tmp/`-Skript bevorzugen
+**Applies to shell one-liners with special characters** (parentheses, exclamation marks, backticks):
+- Instead of `command | grep "foo(bar)"` → write a script to `/tmp/`
+- For complex grep/sed/awk: always prefer a `/tmp/` script
 
-**Gilt auch für einfache Diagnose-Befehle** (env-Checks, grep, find, mvn, etc.):
-- `echo "VAR=$VAR" | tee /tmp/check.out` statt `echo "VAR=$VAR"` direkt lesen
-- `find ... | tee /tmp/find.out` statt Ausgabe im Terminal auswerten
+**Applies to simple diagnostic commands** (env checks, grep, find, mvn, etc.):
+- `echo "VAR=$VAR" | tee /tmp/check.out` instead of reading `echo` output directly
+- `find ... | tee /tmp/find.out` instead of evaluating output in the terminal
+
+---
+
+## Tool Reliability: replace_string_in_file (MANDATORY)
+
+**`replace_string_in_file` reports "success" but sometimes writes nothing — for ALL file types.**
+
+Observed cases so far:
+- `.properties` files: when `oldString` contains raw UTF-8 bytes but the file uses `\uXXXX`
+  escapes (or vice versa) — tool reports success, file unchanged.
+- `.xhtml` files: for larger `replace_string_in_file` calls with multi-line `oldString` on XHTML
+  files, the tool regularly reports "success" but does NOT apply the change
+  (observed May 2026: first two calls on `fishStockTab.xhtml` ignored, third call worked).
+
+**Mandatory rules:**
+1. **After EVERY `replace_string_in_file` call**: run `read_file` on the modified file and
+   visually verify the change — do NOT trust the tool's success message.
+2. **For multi-line replacements in XHTML/XML**: always read the file first with `read_file`,
+   copy `oldString` exactly from the current file content (respect whitespace).
+3. **Repeated failure despite correct `oldString`**: use `insert_edit_into_file` as a fallback —
+   this tool works contextually and is more robust for large XHTML blocks.
+4. **After failure**: re-read the file (`read_file`), then retry with a corrected `oldString`.
+
+**Key principle: Tool output ≠ disk content. Only `read_file` shows what is actually there.**
 
 ---
 
 ## Development Environment Setup
 
-- MacBook CLI mit **BSD Unix Tools** (kein GNU) → abweichende Syntax!
-  - `sed -i ''` statt `sed -i` (BSD sed braucht leeres Extension-Argument)
-  - `grep` ohne `--line-buffered` etc. (BSD grep, nicht GNU grep)
-  - `find` ohne `-printf` (BSD find, nicht GNU find)
-  - Bei Zweifel: `gsed`, `ggrep`, `gfind` (Homebrew GNU-Tools) verwenden
-- IntelliJ Copilot Plugin für Code-Generierung
-- Docker für lokales Testen
-- Deployment nach Prod via Ansible Playbook
+- MacBook CLI with **BSD Unix tools** (not GNU) → different syntax!
+  - `sed -i ''` instead of `sed -i` (BSD sed requires an empty extension argument)
+  - `grep` without `--line-buffered` etc. (BSD grep, not GNU grep)
+  - `find` without `-printf` (BSD find, not GNU find)
+  - When in doubt: use `gsed`, `ggrep`, `gfind` (Homebrew GNU tools)
+- IntelliJ Copilot Plugin for code generation
+- Docker for local testing
+- Deployment to production via Ansible Playbook
 
-### JSF/Facelets Hot-Reload (WICHTIG)
+### JSF/Facelets Hot-Reload (IMPORTANT)
 
-**XHTML-Änderungen erfordern IMMER einen Server-Neustart.** Es gibt keinen Hot-Reload für Facelets:
+**XHTML changes ALWAYS require a server restart.** There is no hot-reload for Facelets:
 
-- JoinFaces/Spring Boot erkennt **keine** Classpath-Ressourcen-Timestamps zur Laufzeit
-- Selbst mit `joinfaces.jsf.project-stage: development` werden kompilierte Facelets-Views **gecacht**
-- Das Kopieren geänderter XHTML-Dateien nach `target/classes/` hat **KEINEN Effekt** — der Server
-  muss vollständig durchgestartet werden
-- **Symptom bei veralteter View**: Auto-generierte JSF-IDs (z.B. `j_idt30`) statt explizit vergebener
-  IDs (`tankSelector`), oder AJAX-Updates die ins Leere gehen
+- JoinFaces/Spring Boot does **not** detect classpath resource timestamps at runtime
+- Even with `joinfaces.jsf.project-stage: development`, compiled Facelets views are **cached**
+- Copying modified XHTML files to `target/classes/` has **NO effect** — the server must be
+  restarted completely
+- **Symptom of a stale view**: Auto-generated JSF IDs (e.g. `j_idt30`) instead of explicitly
+  assigned IDs (`tankSelector`), or AJAX updates targeting non-existent components
 
-**Regel: Nach jeder XHTML-Änderung → Server neu starten → erst dann testen.**
+**Rule: After every XHTML change → restart the server → only then test.**
 
 ### Spring Security + JSF: Forward vs. Redirect
 
-**NIEMALS `successForwardUrl()` in Kombination mit JSF verwenden.**
+**NEVER use `successForwardUrl()` in combination with JSF.**
 
-Ein Servlet-Forward nach erfolgreicher Authentifizierung trägt den `jakarta.faces.ViewState`
-POST-Parameter der Login-Seite in die Zielseite. JSF versucht dann, den ViewState der Login-Seite
-auf den Komponentenbaum der Zielseite anzuwenden → `ArrayIndexOutOfBoundsException` in
+A Servlet forward after successful authentication carries the `jakarta.faces.ViewState` POST
+parameter from the login page into the target page. JSF then tries to apply the login page's
+ViewState to the target page's component tree → `ArrayIndexOutOfBoundsException` in
 `UIComponentBase.restoreState`.
 
-**Immer `defaultSuccessUrl(url, true)` verwenden** — das erzeugt einen HTTP 302 Redirect,
-der Browser macht einen frischen GET-Request, und JSF erstellt eine neue View ohne State-Konflikt.
+**Always use `defaultSuccessUrl(url, true)`** — this produces an HTTP 302 redirect, the browser
+sends a fresh GET request, and JSF creates a new view without state conflicts.
 
 ---
 
 ## i18n Message Bundle Handling (MANDATORY)
 
-### Unterstützte Sprachen (MANDATORY)
+### Supported Languages (MANDATORY)
 
-**Sabi unterstützt exakt diese 5 Sprachen:**
+**Sabi supports exactly these 5 languages:**
 
-| Code | Sprache    | Bundle-Datei               |
+| Code | Language   | Bundle File                |
 |------|------------|----------------------------|
 | `de` | Deutsch    | `messages_de.properties`   |
 | `en` | English    | `messages_en.properties`   |
@@ -138,166 +180,166 @@ der Browser macht einen frischen GET-Request, und JSF erstellt eine neue View oh
 | `fr` | Français   | `messages_fr.properties`   |
 | `it` | Italiano   | `messages_it.properties`   |
 
-Zusätzlich existiert `messages.properties` als **Fallback-Bundle** (Englisch).
+Additionally, `messages.properties` exists as the **fallback bundle** (English).
 
-**Neue Features MÜSSEN alle 6 Dateien (5 Sprachen + Fallback) mit neuen i18n-Keys befüllen.**
-Fehlende Übersetzungen sind ein Release-Blocker. Nach jeder Feature-Implementierung ist zu prüfen,
-dass kein Key in einer der Sprachdateien fehlt.
+**New features MUST populate all 6 files (5 languages + fallback) with new i18n keys.**
+Missing translations are a release blocker. After every feature implementation, verify that no
+key is missing from any of the language files.
 
-**Encoding-Regel für `.properties`-Dateien:**
-- Spring Boot ist mit `spring.messages.encoding: UTF-8` konfiguriert → rohe UTF-8-Bytes sind gültig
-- `\uXXXX`-Escapes sind weiterhin erlaubt und bevorzugt für Konsistenz mit dem Bestand
-- **NIEMALS** rohe Latin-1-Bytes (`0x80`–`0xFF`) in properties-Dateien schreiben
-- **NIEMALS** U+FFFD Replacement Characters (`\xef\xbf\xbd`) einfügen
+**Encoding rule for `.properties` files:**
+- Spring Boot is configured with `spring.messages.encoding: UTF-8` → raw UTF-8 bytes are valid
+- `\uXXXX` escapes are still allowed and preferred for consistency with existing content
+- **NEVER** write raw Latin-1 bytes (`0x80`–`0xFF`) into properties files
+- **NEVER** insert U+FFFD replacement characters (`\xef\xbf\xbd`)
 
-**Python-Hilfsskripte für File-Operationen:**
-- Immer als echtes UTF-8 schreiben: `create_file`-Tool verwenden (nicht heredoc im Terminal)
-- Bei File-Writes explizit `encoding='utf-8'` angeben: `open(path, 'w', encoding='utf-8')`
-- Bei binären Byte-Operationen auf properties-Dateien: nur `\uXXXX`-Escape-Sequenzen als Ziel verwenden
-- Hilfsskripte nach `/tmp/` schreiben und mit `python3 /tmp/skriptname.py` aufrufen
-- **Kein heredoc** für Python-Code im Terminal – Shell-Escaping korrumpiert Sonderzeichen
+**Python helper scripts for file operations:**
+- Always write as proper UTF-8: use the `create_file` tool (not heredoc in terminal)
+- Explicitly specify encoding when writing files: `open(path, 'w', encoding='utf-8')`
+- For binary byte operations on properties files: only use `\uXXXX` escape sequences as target
+- Write helper scripts to `/tmp/` and call them with `python3 /tmp/scriptname.py`
+- **No heredoc** for Python code in the terminal — shell escaping corrupts special characters
 
-**Beim Bearbeiten von Message Bundles via Tools:**
-- `replace_string_in_file` schreibt in der Datei-Encoding des Tools → Sonderzeichen immer als `\uXXXX` angeben
-- **ACHTUNG: `replace_string_in_file` versagt lautlos** wenn `oldString` rohe UTF-8-Zeichen (ö, ü, è …)
-  enthält, die Datei aber `\uXXXX`-Escape-Sequenzen verwendet (oder umgekehrt). Das Tool meldet
-  "Erfolg", schreibt aber nichts.
-- **ACHTUNG: `insert_edit_into_file` versagt ebenfalls lautlos** bei `.properties`-Dateien — das Tool
-  meldet "Erfolg" und zeigt sogar den Datei-Inhalt inklusive der neuen Keys an, aber die Keys werden
-  oft NICHT tatsächlich auf die Disk geschrieben (beobachtet in 5 von 6 Dateien).
-- **Zuverlässigste Methode: Python-Hilfsskript.** Für neue i18n-Keys ein Skript nach `/tmp/append_keys.py`
-  schreiben (via `create_file`), das die Keys per `open(path, 'r+', encoding='utf-8')` anfügt, dann
-  mit `python3 /tmp/append_keys.py | tee /tmp/append_keys.out` ausführen.
-- **IMMER nach jeder Änderung Byte-Check durchführen**: Python-Skript nach `/tmp/bytecheck.py` schreiben,
-  mit `python3 /tmp/bytecheck.py | tee /tmp/bytecheck.out` ausführen, dann `read_file` auf `/tmp/bytecheck.out`
-  (KEIN `python3 -c "..."` inline – Shell-Escaping korrumpiert Sonderzeichen!)
-- Dem Byte-Check **MEHR vertrauen als der Tool-Ausgabe** — nur der Byte-Check zeigt, was wirklich
-  auf der Disk steht.
-
----
-
-## Barrierefreiheit / Accessibility (MANDATORY)
-
-**WCAG AA Kontrast-Mindestanforderungen:**
-- Normaler Text (< 18px / < 14px bold): **mindestens 4.5:1** Kontrast gegen Hintergrund
-- Großer Text (≥ 18px normal / ≥ 14px bold): **mindestens 3:1**
-- UI-Komponenten (Buttons, Inputs, Icons): **mindestens 3:1**
-
-**Verbotene Farb-Kombinationen:**
-- `color: lightblue` auf weißem/hellem Hintergrund → Kontrast ~1.4:1 → **VERBOTEN**
-- `color: yellow` auf weißem Hintergrund → **VERBOTEN**
-- Generell: Keine Pastellfarben als Textfarbe auf hellem Hintergrund
-
-**Empfohlene Farben (SABI Marine Theme):**
-- Links auf weißem/hellem Hintergrund: `#0369a1` (--sabi-primary, ~5.7:1) oder `#075985` (~7:1)
-- Links auf dunklem Hintergrund (Header/Footer): `#bae6fd` (--sabi-primary-light, ~5.2:1)
-- Fehlertexte (rot): `#b91c1c` (~5.5:1 auf weiß) statt `red` (4.5:1)
-
-**HTML in i18n-Properties:**
-- Inline-`style="color:..."` in Message-Bundle-HTML: **immer WCAG-konforme Farbe** verwenden
-- `<a>`-Tags in Properties **immer korrekt schließen**: `</a>` nicht `</>`
-- Links erkennbar machen: `text-decoration: underline` oder andere visuelle Unterscheidung
+**When editing message bundles via tools:**
+- `replace_string_in_file` writes in the tool's file encoding → always specify special chars as `\uXXXX`
+- **WARNING: `replace_string_in_file` fails silently** when `oldString` contains raw UTF-8 chars
+  (ö, ü, è …) but the file uses `\uXXXX` escape sequences (or vice versa). The tool reports
+  "success" but writes nothing.
+- **WARNING: `insert_edit_into_file` also fails silently** for `.properties` files — the tool
+  reports "success" and even displays the file content including the new keys, but the keys are
+  often NOT actually written to disk (observed in 5 of 6 files).
+- **Most reliable method: Python helper script.** For new i18n keys, write a script to
+  `/tmp/append_keys.py` (via `create_file`) that appends keys using
+  `open(path, 'r+', encoding='utf-8')`, then run with
+  `python3 /tmp/append_keys.py | tee /tmp/append_keys.out`.
+- **ALWAYS perform a byte-check after every change**: write a Python script to `/tmp/bytecheck.py`,
+  run with `python3 /tmp/bytecheck.py | tee /tmp/bytecheck.out`, then use `read_file` on
+  `/tmp/bytecheck.out` (NO inline `python3 -c "..."` — shell escaping corrupts special characters!)
+- **Trust the byte-check MORE than the tool output** — only the byte-check shows what is actually
+  on disk.
 
 ---
 
-## Playwright E2E-Tests: Qualitätsregeln (MANDATORY)
+## UI Style Guide (MANDATORY)
 
-### Kein `force: true` und kein `page.evaluate(() => el.click())` als Standard-Click
+> **Before implementing any frontend feature, read [`UI_StyleGuide.md`](./UI_StyleGuide.md) in the
+> repository root.**
 
-**Problem**: `page.evaluate(() => el.click())` und `.click({ force: true })` umgehen CSS-Sichtbarkeit
-und Layout-Prüfungen vollständig. Ein Test kann damit **grün** sein, obwohl das Element für echte
-Nutzer **unsichtbar oder unklickbar** ist (z.B. `width: 0px`, `visibility: hidden`,
-`overflow: hidden`, überdeckt durch ein anderes Element).
+The style guide is the single source of truth for:
+- Color palette (Marine Theme, light + dark mode)
+- Accessibility rules (WCAG AA contrast requirements, forbidden color combos)
+- Navigation patterns (**no dialogs for input forms** — use full pages)
+- Back navigation: breadcrumb link at top + Cancel button at bottom
+- Form structure, button conventions, PrimeFaces component rules
+- Responsive breakpoints
 
-**Gelernte Lektion (April 2026)**: Ein PrimeFaces Toggle-Button hatte `width: 0px; height: 0px`
-durch fehlende CSS-Regeln. Der Test wurde mit `page.evaluate(() => el.click())` grün geschrieben —
-der echte Nutzer konnte das Element aber nie sehen oder klicken.
+**Key rules at a glance (details in UI_StyleGuide.md):**
+- Input forms → standalone pages, never `p:dialog`
+- Every input page → `sabi-back-link` breadcrumb + Cancel button with `type="button" onclick="window.location.href=..."`
+- Save button → `background:#065f46` (dark green, 8:1 contrast)
+- Links on light bg → `#0369a1` or `#075985` (≥ 5.7:1)
+- `lightblue` / `yellow` as text color on light bg → **FORBIDDEN**
 
-**Regeln:**
-- **Standard**: Immer echten Playwright-Click ohne `force` verwenden: `await locator.click()`
-- **Vor dem Click**: Sichtbarkeit explizit prüfen: `await expect(locator).toBeVisible()`
-- **`force: true` / `page.evaluate click`**: NUR als letztes Mittel bei echten technischen
-  Hindernissen (z.B. transienter Overlay), und dann mit erklärendem Kommentar **warum**
-- **Nach einem Workaround**: Den eigentlichen CSS/Layout-Bug fixen statt den Workaround
-  dauerhaft im Test zu belassen
+---
 
-### CSS-Sichtbarkeit von Elementen validieren
+## Playwright E2E Tests: Quality Rules (MANDATORY)
 
-Wenn ein Element gefunden wird aber nicht klickbar scheint, immer die **computed styles** prüfen:
+### No `force: true` and no `page.evaluate(() => el.click())` as standard click
+
+**Problem**: `page.evaluate(() => el.click())` and `.click({ force: true })` completely bypass CSS
+visibility and layout checks. A test can be **green** even though the element is **invisible or
+unclickable** for real users (e.g. `width: 0px`, `visibility: hidden`, `overflow: hidden`,
+covered by another element).
+
+**Lesson learned (April 2026)**: A PrimeFaces toggle button had `width: 0px; height: 0px` due to
+missing CSS rules. The test was written green using `page.evaluate(() => el.click())` — but real
+users could never see or click the element.
+
+**Rules:**
+- **Default**: Always use a real Playwright click without `force`: `await locator.click()`
+- **Before clicking**: Explicitly check visibility: `await expect(locator).toBeVisible()`
+- **`force: true` / `page.evaluate click`**: ONLY as a last resort for genuine technical obstacles
+  (e.g. a transient overlay), and then with an explanatory comment **why**
+- **After a workaround**: Fix the actual CSS/layout bug instead of keeping the workaround
+  permanently in the test
+
+### Validate CSS visibility of elements
+
+When an element is found but does not seem clickable, always check the **computed styles**:
 
 ```javascript
-// Diagnoseskript: computed styles eines Elements prüfen
+// Diagnostic script: check computed styles of an element
 const styles = await page.evaluate((sel) => {
   const el = document.querySelector(sel);
   if (!el) return { error: 'not found' };
   const cs = window.getComputedStyle(el);
   return { width: cs.width, height: cs.height, display: cs.display,
            visibility: cs.visibility, overflow: cs.overflow };
-}, '.mein-selektor');
+}, '.my-selector');
 ```
 
-Elemente mit `width: 0px` oder `height: 0px` sind effektiv unsichtbar — das ist ein **Bug**,
-kein Testproblem.
+Elements with `width: 0px` or `height: 0px` are effectively invisible — that is a **bug**,
+not a test problem.
 
-### Screenshot-basierte Verifikation bei UI-Bugs
+### Screenshot-based verification for UI bugs
 
-Bei visuellen Problemen (Icon unsichtbar, Text unsichtbar) immer Screenshots machen und
-**visuell bestätigen** bevor der Test als grün gilt:
+For visual problems (icon invisible, text invisible) always take screenshots and
+**visually confirm** before declaring the test green:
 
 ```typescript
 await page.screenshot({ path: '/tmp/debug_before.png' });
-// ... Aktion ...
+// ... action ...
 await page.screenshot({ path: '/tmp/debug_after.png' });
-// Screenshots in IDE öffnen und visuell prüfen!
+// Open screenshots in IDE and verify visually!
 ```
 
-Ein grüner Test allein ist kein Beweis für korrekte Darstellung.
+A green test alone is not proof of correct rendering.
 
 ---
 
-## Frontend-REST Design preferred
+## Frontend-REST Design Preferred
 
-Favor RequestScoped Beans for REST Controllers to ensure statelessness 
-and thread safety. Avoid using @SessionScope or @Component for REST controllers,
-as they can lead to shared state issues in a multi-threaded environment. 
-Always inject dependencies via constructor injection and keep REST controllers
-focused on handling HTTP requests and responses without maintaining any
+Favor `@RequestScope` beans for REST controllers to ensure statelessness and thread safety.
+Avoid using `@SessionScope` or `@Component` for REST controllers, as they can lead to shared
+state issues in a multi-threaded environment. Always inject dependencies via constructor injection
+and keep REST controllers focused on handling HTTP requests and responses without maintaining any
 internal state.
 
-## Backend REST-API: Auth-Token-Pattern (MANDATORY)
+## Backend REST API: Auth Token Pattern (MANDATORY)
 
-### Wie das JWT-Token durch den Stack fließt
+### How the JWT token flows through the stack
 
-**Sabi verwendet einen eigenen HTTP-Header `Authorization` mit `Bearer`-Präfix** — kein Standard-OAuth2-Flow,
-sondern ein selbst implementiertes JWT-Schema:
+**Sabi uses a custom HTTP header `Authorization` with `Bearer` prefix** — not a standard OAuth2
+flow, but a self-implemented JWT scheme:
 
-1. **Login** → Backend gibt `Authorization: Bearer <jwt>` im Response-Header zurück
-2. **Webclient** liest diesen Header und speichert ihn in `UserSession.sabiBackendToken`
-   - Token enthält bereits das `Bearer`-Präfix
-3. **Alle Backend-Calls** setzen diesen Token über `RestHelper.prepareAuthedHttpHeader(token)`
-   als `Authorization`-Header
-4. **`JWTAuthorizationFilter`** prüft: `token.startsWith("Bearer ")` → setzt Authentication im SecurityContext
-   - Wenn Token fehlt oder kein Bearer-Präfix → Filter lässt Request **ohne Authentication** durch
-   - Spring Security's `anyRequest().authenticated()` liefert dann **403**
+1. **Login** → Backend returns `Authorization: Bearer <jwt>` in the response header
+2. **Webclient** reads this header and stores it in `UserSession.sabiBackendToken`
+   - Token already includes the `Bearer` prefix
+3. **All backend calls** set this token via `RestHelper.prepareAuthedHttpHeader(token)`
+   as the `Authorization` header
+4. **`JWTAuthorizationFilter`** checks: `token.startsWith("Bearer ")` → sets Authentication in
+   SecurityContext
+   - If token is missing or has no Bearer prefix → filter lets the request through
+     **without Authentication**
+   - Spring Security's `anyRequest().authenticated()` then returns **403**
 
-**Wichtig: Auth-Fehler manifestieren sich als 403, nicht als 401!**
-Der Filter gibt bei fehlendem/ungültigem Token 401 zurück, aber wenn der Request die Security-Config
-erreicht ohne gesetzten SecurityContext → 403 Forbidden.
+**Important: Auth errors manifest as 403, not 401!**
+The filter returns 401 for a missing/invalid token, but if the request reaches the security
+config without a SecurityContext → 403 Forbidden.
 
-### Multipart-Endpunkte: `MultipartFile` statt `byte[]`
+### Multipart endpoints: `MultipartFile` instead of `byte[]`
 
-**NIEMALS `@RequestParam("file") byte[] fileBytes` für Multipart-Uploads verwenden.**
+**NEVER use `@RequestParam("file") byte[] fileBytes` for multipart uploads.**
 
-Spring kann `MultipartFile` nicht automatisch in `byte[]` konvertieren — das führt zu
-`MethodArgumentTypeMismatchException` (400), die sich aber manchmal als 403 am Client manifestiert.
+Spring cannot automatically convert `MultipartFile` to `byte[]` — this leads to a
+`MethodArgumentTypeMismatchException` (400), which sometimes manifests as a 403 on the client.
 
-**Richtig:**
+**Correct:**
 ```java
 // Backend Controller
 @PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 public ResponseEntity<Void> upload(
         @PathVariable Long id,
-        @RequestParam("file") MultipartFile file,  // ← MultipartFile, NICHT byte[]
+        @RequestParam("file") MultipartFile file,  // ← MultipartFile, NOT byte[]
         @RequestHeader(name = AUTH_TOKEN) String token,
         Principal principal) {
     byte[] bytes = file.getBytes();
@@ -306,7 +348,7 @@ public ResponseEntity<Void> upload(
 }
 ```
 
-**Webclient-seitig** (RestTemplate mit ByteArrayResource):
+**Webclient-side** (RestTemplate with ByteArrayResource):
 ```java
 ByteArrayResource resource = new ByteArrayResource(bytes) {
     @Override public String getFilename() { return "photo.jpg"; }
@@ -317,22 +359,110 @@ HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token, MediaType.MULTIP
 restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(parts, headers), String.class);
 ```
 
-### Docker-Backend neu deployen (Checkliste)
+### Redeploy Docker backend (checklist)
 
-Nach Änderungen am Backend (`sabi-server`):
+After changes to the backend (`sabi-server`):
 ```bash
-# 1. JAR bauen
+# 1. Build JAR
 cd sabi-server && mvn package -DskipTests
 
-# 2. JAR in Docker-Assets kopieren
+# 2. Copy JAR to Docker assets
 cd devops/sabi_docker_sdk && bash copyjars.sh
 
-# 3. Container stoppen, Image neu bauen, starten (ARM Mac!)
+# 3. Stop container, rebuild image, start (ARM Mac!)
 docker compose -f docker-compose-arm.yml stop sabi-backend
 docker compose -f docker-compose-arm.yml up --build -d sabi-backend
 
-# 4. Auf Start warten (~20-30 Sekunden), dann testen
+# 4. Wait for startup (~20-30 seconds), then test
 ```
 
-**Für AMD64-Server** `docker-compose.yml` verwenden; für ARM-Entwicklung (MacBook M1/M2/M3/M4)
-immer `docker-compose-arm.yml` mit `Dockerfile_ARM`.
+**For AMD64 servers** use `docker-compose.yml`; for ARM development (MacBook M1/M2/M3/M4)
+always use `docker-compose-arm.yml` with `Dockerfile_ARM`.
+
+---
+
+## Backend Security: Ownership Checks (MANDATORY)
+
+### Principle: Every mutating operation MUST verify that the caller owns the affected record.
+
+**Sabi uses the JWT principal email as the single source of truth for identity.**
+`principal.getName()` in every controller returns the authenticated user's email address.
+This email is passed down to the service layer in every call.
+
+### The Standard Ownership Pattern (ALL services must follow this)
+
+```java
+// 1. Resolve caller to UserEntity (never trust IDs from the request body)
+UserEntity user = userRepository.getByEmail(userEmail);
+if (user == null) {
+    return new ResultTo<>(dto, Message.error(TankMessageCodes.UNKNOWN_USER, userEmail));
+}
+
+// 2. Load the record WITH an ownership filter (never load by ID alone)
+SomeEntity entity = someRepository.findByIdAndUserId(recordId, user.getId());
+// or: aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+// or: measurementRepository.getByIdAndUser(measurementId, user);
+
+// 3. Check and reject if not found (= not owned)
+if (entity == null) {
+    return new ResultTo<>(dto, Message.error(SomeMessageCodes.NOT_YOUR_RECORD, recordId));
+}
+
+// 4. Only now perform the operation
+```
+
+### Verified Ownership Coverage (audited 2026-05-03)
+
+| Controller | Operation | Ownership Method | Status |
+|---|---|---|---|
+| TankController | DELETE `/{id}` (removeTank) | `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| TankController | PUT `` (updateTank) | `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| TankController | POST/GET/DELETE `/{id}/photo` | `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| FishStockController | PUT `/{fishId}` (updateFish) | `findByIdAndUserId` | ✅ |
+| FishStockController | DELETE `/{fishId}` (deleteFish) | `findByIdAndUserId` | ✅ |
+| FishStockController | PUT `/{fishId}/departure` | `findByIdAndUserId` | ✅ |
+| FishStockController | DELETE `/{fishId}/catalogue-link` | `findByIdAndUserId` | ✅ |
+| FishStockController | POST/DELETE `/{fishId}/photo` | `findByIdAndUserId` | ✅ |
+| FishStockController | POST `/{fishId}/size` | `findByIdAndUserId` | ✅ |
+| MeasurementController | POST `` (addMeasurement) | tank: `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| MeasurementController | PUT `` (updateMeasurement) | `getByIdAndUser` | ✅ |
+| MeasurementController | DELETE `/{id}` (removeMeasurement) | `getByIdAndUser` | ✅ |
+| MeasurementController | PUT/DELETE `/reminder` | `pReminderTo.getUserId() != user.getId()` | ✅ |
+| PlagueCenterController | POST `/record` (addPlagueRecord) | tank: `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| FishCatalogueController | POST `/` (proposeEntry) | creator set from JWT | ✅ |
+| FishCatalogueController | PUT `/{id}` (updateEntry) | `isCreator` OR `isAdmin` check | ✅ |
+| FishCatalogueAdminController | PUT `/{id}/approve`, `/{id}/reject` | `isAdmin()` check in service | ✅ |
+| UserProfileController | PUT `` (updateProfile) | `getByEmail(principalName)` | ✅ |
+
+### Rules for New Endpoints
+
+**NEVER** do this in a service method:
+```java
+// ❌ INSECURE: loads by ID without ownership check
+Optional<FishEntity> fish = fishRepository.findById(fishId);
+```
+
+**ALWAYS** do this:
+```java
+// ✅ SECURE: combined ID + user constraint
+Optional<TankFishStockEntity> fish = tankFishStockRepository.findByIdAndUserId(fishId, user.getId());
+```
+
+**Controller response codes for failed ownership**:
+- Return `403 FORBIDDEN` (not `404`) when a record exists but doesn't belong to the caller —
+  to avoid leaking existence information, either `403` or `404` is acceptable, but be consistent.
+- Log as `WARN` or `ERROR` with message: "Attempted access on record {id} by non-owner {email}"
+
+### Long ID Comparison Warning
+
+When comparing `long` (primitive) with `Long` (object) using `!=`:
+```java
+// ✅ Safe: long primitive != Long object → Java auto-unboxes Long to long
+if (reminderTo.getUserId() != userEntity.getId()) { ... }
+```
+But **avoid** `Long != Long` (object reference comparison) — always use `.equals()` for `Long` objects:
+```java
+// ❌ Broken for IDs > 127 (outside JVM Long cache)
+if (!entity.getUserId().equals(user.getId())) { ... }  // ← always use .equals()
+```
+

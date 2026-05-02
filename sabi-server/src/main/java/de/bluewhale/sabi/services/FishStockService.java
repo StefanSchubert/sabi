@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
+import de.bluewhale.sabi.model.FishSizeHistoryTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import jakarta.validation.constraints.NotNull;
@@ -99,6 +100,21 @@ public interface FishStockService {
      */
     @NotNull
     byte[] getPhotoBytes(@NotNull Long fishId, @NotNull String userEmail);
+
+    /**
+     * Returns all size records for a fish, newest first (ownership check).
+     */
+    @NotNull
+    List<FishSizeHistoryTo> getSizeHistory(@NotNull Long fishId, @NotNull String userEmail);
+
+    /**
+     * Adds a new size record for an existing fish entry (ownership check).
+     */
+    @NotNull
+    @Transactional
+    ResultTo<FishSizeHistoryTo> addSizeRecord(@NotNull Long fishId,
+                                              @NotNull FishSizeHistoryTo record,
+                                              @NotNull String userEmail);
 }
 
 

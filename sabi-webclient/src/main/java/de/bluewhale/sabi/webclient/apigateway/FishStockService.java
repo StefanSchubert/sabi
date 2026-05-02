@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
 import de.bluewhale.sabi.model.FishRoleTo;
+import de.bluewhale.sabi.model.FishSizeHistoryTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,12 @@ import java.util.List;
 public interface FishStockService {
 
     @NotNull List<FishStockEntryTo> getFishForTank(@NotNull Long aquariumId, @NotNull String token) throws BusinessException;
+
+    /**
+     * Returns a single fish entry by ID (with ownership check).
+     * Returns null if not found or not owned by the authenticated user.
+     */
+    FishStockEntryTo getFishById(@NotNull Long fishId, @NotNull String token) throws BusinessException;
 
     ResultTo<FishStockEntryTo> addFish(@NotNull FishStockEntryTo entry, @NotNull String token) throws BusinessException;
 
@@ -46,5 +53,15 @@ public interface FishStockService {
      * @return list of fish roles; empty list on error
      */
     @NotNull List<FishRoleTo> getFishRoles(@NotNull String language, @NotNull String token) throws BusinessException;
+
+    /**
+     * Returns the size history for a fish (newest first).
+     */
+    @NotNull List<FishSizeHistoryTo> getSizeHistory(@NotNull Long fishId, @NotNull String token) throws BusinessException;
+
+    /**
+     * Adds a new size record for an existing fish entry.
+     */
+    ResultTo<FishSizeHistoryTo> addSizeRecord(@NotNull Long fishId, @NotNull FishSizeHistoryTo record, @NotNull String token) throws BusinessException;
 }
 

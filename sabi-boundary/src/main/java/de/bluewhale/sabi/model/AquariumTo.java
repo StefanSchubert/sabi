@@ -49,4 +49,7 @@ public class AquariumTo implements Serializable {
     @Schema(description =  "Ecosystem type of a seawater aquarium (e.g. SPS, LPS, mixed).", required = false)
     private EcosystemType ecosystemType;
 
+    @Schema(description = "True if the aquarium has a photo stored on the server.", required = false)
+    private boolean hasPhoto;
+
 }

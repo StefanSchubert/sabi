@@ -6,8 +6,6 @@
 package de.bluewhale.sabi.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -17,13 +15,17 @@ import java.nio.file.Paths;
 
 /**
  * Filesystem-based implementation of {@link PhotoStorageService}.
- * Validates magic bytes, enforces max size, stores under {storage-dir}/{userId}/{fishId}.{ext}.
- * Part of 002-fish-stock-catalogue.
+ * Validates magic bytes, enforces max size, stores under {storage-dir}/{userId}/{entityId}.{ext}.
+ * <p>
+ * This class is NOT a Spring component itself — two named beans are registered via
+ * {@link de.bluewhale.sabi.configs.PhotoStorageConfig}:
+ * <ul>
+ *   <li>{@code fishPhotoStorage}    — bound to {@code sabi.fish.photo.*}</li>
+ *   <li>{@code aquariumPhotoStorage} — bound to {@code sabi.aquarium.photo.*}</li>
+ * </ul>
  *
  * @author Stefan Schubert
  */
-@Service
-@ConfigurationProperties(prefix = "sabi.fish.photo")
 @Slf4j
 public class PhotoStorageServiceImpl implements PhotoStorageService {
 

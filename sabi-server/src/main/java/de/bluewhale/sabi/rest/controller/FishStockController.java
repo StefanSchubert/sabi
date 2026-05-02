@@ -8,6 +8,7 @@ package de.bluewhale.sabi.rest.controller;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
 import de.bluewhale.sabi.model.FishRoleTo;
+import de.bluewhale.sabi.model.FishSizeHistoryTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.FishStockExceptionCodes;
@@ -306,6 +307,45 @@ public class FishStockController {
         FishStockEntryTo e = new FishStockEntryTo();
         e.setId(fishId);
         return e;
+    }
+
+    // ---- Size history ----
+
+    @Operation(summary = "Get size history for a fish entry (newest first).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Size history returned."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized."),
+            @ApiResponse(responseCode = "403", description = "Not your fish.")
+    })
+    @GetMapping(value = "/{fishId}/size", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<FishSizeHistoryTo>> getSizeHistory(
+            @PathVariable Long fishId,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("GET /api/fish/{}/size for {}", fishId, principal.getName());
+        List<FishSizeHistoryTo> history = fishStockService.getSizeHistory(fishId, principal.getName());
+        return ResponseEntity.ok(history);
+    }
+
+    @Operation(summary = "Add a new size record for a fish entry.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Size record created."),
+            @ApiResponse(responseCode = "400", description = "Validation error."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized."),
+            @ApiResponse(responseCode = "403", description = "Not your fish.")
+    })
+    @PostMapping(value = "/{fishId}/size", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultTo<FishSizeHistoryTo>> addSizeRecord(
+            @PathVariable Long fishId,
+            @RequestBody @Valid FishSizeHistoryTo record,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("POST /api/fish/{}/size for {}", fishId, principal.getName());
+        ResultTo<FishSizeHistoryTo> result = fishStockService.addSizeRecord(fishId, record, principal.getName());
+        if (result.getMessage() != null && result.getMessage().getType() == Message.CATEGORY.ERROR) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }
 

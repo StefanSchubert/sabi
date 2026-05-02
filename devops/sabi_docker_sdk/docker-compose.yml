@@ -20,11 +20,11 @@ services:
       # Aktiviert application-local.yml für lokale Google-OIDC-Tests.
       # nicht im Repo, da **/application-local.yml in .gitignore steht) und aufgrund des secrets nicht committet werden darf.
       - SPRING_PROFILES_ACTIVE=local
-      # Fish photo storage (T072 — 002-fish-stock-catalogue)
       - SABI_FISH_PHOTO_STORAGE_DIR=/var/sabi-data/fish-photos
+      - SABI_FISH_AQUARIUM_STORAGE_DIR=/var/sabi-data/aquarium-photos
     volumes:
-      # Fish photo persistent storage volume (FR-008, C-4, FR-025)
       - sabi-fish-photos:/var/sabi-data/fish-photos
+      - sabi-aquarium-photos:/var/sabi-data/aquarium-photos
     networks:
       - sabinet
     ports:

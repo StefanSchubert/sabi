@@ -9,12 +9,14 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.FishCatalogueMapper;
 import de.bluewhale.sabi.mapper.FishStockMapper;
 import de.bluewhale.sabi.model.FishDepartureRecordTo;
+import de.bluewhale.sabi.model.FishSizeHistoryTo;
 import de.bluewhale.sabi.model.FishStockEntryTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.FishCatalogueEntryEntity;
 import de.bluewhale.sabi.persistence.model.FishPhotoEntity;
 import de.bluewhale.sabi.persistence.model.FishRoleEntity;
+import de.bluewhale.sabi.persistence.model.FishSizeHistoryEntity;
 import de.bluewhale.sabi.persistence.model.TankFishStockEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
@@ -23,8 +25,10 @@ import de.bluewhale.sabi.persistence.repositories.FishPhotoRepository;
 import de.bluewhale.sabi.persistence.repositories.FishRoleRepository;
 import de.bluewhale.sabi.persistence.repositories.TankFishStockRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.persistence.repositories.FishSizeHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +77,11 @@ public class FishStockServiceImpl implements FishStockService {
     private FishCatalogueMapper fishCatalogueMapper;
 
     @Autowired
+    @Qualifier("fishPhotoStorage")
     private PhotoStorageService photoStorageService;
+
+    @Autowired
+    private FishSizeHistoryRepository fishSizeHistoryRepository;
 
     // -----------------------------------------------------------------------
 
@@ -321,6 +329,45 @@ public class FishStockServiceImpl implements FishStockService {
                 .orElse(new byte[0]);
     }
 
+    @Override
+    public List<FishSizeHistoryTo> getSizeHistory(Long fishId, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return new ArrayList<>();
+        // ownership check
+        if (tankFishStockRepository.findByIdAndUserId(fishId, user.getId()).isEmpty()) return new ArrayList<>();
+        return fishSizeHistoryRepository.findByFishIdOrderByMeasuredOnDesc(fishId)
+                .stream()
+                .map(e -> {
+                    FishSizeHistoryTo to = new FishSizeHistoryTo();
+                    to.setId(e.getId());
+                    to.setFishStockEntryId(e.getFishId());
+                    to.setMeasuredOn(e.getMeasuredOn());
+                    to.setSizeCm(e.getSizeCm());
+                    return to;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public ResultTo<FishSizeHistoryTo> addSizeRecord(Long fishId, FishSizeHistoryTo record, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) {
+            return new ResultTo<>(record, Message.error(FishStockMessageCodes.FISH_NOT_FOUND, userEmail));
+        }
+        if (tankFishStockRepository.findByIdAndUserId(fishId, user.getId()).isEmpty()) {
+            return new ResultTo<>(record, Message.error(FishStockMessageCodes.FISH_NOT_YOURS, fishId));
+        }
+        FishSizeHistoryEntity entity = new FishSizeHistoryEntity();
+        entity.setFishId(fishId);
+        entity.setMeasuredOn(record.getMeasuredOn() != null ? record.getMeasuredOn() : LocalDate.now());
+        entity.setSizeCm(record.getSizeCm());
+        FishSizeHistoryEntity saved = fishSizeHistoryRepository.save(entity);
+        record.setId(saved.getId());
+        record.setFishStockEntryId(fishId);
+        return new ResultTo<>(record, null);
+    }
+
     // ---- Helpers ----
 
     private boolean aquariumBelongsToUser(Long aquariumId, Long userId) {
@@ -343,6 +390,4 @@ public class FishStockServiceImpl implements FishStockService {
                 .collect(Collectors.toSet());
     }
 }
-
-
 

@@ -19,7 +19,15 @@
     <ui:composition template="/template/masterLayout.xhtml">
         <ui:define name="content">
 
-            <h2 style="color:#075985;">
+            <!-- Breadcrumb / back link -->
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/fishStockView"
+                        styleClass="sabi-back-link">
+                    &#8592; #{msg['fishstock.back.to.list']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
                 #{fishCatalogueProposalView.editMode ? msg['common.edit.b'] : msg['fishcatalogue.propose.title']}
             </h2>
 
@@ -65,11 +73,16 @@
 
                     </p:dataTable>
 
-                    <div style="margin-top:1rem;">
+                    <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
                         <p:commandButton value="#{msg['fishcatalogue.propose.another.b']}"
                                          icon="pi pi-plus"
                                          actionListener="#{fishCatalogueProposalView.onNewProposal()}"
                                          update="proposalForm"/>
+                        <p:commandButton value="#{msg['fishstock.back.to.list']}"
+                                         icon="pi pi-arrow-left"
+                                         styleClass="ui-button-secondary"
+                                         type="button"
+                                         onclick="window.location.href='#{request.contextPath}/secured/fishStockView.xhtml';"/>
                     </div>
                 </p:panel>
 
@@ -139,7 +152,8 @@
                     <p:commandButton value="#{msg['common.cancel.b']}"
                                      icon="pi pi-times"
                                      styleClass="ui-button-secondary"
-                                     action="#{fishCatalogueProposalView.onCancel()}"/>
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/fishStockView.xhtml';"/>
                 </div>
 
                 </h:panelGroup>

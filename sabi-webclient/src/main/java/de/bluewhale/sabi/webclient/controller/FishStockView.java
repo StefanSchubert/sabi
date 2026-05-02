@@ -52,7 +52,7 @@ public class FishStockView implements Serializable {
     FishDepartureView fishDepartureView;
 
     @Inject
-    FishStockEntryView fishStockEntryView;
+    FishEntryNavContext fishEntryNavContext;
 
     /** Active fish (no exodusOn). */
     private List<FishStockEntryTo> activeFish = new ArrayList<>();
@@ -88,6 +88,12 @@ public class FishStockView implements Serializable {
             if (userSession.getSelectedTank() == null) {
                 userSession.setSelectedTank(tankListView.getTanks().get(0));
             }
+        }
+
+        // Restore selectedAquariumId from session when fishEntryForm is submitted
+        // (fishEntryForm doesn't contain selectedAquariumIdHidden, so the value is missing)
+        if (selectedAquariumId == null && userSession.getSelectedTank() != null) {
+            selectedAquariumId = userSession.getSelectedTank().getId();
         }
 
         // Use selectedAquariumId from dropdown if set, otherwise fall back to session tank
@@ -135,18 +141,17 @@ public class FishStockView implements Serializable {
         }
     }
 
-    public void onAddFish() {
-        selectedFish = new FishStockEntryTo();
-        selectedFish.setAquariumId(selectedAquariumId);
-        // Prepare the entry-view for a new fish with the selected aquarium
-        fishStockEntryView.getCurrentEntry().setAquariumId(selectedAquariumId);
-        fishStockEntryView.getCurrentEntry().setAddedOn(java.time.LocalDate.now());
+    public String onAddFish() {
+        FishStockEntryTo newEntry = new FishStockEntryTo();
+        newEntry.setAquariumId(selectedAquariumId);
+        newEntry.setAddedOn(LocalDate.now());
+        fishEntryNavContext.prepare(newEntry);
+        return "/secured/fishStockEntryPage?faces-redirect=true";
     }
 
-    public void onEditFish(FishStockEntryTo fish) {
-        this.selectedFish = fish;
-        // Populate the entry-view so the dialog shows pre-filled fields
-        fishStockEntryView.init(fish);
+    public String onEditFish(FishStockEntryTo fish) {
+        fishEntryNavContext.prepare(fish);
+        return "/secured/fishStockEntryPage?faces-redirect=true";
     }
 
     public void onDeleteFish(FishStockEntryTo fish) {
@@ -166,11 +171,11 @@ public class FishStockView implements Serializable {
     }
 
     /**
-     * Creates a copy of the given fish entry and opens the entry dialog pre-filled with
+     * Creates a copy of the given fish entry and navigates to the entry page pre-filled with
      * the duplicated data. The new entry has no ID (so a new record is created on save),
      * no photo, no departure data, and its addedOn date is reset to today.
      */
-    public void onDuplicateFish(FishStockEntryTo fish) {
+    public String onDuplicateFish(FishStockEntryTo fish) {
         FishStockEntryTo copy = new FishStockEntryTo();
         copy.setAquariumId(fish.getAquariumId());
         copy.setCommonName(fish.getCommonName());
@@ -179,10 +184,13 @@ public class FishStockView implements Serializable {
         copy.setExternalRefUrl(fish.getExternalRefUrl());
         copy.setObservedBehavior(fish.getObservedBehavior());
         copy.setFishCatalogueId(fish.getFishCatalogueId());
+        if (fish.getFishRoleIds() != null) {
+            copy.setFishRoleIds(new java.util.ArrayList<>(fish.getFishRoleIds()));
+        }
         copy.setAddedOn(LocalDate.now());
         // id, exodusOn, departureReason, hasPhoto intentionally left blank
-        this.selectedFish = copy;
-        fishStockEntryView.init(copy);
+        fishEntryNavContext.prepare(copy);
+        return "/secured/fishStockEntryPage?faces-redirect=true";
     }
 
     public void onRemoveCatalogueLink(FishStockEntryTo fish) {

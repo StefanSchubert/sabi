@@ -21,7 +21,7 @@ public class FishRoleEntity extends Auditable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id", nullable = false, insertable = false, updatable = false)
+    @Column(name = "id", nullable = false)
     @Basic
     private Integer id;
 
