@@ -15,14 +15,8 @@ import java.nio.file.Paths;
 
 /**
  * Filesystem-based implementation of {@link PhotoStorageService}.
- * Validates magic bytes, enforces max size, stores under {storage-dir}/{userId}/{entityId}.{ext}.
- * <p>
- * This class is NOT a Spring component itself — two named beans are registered via
- * {@link de.bluewhale.sabi.configs.PhotoStorageConfig}:
- * <ul>
- *   <li>{@code fishPhotoStorage}    — bound to {@code sabi.fish.photo.*}</li>
- *   <li>{@code aquariumPhotoStorage} — bound to {@code sabi.aquarium.photo.*}</li>
- * </ul>
+ * Validates magic bytes, enforces max size, stores under {storage-dir}/{userId}/{fishId}.{ext}.
+ * Part of 002-fish-stock-catalogue.
  *
  * @author Stefan Schubert
  */

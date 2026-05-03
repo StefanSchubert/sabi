@@ -37,9 +37,13 @@
                         <p:inputText id="description"
                                      value="#{tankListView.selectedTank.description}"/>
 
-                        <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
+                        <p:outputLabel for="size" value="#{msg['tankview.volume.gross.l']}"/>
                         <p:inputText id="size"
                                      value="#{tankListView.selectedTank.size}"/>
+
+                        <p:outputLabel for="sizeNet" value="#{msg['tankview.volume.net.l']}"/>
+                        <p:inputText id="sizeNet"
+                                     value="#{tankListView.selectedTank.sizeNet}"/>
 
                         <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
                         <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
@@ -49,7 +53,7 @@
                         <p:outputLabel for="type" value="#{msg['tankview.waterType.l']}"/>
                         <h:selectOneMenu id="type" value="#{tankListView.selectedTank.waterType}">
                             <f:selectItems value="#{units.waterTypes}"
-                                           var="n"
+                                          var="n"
                                            itemValue="#{n}"
                                            itemLabel="#{tankListView.translatedWaterType[n]}"/>
                         </h:selectOneMenu>

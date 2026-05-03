@@ -35,7 +35,6 @@
                                  style="width:100%; border:none;"
                                  columnClasses="ui-grid-col-5,ui-grid-col-7">
 
-                        <!-- Tank photo -->
                         <p:outputLabel value="#{msg['tank.form.photo.label']}"/>
                         <p:outputPanel>
                             <p:graphicImage rendered="#{tank.hasPhoto}"
@@ -51,8 +50,11 @@
                         <p:outputLabel value="#{msg['tankview.waterType.l']}"/>
                         <p:outputLabel value="#{tankListView.translatedWaterType[tank.waterType]}"/>
 
-                        <p:outputLabel value="#{msg['tankview.volume.l']}"/>
+                        <p:outputLabel value="#{msg['tankview.volume.gross.l']}"/>
                         <p:outputLabel value="#{tank.size} #{tank.sizeUnit.unitSign}"/>
+
+                        <p:outputLabel value="#{tank.sizeNet != null ? msg['tankview.volume.net.l'] : ''}"/>
+                        <p:outputLabel value="#{tank.sizeNet != null ? tank.sizeNet.toString().concat(' ').concat(tank.sizeUnit.unitSign) : ''}"/>
 
                         <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
                         <p:outputLabel value="#{tank.inceptionDate}">

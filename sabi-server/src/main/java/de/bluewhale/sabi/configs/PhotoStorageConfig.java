@@ -37,4 +37,3 @@ public class PhotoStorageConfig {
         return new PhotoStorageServiceImpl();
     }
 }
-

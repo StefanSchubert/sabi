@@ -361,23 +361,45 @@ restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(parts, headers), St
 
 ### Redeploy Docker backend (checklist)
 
-After changes to the backend (`sabi-server`):
+**Preferred method: use the redeploy script.**
+
 ```bash
-# 1. Build JAR
-cd sabi-server && mvn package -DskipTests
+# Standard redeploy (no boundary changes, no DB migrations):
+cd devops/sabi_docker_sdk && bash server_redeploy.sh
 
-# 2. Copy JAR to Docker assets
-cd devops/sabi_docker_sdk && bash copyjars.sh
+# After sabi-boundary changes (pom.xml or source):
+bash server_redeploy.sh --boundary
 
-# 3. Stop container, rebuild image, start (ARM Mac!)
-docker compose -f docker-compose-arm.yml stop sabi-backend
-docker compose -f docker-compose-arm.yml up --build -d sabi-backend
+# After new Flyway migration scripts:
+bash server_redeploy.sh --flyway
 
-# 4. Wait for startup (~20-30 seconds), then test
+# Both at once:
+bash server_redeploy.sh --boundary --flyway
 ```
+
+**Script location:** `devops/sabi_docker_sdk/server_redeploy.sh`
+
+**What the script does:**
+1. Stops + removes the `sabi-as` container
+2. `--boundary`: `mvn install -DskipTests` in `sabi-boundary/`
+3. `mvn package -DskipTests` in `sabi-server/`
+4. Runs `copyjars.sh` to copy the JAR into the Docker context
+5. `docker compose -f docker-compose-arm.yml up --build -d sabi-backend`
+6. `--flyway`: runs the Flyway container (`docker compose run --rm flyway`) — it exits after applying pending migrations
+7. Tails the container log for 25 s so startup errors are visible immediately
 
 **For AMD64 servers** use `docker-compose.yml`; for ARM development (MacBook M1/M2/M3/M4)
 always use `docker-compose-arm.yml` with `Dockerfile_ARM`.
+
+**Manual steps (fallback, if script is not usable):**
+```bash
+cd sabi-server && mvn package -DskipTests
+cd devops/sabi_docker_sdk && bash copyjars.sh
+docker compose -f docker-compose-arm.yml stop sabi-backend
+docker compose -f docker-compose-arm.yml up --build -d sabi-backend
+# With migrations:
+docker compose -f docker-compose-arm.yml run --rm flyway
+```
 
 ---
 

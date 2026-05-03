@@ -36,6 +36,10 @@ public class AquariumEntity extends Auditable {
     @Column(name = "size", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
     private Integer size;
 
+    @Basic
+    @Column(name = "size_net", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
+    private Integer sizeNet;
+
     @Column(name = "size_unit", nullable = true, insertable = true, updatable = true, length = 10, precision = 0)
     @Enumerated(EnumType.STRING)
     private SizeUnit sizeUnit;

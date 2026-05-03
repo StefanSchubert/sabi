@@ -108,6 +108,7 @@ networks:
 volumes:
   # Fish photo storage — persistent across container restarts (T073)
   sabi-fish-photos:
+  sabi-aquarium-photos:
 
 # Notice: application.properties files contains "localhost" this does not matches the hosts,
 # db, fakeSMTP etc.. so the application.properties need to be externalized as in production

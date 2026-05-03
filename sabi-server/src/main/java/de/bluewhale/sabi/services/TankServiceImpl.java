@@ -157,11 +157,18 @@ public class TankServiceImpl implements TankService {
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatedAquariumTo.getId(), requestingUser.getId());
 
         if (aquariumEntity != null) {
-            // FIXME STS (04.09.23): The Mapping here will provide a completely new entity
-            // however we have the aquarium before. Isn't there a merge mapping
-            // between entities available by mapstruts?
-            aquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatedAquariumTo);
-            aquariumEntity.setUser(requestingUser);
+            // Update mutable fields directly on the loaded entity to preserve the @Version (optlock) value.
+            // Replacing the entity via mapAquariumTo2Entity() would reset optlock to 0
+            // and cause JpaOptimisticLockingFailureException on saveAndFlush().
+            aquariumEntity.setDescription(updatedAquariumTo.getDescription());
+            aquariumEntity.setSize(updatedAquariumTo.getSize());
+            aquariumEntity.setSizeNet(updatedAquariumTo.getSizeNet());
+            aquariumEntity.setSizeUnit(updatedAquariumTo.getSizeUnit());
+            aquariumEntity.setWaterType(updatedAquariumTo.getWaterType());
+            aquariumEntity.setEcosystemType(updatedAquariumTo.getEcosystemType());
+            aquariumEntity.setActive(updatedAquariumTo.getActive());
+            aquariumEntity.setInceptionDate(updatedAquariumTo.getInceptionDate());
+            // temperatureApiKey is managed via generateAndAssignNewTemperatureApiKey(), not here
             AquariumEntity updatedEntity = aquariumRepository.saveAndFlush(aquariumEntity);
             updatedAquariumTo = aquariumMapper.mapAquariumEntity2To(updatedEntity);
             message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, updatedAquariumTo.getDescription());

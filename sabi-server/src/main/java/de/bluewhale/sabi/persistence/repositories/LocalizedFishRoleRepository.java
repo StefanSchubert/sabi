@@ -17,4 +17,6 @@ public interface LocalizedFishRoleRepository extends CrudRepository<LocalizedFis
 
     List<LocalizedFishRoleEntity> findByLanguageCode(String languageCode);
 
+    List<LocalizedFishRoleEntity> findByRoleIdAndLanguageCode(Integer roleId, String languageCode);
+
 }
