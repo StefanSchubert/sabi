@@ -5,9 +5,11 @@
 
 package de.bluewhale.sabi.services;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import de.bluewhale.sabi.model.AquariumExportTo;
 import de.bluewhale.sabi.model.MeasurementExportTo;
 import de.bluewhale.sabi.model.ReefDataExportTo;
@@ -17,7 +19,7 @@ import de.bluewhale.sabi.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
+// removed slf4j LoggerFactory import (using Log4j2 LogManager instead)
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -89,18 +91,46 @@ public class ReefDataExportServiceTest {
 
     private static final TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
-    /** Logback list appender — captures log events from the service under test. */
-    private ListAppender<ILoggingEvent> logAppender;
+    /** Capturing appender — captures log events from the service under test (Log4j2). */
+    private CapturingAppender logAppender;
 
     @BeforeEach
     public void setUpLogCapture() {
-        Logger serviceLogger = (Logger) LoggerFactory.getLogger(ReefDataExportServiceImpl.class);
-        logAppender = new ListAppender<>();
-        logAppender.start();
+        // Use Log4j2 core API to attach a capturing appender
+        org.apache.logging.log4j.core.Logger serviceLogger =
+                (org.apache.logging.log4j.core.Logger) LogManager.getLogger(ReefDataExportServiceImpl.class);
+
         // Remove any previous instance to avoid duplicates across tests
-        serviceLogger.detachAppender("list");
-        logAppender.setName("list");
+        if (serviceLogger.getAppenders().containsKey("list")) {
+            // remove by Appender instance to avoid signature ambiguity across Log4j2 versions
+            org.apache.logging.log4j.core.Appender existing = serviceLogger.getAppenders().get("list");
+            if (existing != null) {
+                serviceLogger.removeAppender(existing);
+            }
+        }
+
+        logAppender = new CapturingAppender("list", PatternLayout.newBuilder().withPattern("%m").build());
+        logAppender.start();
         serviceLogger.addAppender(logAppender);
+    }
+
+    /** Simple Log4j2 appender that records LogEvent instances in memory. */
+    private static class CapturingAppender extends AbstractAppender {
+        private final java.util.List<LogEvent> events = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+        protected CapturingAppender(String name, org.apache.logging.log4j.core.Layout<?> layout) {
+            super(name, null, (org.apache.logging.log4j.core.Layout<?>) layout, false, null);
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            // store an immutable copy to avoid lifecycle issues
+            events.add(event.toImmutable());
+        }
+
+        public java.util.List<LogEvent> getEvents() {
+            return events;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -151,21 +181,21 @@ public class ReefDataExportServiceTest {
         reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
 
         // Then — exactly one DATA_EXPORT log entry
-        List<ILoggingEvent> logs = logAppender.list;
+        List<LogEvent> logs = logAppender.getEvents();
         long dataExportLogs = logs.stream()
-                .filter(e -> e.getFormattedMessage().contains("DATA_EXPORT"))
+                .filter(e -> e.getMessage().getFormattedMessage().contains("DATA_EXPORT"))
                 .count();
         assertEquals(1, dataExportLogs, "Exactly one DATA_EXPORT audit log entry expected");
 
         // Hash must be present
         String expectedHash = sha256Hex(TEST_USER_ID.toString());
         boolean hashFound = logs.stream()
-                .anyMatch(e -> e.getFormattedMessage().contains(expectedHash));
+                .anyMatch(e -> e.getMessage().getFormattedMessage().contains(expectedHash));
         assertTrue(hashFound, "Audit log must contain SHA-256 hash of userId");
 
         // Email must NOT appear in any log message
         boolean emailFound = logs.stream()
-                .anyMatch(e -> e.getFormattedMessage().contains(TESTUSER_EMAIL1));
+                .anyMatch(e -> e.getMessage().getFormattedMessage().contains(TESTUSER_EMAIL1));
         assertFalse(emailFound, "Email address must NOT appear in audit log (FR-014)");
     }
 

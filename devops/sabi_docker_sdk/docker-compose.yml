@@ -20,6 +20,11 @@ services:
       # Aktiviert application-local.yml für lokale Google-OIDC-Tests.
       # nicht im Repo, da **/application-local.yml in .gitignore steht) und aufgrund des secrets nicht committet werden darf.
       - SPRING_PROFILES_ACTIVE=local
+      - SABI_FISH_PHOTO_STORAGE_DIR=/var/sabi-data/fish-photos
+      - SABI_FISH_AQUARIUM_STORAGE_DIR=/var/sabi-data/aquarium-photos
+    volumes:
+      - sabi-fish-photos:/var/sabi-data/fish-photos
+      - sabi-aquarium-photos:/var/sabi-data/aquarium-photos
     networks:
       - sabinet
     ports:
@@ -89,6 +94,12 @@ services:
 networks:
   sabinet:
     driver: bridge
+
+volumes:
+  # Fish photo storage — persistent across container restarts (T072)
+  sabi-fish-photos:
+  sabi-aquarium-photos:
+
 
 # TODO: application.properties files contains "localhost" this does not matches the hosts,
 # db, fakeSMTP etc.. so the application.properties need to be externalized as in production

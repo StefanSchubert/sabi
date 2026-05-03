@@ -127,4 +127,34 @@ public interface TankService {
     @Transactional
     @NotNull
     ResultTo<AquariumTo> generateAndAssignNewTemperatureApiKey(Long persistedTankId, String pUsersEmail);
+
+    /**
+     * Uploads a photo for the given aquarium. Validates ownership.
+     *
+     * @param aquariumId  ID of the aquarium
+     * @param bytes       raw image bytes
+     * @param contentType MIME type (image/jpeg, image/png, image/webp, image/gif)
+     * @param userEmail   owner's email
+     */
+    @Transactional
+    void uploadPhoto(Long aquariumId, byte[] bytes, String contentType, String userEmail);
+
+    /**
+     * Returns the raw photo bytes for the given aquarium, or empty array if none.
+     *
+     * @param aquariumId ID of the aquarium
+     * @param userEmail  owner's email (ownership check)
+     * @return raw image bytes, never null
+     */
+    @NotNull
+    byte[] getPhotoBytes(Long aquariumId, String userEmail);
+
+    /**
+     * Deletes the photo of the given aquarium (filesystem + metadata).
+     *
+     * @param aquariumId ID of the aquarium
+     * @param userEmail  owner's email
+     */
+    @Transactional
+    void deletePhoto(Long aquariumId, String userEmail);
 }

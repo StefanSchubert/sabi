@@ -6,7 +6,16 @@
 package de.bluewhale.sabi.security;
 
 import org.apache.logging.log4j.util.Strings;
-import org.passay.*;
+import org.passay.DefaultPasswordValidator;
+import org.passay.PasswordData;
+import org.passay.PasswordValidator;
+import org.passay.ValidationResult;
+import org.passay.data.EnglishCharacterData;
+import org.passay.data.EnglishSequenceData;
+import org.passay.rule.CharacterRule;
+import org.passay.rule.IllegalSequenceRule;
+import org.passay.rule.LengthRule;
+import org.passay.rule.WhitespaceRule;
 import org.springframework.lang.Nullable;
 
 /**
@@ -16,7 +25,7 @@ import org.springframework.lang.Nullable;
  */
 public class PasswordPolicy {
 
-    private static PasswordValidator validator = new PasswordValidator(
+    private static PasswordValidator validator = new DefaultPasswordValidator(
             new LengthRule(10, 20),
             new CharacterRule(EnglishCharacterData.UpperCase, 1),
             new CharacterRule(EnglishCharacterData.LowerCase, 1),
@@ -52,7 +61,7 @@ public class PasswordPolicy {
      */
     public static boolean isPasswordValid(@Nullable final String pPhrase) {
         if (Strings.isEmpty(pPhrase)) return false;
-        final RuleResult result = validator.validate(new PasswordData(pPhrase));
+        final ValidationResult result = validator.validate(new PasswordData(pPhrase));
         return result.isValid();
     }
 

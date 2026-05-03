@@ -52,9 +52,10 @@ public interface TankService extends Serializable {
      * Update an existing or create a new tank for the user.
      * @param tank Tank to patch or to create
      * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return the saved tank (with server-assigned ID for new tanks)
      * @throws BusinessException
      */
-    void save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException;
+    AquariumTo save(AquariumTo tank, String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
      * Retrieves a new temperature API Key.
@@ -64,4 +65,23 @@ public interface TankService extends Serializable {
      * @throws BusinessException
      */
     String reCreateTemperatureAPIKey(@NotNull Long tankID, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
+
+    /**
+     * Uploads a photo for the given aquarium.
+     * @param aquariumId ID of the aquarium
+     * @param bytes raw image bytes
+     * @param contentType MIME type
+     * @param token Bearer auth token
+     * @throws BusinessException
+     */
+    void uploadPhoto(@NotNull Long aquariumId, @NotNull byte[] bytes, @NotNull String contentType, @NotNull String token) throws BusinessException;
+
+    /**
+     * Downloads the photo bytes for the given aquarium from backend.
+     * @param aquariumId ID of the aquarium
+     * @param token Bearer auth token
+     * @return raw image bytes, empty array if none
+     * @throws BusinessException
+     */
+    @NotNull byte[] getPhoto(@NotNull Long aquariumId, @NotNull String token) throws BusinessException;
 }

@@ -19,6 +19,8 @@ captcha:
 sabi:
   mailvalidation:
     url: https://api.sabi-project.net/sabi/api/auth/
+  admin:
+    users: ${SABI_ADMIN_USERS:stefan@bluewhale.de}
 
 # EclipseLink Logging in Produktion reduzieren
 eclipselink:
@@ -38,4 +40,6 @@ spring:
 # No API doc in production
 springdoc:
   swagger-ui:
+    enabled: false
+  api-docs:
     enabled: false

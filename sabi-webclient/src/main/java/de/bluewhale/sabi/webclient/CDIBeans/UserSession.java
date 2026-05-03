@@ -16,10 +16,12 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -38,10 +40,23 @@ public class UserSession implements Serializable {
 
     private String userName = "";
 
+    /**
+     * The authenticated user's email address — distinct from userName which may be a display name.
+     * Used for admin role checks (sabi.admin.users is a list of emails).
+     */
+    private String userEmail = "";
+
     private Locale locale;
 
     /** Whether the user has activated dark mode in their profile. */
     private boolean darkModeEnabled = false;
+
+    /**
+     * Comma-separated list of admin emails — mirrors sabi-server's sabi.admin.users property.
+     * Used by #{userSession.admin} in header.xhtml (T066).
+     */
+    @Value("${sabi.admin.users:admin@sabi-project.net}")
+    private String adminUsers;
 
     /**
      * Temporary storage for the tank currently being edited/created.
@@ -103,6 +118,11 @@ public class UserSession implements Serializable {
      * @param sabiBackendToken
      */
     public void setSabiBackendToken(String sabiBackendToken) {
+        log.info("setSabiBackendToken: prefix='{}', length={}",
+                sabiBackendToken != null && sabiBackendToken.length() > 10
+                        ? sabiBackendToken.substring(0, 10) + "..."
+                        : sabiBackendToken,
+                sabiBackendToken != null ? sabiBackendToken.length() : -1);
         this.sabiBackendToken = sabiBackendToken;
     }
 
@@ -122,6 +142,22 @@ public class UserSession implements Serializable {
      */
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    /**
+     * Returns the authenticated user's email address.
+     * Explicitly set during login (direct or OIDC).
+     */
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    /**
+     * Sets the authenticated user's email address.
+     * Must be called during both direct login and OIDC login flows.
+     */
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail != null ? userEmail.trim() : "";
     }
 
     /**
@@ -226,6 +262,26 @@ public class UserSession implements Serializable {
 
     public void setSelectedTank(AquariumTo selectedTank) {
         this.selectedTank = selectedTank;
+    }
+
+    /**
+     * Returns true if the currently logged-in user is an admin.
+     * Admin users are defined by the sabi.admin.users property (comma-separated list of emails).
+     * Uses userEmail (explicit) with fallback to userName (legacy direct-login path stores email there).
+     * Used in header.xhtml via #{userSession.admin} (T066).
+     */
+    public boolean isAdmin() {
+        if (adminUsers == null || adminUsers.isBlank()) {
+            return false;
+        }
+        // Primary check: use the dedicated email field (set by both login paths)
+        String candidate = (userEmail != null && !userEmail.isBlank()) ? userEmail : userName;
+        if (candidate == null || candidate.isBlank()) {
+            return false;
+        }
+        return Arrays.stream(adminUsers.split(","))
+                .map(String::trim)
+                .anyMatch(email -> email.equalsIgnoreCase(candidate));
     }
 
     /** Invalidates Frontend Session in case of logout. */

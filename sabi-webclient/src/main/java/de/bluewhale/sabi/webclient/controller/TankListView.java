@@ -144,4 +144,24 @@ public class TankListView implements Serializable {
         return TANK_VIEW_PAGE.getNavigationableAddress();
     }
 
+    /**
+     * AJAX-compatible save for tankEditor when photo upload is involved.
+     * Does NOT return navigation — JS in tankEditor.xhtml handles the redirect.
+     * The saved tank (with server-assigned ID for new tanks) is stored back in session
+     * so the hidden tankEditorId input reflects the correct ID.
+     */
+    public void onSaveForEditor() {
+        AquariumTo selectedTank = userSession.getSelectedTank();
+        if (selectedTank != null) {
+            try {
+                AquariumTo saved = tankService.save(selectedTank, userSession.getSabiBackendToken());
+                // Important: update selectedTank with the server-assigned ID (new tanks)
+                userSession.setSelectedTank(saved);
+            } catch (BusinessException e) {
+                log.error(e.getLocalizedMessage());
+                MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
+            }
+        }
+    }
+
 }

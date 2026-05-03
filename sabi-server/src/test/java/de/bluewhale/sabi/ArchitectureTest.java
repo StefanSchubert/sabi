@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+
 
 /**
  * Checking on architectural constraints
@@ -73,8 +75,7 @@ public class ArchitectureTest {
     };
 
     @Test
-    public void test_onion_architecture_inside_one_component_using_layers() {
-        // arrange
+    public void test_onion_architecture_inside_one_component_using_layers() {        // arrange
         Layer coreDataLayer = new Layer("JPA", PACKAGE_PREFIX_WITH_WILDCARD + ".persistence..");
         Layer serviceLayer = new Layer("Services", PACKAGE_PREFIX_WITH_WILDCARD + ".services..");
         Layer securityLayer = new Layer("Security", PACKAGE_PREFIX_WITH_WILDCARD + ".security..");
@@ -96,6 +97,19 @@ public class ArchitectureTest {
                 .whereLayer(serviceLayer.name).mayOnlyAccessLayers(coreDataLayer.name, utilLayer.name, securityLayer.name);
 
         layeredArchitecture.evaluate(classesFromSabi);
+    }
+
+    /**
+     * T079 (002-fish-stock-catalogue): No entity may use the deprecated @Where annotation.
+     * New entities must use @SQLRestriction (Hibernate 6+) instead.
+     */
+    @Test
+    public void noEntityShouldUseDeprecatedWhereAnnotation() {
+        noClasses()
+                .that().resideInAPackage("de.bluewhale.sabi.persistence.model..")
+                .should().beAnnotatedWith("org.hibernate.annotations.Where")
+                .as("Entities must use @SQLRestriction instead of the deprecated @Where annotation (Hibernate 6+)")
+                .check(classesFromSabi);
     }
 
     class Layer {

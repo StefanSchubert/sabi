@@ -12,10 +12,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Transportobject describing a fish
+ * Transportobject describing a fish.
+ * @deprecated Use {@link FishStockEntryTo} instead (002-fish-stock-catalogue).
  *
  * @author Stefan Schubert
  */
+@Deprecated
 @Data
 public class FishTo implements Serializable  {
 

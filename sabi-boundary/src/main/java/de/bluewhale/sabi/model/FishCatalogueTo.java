@@ -12,11 +12,12 @@ import java.io.Serializable;
 
 /**
  * Transport Objekt which references the fish with a catalogue, to support
- * a common fish base. This is the required common attribute. Without it
- * we would't be able to analyse treatments between the different tanks.
+ * a common fish base.
+ * @deprecated Use {@link FishCatalogueEntryTo} instead (002-fish-stock-catalogue).
  *
  * @author Stefan Schubert
  */
+@Deprecated
 @Data
 public class FishCatalogueTo implements Serializable {
 

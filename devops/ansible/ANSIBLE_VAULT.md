@@ -29,19 +29,20 @@ Secret wird mit Vault-Passwort verschlüsselt
 
 Übersicht aller Secrets und ihr aktueller Verwaltungsstatus:
 
-| Secret                           | Service | Datei | Status |
-|----------------------------------|---------|-------|--------|
-| `sabi_google_oidc_client_id`     | sabi-webclient (FE) | `group_vars/sabiFrontend.yml` | ✅ Vaulted |
-| `sabi_google_oidc_client_secret` | sabi-webclient (FE) | `group_vars/sabiFrontend.yml` | ✅ Vaulted |
-| `sabi_google_oidc_client_id`     | sabi-service / Middleware (blackpearl4u) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| `sabi_google_oidc_client_secret` | sabi-service / Middleware (blackpearl4u) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| `sabi_db_password`               | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| `sabi_smtp_host`                 | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| `sabi_smtp_user`                 | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| `sabi_smtp_password`             | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| `sabi_jwt_secret`                | sabi-service (BE) | `group_vars/sabiMiddleware.yml` | ✅ Vaulted |
-| Grafana SMTP-Password            | Grafana | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
-| Grafana Secret Key               | Grafana | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
+| Secret                           | Service                                  | Datei                                             | Status                          |
+|----------------------------------|------------------------------------------|---------------------------------------------------|---------------------------------|
+| `sabi_google_oidc_client_id`     | sabi-webclient (FE)                      | `group_vars/sabiFrontend.yml`                     | ✅ Vaulted                       |
+| `sabi_google_oidc_client_secret` | sabi-webclient (FE)                      | `group_vars/sabiFrontend.yml`                     | ✅ Vaulted                       |
+| `sabi_google_oidc_client_id`     | sabi-service / Middleware (blackpearl4u) | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_google_oidc_client_secret` | sabi-service / Middleware (blackpearl4u) | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_db_password`               | sabi-service (BE)                        | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_smtp_host`                 | sabi-service (BE)                        | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_smtp_user`                 | sabi-service (BE)                        | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_smtp_password`             | sabi-service (BE)                        | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_jwt_secret`                | sabi-service (BE)                        | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| `sabi_admin_users`               | sabi-service (BE)                        | `group_vars/sabiMiddleware.yml`                   | ✅ Vaulted                       |
+| Grafana SMTP-Password            | Grafana                                  | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
+| Grafana Secret Key               | Grafana                                  | `~/Documents/SABI_Config_Safe/grafana/custom.ini` | ✅ Lokal isoliert (nicht im Git) |
 
 > **Hinweis Grafana:** Für Grafana existiert bereits ein separater Mechanismus
 > (`GRAFANA_CUSTOM_INI.md`). Die `custom.ini` liegt außerhalb des Repos.

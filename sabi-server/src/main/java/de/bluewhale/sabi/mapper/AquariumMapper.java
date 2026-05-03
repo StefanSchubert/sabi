@@ -25,12 +25,14 @@ public interface AquariumMapper {
             @Mapping(target ="sizeUnit", source="sizeUnit"),
             @Mapping(target ="waterType", source="waterType"),
             @Mapping(target ="size", source="size"),
+            @Mapping(target ="sizeNet", source="sizeNet"),
             @Mapping(target ="description", source="description"),
             @Mapping(target ="userId", source="user.id"),
             @Mapping(target ="active", source="active"),
             @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),
             @Mapping(target ="inceptionDate", source="inceptionDate"),
             @Mapping(target ="ecosystemType", source="ecosystemType"),
+            @Mapping(target ="hasPhoto", ignore = true),
     })
     AquariumTo mapAquariumEntity2To(@NotNull final AquariumEntity pAquariumEntity);
 
@@ -39,6 +41,7 @@ public interface AquariumMapper {
             @Mapping(target ="sizeUnit", source="sizeUnit"),
             @Mapping(target ="waterType", source="waterType"),
             @Mapping(target ="size", source="size"),
+            @Mapping(target ="sizeNet", source="sizeNet"),
             @Mapping(target ="description", source="description"),
             @Mapping(target ="active", source="active"),
             @Mapping(target ="temperatureApiKey", source="temperatureApiKey"),

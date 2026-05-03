@@ -13,7 +13,9 @@ import lombok.EqualsAndHashCode;
  *
  * User: Stefan
  * Date: 12.03.15
+ * @deprecated Use {@link FishCatalogueEntryEntity} instead (002-fish-stock-catalogue).
  */
+@Deprecated
 @Table(name = "fish_catalogue", schema = "sabi")
 @Entity
 @Data

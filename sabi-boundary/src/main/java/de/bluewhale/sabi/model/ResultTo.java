@@ -19,6 +19,9 @@ public class ResultTo<T> implements Serializable {
     private T value;
     private Message message;
 
+    /** No-arg constructor required for Jackson deserialization. */
+    public ResultTo() {
+    }
 
     public ResultTo(T pValue, Message pMessage) {
         this.value = pValue;
@@ -30,8 +33,15 @@ public class ResultTo<T> implements Serializable {
         return this.value;
     }
 
+    public void setValue(T value) {
+        this.value = value;
+    }
 
     public Message getMessage() {
         return this.message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 }
