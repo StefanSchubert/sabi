@@ -80,10 +80,11 @@ public class TankFishStockRepositoryTest {
 
     /**
      * existsByIdAndExodusOnIsNotNull returns false for non-existent entity.
+     * Returns Boolean (nullable); null = no row found = effectively false.
      */
     @Test
     public void existsByIdAndExodusOnIsNotNull_returnsFalseForNonExistent() {
-        boolean result = tankFishStockRepository.existsByIdAndExodusOnIsNotNull(999L);
-        assertFalse(result);
+        Boolean result = tankFishStockRepository.existsByIdAndExodusOnIsNotNull(999L);
+        assertFalse(Boolean.TRUE.equals(result));
     }
 }

@@ -7,7 +7,10 @@
 package de.bluewhale.sabi.persistence;
 
 import de.bluewhale.sabi.persistence.model.FishCatalogueEntryEntity;
+import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.FishCatalogueEntryRepository;
+import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,31 @@ public class FishCatalogueRepositoryTest {
     @Autowired
     private FishCatalogueEntryRepository fishCatalogueEntryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    // Dynamic user IDs — populated in @BeforeEach (FK constraint on fish_catalogue.proposer_user_id)
+    private Long userId1;
+    private Long userId2;
+
+    @BeforeEach
+    public void setUp() {
+        userId1 = createUser("cataloguetest1@test.de", "catuser1");
+        userId2 = createUser("cataloguetest2@test.de", "catuser2");
+    }
+
+    private Long createUser(String email, String username) {
+        UserEntity u = new UserEntity();
+        u.setEmail(email);
+        u.setUsername(username);
+        u.setPassword("hashed");
+        u.setValidateToken("tok-" + username);
+        u.setValidated(true);
+        u.setLanguage("en");
+        u.setCountry("DE");
+        return userRepository.save(u).getId();
+    }
+
     // ---- Helpers ----
 
     private FishCatalogueEntryEntity entry(String scientificName, String status, Long proposerId) {
@@ -64,11 +92,11 @@ public class FishCatalogueRepositoryTest {
      */
     @Test
     public void searchByQuery_returnsPublicEntries() {
-        fishCatalogueEntryRepository.save(entry("Amphiprion ocellaris", "PUBLIC", 1L));
-        fishCatalogueEntryRepository.save(entry("Paracanthurus hepatus", "PUBLIC", 1L));
+        fishCatalogueEntryRepository.saveAndFlush(entry("Amphiprion ocellaris", "PUBLIC", userId1));
+        fishCatalogueEntryRepository.saveAndFlush(entry("Paracanthurus hepatus", "PUBLIC", userId1));
 
         List<FishCatalogueEntryEntity> results =
-                fishCatalogueEntryRepository.searchByQueryAndLang("Amphiprion", "en", 99L);
+                fishCatalogueEntryRepository.searchByQueryAndLang("Amphiprion", "en", userId2);
 
         assertNotNull(results);
         assertFalse(results.isEmpty());
@@ -80,11 +108,10 @@ public class FishCatalogueRepositoryTest {
      */
     @Test
     public void searchByQuery_returnsOwnPendingEntries() {
-        Long userId = 42L;
-        fishCatalogueEntryRepository.save(entry("Naso lituratus", "PENDING", userId));
+        fishCatalogueEntryRepository.saveAndFlush(entry("Naso lituratus", "PENDING", userId1));
 
         List<FishCatalogueEntryEntity> results =
-                fishCatalogueEntryRepository.searchByQueryAndLang("Naso", "en", userId);
+                fishCatalogueEntryRepository.searchByQueryAndLang("Naso", "en", userId1);
 
         assertTrue(results.stream().anyMatch(e -> "Naso lituratus".equals(e.getScientificName())));
     }
@@ -94,12 +121,11 @@ public class FishCatalogueRepositoryTest {
      */
     @Test
     public void searchByQuery_doesNotReturnOtherUsersPendingEntries() {
-        Long proposer = 55L;
-        Long searcher = 77L;
-        fishCatalogueEntryRepository.save(entry("Chaetodontoplus duboulayi", "PENDING", proposer));
+        // userId1 proposes an entry; userId2 searches — should NOT see it
+        fishCatalogueEntryRepository.saveAndFlush(entry("Chaetodontoplus duboulayi", "PENDING", userId1));
 
         List<FishCatalogueEntryEntity> results =
-                fishCatalogueEntryRepository.searchByQueryAndLang("Chaetodontoplus", "en", searcher);
+                fishCatalogueEntryRepository.searchByQueryAndLang("Chaetodontoplus", "en", userId2);
 
         assertTrue(results.stream().noneMatch(e -> "Chaetodontoplus duboulayi".equals(e.getScientificName())),
                 "Other user PENDING entries must not appear in search results");
@@ -110,10 +136,10 @@ public class FishCatalogueRepositoryTest {
      */
     @Test
     public void searchByQuery_partialMatchOnScientificName() {
-        fishCatalogueEntryRepository.save(entry("Zebrasoma flavescens", "PUBLIC", 1L));
+        fishCatalogueEntryRepository.saveAndFlush(entry("Zebrasoma flavescens", "PUBLIC", userId1));
 
         List<FishCatalogueEntryEntity> results =
-                fishCatalogueEntryRepository.searchByQueryAndLang("Zebra", "en", 99L);
+                fishCatalogueEntryRepository.searchByQueryAndLang("Zebra", "en", userId2);
 
         assertFalse(results.isEmpty());
     }
@@ -123,7 +149,7 @@ public class FishCatalogueRepositoryTest {
      */
     @Test
     public void uniqueConstraint_rejectedNameNotCountedAsDuplicate() {
-        fishCatalogueEntryRepository.save(entry("Pomacanthus imperator", "REJECTED", 1L));
+        fishCatalogueEntryRepository.saveAndFlush(entry("Pomacanthus imperator", "REJECTED", userId1));
 
         boolean isDuplicate = fishCatalogueEntryRepository
                 .existsByScientificNameAndStatusIn("Pomacanthus imperator",
@@ -137,7 +163,7 @@ public class FishCatalogueRepositoryTest {
      */
     @Test
     public void uniqueConstraint_publicNameCountedAsDuplicate() {
-        fishCatalogueEntryRepository.save(entry("Centropyge bicolor", "PUBLIC", 1L));
+        fishCatalogueEntryRepository.saveAndFlush(entry("Centropyge bicolor", "PUBLIC", userId1));
 
         boolean isDuplicate = fishCatalogueEntryRepository
                 .existsByScientificNameAndStatusIn("Centropyge bicolor",

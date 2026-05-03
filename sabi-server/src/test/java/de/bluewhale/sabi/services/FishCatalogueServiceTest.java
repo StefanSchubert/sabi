@@ -116,7 +116,8 @@ public class FishCatalogueServiceTest {
 
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(fishCatalogueMapper.mapTo2Entity(any())).willReturn(savedEntity);
-        given(fishCatalogueEntryRepository.save(any())).willReturn(savedEntity);
+        // Service calls saveAndFlush(), not save()
+        given(fishCatalogueEntryRepository.saveAndFlush(any())).willReturn(savedEntity);
         FishCatalogueEntryTo savedTo = buildEntryTo("Amphiprioninae");
         savedTo.setId(99L);
         given(fishCatalogueMapper.mapEntity2To(savedEntity)).willReturn(savedTo);
@@ -125,6 +126,7 @@ public class FishCatalogueServiceTest {
         given(fishCatalogueEntryRepository.searchByQueryAndLang(
                 eq("Amphiprioninae"), anyString(), anyLong()))
                 .willReturn(List.of(otherEntity));
+        given(fishCatalogueEntryRepository.findById(99L)).willReturn(Optional.of(savedEntity));
 
         ResultTo<FishCatalogueEntryTo> result = fishCatalogueService.proposeEntry(entryTo, TESTUSER_EMAIL1);
 
@@ -143,13 +145,14 @@ public class FishCatalogueServiceTest {
 
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(fishCatalogueMapper.mapTo2Entity(any())).willReturn(savedEntity);
-        given(fishCatalogueEntryRepository.save(any())).willReturn(savedEntity);
+        given(fishCatalogueEntryRepository.saveAndFlush(any())).willReturn(savedEntity);
         FishCatalogueEntryTo savedTo = buildEntryTo("Amphiprioninae");
         savedTo.setId(100L);
         given(fishCatalogueMapper.mapEntity2To(savedEntity)).willReturn(savedTo);
         // PENDING/PUBLIC check returns false -> only REJECTED exists
         given(fishCatalogueEntryRepository.existsByScientificNameAndStatusIn(
                 eq("Amphiprioninae"), anyList())).willReturn(false);
+        given(fishCatalogueEntryRepository.findById(100L)).willReturn(Optional.of(savedEntity));
 
         ResultTo<FishCatalogueEntryTo> result = fishCatalogueService.proposeEntry(entryTo, TESTUSER_EMAIL1);
 
@@ -167,7 +170,7 @@ public class FishCatalogueServiceTest {
 
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(fishCatalogueMapper.mapTo2Entity(any())).willReturn(entityToSave);
-        given(fishCatalogueEntryRepository.save(any())).willAnswer(inv -> {
+        given(fishCatalogueEntryRepository.saveAndFlush(any())).willAnswer(inv -> {
             FishCatalogueEntryEntity e = inv.getArgument(0);
             e.setId(77L);
             return e;
@@ -176,6 +179,7 @@ public class FishCatalogueServiceTest {
         savedTo.setId(77L);
         given(fishCatalogueMapper.mapEntity2To(any())).willReturn(savedTo);
         given(fishCatalogueEntryRepository.existsByScientificNameAndStatusIn(anyString(), anyList())).willReturn(false);
+        given(fishCatalogueEntryRepository.findById(77L)).willReturn(Optional.of(entityToSave));
 
         ResultTo<FishCatalogueEntryTo> result = fishCatalogueService.proposeEntry(entryTo, TESTUSER_EMAIL1);
 
@@ -201,7 +205,8 @@ public class FishCatalogueServiceTest {
 
         assertNotNull(result);
         assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
-        assertEquals(FishCatalogueExceptionCodes.CATALOGUE_REJECTED_READ_ONLY, result.getMessage().getCode());
+        // Service returns FishCatalogueMessageCodes, not FishCatalogueExceptionCodes
+        assertEquals(FishCatalogueMessageCodes.CATALOGUE_REJECTED_READ_ONLY, result.getMessage().getCode());
     }
 
     /** PENDING by creator -> succeeds. */
@@ -215,6 +220,10 @@ public class FishCatalogueServiceTest {
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(fishCatalogueEntryRepository.findById(6L)).willReturn(Optional.of(entity));
         given(fishCatalogueEntryRepository.save(any())).willReturn(entity);
+        // mergeI18nEntries calls mapper for new i18n entries (entity has empty list, entryTo has 1 EN entry)
+        FishCatalogueI18nEntity i18nEntity = new FishCatalogueI18nEntity();
+        i18nEntity.setCatalogueId(6L);
+        given(fishCatalogueMapper.mapI18nTo2Entity(any())).willReturn(i18nEntity);
         FishCatalogueEntryTo savedTo = buildEntryTo("Amphiprioninae");
         savedTo.setId(6L);
         given(fishCatalogueMapper.mapEntity2To(any())).willReturn(savedTo);
@@ -243,7 +252,8 @@ public class FishCatalogueServiceTest {
 
         assertNotNull(result);
         assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
-        assertEquals(FishCatalogueExceptionCodes.CATALOGUE_ENTRY_NOT_YOURS, result.getMessage().getCode());
+        // Service returns FishCatalogueMessageCodes, not FishCatalogueExceptionCodes
+        assertEquals(FishCatalogueMessageCodes.CATALOGUE_ENTRY_NOT_YOURS, result.getMessage().getCode());
     }
 
     /** FR-015: updateEntry with changed scientificName -> re-triggers duplicate warning. */
@@ -258,6 +268,10 @@ public class FishCatalogueServiceTest {
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(fishCatalogueEntryRepository.findById(8L)).willReturn(Optional.of(entity));
         given(fishCatalogueEntryRepository.save(any())).willReturn(entity);
+        // mergeI18nEntries: entity has empty i18n list, entryTo has EN entry -> mapper is called
+        FishCatalogueI18nEntity i18nEntity = new FishCatalogueI18nEntity();
+        i18nEntity.setCatalogueId(8L);
+        given(fishCatalogueMapper.mapI18nTo2Entity(any())).willReturn(i18nEntity);
         FishCatalogueEntryTo savedTo = buildEntryTo("Amphiprioninae");
         savedTo.setId(8L);
         given(fishCatalogueMapper.mapEntity2To(any())).willReturn(savedTo);

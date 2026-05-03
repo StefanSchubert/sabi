@@ -80,8 +80,13 @@ public class FishStockServiceTest {
     @MockitoBean
     private FishPhotoRepository fishPhotoRepository;
 
-    @MockitoBean
+    // FishStockServiceImpl uses @Qualifier("fishPhotoStorage") — must mock by bean name.
+    // Both PhotoStorageService beans must be mocked to avoid ambiguity during context loading.
+    @MockitoBean(name = "fishPhotoStorage")
     private PhotoStorageService photoStorageService;
+
+    @MockitoBean(name = "aquariumPhotoStorage")
+    private PhotoStorageService aquariumPhotoStorageService;
 
     @MockitoBean
     private FishStockMapper fishStockMapper;
@@ -151,7 +156,8 @@ public class FishStockServiceTest {
         given(aquariumRepository.findById(1L)).willReturn(Optional.of(aquarium));
         given(fishStockMapper.mapTo2Entity(any())).willReturn(entityToSave);
         given(fishCatalogueEntryRepository.findById(5L)).willReturn(Optional.of(catEntry));
-        given(tankFishStockRepository.save(any())).willReturn(entityToSave);
+        // Service calls saveAndFlush(), not save()
+        given(tankFishStockRepository.saveAndFlush(any())).willReturn(entityToSave);
         FishStockEntryTo savedTo = testFishTo();
         savedTo.setScientificName("Amphiprioninae");
         given(fishStockMapper.mapEntity2To(any())).willReturn(savedTo);
@@ -178,7 +184,8 @@ public class FishStockServiceTest {
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(aquariumRepository.findById(1L)).willReturn(Optional.of(aquarium));
         given(fishStockMapper.mapTo2Entity(any())).willReturn(entityToSave);
-        given(tankFishStockRepository.save(any())).willReturn(entityToSave);
+        // Service calls saveAndFlush(), not save()
+        given(tankFishStockRepository.saveAndFlush(any())).willReturn(entityToSave);
         given(fishStockMapper.mapEntity2To(any())).willReturn(testFishTo());
 
         ResultTo<FishStockEntryTo> result = fishStockService.addFishToTank(entry, TESTUSER_EMAIL1);

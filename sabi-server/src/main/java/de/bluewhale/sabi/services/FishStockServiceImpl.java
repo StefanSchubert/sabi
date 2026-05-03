@@ -197,7 +197,7 @@ public class FishStockServiceImpl implements FishStockService {
         }
 
         // FR-024: Wenn departure-Record vorhanden → kein physisches Löschen
-        if (tankFishStockRepository.existsByIdAndExodusOnIsNotNull(fishId)) {
+        if (Boolean.TRUE.equals(tankFishStockRepository.existsByIdAndExodusOnIsNotNull(fishId))) {
             return new ResultTo<>(fishStockMapper.mapEntity2To(fishOpt.get()),
                     Message.error(FishStockMessageCodes.FISH_HAS_DEPARTURE_RECORD, fishId));
         }

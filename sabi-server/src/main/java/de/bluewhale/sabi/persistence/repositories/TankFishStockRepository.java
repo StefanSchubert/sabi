@@ -41,10 +41,12 @@ public interface TankFishStockRepository extends JpaRepository<TankFishStockEnti
 
     /**
      * Guard for FR-024: returns true if the fish has a departure record.
+     * Returns Boolean (nullable) because an empty result (non-existent entity) maps to null,
+     * which cannot be auto-unboxed to a primitive boolean by Spring AOP.
      */
     @Query("SELECT CASE WHEN f.exodusOn IS NOT NULL THEN true ELSE false END " +
            "FROM TankFishStockEntity f WHERE f.id = :fishId")
-    boolean existsByIdAndExodusOnIsNotNull(@Param("fishId") Long fishId);
+    Boolean existsByIdAndExodusOnIsNotNull(@Param("fishId") Long fishId);
 
     /**
      * Find all fish (including departed) for a tank — used for building full list in UI.
