@@ -9,6 +9,6 @@
 -- V1_5_0_10: Add estimated net volume column to aquarium table.
 -- The net volume (size_net) represents the effective water volume after subtracting
 -- rocks, substrate, and decoration — relevant for AI-based dosage recommendations.
-ALTER TABLE sabi.aquarium
+ALTER TABLE aquarium
     ADD COLUMN size_net INT NULL COMMENT 'Estimated net water volume in liters (after subtracting rocks/decoration)';
 
