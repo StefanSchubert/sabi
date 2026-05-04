@@ -35,14 +35,26 @@
                                  style="width:100%; border:none;"
                                  columnClasses="ui-grid-col-5,ui-grid-col-7">
 
+                        <p:outputLabel value="#{msg['tank.form.photo.label']}"/>
+                        <p:outputPanel>
+                            <p:graphicImage rendered="#{tank.hasPhoto}"
+                                            value="#{request.contextPath}/secured/tankPhoto?tankId=#{tank.id}"
+                                            style="max-width:80px; max-height:60px; border-radius:4px; display:block;"/>
+                            <h:panelGroup layout="inline" rendered="#{not tank.hasPhoto}"
+                                          styleClass="sabi-fish-placeholder sabi-fish-placeholder-sm"/>
+                        </p:outputPanel>
+
                         <p:outputLabel value="#{msg['tankview.description.l']}"/>
                         <p:outputLabel value="#{tank.description}" style="font-weight:600;"/>
 
                         <p:outputLabel value="#{msg['tankview.waterType.l']}"/>
                         <p:outputLabel value="#{tankListView.translatedWaterType[tank.waterType]}"/>
 
-                        <p:outputLabel value="#{msg['tankview.volume.l']}"/>
+                        <p:outputLabel value="#{msg['tankview.volume.gross.l']}"/>
                         <p:outputLabel value="#{tank.size} #{tank.sizeUnit.unitSign}"/>
+
+                        <p:outputLabel value="#{tank.sizeNet != null ? msg['tankview.volume.net.l'] : ''}"/>
+                        <p:outputLabel value="#{tank.sizeNet != null ? tank.sizeNet.toString().concat(' ').concat(tank.sizeUnit.unitSign) : ''}"/>
 
                         <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
                         <p:outputLabel value="#{tank.inceptionDate}">

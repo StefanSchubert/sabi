@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.EcosystemType;
 import de.bluewhale.sabi.model.WaterType;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
@@ -51,6 +52,7 @@ public class TankListView implements Serializable {
     private List<AquariumTo> tanks;
     // selectedTank is stored in UserSession to survive request boundaries
     private Map<WaterType, String> translatedWaterType;
+    private Map<EcosystemType, String> translatedEcosystemType;
 
     @PostConstruct
     public void init() {
@@ -68,6 +70,13 @@ public class TankListView implements Serializable {
             String msgKey = "enum.waterType."+value.getWaterType()+".l";
             String translatedType = MessageUtil.getFromMessageProperties(msgKey, userSession.getLocale());
             translatedWaterType.put(value,translatedType);
+        }
+
+        translatedEcosystemType = new HashMap<EcosystemType, String>();
+        for (EcosystemType value : EcosystemType.values()) {
+            String msgKey = "enum.ecosystemType."+value.getType()+".l";
+            String translatedType = MessageUtil.getFromMessageProperties(msgKey, userSession.getLocale());
+            translatedEcosystemType.put(value, translatedType);
         }
 
     }
@@ -133,6 +142,26 @@ public class TankListView implements Serializable {
             }
         }
         return TANK_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    /**
+     * AJAX-compatible save for tankEditor when photo upload is involved.
+     * Does NOT return navigation — JS in tankEditor.xhtml handles the redirect.
+     * The saved tank (with server-assigned ID for new tanks) is stored back in session
+     * so the hidden tankEditorId input reflects the correct ID.
+     */
+    public void onSaveForEditor() {
+        AquariumTo selectedTank = userSession.getSelectedTank();
+        if (selectedTank != null) {
+            try {
+                AquariumTo saved = tankService.save(selectedTank, userSession.getSabiBackendToken());
+                // Important: update selectedTank with the server-assigned ID (new tanks)
+                userSession.setSelectedTank(saved);
+            } catch (BusinessException e) {
+                log.error(e.getLocalizedMessage());
+                MessageUtil.warn("messages","common.error.internal_server_problem.t",userSession.getLocale());
+            }
+        }
     }
 
 }

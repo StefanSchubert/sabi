@@ -112,7 +112,8 @@
                     </ui:remove>
                     <p:datePicker id="measureDate" value="#{measurementListView.measurement.measuredOn}"
                                   pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
-                                  showOtherMonths="true" yearNavigator="true" />
+                                  showOtherMonths="true" yearNavigator="true" touchUI="false"
+                                  readonlyInput="true" />
 
                     <p:commandButton value="#{msg['common.save.b']}" action="#{measurementListView.save()}"
                                      id="saveAction" icon="pi pi-save"

@@ -81,10 +81,13 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.invalidSessionUrl("/"))
 
                 // login - using this the browser redirect to this page if login is required and you are not logged in.
+                // IMPORTANT: use defaultSuccessUrl (redirect) instead of successForwardUrl (forward)
+                // because a servlet forward carries the login POST's ViewState into the target page,
+                // causing JSF to attempt restoring mismatched component state → ArrayIndexOutOfBoundsException.
                 .formLogin(form -> form
                         .loginPage("/login.xhtml").permitAll()
                         .failureUrl("/login.xhtml?error=true")
-                        .successForwardUrl("/secured/userportal.xhtml")
+                        .defaultSuccessUrl("/secured/userportal.xhtml", true)
                 )
 
                 // OIDC Login via Google (sabi-150)

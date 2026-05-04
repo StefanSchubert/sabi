@@ -24,8 +24,11 @@ public class AquariumExportTo implements Serializable {
     private String waterType;
     private Integer size;
     private String sizeUnit;
+    /** Estimated net volume in liters (after subtracting rocks/decoration). Used for AI dosage advice. */
+    private Integer sizeNet;
     private Boolean active;
     private String inceptionDate;
+    private String ecosystemType;
     private List<MeasurementExportTo> measurements = new ArrayList<>();
     private List<PlagueRecordExportTo> plagueRecords = new ArrayList<>();
     private List<FishExportTo> fish = new ArrayList<>();

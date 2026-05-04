@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  - Part of 002-fish-stock-catalogue
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}"
+            contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head>
+    <title>SABI - #{fishStockEntryView.edit ? msg['common.edit.b'] : msg['fishstock.add.button']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/fishStockView" styleClass="sabi-back-link">
+                    &#8592; #{msg['fishstock.back.to.list']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
+                #{fishStockEntryView.edit ? msg['common.edit.b'] : msg['fishstock.add.button']}
+            </h2>
+
+            <h:form id="fishEntryForm">
+
+                <h:inputHidden id="fishEntryId" value="#{fishStockEntryView.currentEntry.id}"/>
+                <h:inputHidden id="dialogAquariumId" value="#{fishStockEntryView.currentEntry.aquariumId}"/>
+
+                <p:messages id="fishEntryMessages" showDetail="true" closable="true"/>
+
+                <!-- ═══════════════════════════════════════════════════════
+                     SECTION 1: two-column
+                     LEFT:  Photo + Notes + Size + Growth history
+                     RIGHT: Name / Nickname / Date + Catalogue
+                     ═══════════════════════════════════════════════════════ -->
+                <div class="sabi-two-col">
+
+                    <!-- LEFT: photo + notes + size + growth history -->
+                    <div>
+                        <h3 style="margin-top:0; color:var(--sabi-accent);">#{msg['fishstock.form.description.section']}</h3>
+
+                        <div class="p-field p-mb-2" rendered="#{fishStockEntryView.edit and fishStockEntryView.currentEntry.hasPhoto}">
+                            <p:graphicImage id="currentPhotoPreview"
+                                            value="#{request.contextPath}/secured/fishPhoto?fishId=#{fishStockEntryView.currentEntry.id}"
+                                            style="max-width:100%; max-height:160px; border-radius:6px; display:block; margin-bottom:0.5rem; object-fit:cover;"
+                                            alt="#{msg['fishstock.form.photo.label']}"/>
+                        </div>
+
+                        <h:panelGroup layout="block"
+                                      rendered="#{not fishStockEntryView.currentEntry.hasPhoto}"
+                                      styleClass="p-field p-mb-2">
+                            <span class="sabi-fish-placeholder sabi-fish-placeholder-lg"/>
+                        </h:panelGroup>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel value="#{msg['fishstock.form.photo.label']}"
+                                           style="display:block; font-size:0.9rem; color:var(--sabi-text-muted);"/>
+                            <div class="sabi-file-upload-row">
+                                <label for="photoFileInput" class="sabi-file-btn">
+                                    <i class="pi pi-upload"/>
+                                    #{msg['fishstock.form.photo.choose']}
+                                </label>
+                                <span id="photoFileNameDisplay" class="sabi-file-name"/>
+                                <input type="file" id="photoFileInput"
+                                       accept="image/jpeg,image/png,image/webp,image/gif"
+                                       onchange="sabiValidatePhotoSize(this); sabiUpdateFileName(this);"/>
+                            </div>
+                            <small style="color:var(--sabi-text-muted);">#{msg['fishstock.form.photo.hint']}</small>
+                            <span id="photoUploadError" style="display:none; color:#b91c1c; font-size:0.875rem;"/>
+                        </div>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="observedBehavior" value="#{msg['fishstock.form.notes.label']}"
+                                           style="display:block;"/>
+                            <p:inputTextarea id="observedBehavior"
+                                             value="#{fishStockEntryView.currentEntry.observedBehavior}"
+                                             rows="5" style="width:100%;"/>
+                        </div>
+
+                        <!-- Current Size -->
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="newSizeCm" value="#{msg['fishstock.form.size.label']}"
+                                           style="display:block;"/>
+                            <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:nowrap;">
+                                <p:inputNumber id="newSizeCm"
+                                               value="#{fishStockEntryView.newSizeCm}"
+                                               minValue="0.1" maxValue="999.9" decimalPlaces="1"
+                                               placeholder="z.B. 7.5" style="width:100px;"/>
+                                <span style="color:var(--sabi-text-muted); font-size:0.9rem; white-space:nowrap;">cm</span>
+                                <p:datePicker id="newSizeDate"
+                                              value="#{fishStockEntryView.newSizeDate}"
+                                              pattern="dd.MM.yyyy" showIcon="true"
+                                              style="flex:1 1 auto;"/>
+                            </div>
+                            <small style="color:var(--sabi-text-muted);">#{msg['fishstock.form.size.hint']}</small>
+                        </div>
+
+                        <!-- Growth History (edit mode) -->
+                        <div class="p-field p-mb-2"
+                             rendered="#{fishStockEntryView.edit and not empty fishStockEntryView.sizeHistory}">
+                            <p:outputLabel value="#{msg['fishstock.form.size.history.title']}"
+                                           style="display:block; font-size:0.9rem; color:var(--sabi-text-muted); margin-bottom:0.25rem;"/>
+                            <p:dataTable value="#{fishStockEntryView.sizeHistory}" var="sh"
+                                         styleClass="sabi-size-history-table" style="width:100%;" emptyMessage="-">
+                                <p:column headerText="#{msg['fishstock.form.size.history.date']}">
+                                    <h:outputText value="#{sh.measuredOn}">
+                                        <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{msg['fishstock.form.size.history.cm']}"
+                                          style="text-align:right; width:5rem;">
+                                    <h:outputText value="#{sh.sizeCm}"/> cm
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: name + nickname + date + catalogue -->
+                    <div>
+                        <h3 style="margin-top:0; color:var(--sabi-accent);">&#160;</h3>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="commonName" value="#{msg['fishstock.form.commonname.label']}"
+                                           style="display:block; font-weight:600;"/>
+                            <p:inputText id="commonName"
+                                         value="#{fishStockEntryView.currentEntry.commonName}"
+                                         required="true"
+                                         requiredMessage="#{msg['fishstock.form.commonname.required']}"
+                                         maxlength="255" style="width:100%;"/>
+                            <p:message for="commonName"/>
+                        </div>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="nickname" value="#{msg['fishstock.form.nickname.label']}"
+                                           style="display:block;"/>
+                            <p:inputText id="nickname"
+                                         value="#{fishStockEntryView.currentEntry.nickname}"
+                                         maxlength="100" style="width:100%;"/>
+                        </div>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="addedOn" value="#{msg['fishstock.form.entrydate.label']}"
+                                           style="display:block; font-weight:600;"/>
+                            <p:datePicker id="addedOn"
+                                          value="#{fishStockEntryView.currentEntry.addedOn}"
+                                          required="true"
+                                          requiredMessage="#{msg['fishstock.form.entrydate.required']}"
+                                          pattern="dd.MM.yyyy" showIcon="true" style="width:100%;"/>
+                            <p:message for="addedOn"/>
+                        </div>
+
+                        <!-- Catalogue (moved from former section 2) -->
+                        <h3 style="color:var(--sabi-accent); margin-top:1rem; margin-bottom:0.5rem;">
+                            #{msg['fishstock.form.catalogue.section']}
+                        </h3>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel value="#{msg['fishstock.form.catalogue.link.label']}"
+                                           style="display:block;"/>
+                            <p:autoComplete id="catalogueSearch"
+                                            completeMethod="#{fishStockEntryView.onSearchCatalogue}"
+                                            var="result"
+                                            itemLabel="#{empty result.commonName ? result.scientificName : result.commonName.concat(' (').concat(result.scientificName).concat(')')}"
+                                            itemValue="#{result}"
+                                            converter="fishCatalogueSearchResultConverter"
+                                            minQueryLength="2"
+                                            placeholder="#{msg['fishstock.form.catalogue.search.placeholder']}"
+                                            emptyMessage="#{msg['fishstock.form.catalogue.noresults']}"
+                                            style="width:100%;">
+                                <p:ajax event="itemSelect"
+                                        listener="#{fishStockEntryView.onSelectCatalogue}"
+                                        update="scientificName externalRefUrl"/>
+                            </p:autoComplete>
+                            <div class="sabi-catalogue-actions">
+                                <h:outputLink value="#{request.contextPath}/secured/fishCatalogueProposalForm.xhtml">
+                                    <i class="pi pi-plus-circle" style="margin-right:0.2rem;"/>#{msg['fishstock.form.catalogue.propose.link']}
+                                </h:outputLink>
+                                <p:commandButton rendered="#{fishStockEntryView.currentEntry.fishCatalogueId != null}"
+                                                 value="#{msg['fishstock.form.catalogue.unlink.button']}"
+                                                 icon="pi pi-times"
+                                                 styleClass="ui-button-link sabi-unlink-btn"
+                                                 actionListener="#{fishStockEntryView.onRemoveCatalogueLink()}"
+                                                 update="scientificName externalRefUrl catalogueSearch"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="scientificName"
+                                           value="#{msg['fishstock.form.scientificname.label']}"
+                                           style="display:block; font-style:italic;"/>
+                            <p:inputText id="scientificName"
+                                         value="#{fishStockEntryView.currentEntry.scientificName}"
+                                         maxlength="255" style="width:100%; font-style:italic;"/>
+                        </div>
+
+                        <div class="p-field p-mb-2">
+                            <p:outputLabel for="externalRefUrl" value="#{msg['fishstock.form.refurl.label']}"
+                                           style="display:block;"/>
+                            <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:nowrap;">
+                                <p:inputText id="externalRefUrl"
+                                             value="#{fishStockEntryView.currentEntry.externalRefUrl}"
+                                             maxlength="512" style="flex:1 1 auto; min-width:0;"/>
+                                <p:commandButton type="button"
+                                                 icon="pi pi-external-link"
+                                                 styleClass="ui-button-secondary"
+                                                 style="flex:0 0 auto; padding:0.35rem 0.5rem;"
+                                                 title="#{msg['fishstock.form.refurl.opentab']}"
+                                                 onclick="var f=document.querySelector('[id$=externalRefUrl]'); var v=f?f.value:''; if(v &amp;&amp; (v.startsWith('http://') || v.startsWith('https://'))){window.open(v,'_blank');} return false;"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════════════
+                     SECTION 2: Roles — full-width below two-column section
+                     ═══════════════════════════════════════════════════════ -->
+                <div rendered="#{not empty fishStockEntryView.availableRoles}"
+                     style="margin-bottom:1.5rem;">
+                    <h3 style="margin-top:0; color:var(--sabi-accent);">#{msg['fishstock.form.roles.section']}</h3>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.25rem 1.5rem;">
+                        <ui:repeat value="#{fishStockEntryView.availableRoles}" var="role">
+                            <div class="sabi-role-row">
+                                <p:selectBooleanCheckbox value="#{fishStockEntryView.roleSelectionMap[role.id]}"/>
+                                <p:outputLabel value="#{role.localizedName}" style="cursor:default; margin:0;"/>
+                                <p:commandButton icon="pi pi-info-circle"
+                                                 styleClass="ui-button-text ui-button-rounded"
+                                                 style="width:1.4rem; height:1.4rem; padding:0; color:#0369a1; flex-shrink:0;"
+                                                 type="button"
+                                                 onclick="PF('roleInfo_#{role.id}').toggle(this); return false;"/>
+                                <p:overlayPanel widgetVar="roleInfo_#{role.id}"
+                                                showCloseIcon="true" style="max-width:300px;">
+                                    <div style="padding:0.5rem;">
+                                        <strong style="color:#075985; display:block; margin-bottom:0.3rem;">#{role.localizedName}</strong>
+                                        <span style="color:var(--sabi-text); font-size:0.88rem; line-height:1.4; word-wrap:break-word; display:block;">#{role.localizedDescription}</span>
+                                    </div>
+                                </p:overlayPanel>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--sabi-border);">
+                    <p:commandButton value="#{msg['common.save.b']}"
+                                     icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     actionListener="#{fishStockEntryView.onSave()}"
+                                     update="fishEntryMessages fishEntryId"
+                                     oncomplete="if (!args.validationFailed) sabiUploadPhotoAndRedirect();"/>
+                    <p:commandButton value="#{msg['common.cancel.b']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/fishStockView.xhtml';"/>
+                </div>
+
+            </h:form>
+
+            <script>
+            //<![CDATA[
+            var SABI_MAX_PHOTO_BYTES = 5242880;
+            var SABI_PHOTO_SIZE_ERROR_MSG = '#{msg["fishstock.form.photo.size.error"]}';
+            var SABI_CONTEXT_PATH = '#{request.contextPath}';
+
+            function sabiValidatePhotoSize(input) {
+                var errorEl = document.getElementById('photoUploadError');
+                if (!errorEl) return;
+                if (input.files && input.files.length > 0 && input.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                    errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG;
+                    errorEl.style.display = 'block';
+                    input.value = '';
+                    sabiUpdateFileName(input);
+                } else {
+                    errorEl.style.display = 'none';
+                }
+            }
+
+            function sabiUpdateFileName(input) {
+                var display = document.getElementById('photoFileNameDisplay');
+                if (!display) return;
+                if (input.files && input.files.length > 0) {
+                    display.textContent = input.files[0].name;
+                    display.style.color = 'var(--sabi-text)';
+                } else {
+                    display.textContent = '';
+                }
+            }
+
+            function sabiUploadPhotoAndRedirect() {
+                var fileInput = document.getElementById('photoFileInput');
+                var errorEl = document.getElementById('photoUploadError');
+                var redirect = function() {
+                    window.location.href = SABI_CONTEXT_PATH + '/secured/fishStockView.xhtml';
+                };
+                if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                    redirect();
+                    return;
+                }
+                if (fileInput.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                    if (errorEl) { errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                    return;
+                }
+                var fishIdEl = document.querySelector('[id$="fishEntryId"]');
+                var fishId = fishIdEl ? fishIdEl.value : null;
+                if (!fishId || fishId === '0' || fishId === '') {
+                    redirect();
+                    return;
+                }
+                var formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                fetch(SABI_CONTEXT_PATH + '/secured/fishPhoto?fishId=' + fishId, { method: 'POST', body: formData })
+                    .then(function(resp) {
+                        if (!resp.ok) {
+                            if (errorEl) { errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                            console.warn('Photo upload returned status ' + resp.status);
+                        } else {
+                            redirect();
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error('Photo upload failed:', err);
+                        redirect();
+                    });
+            }
+            //]]>
+            </script>
+
+        </ui:define>
+    </ui:composition>
+
+</h:body>
+</html>

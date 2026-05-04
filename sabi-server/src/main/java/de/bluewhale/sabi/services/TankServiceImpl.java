@@ -10,16 +10,22 @@ import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.AquariumPhotoEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
+import de.bluewhale.sabi.persistence.repositories.AquariumPhotoRepository;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
+import de.bluewhale.sabi.persistence.repositories.TankFishStockRepository;
 import jakarta.validation.constraints.NotNull;
-import org.passay.CharacterRule;
-import org.passay.EnglishCharacterData;
-import org.passay.PasswordGenerator;
+import org.passay.data.EnglishCharacterData;
+import org.passay.generate.PasswordGenerator;
+import org.passay.rule.CharacterRule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +45,16 @@ public class TankServiceImpl implements TankService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TankFishStockRepository tankFishStockRepository;
+
+    @Autowired
+    private AquariumPhotoRepository aquariumPhotoRepository;
+
+    @Autowired
+    @Qualifier("aquariumPhotoStorage")
+    private PhotoStorageService photoStorageService;
 
     @Override
     public ResultTo<AquariumTo> registerNewTank(final AquariumTo pAquariumTo, final String pRegisteredUsersEmail) {
@@ -101,6 +117,7 @@ public class TankServiceImpl implements TankService {
         List<AquariumTo> aquariumTos = new ArrayList<>();
         for (AquariumEntity aquariumEntity : usersAquariums) {
             AquariumTo aquariumTo = aquariumMapper.mapAquariumEntity2To(aquariumEntity);
+            aquariumTo.setHasPhoto(aquariumPhotoRepository.findByAquariumId(aquariumEntity.getId()).isPresent());
             aquariumTos.add(aquariumTo);
         }
 
@@ -119,6 +136,7 @@ public class TankServiceImpl implements TankService {
         List<AquariumTo> aquariumTos = new ArrayList<>();
         for (AquariumEntity aquariumEntity : usersAquariums) {
             AquariumTo aquariumTo = aquariumMapper.mapAquariumEntity2To(aquariumEntity);
+            aquariumTo.setHasPhoto(aquariumPhotoRepository.findByAquariumId(aquariumEntity.getId()).isPresent());
             aquariumTos.add(aquariumTo);
         }
 
@@ -139,11 +157,18 @@ public class TankServiceImpl implements TankService {
         AquariumEntity aquariumEntity = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(updatedAquariumTo.getId(), requestingUser.getId());
 
         if (aquariumEntity != null) {
-            // FIXME STS (04.09.23): The Mapping here will provide a completely new entity
-            // however we have the aquarium before. Isn't there a merge mapping
-            // between entities available by mapstruts?
-            aquariumEntity = aquariumMapper.mapAquariumTo2Entity(updatedAquariumTo);
-            aquariumEntity.setUser(requestingUser);
+            // Update mutable fields directly on the loaded entity to preserve the @Version (optlock) value.
+            // Replacing the entity via mapAquariumTo2Entity() would reset optlock to 0
+            // and cause JpaOptimisticLockingFailureException on saveAndFlush().
+            aquariumEntity.setDescription(updatedAquariumTo.getDescription());
+            aquariumEntity.setSize(updatedAquariumTo.getSize());
+            aquariumEntity.setSizeNet(updatedAquariumTo.getSizeNet());
+            aquariumEntity.setSizeUnit(updatedAquariumTo.getSizeUnit());
+            aquariumEntity.setWaterType(updatedAquariumTo.getWaterType());
+            aquariumEntity.setEcosystemType(updatedAquariumTo.getEcosystemType());
+            aquariumEntity.setActive(updatedAquariumTo.getActive());
+            aquariumEntity.setInceptionDate(updatedAquariumTo.getInceptionDate());
+            // temperatureApiKey is managed via generateAndAssignNewTemperatureApiKey(), not here
             AquariumEntity updatedEntity = aquariumRepository.saveAndFlush(aquariumEntity);
             updatedAquariumTo = aquariumMapper.mapAquariumEntity2To(updatedEntity);
             message = Message.info(TankMessageCodes.UPDATE_SUCCEEDED, updatedAquariumTo.getDescription());
@@ -166,6 +191,7 @@ public class TankServiceImpl implements TankService {
             AquariumEntity usersAquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
             if (usersAquarium != null) {
                 aquariumTo = aquariumMapper.mapAquariumEntity2To(usersAquarium);
+                aquariumTo.setHasPhoto(aquariumPhotoRepository.findByAquariumId(aquariumId).isPresent());
             }
         }
 
@@ -182,6 +208,8 @@ public class TankServiceImpl implements TankService {
             aquariumTo.setId(persistedTankId);
 
             if (usersAquarium != null) {
+                // T075 (R-5): Soft-delete all fish entries before physical aquarium deletion
+                tankFishStockRepository.softDeleteAllByAquariumId(persistedTankId, LocalDateTime.now());
                 aquariumRepository.delete(usersAquarium);
                 aquariumTo = aquariumMapper.mapAquariumEntity2To(usersAquarium);
                 resultTo = new ResultTo<>(aquariumTo, Message.info(TankMessageCodes.REMOVAL_SUCCEEDED));
@@ -245,7 +273,54 @@ public class TankServiceImpl implements TankService {
     private static String generateNewApiKey() {
         CharacterRule digits = new CharacterRule(EnglishCharacterData.Digit);
         CharacterRule alphabets = new CharacterRule(EnglishCharacterData.Alphabetical);
-        PasswordGenerator passwordGenerator = new PasswordGenerator();
-        return passwordGenerator.generatePassword(30, digits, alphabets);
+        PasswordGenerator passwordGenerator = new PasswordGenerator(30, digits, alphabets);
+        return passwordGenerator.generate().toString();
+    }
+
+    @Override
+    public void uploadPhoto(Long aquariumId, byte[] bytes, String contentType, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return;
+
+        String relativePath = photoStorageService.store(user.getId(), aquariumId, bytes, contentType);
+
+        java.util.Optional<AquariumPhotoEntity> existing = aquariumPhotoRepository.findByAquariumId(aquariumId);
+        AquariumPhotoEntity photoEntity = existing.orElseGet(() -> {
+            AquariumPhotoEntity p = new AquariumPhotoEntity();
+            p.setAquariumId(aquariumId);
+            return p;
+        });
+        photoEntity.setFilePath(relativePath);
+        photoEntity.setContentType(contentType);
+        photoEntity.setFileSize((long) bytes.length);
+        photoEntity.setUploadDate(LocalDate.now());
+        aquariumPhotoRepository.save(photoEntity);
+    }
+
+    @Override
+    public byte[] getPhotoBytes(Long aquariumId, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return new byte[0];
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return new byte[0];
+
+        return aquariumPhotoRepository.findByAquariumId(aquariumId)
+                .map(photo -> photoStorageService.load(photo.getFilePath()))
+                .orElse(new byte[0]);
+    }
+
+    @Override
+    public void deletePhoto(Long aquariumId, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return;
+
+        aquariumPhotoRepository.findByAquariumId(aquariumId).ifPresent(photo -> {
+            photoStorageService.delete(photo.getFilePath());
+            aquariumPhotoRepository.delete(photo);
+        });
     }
 }

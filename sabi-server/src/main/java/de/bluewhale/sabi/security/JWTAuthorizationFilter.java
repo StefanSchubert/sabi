@@ -11,11 +11,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
@@ -28,8 +32,14 @@ import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
  */
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+    /** Comma-separated list of admin emails. Injected via constructor from WebSecurityConfig. */
+    private final List<String> adminUsers;
+
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager, String adminUsersProperty) {
         super(authenticationManager);
+        this.adminUsers = adminUsersProperty != null
+                ? Arrays.asList(adminUsersProperty.split(","))
+                : new ArrayList<>();
     }
 
     @Override
@@ -73,7 +83,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             String user = TokenAuthenticationService.extractUserFromToken(token);
 
             if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                // Grant ROLE_ADMIN to configured admin users (T062 — 002-fish-stock-catalogue)
+                if (adminUsers.stream().anyMatch(a -> a.trim().equalsIgnoreCase(user))) {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                }
+                return new UsernamePasswordAuthenticationToken(user, null, authorities);
             }
             return null;
         }

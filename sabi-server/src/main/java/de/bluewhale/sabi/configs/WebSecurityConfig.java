@@ -10,6 +10,7 @@ import de.bluewhale.sabi.security.JWTAuthorizationFilter;
 import de.bluewhale.sabi.security.JWTLoginFilter;
 import de.bluewhale.sabi.security.SabiDoorKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,9 +33,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class WebSecurityConfig {
 
-
     @Autowired
     SabiDoorKeeper sabiAuthenticationProvider;
+
+    /** Comma-separated list of admin user emails (mirrors FishCatalogueServiceImpl). */
+    @Value("${sabi.admin.users:admin@sabi-project.net}")
+    private String adminUsers;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -71,6 +75,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                         // Allow IOT Endpoints, they are checked internally based on specific API-Keys
                         .requestMatchers(HttpMethod.POST, Endpoint.IOT_API.getPath() + "/**").permitAll()
+                        // Admin endpoints require ADMIN role (T062 — 002-fish-stock-catalogue)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // all others require JWT authentication
                         .anyRequest().authenticated()
                 )
@@ -78,7 +84,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), sabiAuthenticationProvider),
                         UsernamePasswordAuthenticationFilter.class)
                 // And filter other requests to check the presence of a valid JWT in header
-                .addFilter(new JWTAuthorizationFilter(sabiAuthenticationProvider))
+                .addFilter(new JWTAuthorizationFilter(sabiAuthenticationProvider, adminUsers))
                 .authenticationProvider(sabiAuthenticationProvider);
 
         return http.build();

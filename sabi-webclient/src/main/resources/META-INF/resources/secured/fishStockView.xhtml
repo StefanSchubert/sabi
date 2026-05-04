@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  - Part of 002-fish-stock-catalogue — T037
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI - Seawater Aquarium Business Intelligence</title>
+</h:head>
+
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+
+        <ui:define name="content">
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <!-- Tank selector: reuse existing tankListView to let user pick a tank -->
+            <h:form id="tankSelectorForm" style="margin-bottom:1rem;">
+                <p:outputLabel value="#{msg['tankview.tanklist.h']}" style="font-weight:600; display:block; margin-bottom:0.5rem;"/>
+                <p:selectOneMenu id="tankSelector"
+                                 value="#{fishStockView.selectedAquariumId}"
+                                 style="width:100%; max-width:400px;">
+                    <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{tankListView.tanks}" var="tank"
+                                   itemLabel="#{tank.description}" itemValue="#{tank.id}"/>
+                    <p:ajax event="change"
+                            listener="#{fishStockView.onTankSelected}"
+                            update=":fishStockForm :messages"/>
+                </p:selectOneMenu>
+            </h:form>
+
+            <!-- Fish Stock Tab — immer gerendert (wie datasection in reportView).
+                 fishStockForm ist IMMER im DOM, so dass PrimeFaces AJAX es updaten kann.
+                 Kein rendered-Wrapper nötig: Tabellen zeigen leere Liste wenn kein Tank gewählt. -->
+            <ui:include src="/secured/fishStockTab.xhtml"/>
+
+        </ui:define>
+
+    </ui:composition>
+</h:body>
+</html>
+

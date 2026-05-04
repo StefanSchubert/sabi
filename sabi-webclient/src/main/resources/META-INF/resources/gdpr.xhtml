@@ -25,6 +25,29 @@
             <p:panel header="#{msg['register.gdpr.h']}">
                 <p:outputLabel value="#{msg['register.gdpr.t']}"/>
             </p:panel>
+
+            <p:panel header="#{msg['gdpr.google.h']}" styleClass="mt-3">
+                <h:panelGroup layout="block" styleClass="mb-3">
+                    <h3>#{msg['gdpr.google.data_accessed.h']}</h3>
+                    <h:outputText value="#{msg['gdpr.google.data_accessed.t']}" escape="false"/>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="mb-3">
+                    <h3>#{msg['gdpr.google.data_usage.h']}</h3>
+                    <h:outputText value="#{msg['gdpr.google.data_usage.t']}" escape="false"/>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="mb-3">
+                    <h3>#{msg['gdpr.google.data_sharing.h']}</h3>
+                    <h:outputText value="#{msg['gdpr.google.data_sharing.t']}" escape="false"/>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="mb-3">
+                    <h3>#{msg['gdpr.google.data_storage.h']}</h3>
+                    <h:outputText value="#{msg['gdpr.google.data_storage.t']}" escape="false"/>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="mb-3">
+                    <h3>#{msg['gdpr.google.data_retention.h']}</h3>
+                    <h:outputText value="#{msg['gdpr.google.data_retention.t']}" escape="false"/>
+                </h:panelGroup>
+            </p:panel>
         </ui:define>
     </ui:composition>
 

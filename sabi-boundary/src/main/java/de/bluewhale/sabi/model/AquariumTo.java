@@ -22,8 +22,12 @@ public class AquariumTo implements Serializable {
     @Schema(description =  "ID this object for further reference.")
     private Long id;
 
-    @Schema(description =  "Tanks volume", requiredProperties = {"size"})
+    @Schema(description =  "Tanks volume (gross, total capacity)", requiredProperties = {"size"})
     private Integer size;
+
+    @Schema(description = "Tanks estimated net volume in liters (after subtracting rocks, substrate, decoration). " +
+            "Used for AI-based dosage recommendations.", required = false)
+    private Integer sizeNet;
 
     @Schema(description =  "Unit of tanks volume size.", requiredProperties = {"sizeUnit"})
     private SizeUnit sizeUnit;
@@ -45,5 +49,11 @@ public class AquariumTo implements Serializable {
 
     @Schema(description =  "Date since when this tank is up and running.", required = false)
     private Date inceptionDate;
+
+    @Schema(description =  "Ecosystem type of a seawater aquarium (e.g. SPS, LPS, mixed).", required = false)
+    private EcosystemType ecosystemType;
+
+    @Schema(description = "True if the aquarium has a photo stored on the server.", required = false)
+    private boolean hasPhoto;
 
 }

@@ -5,6 +5,8 @@
 
 package de.bluewhale.sabi.exception;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.io.Serializable;
 
 /**
@@ -15,6 +17,7 @@ import java.io.Serializable;
 public class Message implements Serializable {
 // ------------------------------ FIELDS ------------------------------
 
+    @JsonDeserialize(using = MessageCodeDeserializer.class)
     private MessageCode code;
 
     private CATEGORY type;
@@ -37,6 +40,10 @@ public class Message implements Serializable {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
+    /** No-arg constructor required for Jackson deserialization. */
+    public Message() {
+    }
+
     public Message(MessageCode pCode, CATEGORY pType, Serializable... pArgs) {
         code = pCode;
         type = pType;
@@ -49,12 +56,24 @@ public class Message implements Serializable {
         return this.args;
     }
 
+    public void setArgs(Serializable[] args) {
+        this.args = args;
+    }
+
     public MessageCode getCode() {
         return this.code;
     }
 
+    public void setCode(MessageCode code) {
+        this.code = code;
+    }
+
     public CATEGORY getType() {
         return this.type;
+    }
+
+    public void setType(CATEGORY type) {
+        this.type = type;
     }
 
 // -------------------------- ENUMERATIONS --------------------------

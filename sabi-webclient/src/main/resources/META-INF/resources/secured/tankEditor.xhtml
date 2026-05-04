@@ -29,6 +29,7 @@
 
             <p:panel header="#{msg['tankview.tanklist.h']}">
                 <h:form id="tankform">
+                    <h:inputHidden id="tankEditorId" value="#{tankListView.selectedTank.id}"/>
                     <p:panelGrid columns="2" style="width:100%; border:none;"
                                  columnClasses="ui-grid-col-5,ui-grid-col-7">
 
@@ -36,9 +37,13 @@
                         <p:inputText id="description"
                                      value="#{tankListView.selectedTank.description}"/>
 
-                        <p:outputLabel for="size" value="#{msg['tankview.volume.l']}"/>
+                        <p:outputLabel for="size" value="#{msg['tankview.volume.gross.l']}"/>
                         <p:inputText id="size"
                                      value="#{tankListView.selectedTank.size}"/>
+
+                        <p:outputLabel for="sizeNet" value="#{msg['tankview.volume.net.l']}"/>
+                        <p:inputText id="sizeNet"
+                                     value="#{tankListView.selectedTank.sizeNet}"/>
 
                         <p:outputLabel for="unit" value="#{msg['tankview.volUnit.l']}"/>
                         <h:selectOneMenu id="unit" value="#{tankListView.selectedTank.sizeUnit}">
@@ -48,28 +53,142 @@
                         <p:outputLabel for="type" value="#{msg['tankview.waterType.l']}"/>
                         <h:selectOneMenu id="type" value="#{tankListView.selectedTank.waterType}">
                             <f:selectItems value="#{units.waterTypes}"
-                                           var="n"
+                                          var="n"
                                            itemValue="#{n}"
                                            itemLabel="#{tankListView.translatedWaterType[n]}"/>
+                        </h:selectOneMenu>
+
+                        <p:outputLabel for="ecosystemType" value="#{msg['tankview.ecosystemType.l']}"/>
+                        <h:selectOneMenu id="ecosystemType" value="#{tankListView.selectedTank.ecosystemType}">
+                            <f:selectItems value="#{units.ecosystemTypes}"
+                                           var="e"
+                                           itemValue="#{e}"
+                                           itemLabel="#{tankListView.translatedEcosystemType[e]}"/>
                         </h:selectOneMenu>
 
                         <p:outputLabel for="inception" value="#{msg['tankview.inceptionDate.l']}"/>
                         <p:datePicker id="inception" value="#{tankListView.selectedTank.inceptionDate}"
                                       pattern="dd.MM.yyyy"
-                                      showOtherMonths="true"/>
+                                      showOtherMonths="true" touchUI="true"/>
+
+                        <!-- Photo -->
+                        <p:outputLabel value="#{msg['tank.form.photo.label']}"/>
+                        <p:outputPanel>
+                            <!-- Existing photo preview -->
+                            <h:panelGroup layout="block"
+                                          rendered="#{tankListView.selectedTank != null and tankListView.selectedTank.hasPhoto}"
+                                          styleClass="p-field p-mb-2">
+                                <p:graphicImage value="#{request.contextPath}/secured/tankPhoto?tankId=#{tankListView.selectedTank.id}"
+                                                style="max-width:200px; max-height:150px; border-radius:6px; display:block; margin-bottom:0.5rem;"/>
+                            </h:panelGroup>
+                            <!-- Placeholder when no photo -->
+                            <h:panelGroup layout="block"
+                                          rendered="#{tankListView.selectedTank == null or not tankListView.selectedTank.hasPhoto}"
+                                          styleClass="p-field p-mb-2">
+                                <span class="sabi-fish-placeholder sabi-fish-placeholder-lg"/>
+                            </h:panelGroup>
+                            <!-- Upload button -->
+                            <div class="sabi-file-upload-row">
+                                <label for="tankPhotoFileInput" class="sabi-file-btn">
+                                    <i class="pi pi-upload"/>
+                                    #{msg['tank.form.photo.choose']}
+                                </label>
+                                <span id="tankPhotoFileNameDisplay" class="sabi-file-name"/>
+                                <input type="file" id="tankPhotoFileInput"
+                                       accept="image/jpeg,image/png,image/webp,image/gif"
+                                       onchange="sabiValidateTankPhotoSize(this); sabiUpdateTankFileName(this);"/>
+                            </div>
+                            <span id="tankPhotoUploadError" style="color:#dc2626; font-size:0.8rem; display:none;"/>
+                        </p:outputPanel>
 
                         <!-- Buttons -->
                         <p:outputPanel>&#160;</p:outputPanel>
                         <p:outputPanel style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                            <p:button value="#{msg['common.cancel.b']}" outcome="tankView" icon="pi pi-times"/>
+                            <p:commandButton value="#{msg['common.cancel.b']}"
+                                             icon="pi pi-times"
+                                             styleClass="ui-button-secondary"
+                                             type="button"
+                                             onclick="window.location.href='#{request.contextPath}/secured/tankView.xhtml';"/>
                             <p:commandButton value="#{msg['common.save.b']}"
-                                             action="#{tankListView.save}"
-                                             icon="pi pi-save"/>
+                                             actionListener="#{tankListView.onSaveForEditor()}"
+                                             icon="pi pi-save"
+                                             style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                             update="tankEditorId"
+                                             oncomplete="if (!args.validationFailed) sabiUploadTankPhotoAndRedirect();"/>
                         </p:outputPanel>
 
                     </p:panelGrid>
                 </h:form>
             </p:panel>
+
+            <script>
+            //<![CDATA[
+            var SABI_MAX_PHOTO_BYTES = 5242880;
+            var SABI_TANK_PHOTO_ERROR_MSG = '#{msg["fishstock.form.photo.size.error"]}';
+            var SABI_CONTEXT_PATH = '#{request.contextPath}';
+
+            function sabiValidateTankPhotoSize(input) {
+                var errorEl = document.getElementById('tankPhotoUploadError');
+                if (!errorEl) return;
+                if (input.files && input.files.length > 0 && input.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                    errorEl.textContent = SABI_TANK_PHOTO_ERROR_MSG;
+                    errorEl.style.display = 'block';
+                    input.value = '';
+                    sabiUpdateTankFileName(input);
+                } else {
+                    errorEl.style.display = 'none';
+                }
+            }
+
+            function sabiUpdateTankFileName(input) {
+                var display = document.getElementById('tankPhotoFileNameDisplay');
+                if (!display) return;
+                if (input.files && input.files.length > 0) {
+                    display.textContent = input.files[0].name;
+                    display.style.color = 'var(--sabi-text)';
+                } else {
+                    display.textContent = '';
+                }
+            }
+
+            function sabiUploadTankPhotoAndRedirect() {
+                var fileInput = document.getElementById('tankPhotoFileInput');
+                var errorEl = document.getElementById('tankPhotoUploadError');
+                var redirect = function() {
+                    window.location.href = SABI_CONTEXT_PATH + '/secured/tankView.xhtml';
+                };
+                if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                    redirect();
+                    return;
+                }
+                if (fileInput.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                    if (errorEl) { errorEl.textContent = SABI_TANK_PHOTO_ERROR_MSG; errorEl.style.display = 'block'; }
+                    return;
+                }
+                var tankIdEl = document.querySelector('[id$="tankEditorId"]');
+                var tankId = tankIdEl ? tankIdEl.value : null;
+                if (!tankId || tankId === '0' || tankId === '') {
+                    redirect();
+                    return;
+                }
+                var formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                fetch(SABI_CONTEXT_PATH + '/secured/tankPhoto?tankId=' + tankId, { method: 'POST', body: formData })
+                    .then(function(resp) {
+                        if (!resp.ok) {
+                            if (errorEl) { errorEl.textContent = SABI_TANK_PHOTO_ERROR_MSG; errorEl.style.display = 'block'; }
+                            console.warn('Tank photo upload returned status ' + resp.status);
+                        } else {
+                            redirect();
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error('Tank photo upload failed:', err);
+                        redirect();
+                    });
+            }
+            //]]>
+            </script>
 
         </ui:define>
 

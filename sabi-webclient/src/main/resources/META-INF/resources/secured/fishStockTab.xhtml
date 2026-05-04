@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  - Part of 002-fish-stock-catalogue — T036
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Fish Stock Tab Content — included by tankView.xhtml -->
+
+    <h:form id="fishStockForm">
+
+        <!-- Preserve selectedAquariumId across RequestScope boundary (different form than tankSelectorForm) -->
+        <h:inputHidden id="selectedAquariumIdHidden" value="#{fishStockView.selectedAquariumId}"/>
+
+        <!-- Remote command to refresh fish table after JS photo upload (called by sabiUploadPhotoThenClose) -->
+        <p:remoteCommand name="sabiRefreshFishTable"
+                         actionListener="#{fishStockView.onTankSelected}"
+                         update=":fishStockForm"
+                         process=":fishStockForm:selectedAquariumIdHidden"/>
+
+        <p:messages id="fishStockMessages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
+        <!-- Add Fish Button — navigates to standalone entry page -->
+        <div style="margin-bottom:0.75rem;">
+            <p:commandButton value="#{msg['fishstock.add.button']}"
+                             icon="pi pi-plus"
+                             ajax="false"
+                             action="#{fishStockView.onAddFish()}"
+                             title="#{msg['fishstock.add.button']}"
+                             disabled="#{fishStockView.selectedAquariumId == null}"/>
+        </div>
+
+        <!-- Section: Currently in Tank -->
+        <p:panel header="#{msg['fishstock.current.section']}" styleClass="greenColoredPanel">
+
+            <p:outputLabel rendered="#{empty fishStockView.activeFish}"
+                           value="#{msg['fishstock.empty.hint']}"
+                           style="color:#065f46; font-style:italic;"/>
+
+            <p:dataTable id="activeFishTable"
+                         var="fish"
+                         value="#{fishStockView.activeFish}"
+                         rendered="#{not empty fishStockView.activeFish}"
+                         styleClass="p-mt-2">
+
+                <!-- Thumbnail -->
+                <p:column headerText="#{msg['fishstock.form.photo.label']}" style="width:3.5rem;">
+                    <p:graphicImage rendered="#{fish.hasPhoto}"
+                                    value="#{request.contextPath}/secured/fishPhoto?fishId=#{fish.id}"
+                                    style="max-width:48px; max-height:48px; border-radius:4px; display:block;"/>
+                    <h:panelGroup layout="inline" rendered="#{not fish.hasPhoto}"
+                                  styleClass="sabi-fish-placeholder sabi-fish-placeholder-sm"/>
+                </p:column>
+
+                <!-- Common Name -->
+                <p:column headerText="#{msg['fishstock.form.commonname.label']}">
+                    <p:outputLabel value="#{fish.commonName}" style="font-weight:600;"/>
+                    <p:outputLabel rendered="#{fish.nickname != null and fish.nickname != ''}"
+                                   value=" (#{fish.nickname})"
+                                   style="color:#64748b; font-size:0.85rem;"/>
+                </p:column>
+
+                <!-- Scientific Name -->
+                <p:column headerText="#{msg['fishstock.form.scientificname.label']}">
+                    <p:outputLabel value="#{fish.scientificName}"
+                                   style="font-style:italic; color:#475569;"/>
+                </p:column>
+
+                <!-- Entry Date -->
+                <p:column headerText="#{msg['fishstock.form.entrydate.label']}">
+                    <p:outputLabel value="#{fish.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <!-- Actions — navigate to entry page -->
+                <p:column headerText="" style="width:12rem; text-align:center;">
+                    <p:commandButton icon="pi pi-pencil"
+                                     title="#{msg['common.edit.b']}"
+                                     ajax="false"
+                                     action="#{fishStockView.onEditFish(fish)}"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-copy"
+                                     title="#{msg['fishstock.duplicate.button']}"
+                                     styleClass="ui-button-secondary"
+                                     ajax="false"
+                                     action="#{fishStockView.onDuplicateFish(fish)}"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-arrow-right"
+                                     title="#{msg['fishstock.departure.title']}"
+                                     styleClass="ui-button-warning"
+                                     actionListener="#{fishStockView.onRecordDeparture(fish)}"
+                                     update=":fishDepartureDialog"
+                                     oncomplete="PF('fishDepartureDialogWidget').show()"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-trash"
+                                     title="#{msg['common.delete.b']}"
+                                     styleClass="ui-button-danger"
+                                     actionListener="#{fishStockView.onDeleteFish(fish)}"
+                                     update=":fishStockForm"/>
+                </p:column>
+
+            </p:dataTable>
+        </p:panel>
+
+        <p:spacer height="10px"/>
+
+        <!-- Section: Departed Fish (FR-007: collapsed by default) -->
+        <p:fieldset legend="#{msg['fishstock.departed.section']}"
+                    toggleable="true"
+                    collapsed="true">
+
+            <p:dataTable id="departedFishTable"
+                         var="fish"
+                         value="#{fishStockView.departedFish}"
+                         rendered="#{not empty fishStockView.departedFish}"
+                         styleClass="p-mt-2">
+
+                <p:column headerText="#{msg['fishstock.form.commonname.label']}">
+                    <p:outputLabel value="#{fish.commonName}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.form.scientificname.label']}">
+                    <p:outputLabel value="#{fish.scientificName}" style="font-style:italic;"/>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.form.entrydate.label']}">
+                    <p:outputLabel value="#{fish.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.departure.date.label']}">
+                    <p:outputLabel value="#{fish.exodusOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['fishstock.departure.reason.label']}">
+                    <p:outputLabel value="#{fish.departureReason != null ? msg['fishstock.departure.reason.'.concat(fish.departureReason.toString().toLowerCase())] : ''}"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:outputLabel rendered="#{empty fishStockView.departedFish}"
+                           value="#{msg['fishstock.empty.hint']}"
+                           style="font-style:italic; color:#64748b;"/>
+        </p:fieldset>
+
+    </h:form>
+
+    <!-- Departure Dialog (T046) — stays as dialog (simple, mobile-ok) -->
+    <ui:include src="/secured/fishDepartureDialog.xhtml"/>
+
+    <!-- Note: fishStockEntryForm.xhtml is now a standalone page (fishStockEntryPage.xhtml) -->
+
+</ui:composition>
+

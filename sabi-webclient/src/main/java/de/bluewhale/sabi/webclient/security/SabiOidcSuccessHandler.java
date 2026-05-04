@@ -73,6 +73,8 @@ public class SabiOidcSuccessHandler implements AuthenticationSuccessHandler {
                 // Store Sabi JWT and username in the session for subsequent API calls
                 userSession.setSabiBackendToken("Bearer " + sabiResponse.getToken());
                 userSession.setUserName(sabiResponse.getUsername());
+                // Store email separately — isAdmin() checks email, not display name
+                userSession.setUserEmail(sabiResponse.getEmail());
 
                 log.info("OIDC_LOGIN_SUCCESS username={} provisioned={}", sabiResponse.getUsername(), sabiResponse.isProvisioned());
 

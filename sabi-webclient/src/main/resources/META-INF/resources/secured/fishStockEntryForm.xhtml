@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  - Part of 002-fish-stock-catalogue — T039 + T052
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Fish Stock Entry Form Dialog (Add / Edit) -->
+    <p:dialog id="fishEntryDialog"
+              header="#{fishStockEntryView.edit ? msg['common.edit.b'] : msg['fishstock.add.button']}"
+              widgetVar="fishEntryDialogWidget"
+              modal="true"
+              responsive="true"
+              width="600"
+              closeOnEscape="true">
+
+        <h:form id="fishEntryForm">
+
+            <!-- Preserve IDs across RequestScope boundary (same pattern as measureView.xhtml) -->
+            <h:inputHidden id="dialogAquariumId" value="#{fishStockEntryView.currentEntry.aquariumId}"/>
+            <h:inputHidden id="fishEntryId" value="#{fishStockEntryView.currentEntry.id}"/>
+
+            <p:messages id="fishEntryMessages" showDetail="true" closable="true"/>
+
+            <!-- Common Name (mandatory FR-002) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="commonName" value="#{msg['fishstock.form.commonname.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:inputText id="commonName"
+                             value="#{fishStockEntryView.currentEntry.commonName}"
+                             required="true"
+                             requiredMessage="#{msg['fishstock.form.commonname.required']}"
+                             maxlength="255"
+                             style="width:100%;"/>
+                <p:message for="commonName"/>
+            </div>
+
+            <!-- Nickname (optional) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="nickname" value="#{msg['fishstock.form.nickname.label']}"
+                               style="display:block;"/>
+                <p:inputText id="nickname"
+                             value="#{fishStockEntryView.currentEntry.nickname}"
+                             maxlength="100"
+                             style="width:100%;"/>
+            </div>
+
+            <!-- Entry Date (mandatory FR-002, FR-003) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="addedOn" value="#{msg['fishstock.form.entrydate.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:datePicker id="addedOn"
+                              value="#{fishStockEntryView.currentEntry.addedOn}"
+                              required="true"
+                              requiredMessage="#{msg['fishstock.form.entrydate.required']}"
+                              pattern="dd.MM.yyyy"
+                              showIcon="true"
+                              style="width:100%;"/>
+                <p:message for="addedOn"/>
+            </div>
+
+            <!-- Catalogue Search / Link (T052 — p:autoComplete, FR-009) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel value="#{msg['fishstock.form.catalogue.link.label']}"
+                               style="display:block;"/>
+                <p:autoComplete id="catalogueSearch"
+                                completeMethod="#{fishStockEntryView.onSearchCatalogue}"
+                                var="result"
+                                itemLabel="#{empty result.commonName ? result.scientificName : result.commonName.concat(' (').concat(result.scientificName).concat(')')}"
+                                itemValue="#{result}"
+                                converter="fishCatalogueSearchResultConverter"
+                                minQueryLength="2"
+                                placeholder="#{msg['fishstock.form.catalogue.search.placeholder']}"
+                                emptyMessage="#{msg['fishstock.form.catalogue.noresults']}"
+                                style="width:100%;">
+                    <p:ajax event="itemSelect"
+                            listener="#{fishStockEntryView.onSelectCatalogue}"
+                            update="scientificName externalRefUrl"/>
+                </p:autoComplete>
+                <div style="margin-top:0.25rem; font-size:0.85rem;">
+                    <h:outputLink value="#{request.contextPath}/secured/fishCatalogueProposalForm.xhtml"
+                                  style="color:#0369a1; text-decoration:underline;">
+                        #{msg['fishstock.form.catalogue.propose.link']}
+                    </h:outputLink>
+                </div>
+                <p:commandButton rendered="#{fishStockEntryView.currentEntry.fishCatalogueId != null}"
+                                 value="#{msg['fishstock.form.catalogue.unlink.button']}"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="margin-top:0.25rem;"
+                                 actionListener="#{fishStockEntryView.onRemoveCatalogueLink()}"
+                                 update="scientificName externalRefUrl catalogueSearch"/>
+            </div>
+
+            <!-- Scientific Name (auto-filled, user-editable FR-009) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="scientificName" value="#{msg['fishstock.form.scientificname.label']}"
+                               style="display:block; font-style:italic;"/>
+                <p:inputText id="scientificName"
+                             value="#{fishStockEntryView.currentEntry.scientificName}"
+                             maxlength="255"
+                             style="width:100%; font-style:italic;"/>
+            </div>
+
+            <!-- External Reference URL (optional) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="externalRefUrl" value="#{msg['fishstock.form.refurl.label']}"
+                               style="display:block;"/>
+                <p:inputText id="externalRefUrl"
+                             value="#{fishStockEntryView.currentEntry.externalRefUrl}"
+                             maxlength="512"
+                             style="width:100%;"/>
+            </div>
+
+            <!-- Observed Behaviour Notes (optional) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="observedBehavior" value="#{msg['fishstock.form.notes.label']}"
+                               style="display:block;"/>
+                <p:inputTextarea id="observedBehavior"
+                                 value="#{fishStockEntryView.currentEntry.observedBehavior}"
+                                 rows="4"
+                                 style="width:100%;"/>
+            </div>
+
+            <!-- Fish Roles (optional, multi-select checkboxes) -->
+            <div class="p-field p-mb-2" rendered="#{not empty fishStockEntryView.availableRoles}">
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+                    <p:outputLabel value="#{msg['fishstock.form.roles.label']}" style="display:inline;"/>
+                    <p:commandButton id="rolesInfoBtn"
+                                     icon="pi pi-info-circle"
+                                     styleClass="ui-button-text ui-button-rounded"
+                                     style="width:1.5rem; height:1.5rem; padding:0; color:#0369a1;"
+                                     type="button"
+                                     title="#{msg['fishstock.form.roles.info.title']}"
+                                     onclick="PF('rolesOverlayWidget').toggle(this); return false;"/>
+                </div>
+                <p:overlayPanel id="rolesInfoPanel"
+                                widgetVar="rolesOverlayWidget"
+                                showCloseIcon="true"
+                                style="max-width:350px;">
+                    <p:dataTable value="#{fishStockEntryView.availableRoles}" var="roleInfo"
+                                 style="width:100%;" showGridlines="false">
+                        <p:column>
+                            <p:outputLabel value="#{roleInfo.localizedName}"
+                                           style="font-weight:600; display:block;"/>
+                            <small style="color:#64748b;">#{roleInfo.localizedDescription}</small>
+                        </p:column>
+                    </p:dataTable>
+                </p:overlayPanel>
+                <p:selectManyCheckbox id="fishRoles"
+                                      value="#{fishStockEntryView.currentEntry.fishRoleIds}"
+                                      layout="responsive"
+                                      columns="2"
+                                      style="width:100%;">
+                    <f:selectItems value="#{fishStockEntryView.availableRoles}"
+                                   var="role"
+                                   itemLabel="#{role.localizedName}"
+                                   itemValue="#{role.id}"/>
+                    <f:converter converterId="jakarta.faces.Integer"/>
+                </p:selectManyCheckbox>
+            </div>
+
+            <!-- Photo Upload (optional, FR-008, FR-025)
+                 NOTE: p:fileUpload mode="simple" does NOT transmit file bytes via PrimeFaces AJAX.
+                 We use a plain HTML file input; JS fetch() uploads after the AJAX save returns the fish ID. -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel value="#{msg['fishstock.form.photo.label']}"
+                               style="display:block;"/>
+                <!-- Current photo preview when editing a fish that already has a photo -->
+                <p:graphicImage id="currentPhotoPreview"
+                                rendered="#{fishStockEntryView.edit and fishStockEntryView.currentEntry.hasPhoto}"
+                                value="#{request.contextPath}/secured/fishPhoto?fishId=#{fishStockEntryView.currentEntry.id}"
+                                style="max-width:120px; max-height:120px; border-radius:4px; display:block; margin-bottom:0.5rem;"
+                                alt="#{msg['fishstock.form.photo.label']}"/>
+                <input type="file" id="photoFileInput"
+                       accept="image/jpeg,image/png,image/webp,image/gif"
+                       style="width:100%;"
+                       onchange="sabiValidatePhotoSize(this)"/>
+                <small style="color:#6b7280;">#{msg['fishstock.form.photo.hint']}</small>
+                <span id="photoUploadError"
+                      style="display:none; color:#b91c1c; font-size:0.875rem;"/>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                <p:commandButton value="#{msg['common.save.b']}"
+                                 icon="pi pi-check"
+                                 actionListener="#{fishStockEntryView.onSave()}"
+                                 update=":fishStockForm :fishEntryMessages :fishEntryForm:fishEntryId"
+                                 oncomplete="if (!args.validationFailed) sabiUploadPhotoThenClose();"/>
+                <p:commandButton value="#{msg['common.cancel.b']}"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 type="button"
+                                 onclick="PF('fishEntryDialogWidget').hide();"/>
+            </div>
+
+        </h:form>
+
+        <script>
+        //<![CDATA[
+        /** Maximum photo file size in bytes (must match sabi.fish.photo.max-size-bytes on the backend). */
+        var SABI_MAX_PHOTO_BYTES = 5242880;
+        var SABI_PHOTO_SIZE_ERROR_MSG = '#{msg["fishstock.form.photo.size.error"]}';
+
+        /**
+         * Validates the selected file size immediately on change.
+         * Shows an inline error and clears the input if the file is too large.
+         */
+        function sabiValidatePhotoSize(input) {
+            var errorEl = document.getElementById('photoUploadError');
+            if (!errorEl) return;
+            if (input.files && input.files.length > 0 && input.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG;
+                errorEl.style.display = 'block';
+                input.value = '';
+            } else {
+                errorEl.style.display = 'none';
+            }
+        }
+
+        /**
+         * After AJAX save: reads the server-assigned fish ID from the hidden field,
+         * validates the file size, uploads the selected photo via fetch(FormData) to
+         * the Spring MVC proxy, refreshes the fish table, then closes the dialog.
+         *
+         * If the file is too large or the server rejects it, the dialog stays open
+         * and an inline error message is shown.
+         *
+         * Background: PrimeFaces AJAX does not transmit file bytes from mode="simple"
+         * p:fileUpload. We therefore use a plain HTML file input and upload separately.
+         */
+        function sabiUploadPhotoThenClose() {
+            var fileInput = document.getElementById('photoFileInput');
+            var errorEl = document.getElementById('photoUploadError');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                PF('fishEntryDialogWidget').hide();
+                return;
+            }
+            // Client-side size check before even attempting the upload
+            if (fileInput.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                if (errorEl) { errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                return; // Keep dialog open so user can choose a smaller file
+            }
+            // Fish ID is stored in the hidden input bound to fishStockEntryView.currentEntry.id
+            var fishIdEl = document.querySelector('[id$="fishEntryId"]');
+            var fishId = fishIdEl ? fishIdEl.value : null;
+            if (!fishId || fishId === '0' || fishId === '') {
+                PF('fishEntryDialogWidget').hide();
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            fetch('/secured/fishPhoto?fishId=' + fishId, { method: 'POST', body: formData })
+                .then(function(resp) {
+                    if (!resp.ok) {
+                        // Server rejected the upload (e.g. file too large) — show error, keep dialog open
+                        if (errorEl) { errorEl.textContent = SABI_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                        console.warn('Photo upload returned status ' + resp.status);
+                    } else {
+                        fileInput.value = '';
+                        if (errorEl) errorEl.style.display = 'none';
+                        // Close dialog, then refresh table so hasPhoto=true is reflected
+                        PF('fishEntryDialogWidget').hide();
+                        if (typeof sabiRefreshFishTable === 'function') {
+                            setTimeout(sabiRefreshFishTable, 200);
+                        }
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Photo upload failed:', err);
+                    PF('fishEntryDialogWidget').hide();
+                });
+        }
+        //]]>
+        </script>
+    </p:dialog>
+
+</ui:composition>
+

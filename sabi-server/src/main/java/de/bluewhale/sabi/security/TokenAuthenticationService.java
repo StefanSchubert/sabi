@@ -12,6 +12,7 @@ import de.bluewhale.sabi.api.HttpHeader;
 import de.bluewhale.sabi.configs.AppConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ import static java.util.Collections.emptyList;
  *
  * @author schubert
  */
+@Slf4j
 public class TokenAuthenticationService {
     private static final String SABI_JWT_ISSUER = "SABI-server module";
     // ------------------------------ FIELDS ------------------------------
@@ -109,10 +111,13 @@ public class TokenAuthenticationService {
 
             userID = verified.getSubject();
 
+            log.debug("TokenAuth discovered UserID: {}", userID);
+
         } catch (Exception e) {
-            System.out.println("Sabi.Service: TokenAuthenticationService could not parse JWT Token!");
-            System.out.println("Token was: " + token);
-            e.printStackTrace();
+            log.error("Error parsing JWT token", e);
+            // System.out.println("Sabi.Service: TokenAuthenticationService could not parse JWT Token!");
+            // System.out.println("Token was: " + token);
+            // e.printStackTrace();
         }
         return userID;
     }

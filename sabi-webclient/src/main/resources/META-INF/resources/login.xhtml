@@ -56,16 +56,18 @@
           The welcome panel contains "About Sabi" information and is collapsed by default. It can be expanded by the user to read more about Sabi and to find the link to the GitHub repository.
          -->
     </ui:remove>
-    <p:panel id="welcome" header="#{msg['register.welcome.h']}"
-             toggleable="true" collapsed="true" style="margin-bottom:20px; max-width:700px; margin-left:auto; margin-right:auto;">
-        #{msg['register.welcome.t']}
-        <p>
-            #{msg['register.sabi_on_github.l']}
-            <h:outputLink value="https://github.com/StefanSchubert/sabi" target="_blank">
-                #{msg['register.homepage.l']}
-            </h:outputLink>
-        </p>
-    </p:panel>
+    <h:form id="welcome-form" prependId="false">
+        <p:panel id="welcome" header="#{msg['register.welcome.h']}"
+                 toggleable="true" collapsed="true" style="margin-bottom:20px; max-width:700px; margin-left:auto; margin-right:auto;">
+            #{msg['register.welcome.t']}
+            <p>
+                #{msg['register.sabi_on_github.l']}
+                <h:outputLink value="https://github.com/StefanSchubert/sabi" target="_blank">
+                    #{msg['register.homepage.l']}
+                </h:outputLink>
+            </p>
+        </p:panel>
+    </h:form>
 
     <h:form id="login-form" prependId="false">
 

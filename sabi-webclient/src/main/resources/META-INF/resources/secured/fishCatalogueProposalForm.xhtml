@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 002-fish-stock-catalogue — T057 + T070
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head><title>SABI - Fish Catalogue</title></h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <!-- Breadcrumb / back link -->
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/fishStockView"
+                        styleClass="sabi-back-link">
+                    &#8592; #{msg['fishstock.back.to.list']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
+                #{fishCatalogueProposalView.editMode ? msg['common.edit.b'] : msg['fishcatalogue.propose.title']}
+            </h2>
+
+            <h:form id="proposalForm">
+
+                <p:messages id="proposalMessages" showDetail="true" closable="true"/>
+
+                <!-- ═══════════════════════════════════════════════════════════
+                     Catalogue overview — shown after successful proposal submit
+                     ═══════════════════════════════════════════════════════════ -->
+                <p:panel id="catalogueOverviewPanel"
+                         rendered="#{fishCatalogueProposalView.submittedSuccessfully}"
+                         style="margin-bottom:1.5rem;">
+
+                    <h3 style="color:#075985; margin-top:0;">#{msg['fishcatalogue.overview.title']}</h3>
+
+                    <p:dataTable var="entry"
+                                 value="#{fishCatalogueProposalView.catalogueEntries}"
+                                 emptyMessage="#{msg['common.no.data.l']}"
+                                 styleClass="sabi-catalogue-table"
+                                 style="width:100%;">
+
+                        <p:column headerText="#{msg['fishcatalogue.scientificname.label']}" style="font-style:italic;">
+                            <p:outputLabel value="#{entry.scientificName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['fishcatalogue.commonname.label']}">
+                            <p:outputLabel value="#{entry.commonName}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['fishcatalogue.status.label']}" style="width:10rem; text-align:center;">
+                            <!-- PENDING = "in review", PUBLIC = "freigegeben" -->
+                            <p:tag rendered="#{entry.status.name() == 'PUBLIC'}"
+                                   value="#{msg['fishcatalogue.status.public']}"
+                                   severity="success"/>
+                            <p:tag rendered="#{entry.status.name() == 'PENDING'}"
+                                   value="#{msg['fishcatalogue.status.pending']}"
+                                   severity="warn"/>
+                            <p:tag rendered="#{entry.status.name() == 'REJECTED'}"
+                                   value="#{msg['fishcatalogue.status.rejected']}"
+                                   severity="danger"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <p:commandButton value="#{msg['fishcatalogue.propose.another.b']}"
+                                         icon="pi pi-plus"
+                                         actionListener="#{fishCatalogueProposalView.onNewProposal()}"
+                                         update="proposalForm"/>
+                        <p:commandButton value="#{msg['fishstock.back.to.list']}"
+                                         icon="pi pi-arrow-left"
+                                         styleClass="ui-button-secondary"
+                                         type="button"
+                                         onclick="window.location.href='#{request.contextPath}/secured/fishStockView.xhtml';"/>
+                    </div>
+                </p:panel>
+
+                <!-- ═══════════════════════════════════════════════════════════
+                     Proposal form — hidden after successful submit
+                     ═══════════════════════════════════════════════════════════ -->
+                <h:panelGroup id="proposalFormGroup"
+                              rendered="#{not fishCatalogueProposalView.submittedSuccessfully}">
+
+                <!-- Duplicate Warning Panel -->
+                <p:panel rendered="#{fishCatalogueProposalView.duplicateWarningShown}"
+                         style="background:#fef3c7; border:1px solid #d97706; padding:0.75rem; border-radius:4px; margin-bottom:1rem; color:#92400e;">
+                    <p:outputLabel value="#{fishCatalogueProposalView.duplicateWarningMessage}"/>
+                </p:panel>
+
+                <!-- Scientific Name (FR-012, FR-013) -->
+                <div class="p-field p-mb-2">
+                    <p:outputLabel for="scientificName"
+                                   value="#{msg['fishcatalogue.scientificname.label']}"
+                                   style="display:block; font-weight:600;"/>
+                    <p:inputText id="scientificName"
+                                 value="#{fishCatalogueProposalView.proposal.scientificName}"
+                                 required="true"
+                                 requiredMessage="#{msg['fishcatalogue.scientificname.required']}"
+                                 maxlength="255"
+                                 style="width:100%;">
+                        <p:ajax event="blur" listener="#{fishCatalogueProposalView.onScientificNameBlur}"
+                                update="proposalMessages duplicateWarning"/>
+                    </p:inputText>
+                    <p:message for="scientificName"/>
+                </div>
+
+                <!-- i18n Tabs (DE/EN/ES/FR/IT) -->
+                <p:tabView style="margin-top:1rem;">
+                    <p:tab title="#{msg['fishcatalogue.tab.de']}">
+                        <ui:include src="/secured/fishCatalogueI18nFields.xhtml">
+                            <ui:param name="langIdx" value="0"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.en']}">
+                        <ui:include src="/secured/fishCatalogueI18nFields.xhtml">
+                            <ui:param name="langIdx" value="1"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.es']}">
+                        <ui:include src="/secured/fishCatalogueI18nFields.xhtml">
+                            <ui:param name="langIdx" value="2"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.fr']}">
+                        <ui:include src="/secured/fishCatalogueI18nFields.xhtml">
+                            <ui:param name="langIdx" value="3"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.it']}">
+                        <ui:include src="/secured/fishCatalogueI18nFields.xhtml">
+                            <ui:param name="langIdx" value="4"/>
+                        </ui:include>
+                    </p:tab>
+                </p:tabView>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+                    <p:commandButton value="#{msg['common.save.b']}"
+                                     icon="pi pi-check"
+                                     actionListener="#{fishCatalogueProposalView.onSubmit()}"
+                                     update="proposalMessages proposalForm"/>
+                    <p:commandButton value="#{msg['common.cancel.b']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/fishStockView.xhtml';"/>
+                </div>
+
+                </h:panelGroup>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

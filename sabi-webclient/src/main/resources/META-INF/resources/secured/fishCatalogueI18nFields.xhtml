@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Part of 002-fish-stock-catalogue — i18n partial for proposal/edit form
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <div class="p-field p-mb-2">
+        <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+        <p:inputText value="#{fishCatalogueProposalView.proposal.i18nEntries[langIdx].commonName}"
+                     maxlength="255" style="width:100%;"/>
+    </div>
+    <div class="p-field p-mb-2">
+        <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+        <p:inputTextarea value="#{fishCatalogueProposalView.proposal.i18nEntries[langIdx].description}"
+                         maxlength="2000"
+                         rows="5"
+                         style="width:100%;"
+                         counter="descCounter#{langIdx}"
+                         counterTemplate="{0} #{msg['common.chars.remaining.l']}"/>
+        <p:outputLabel id="descCounter#{langIdx}" style="font-size:0.8rem; color:#64748b;"/>
+        <h:outputText rendered="#{fishCatalogueProposalView.proposal.i18nEntries[langIdx].description != null
+                                  and fishCatalogueProposalView.proposal.i18nEntries[langIdx].description.length() > 2000}"
+                      value="#{msg['fishcatalogue.i18n.description.maxlength.error']}"
+                      style="color:#b91c1c; font-size:0.85rem;"/>
+    </div>
+    <div class="p-field p-mb-2">
+        <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+        <p:inputText value="#{fishCatalogueProposalView.proposal.i18nEntries[langIdx].referenceUrl}"
+                     maxlength="512" style="width:100%;"/>
+    </div>
+
+</ui:composition>

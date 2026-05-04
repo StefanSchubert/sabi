@@ -112,6 +112,33 @@ You may login with the following test user:
 
 or register a new one. 
 
+#### JSF/Facelets — No Hot-Reload
+
+**XHTML changes always require a full server restart.** There is no hot-reload for Facelets
+in JoinFaces/Spring Boot:
+
+- Even with `joinfaces.jsf.project-stage: development`, compiled Facelets views are **cached** at
+  startup and never reloaded from the classpath.
+- Copying changed XHTML files into `target/classes/` has **no effect** — the embedded Tomcat reads
+  from the classpath that was scanned at boot time.
+- **Symptom of a stale view**: auto-generated JSF component IDs (e.g. `j_idt30`) instead of
+  explicitly assigned IDs (e.g. `tankSelector`), or AJAX partial-updates silently failing because
+  the target component ID doesn't exist in the DOM.
+
+**Rule: After every XHTML change → restart the server → only then test.**
+
+#### Spring Security + JSF: Forward vs. Redirect
+
+**Never use `successForwardUrl()` in combination with JSF.**
+
+A servlet forward after successful authentication carries the login form's
+`jakarta.faces.ViewState` POST parameter into the target page. JSF then tries to apply the login
+page's saved state onto the target page's component tree, which leads to an
+`ArrayIndexOutOfBoundsException` in `UIComponentBase.restoreState`.
+
+**Always use `defaultSuccessUrl(url, true)`** — this issues an HTTP 302 redirect so that the
+browser makes a fresh GET request and JSF builds a new view without any state conflict.
+
 ### Dev-Environment for a backend engineer to work on sabi-server.
 
 #### Preparations
@@ -167,24 +194,102 @@ To ease the work with flyway you should add the following snippet to your maven 
 
 Nothing very special here, except two things you need to know:
 
-##### Junit testing.
+##### JUnit testing
 
-Introducing new functionalities require addition of junit test. 
+Introducing new functionalities requires the addition of JUnit tests.
 
-As we are using eclipselink you must add a specific javaagent, when running your tests. See section prepare your IDE below for it:
+###### EclipseLink javaagent
 
+Because we use EclipseLink (not Hibernate), JPA weaving requires a Spring instrument javaagent
+at runtime. The pom.xml already configures the Maven Surefire plugin to pass this agent
+automatically when you run `mvn test` — so **`mvn test` works out-of-the-box without any manual
+configuration**.
+
+However, when running tests directly from your **IDE** (IntelliJ run config or test runner), you
+must add the javaagent as a VM option yourself:
+
+```
+-javaagent:${M2_REPO}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar
+```
+
+Replace `${M2_REPO}` with your local Maven repository path (e.g. `~/.m2/repository`) and
+`${spring-framework.version}` with the actual version derived from the Spring Boot parent POM.
+
+**How to find the current version:**
+```bash
+cd sabi-server && mvn help:evaluate -Dexpression=spring-framework.version -q -DforceStdout
+```
+> As of Spring Boot 4.0.5 this resolves to **`7.0.6`**, giving:
+> ```
+> -javaagent:/Users/YOU/.m2/repository/org/springframework/spring-instrument/7.0.6/spring-instrument-7.0.6.jar
+> ```
+
+You need this agent both for the Spring Boot application run-config and for the IDE test runner
+config. Always verify the version after updating the Spring Boot parent in `pom.xml`.
+
+###### Test Users and FK Constraints in Repository Tests
+
+**NEVER use hardcoded user IDs** in repository integration tests (e.g. `proposerUserId = 42`).
+
+Sabi's integration tests run against a real MariaDB Testcontainer that starts empty. Flyway
+migrations populate schema and reference data, but they do **not** create application users.
+Any `INSERT` that references a non-existent `users.id` via a foreign key will fail with
+`SQLIntegrityConstraintViolationException`.
+
+**Rule: Always create the required users programmatically in `@BeforeEach` via `UserRepository`.**
+
+```java
+@Autowired
+private UserRepository userRepository;
+
+@Autowired  // needed to bypass EclipseLink L1 cache
+@PersistenceContext(unitName = "sabi")
+private EntityManager em;
+
+private Long userId1;
+
+@BeforeEach
+public void setUp() {
+    userId1 = createUser("mytest1@test.de", "mytestuser1");
+    em.flush();
+}
+
+private Long createUser(String email, String alias) {
+    UserEntity u = new UserEntity();
+    u.setEmail(email);
+    u.setAlias(alias);
+    // … set other mandatory fields (language, validated = true, etc.) …
+    return userRepository.saveAndFlush(u).getId();
+}
+```
+
+###### EclipseLink L1 Cache in Repository Tests
+
+EclipseLink maintains an **identity map (L1 cache)** per `EntityManager`. Unlike Hibernate,
+`saveAndFlush()` writes to the DB but JPQL queries may still read from the cache. Symptoms:
+- A freshly saved entity is not found by a subsequent `findBy` query
+- Query results look stale (return old field values)
+
+**Fix: call `em.clear()` after every `saveAndFlush()` in tests** to evict the identity map and
+force the next query to hit the database:
+
+```java
+private void saveAndClear(SomeEntity entity) {
+    someRepository.saveAndFlush(entity);
+    em.clear();
+}
+```
 
 ##### Preparing your productive and IDE environment
 
-Because of eclipselink we are using weaving at runtime which requires the following vm option:
+Because of EclipseLink we are using weaving at runtime which requires the javaagent described
+above in *EclipseLink javaagent*. For the Spring Boot application run-config use:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.2.6/spring-instrument-6.2.6.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/CURRENT_VERSION/spring-instrument-CURRENT_VERSION.jar
 ```
 
-You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
-test runner config. **Please verify** that you use the correct version as derived from pom.xml dependency tree, as you may require
-to adopt the javaagent string above to suite to your version.
-You may also need to adopt your setting if that version in the pom changes because of patch management.
+Determine `CURRENT_VERSION` as shown above. The version tracks the `spring-framework.version`
+property managed by the Spring Boot parent — it changes with every Spring Boot upgrade.
 
 

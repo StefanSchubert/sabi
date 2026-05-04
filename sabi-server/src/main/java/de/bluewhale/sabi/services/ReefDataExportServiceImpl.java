@@ -51,6 +51,12 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     private FishRepository fishRepository;
 
     @Autowired
+    private TankFishStockRepository tankFishStockRepository;
+
+    @Autowired
+    private FishSizeHistoryRepository fishSizeHistoryRepository;
+
+    @Autowired
     private CoralRepository coralRepository;
 
     @Autowired
@@ -76,6 +82,9 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
 
     @Autowired
     private RemedyRepository remedyRepository;
+
+    @Autowired
+    private LocalizedFishRoleRepository localizedFishRoleRepository;
 
     // -------------------------------------------------------------------------
     // Public API
@@ -139,8 +148,10 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         ato.setDescription(aquarium.getDescription());
         ato.setWaterType(aquarium.getWaterType() != null ? aquarium.getWaterType().name() : null);
         ato.setSize(aquarium.getSize());
+        ato.setSizeNet(aquarium.getSizeNet());
         ato.setSizeUnit(aquarium.getSizeUnit() != null ? aquarium.getSizeUnit().name() : null);
         ato.setActive(aquarium.getActive());
+        ato.setEcosystemType(aquarium.getEcosystemType() != null ? aquarium.getEcosystemType().name() : null);
         if (aquarium.getInceptionDate() != null) {
             ato.setInceptionDate(new SimpleDateFormat("yyyy-MM-dd").format(aquarium.getInceptionDate()));
         }
@@ -232,21 +243,58 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     }
 
     private List<FishExportTo> buildFishExports(Long aquariumId) {
-        List<FishEntity> entities = fishRepository.findFishEntitiesByAquariumId(aquariumId);
+        // Use TankFishStockRepository (includes all fish: active + departed, soft-delete filter applies)
+        List<TankFishStockEntity> entities = tankFishStockRepository.findAllByAquariumId(aquariumId);
         List<FishExportTo> result = new ArrayList<>();
-        for (FishEntity f : entities) {
+        for (TankFishStockEntity f : entities) {
             FishExportTo fto = new FishExportTo();
             fto.setFishCatalogueId(f.getFishCatalogueId());
+            fto.setCommonName(f.getCommonName());
+            fto.setNickname(f.getNickname());
             fto.setAddedOn(f.getAddedOn() != null ? f.getAddedOn().toString() : null);
+            fto.setExodusOn(f.getExodusOn() != null ? f.getExodusOn().toString() : null);
+            fto.setDepartureReason(f.getDepartureReason());
             fto.setObservedBehavior(f.getObservedBehavior());
 
-            // T015: fish catalogue resolution
-            String scientificName = null;
-            if (f.getFishCatalogueId() != null) {
+            // scientific name: prefer entity field (denormalised), fall back to catalogue lookup
+            String scientificName = f.getScientificName();
+            if (scientificName == null && f.getFishCatalogueId() != null) {
                 Optional<FishCatalogueEntity> catOpt = fishCatalogueRepository.findById(f.getFishCatalogueId());
                 scientificName = catOpt.map(FishCatalogueEntity::getScientificName).orElse(null);
             }
             fto.setScientificName(scientificName);
+
+            // size history (most recent first)
+            List<FishSizeHistoryEntity> sizeHistoryEntities =
+                    fishSizeHistoryRepository.findByFishIdOrderByMeasuredOnDesc(f.getId());
+            List<FishSizeHistoryExportTo> sizeHistory = new ArrayList<>();
+            for (FishSizeHistoryEntity sh : sizeHistoryEntities) {
+                FishSizeHistoryExportTo shto = new FishSizeHistoryExportTo();
+                shto.setMeasuredOn(sh.getMeasuredOn() != null ? sh.getMeasuredOn().toString() : null);
+                shto.setSizeCm(sh.getSizeCm() != null ? sh.getSizeCm().doubleValue() : null);
+                sizeHistory.add(shto);
+            }
+            fto.setSizeHistory(sizeHistory);
+
+            // fish roles: resolve localized names/descriptions (English for AI readability)
+            List<FishRoleExportTo> roleExports = new ArrayList<>();
+            for (FishRoleEntity role : f.getFishRoles()) {
+                List<LocalizedFishRoleEntity> localizations =
+                        localizedFishRoleRepository.findByRoleIdAndLanguageCode(role.getId(), EXPORT_LANG);
+                FishRoleExportTo rto = new FishRoleExportTo();
+                rto.setEnumKey(role.getEnumKey());
+                if (!localizations.isEmpty()) {
+                    LocalizedFishRoleEntity loc = localizations.get(0);
+                    rto.setName(loc.getName());
+                    rto.setDescription(loc.getDescription());
+                } else {
+                    // fallback: enum key only, no localization available
+                    rto.setName(role.getEnumKey());
+                    rto.setDescription(null);
+                }
+                roleExports.add(rto);
+            }
+            fto.setRoles(roleExports);
 
             result.add(fto);
         }
