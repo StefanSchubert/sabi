@@ -130,6 +130,15 @@ Observed cases so far:
 
 ## Development Environment Setup
 
+> **Before starting any backend work, read [`DEVELOPERS_MANUAL.md`](./DEVELOPERS_MANUAL.md) in the
+> repository root.** It is the authoritative reference for:
+> - EclipseLink javaagent setup (required for IDE test runs and the Spring Boot run-config)
+> - JUnit test rules: always create test users via `UserRepository` in `@BeforeEach` — never use
+>   hardcoded IDs that reference non-existent rows in the Testcontainer DB
+> - EclipseLink L1 cache pitfalls in repository tests (`em.clear()` after `saveAndFlush()`)
+> - Flyway migration rules (no hardcoded schema prefix, immutable existing scripts)
+> - Docker redeploy checklist
+
 - MacBook CLI with **BSD Unix tools** (not GNU) → different syntax!
   - `sed -i ''` instead of `sed -i` (BSD sed requires an empty extension argument)
   - `grep` without `--line-buffered` etc. (BSD grep, not GNU grep)

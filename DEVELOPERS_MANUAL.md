@@ -194,24 +194,102 @@ To ease the work with flyway you should add the following snippet to your maven 
 
 Nothing very special here, except two things you need to know:
 
-##### Junit testing.
+##### JUnit testing
 
-Introducing new functionalities require addition of junit test. 
+Introducing new functionalities requires the addition of JUnit tests.
 
-As we are using eclipselink you must add a specific javaagent, when running your tests. See section prepare your IDE below for it:
+###### EclipseLink javaagent
 
+Because we use EclipseLink (not Hibernate), JPA weaving requires a Spring instrument javaagent
+at runtime. The pom.xml already configures the Maven Surefire plugin to pass this agent
+automatically when you run `mvn test` — so **`mvn test` works out-of-the-box without any manual
+configuration**.
+
+However, when running tests directly from your **IDE** (IntelliJ run config or test runner), you
+must add the javaagent as a VM option yourself:
+
+```
+-javaagent:${M2_REPO}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar
+```
+
+Replace `${M2_REPO}` with your local Maven repository path (e.g. `~/.m2/repository`) and
+`${spring-framework.version}` with the actual version derived from the Spring Boot parent POM.
+
+**How to find the current version:**
+```bash
+cd sabi-server && mvn help:evaluate -Dexpression=spring-framework.version -q -DforceStdout
+```
+> As of Spring Boot 4.0.5 this resolves to **`7.0.6`**, giving:
+> ```
+> -javaagent:/Users/YOU/.m2/repository/org/springframework/spring-instrument/7.0.6/spring-instrument-7.0.6.jar
+> ```
+
+You need this agent both for the Spring Boot application run-config and for the IDE test runner
+config. Always verify the version after updating the Spring Boot parent in `pom.xml`.
+
+###### Test Users and FK Constraints in Repository Tests
+
+**NEVER use hardcoded user IDs** in repository integration tests (e.g. `proposerUserId = 42`).
+
+Sabi's integration tests run against a real MariaDB Testcontainer that starts empty. Flyway
+migrations populate schema and reference data, but they do **not** create application users.
+Any `INSERT` that references a non-existent `users.id` via a foreign key will fail with
+`SQLIntegrityConstraintViolationException`.
+
+**Rule: Always create the required users programmatically in `@BeforeEach` via `UserRepository`.**
+
+```java
+@Autowired
+private UserRepository userRepository;
+
+@Autowired  // needed to bypass EclipseLink L1 cache
+@PersistenceContext(unitName = "sabi")
+private EntityManager em;
+
+private Long userId1;
+
+@BeforeEach
+public void setUp() {
+    userId1 = createUser("mytest1@test.de", "mytestuser1");
+    em.flush();
+}
+
+private Long createUser(String email, String alias) {
+    UserEntity u = new UserEntity();
+    u.setEmail(email);
+    u.setAlias(alias);
+    // … set other mandatory fields (language, validated = true, etc.) …
+    return userRepository.saveAndFlush(u).getId();
+}
+```
+
+###### EclipseLink L1 Cache in Repository Tests
+
+EclipseLink maintains an **identity map (L1 cache)** per `EntityManager`. Unlike Hibernate,
+`saveAndFlush()` writes to the DB but JPQL queries may still read from the cache. Symptoms:
+- A freshly saved entity is not found by a subsequent `findBy` query
+- Query results look stale (return old field values)
+
+**Fix: call `em.clear()` after every `saveAndFlush()` in tests** to evict the identity map and
+force the next query to hit the database:
+
+```java
+private void saveAndClear(SomeEntity entity) {
+    someRepository.saveAndFlush(entity);
+    em.clear();
+}
+```
 
 ##### Preparing your productive and IDE environment
 
-Because of eclipselink we are using weaving at runtime which requires the following vm option:
+Because of EclipseLink we are using weaving at runtime which requires the javaagent described
+above in *EclipseLink javaagent*. For the Spring Boot application run-config use:
 
 ```
--javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/6.2.6/spring-instrument-6.2.6.jar
+-javaagent:/PATH_TO_YOUR_MAVEN_REPOSITORY/org/springframework/spring-instrument/CURRENT_VERSION/spring-instrument-CURRENT_VERSION.jar
 ```
 
-You will need the agent for the springboot application run-config in your IDE as well as VM parameter for you 
-test runner config. **Please verify** that you use the correct version as derived from pom.xml dependency tree, as you may require
-to adopt the javaagent string above to suite to your version.
-You may also need to adopt your setting if that version in the pom changes because of patch management.
+Determine `CURRENT_VERSION` as shown above. The version tracks the `spring-framework.version`
+property managed by the Spring Boot parent — it changes with every Spring Boot upgrade.
 
 
