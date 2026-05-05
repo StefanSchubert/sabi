@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import java.util.Date;
+import java.util.List;
 
 import static java.util.Collections.emptyList;
 
@@ -29,6 +30,8 @@ import static java.util.Collections.emptyList;
 @Slf4j
 public class TokenAuthenticationService {
     private static final String SABI_JWT_ISSUER = "SABI-server module";
+    /** JWT claim name used to encode assigned roles (e.g. {@code ["ADMIN"]}). */
+    public static final String CLAIM_ROLES = "roles";
     // ------------------------------ FIELDS ------------------------------
 
 
@@ -50,21 +53,76 @@ public class TokenAuthenticationService {
      * @param pUserID   For sabi it's users email address.
      */
     static void addAuthentication(@NotNull HttpServletResponse pResponse, String pUserID) {
-        String jsonWebtoken = createAuthorizationTokenFor(pUserID);
+        addAuthentication(pResponse, pUserID, false);
+    }
+
+    /**
+     * Will be used by login or register, to provide the token belonging to the user.
+     * Includes the ADMIN role in the JWT claim if {@code isAdmin} is {@code true}.
+     *
+     * @param pResponse
+     * @param pUserID   For sabi it's users email address.
+     * @param isAdmin   Whether to embed the ADMIN role in the token.
+     */
+    static void addAuthentication(@NotNull HttpServletResponse pResponse, String pUserID, boolean isAdmin) {
+        String jsonWebtoken = createAuthorizationTokenFor(pUserID, isAdmin);
         pResponse.addHeader(HttpHeader.AUTH_TOKEN, HttpHeader.TOKEN_PREFIX + jsonWebtoken);
     }
 
+    /**
+     * Creates a JWT without any roles (backward-compatible overload).
+     */
     public static String createAuthorizationTokenFor(String pUserID) {
+        return createAuthorizationTokenFor(pUserID, false);
+    }
+
+    /**
+     * Creates a JWT for the given user.  When {@code isAdmin} is {@code true} the claim
+     * {@value CLAIM_ROLES} is set to {@code ["ADMIN"]} so that the frontend and backend
+     * can derive the admin role from the token rather than from a separate config.
+     *
+     * @param pUserID For sabi it's users email address.
+     * @param isAdmin Whether to embed the ADMIN role in the token.
+     */
+    public static String createAuthorizationTokenFor(String pUserID, boolean isAdmin) {
 
         Date expiresAt = new Date(System.currentTimeMillis() + ACCESS_TOKEN_MAX_VALIDITY_PERIOD_IN_SECS * 1000);
 
-        String jwtToken = JWT.create()
+        var builder = JWT.create()
                 .withSubject(pUserID)
                 .withExpiresAt(expiresAt)
-                .withIssuer(SABI_JWT_ISSUER)
-                .sign(JWT_TOKEN_ALGORITHM);
+                .withIssuer(SABI_JWT_ISSUER);
 
-        return jwtToken;
+        if (isAdmin) {
+            builder = builder.withClaim(CLAIM_ROLES, List.of("ADMIN"));
+        }
+
+        return builder.sign(JWT_TOKEN_ALGORITHM);
+    }
+
+    /**
+     * Returns {@code true} if the given JWT contains the ADMIN role in the {@value CLAIM_ROLES} claim.
+     *
+     * @param token raw JWT string (with or without "Bearer " prefix).
+     * @return {@code true} if the token is valid and contains the ADMIN role.
+     */
+    public static boolean extractAdminFromToken(String token) {
+        if (token == null) {
+            return false;
+        }
+        if (token.startsWith(HttpHeader.TOKEN_PREFIX)) {
+            token = token.substring(7);
+        }
+        try {
+            DecodedJWT verified = JWT.require(JWT_TOKEN_ALGORITHM)
+                    .withIssuer(SABI_JWT_ISSUER)
+                    .build()
+                    .verify(token);
+            List<String> roles = verified.getClaim(CLAIM_ROLES).asList(String.class);
+            return roles != null && roles.contains("ADMIN");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

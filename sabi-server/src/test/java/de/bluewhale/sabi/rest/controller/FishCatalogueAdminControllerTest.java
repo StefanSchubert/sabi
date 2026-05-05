@@ -56,7 +56,8 @@ public class FishCatalogueAdminControllerTest extends CommonTestController {
     JsonMapper objectMapper;
 
     private HttpHeaders headerFor(String email) {
-        String token = TokenAuthenticationService.createAuthorizationTokenFor(email);
+        boolean isAdmin = ADMIN_USER.equalsIgnoreCase(email);
+        String token = TokenAuthenticationService.createAuthorizationTokenFor(email, isAdmin);
         return RestHelper.prepareAuthedHttpHeader(token);
     }
 

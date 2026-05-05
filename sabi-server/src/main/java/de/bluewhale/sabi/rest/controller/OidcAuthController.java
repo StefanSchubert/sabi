@@ -63,6 +63,10 @@ public class OidcAuthController {
     @Autowired
     private OidcProviderLinkRepository oidcProviderLinkRepository;
 
+    /** Comma-separated list of admin emails — used to embed the ADMIN role in the issued JWT. */
+    @Value("${sabi.admin.users:admin@sabi-project.net}")
+    private String adminUsers;
+
     @Operation(summary = "Exchange Google ID token for Sabi JWT",
             description = "Validates the Google ID token, looks up or provisions the Sabi user, and returns a Sabi JWT.")
     @ApiResponses({
@@ -151,7 +155,9 @@ public class OidcAuthController {
         }
 
         // --- Step 7: Issue Sabi JWT ---
-        String sabiJwt = TokenAuthenticationService.createAuthorizationTokenFor(sabiUser.getEmail());
+        boolean isAdmin = java.util.Arrays.stream(adminUsers.split(","))
+                .anyMatch(a -> a.trim().equalsIgnoreCase(sabiUser.getEmail()));
+        String sabiJwt = TokenAuthenticationService.createAuthorizationTokenFor(sabiUser.getEmail(), isAdmin);
 
         OidcLoginResponseTo response = new OidcLoginResponseTo();
         response.setToken(sabiJwt);

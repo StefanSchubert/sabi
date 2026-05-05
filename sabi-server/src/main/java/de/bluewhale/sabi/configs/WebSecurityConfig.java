@@ -81,7 +81,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // ...existing code...
-                .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), sabiAuthenticationProvider),
+                .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), sabiAuthenticationProvider, adminUsers),
                         UsernamePasswordAuthenticationFilter.class)
                 // And filter other requests to check the presence of a valid JWT in header
                 .addFilter(new JWTAuthorizationFilter(sabiAuthenticationProvider, adminUsers))

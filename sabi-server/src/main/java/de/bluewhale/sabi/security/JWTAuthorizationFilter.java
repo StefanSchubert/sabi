@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
@@ -27,19 +26,23 @@ import static de.bluewhale.sabi.api.HttpHeader.TOKEN_PREFIX;
 /**
  * Used by requests which requires an authentication.
  * Checks the presence of a valid JWT Token in the Request header field 'Authorization' following the Bearer schema.
+ * The ADMIN role is read from the {@value TokenAuthenticationService#CLAIM_ROLES} JWT claim instead of
+ * a separate config list, so that admin determination is purely based on the verified principal.
  *
  * @author Stefan Schubert
  */
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    /** Comma-separated list of admin emails. Injected via constructor from WebSecurityConfig. */
-    private final List<String> adminUsers;
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+    }
 
+    /**
+     * Legacy constructor kept for backward compatibility; the adminUsersProperty is no longer used
+     * because the ADMIN role is now embedded in the JWT claim.
+     */
     public JWTAuthorizationFilter(AuthenticationManager authenticationManager, String adminUsersProperty) {
         super(authenticationManager);
-        this.adminUsers = adminUsersProperty != null
-                ? Arrays.asList(adminUsersProperty.split(","))
-                : new ArrayList<>();
     }
 
     @Override
@@ -66,8 +69,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             // This is necessary to extend the "backend-session" if users-client session continues.
             // it's in the responsibility of the client to continue with the renewed token (the old token will be still
             // valid until its TTL expired - for the cases where the client missed the cycle due to network problems.)
-             String userID = (String) authentication.getPrincipal();
-             TokenAuthenticationService.addAuthentication(res,userID);
+            String userID = (String) authentication.getPrincipal();
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+            TokenAuthenticationService.addAuthentication(res, userID, isAdmin);
             chain.doFilter(req, res);
         } else {
             // don't continue the chain
@@ -84,8 +89,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
             if (user != null) {
                 List<GrantedAuthority> authorities = new ArrayList<>();
-                // Grant ROLE_ADMIN to configured admin users (T062 — 002-fish-stock-catalogue)
-                if (adminUsers.stream().anyMatch(a -> a.trim().equalsIgnoreCase(user))) {
+                // Grant ROLE_ADMIN based on the roles claim embedded in the JWT (T062 — 002-fish-stock-catalogue)
+                if (TokenAuthenticationService.extractAdminFromToken(token)) {
                     authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                 }
                 return new UsernamePasswordAuthenticationToken(user, null, authorities);

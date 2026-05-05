@@ -8,6 +8,7 @@ package de.bluewhale.sabi.webclient.security;
 import de.bluewhale.sabi.model.OidcLoginRequestTo;
 import de.bluewhale.sabi.model.OidcLoginResponseTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
+import de.bluewhale.sabi.webclient.utils.JwtDecoder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,8 +74,9 @@ public class SabiOidcSuccessHandler implements AuthenticationSuccessHandler {
                 // Store Sabi JWT and username in the session for subsequent API calls
                 userSession.setSabiBackendToken("Bearer " + sabiResponse.getToken());
                 userSession.setUserName(sabiResponse.getUsername());
-                // Store email separately — isAdmin() checks email, not display name
+                // Extract email and admin role from the Sabi JWT rather than from a separate config.
                 userSession.setUserEmail(sabiResponse.getEmail());
+                userSession.setAdminRole(JwtDecoder.hasAdminRole(sabiResponse.getToken()));
 
                 log.info("OIDC_LOGIN_SUCCESS username={} provisioned={}", sabiResponse.getUsername(), sabiResponse.isProvisioned());
 

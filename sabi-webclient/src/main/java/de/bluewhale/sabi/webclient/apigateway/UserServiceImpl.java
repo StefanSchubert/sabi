@@ -14,6 +14,7 @@ import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.webclient.utils.I18nUtil;
+import de.bluewhale.sabi.webclient.utils.JwtDecoder;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
@@ -101,6 +102,13 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
             String jwtSabiBackendToken = responseHeaders.getFirst(HttpHeader.AUTH_TOKEN);
             userSession.setSabiBackendToken(jwtSabiBackendToken);
 
+            // Decode the JWT to get the canonical email (subject) and admin role.
+            // The backend always stores the email as JWT subject regardless of whether the user
+            // logged in via email address or username — so we no longer rely on what the user typed.
+            String emailFromToken = JwtDecoder.extractSubject(jwtSabiBackendToken);
+            userSession.setUserEmail(emailFromToken != null ? emailFromToken : pEmail);
+            userSession.setAdminRole(JwtDecoder.hasAdminRole(jwtSabiBackendToken));
+
             UserProfileTo userProfileTo = requestUserProfile(jwtSabiBackendToken);
 
             Locale supportedLocale;
@@ -116,8 +124,6 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
             LocaleContextHolder.setLocale(supportedLocale); // Used by spring
             userSession.setLocale(supportedLocale);
             userSession.setUserName(loginData.getUsername());
-            // Store email explicitly so isAdmin() can check it regardless of display-name differences
-            userSession.setUserEmail(pEmail);
             if (userProfileTo != null) {
                 userSession.setDarkModeEnabled(userProfileTo.isDarkModeEnabled());
             }
