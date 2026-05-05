@@ -101,6 +101,23 @@ public class TokenAuthenticationService {
     }
 
     /**
+     * Returns {@code true} if the given email is contained in the admin-users property string
+     * (comma-separated list of emails, case-insensitive).
+     * Centralizes the admin determination logic used by {@link JWTLoginFilter} and other callers.
+     *
+     * @param email              the user's email address to check.
+     * @param adminUsersProperty comma-separated list of admin email addresses.
+     * @return {@code true} if the email matches an admin entry.
+     */
+    public static boolean isAdminEmail(String email, String adminUsersProperty) {
+        if (adminUsersProperty == null || adminUsersProperty.isBlank() || email == null || email.isBlank()) {
+            return false;
+        }
+        return java.util.Arrays.stream(adminUsersProperty.split(","))
+                .anyMatch(a -> a.trim().equalsIgnoreCase(email));
+    }
+
+    /**
      * Returns {@code true} if the given JWT contains the ADMIN role in the {@value CLAIM_ROLES} claim.
      *
      * @param token raw JWT string (with or without "Bearer " prefix).

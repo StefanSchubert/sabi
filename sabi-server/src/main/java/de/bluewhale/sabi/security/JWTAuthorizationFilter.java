@@ -38,9 +38,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     /**
-     * Legacy constructor kept for backward compatibility; the adminUsersProperty is no longer used
-     * because the ADMIN role is now embedded in the JWT claim.
+     * @deprecated The {@code adminUsersProperty} parameter is no longer used.
+     *             The ADMIN role is now embedded in the JWT claim by {@link JWTLoginFilter} at login time.
+     *             Use {@link #JWTAuthorizationFilter(AuthenticationManager)} instead.
      */
+    @Deprecated
     public JWTAuthorizationFilter(AuthenticationManager authenticationManager, String adminUsersProperty) {
         super(authenticationManager);
     }

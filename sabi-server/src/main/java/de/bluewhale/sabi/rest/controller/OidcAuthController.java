@@ -155,8 +155,7 @@ public class OidcAuthController {
         }
 
         // --- Step 7: Issue Sabi JWT ---
-        boolean isAdmin = java.util.Arrays.stream(adminUsers.split(","))
-                .anyMatch(a -> a.trim().equalsIgnoreCase(sabiUser.getEmail()));
+        boolean isAdmin = TokenAuthenticationService.isAdminEmail(sabiUser.getEmail(), adminUsers);
         String sabiJwt = TokenAuthenticationService.createAuthorizationTokenFor(sabiUser.getEmail(), isAdmin);
 
         OidcLoginResponseTo response = new OidcLoginResponseTo();

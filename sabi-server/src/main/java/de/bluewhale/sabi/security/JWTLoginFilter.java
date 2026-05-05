@@ -22,8 +22,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This Class filters the /login request route.
@@ -33,8 +31,8 @@ import java.util.List;
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    /** Comma-separated list of admin emails — used to embed the ADMIN role in the issued JWT. */
-    private final List<String> adminUsers;
+    /** Comma-separated admin email string — used to embed the ADMIN role in the issued JWT. */
+    private final String adminUsersProperty;
 
     public JWTLoginFilter(String url, AuthenticationManager authenticationManager) {
         this(url, authenticationManager, null);
@@ -43,9 +41,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     public JWTLoginFilter(String url, AuthenticationManager authenticationManager, String adminUsersProperty) {
         super(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, url));
         setAuthenticationManager(authenticationManager);
-        this.adminUsers = adminUsersProperty != null
-                ? Arrays.asList(adminUsersProperty.split(","))
-                : List.of();
+        this.adminUsersProperty = adminUsersProperty;
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -100,8 +96,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             HttpServletResponse pResponse, FilterChain chain,
             Authentication auth) throws IOException, ServletException {
         if (auth.isAuthenticated()) {
-            boolean isAdmin = adminUsers.stream()
-                    .anyMatch(a -> a.trim().equalsIgnoreCase(auth.getName()));
+            boolean isAdmin = TokenAuthenticationService.isAdminEmail(auth.getName(), adminUsersProperty);
             TokenAuthenticationService.addAuthentication(pResponse, auth.getName(), isAdmin);
             pResponse.setStatus(HttpStatus.ACCEPTED.value());
         } else {
