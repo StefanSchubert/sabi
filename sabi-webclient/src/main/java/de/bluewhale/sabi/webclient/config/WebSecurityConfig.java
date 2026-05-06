@@ -68,6 +68,8 @@ public class WebSecurityConfig {
                         .requestMatchers(path.matcher("/.well-known/**")).permitAll()
                         .requestMatchers(path.matcher("/error")).permitAll() // Error Controller
                         .requestMatchers(path.matcher("/images/**")).permitAll()
+                        // Public HouseReef report (no login required)
+                        .requestMatchers(path.matcher("/houseReefReport.xhtml")).permitAll()
                         // OIDC login flow (sabi-150): Spring Security OAuth2 redirect URIs
                         .requestMatchers(path.matcher("/oauth2/**")).permitAll()
                         .requestMatchers(path.matcher("/login/oauth2/**")).permitAll()
