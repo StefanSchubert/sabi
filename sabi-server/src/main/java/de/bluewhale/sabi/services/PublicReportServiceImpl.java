@@ -246,7 +246,10 @@ public class PublicReportServiceImpl implements PublicReportService {
         // Verify the fish belongs to the aquarium referenced by the link
         boolean fishBelongsToAquarium = tankFishStockRepository.findById(fishId)
                 .map(f -> link.getAquariumId().equals(f.getAquariumId()))
-                .orElse(false);
+                .orElseGet(() -> {
+                    log.warn("Public report photo requested for non-existent fishId={} with token={}", fishId, linkToken);
+                    return false;
+                });
         if (!fishBelongsToAquarium) return new byte[0];
 
         return fishPhotoRepository.findByFishId(fishId)

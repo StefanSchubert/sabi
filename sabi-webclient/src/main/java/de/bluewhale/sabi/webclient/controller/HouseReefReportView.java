@@ -138,7 +138,7 @@ public class HouseReefReportView implements Serializable {
 
             Locale locale = userSession.getLocale();
 
-            for (int dayOffset = 90; dayOffset > 0; dayOffset--) {
+            for (int dayOffset = 90; dayOffset >= 0; dayOffset--) {
                 LocalDate date = LocalDate.now().minusDays(dayOffset);
                 int dayOfMonth = date.getDayOfMonth();
                 if (dayOfMonth < 3) {
