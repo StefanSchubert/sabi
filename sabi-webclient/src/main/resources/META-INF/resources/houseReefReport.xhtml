@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<f:metadata>
+    <f:viewParam name="token" value="#{houseReefReportView.token}"/>
+    <f:event type="preRenderView" listener="#{houseReefReportView.loadReport}"/>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI – #{msg['housereef.report.page.title']}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="robots" content="noindex, nofollow"/>
+    <link rel="icon" type="image/png" href="#{resource['images:icons8-crab-64.png']}"/>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
+    <style>
+        .report-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #065f46;
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+        }
+        .report-header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+        .report-header .meta {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            text-align: right;
+        }
+        .report-badge {
+            width: 48px;
+            height: auto;
+        }
+        .report-body {
+            padding: 1rem;
+        }
+        .two-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .two-col .tank-photo {
+            flex: 1 1 280px;
+            max-width: 420px;
+        }
+        .two-col .tank-photo img {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .two-col .tank-params {
+            flex: 1 1 260px;
+        }
+        .fish-card {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.5rem;
+            width: 160px;
+            vertical-align: top;
+            background: #f8fafc;
+        }
+        .fish-card img {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        .fish-card .fish-name {
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .fish-card .fish-sci {
+            font-style: italic;
+            font-size: 0.75rem;
+            color: #475569;
+            text-align: center;
+        }
+        .coming-soon-box {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            color: #64748b;
+        }
+        .chart-wrap {
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .two-col { flex-direction: column; }
+            .fish-card { width: 100%; flex-direction: row; align-items: flex-start; }
+            .fish-card img { width: 80px; height: 60px; margin-right: 0.75rem; margin-bottom: 0; }
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <!-- ============================================================
+         EXPIRED / NOT FOUND
+         ============================================================ -->
+    <h:panelGroup layout="block" rendered="#{houseReefReportView.report.linkExpired or !houseReefReportView.reportAvailable}">
+        <div style="max-width:600px; margin:4rem auto; text-align:center; padding:2rem;">
+            <h:graphicImage library="images" name="ByeBye.png" style="max-width:320px; width:100%;"/>
+            <h2 style="color:#065f46; margin-top:1.5rem;">#{msg['housereef.report.expired.h']}</h2>
+            <p>#{msg['housereef.report.expired.t']}</p>
+            <p><a href="/" style="color:#0369a1;">#{msg['housereef.report.backtosabi.l']}</a></p>
+        </div>
+    </h:panelGroup>
+
+    <!-- ============================================================
+         FULL REPORT
+         ============================================================ -->
+    <h:panelGroup layout="block" rendered="#{houseReefReportView.reportAvailable}">
+
+        <div style="max-width:960px; margin:1.5rem auto;">
+
+            <!-- ---- HEADER ---- -->
+            <div class="report-header">
+                <div>
+                    <h1>#{houseReefReportView.report.ownerUsername}#{msg['housereef.report.title.suffix']}</h1>
+                    <div class="meta">
+                        #{houseReefReportView.report.tank.description}<br/>
+                        #{msg['housereef.report.generated.l']}:
+                        <h:outputText value="#{houseReefReportView.report.reportGeneratedAt}">
+                            <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                        </h:outputText>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="meta" style="margin-bottom:0.25rem;">#{msg['housereef.report.producedby.l']}</div>
+                    <h:graphicImage library="images" name="Sabi_Badge_Small.png" styleClass="report-badge"
+                                    alt="SABI Badge"/>
+                </div>
+            </div>
+
+            <div class="report-body">
+
+                <!-- ---- TWO-COLUMN: PHOTO + PARAMS ---- -->
+                <div class="two-col">
+
+                    <!-- Tank photo -->
+                    <div class="tank-photo">
+                        <h:panelGroup rendered="#{houseReefReportView.report.tank.hasPhoto}">
+                            <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/photo"
+                                 alt="#{houseReefReportView.report.tank.description}"/>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{!houseReefReportView.report.tank.hasPhoto}">
+                            <div style="border:1px dashed #cbd5e1; border-radius:6px; padding:3rem; text-align:center; color:#94a3b8;">
+                                #{msg['housereef.report.no.photo.t']}
+                            </div>
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Tank parameters -->
+                    <div class="tank-params">
+                        <p:panel header="#{msg['housereef.report.tankparams.h']}">
+                            <p:panelGrid columns="2" styleClass="ui-noborder">
+                                <h:outputText value="#{msg['tankview.watertype.l']}"/>
+                                <h:outputText value="#{houseReefReportView.report.tank.waterType}"/>
+
+                                <h:outputText value="#{msg['tankview.size.l']}"/>
+                                <h:outputText value="#{houseReefReportView.report.tank.size} #{houseReefReportView.report.tank.sizeUnit}"/>
+
+                                <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
+                                    <h:outputText value="#{msg['tankview.sizenet.l']}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
+                                    <h:outputText value="#{houseReefReportView.report.tank.sizeNet} #{houseReefReportView.report.tank.sizeUnit}"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
+                                    <h:outputText value="#{msg['tankview.ecosystemtype.l']}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
+                                    <h:outputText value="#{houseReefReportView.report.tank.ecosystemType}"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
+                                    <h:outputText value="#{msg['tankview.inception.l']}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
+                                    <h:outputText value="#{houseReefReportView.report.tank.inceptionDate}">
+                                        <f:convertDateTime locale="#{userSession.locale}" type="date" dateStyle="medium"/>
+                                    </h:outputText>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:panel>
+                    </div>
+                </div>
+
+                <!-- ---- FISH INHABITANTS ---- -->
+                <p:panel header="#{msg['housereef.report.inhabitants.h']}" styleClass="p-mt-2">
+                    <h:panelGroup rendered="#{empty houseReefReportView.report.inhabitants}">
+                        <p style="color:#64748b;">#{msg['housereef.report.no.fish.t']}</p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not empty houseReefReportView.report.inhabitants}">
+                        <ui:repeat value="#{houseReefReportView.report.inhabitants}" var="fish">
+                            <div class="fish-card">
+                                <h:panelGroup rendered="#{fish.hasPhoto}">
+                                    <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/fish/#{fish.id}/photo"
+                                         alt="#{fish.commonName}"/>
+                                </h:panelGroup>
+                                <div class="fish-name">
+                                    <h:outputText value="#{fish.nickname != null and fish.nickname != '' ? fish.nickname : fish.commonName}"/>
+                                </div>
+                                <div class="fish-sci">
+                                    <h:outputText value="#{fish.commonName}" rendered="#{fish.nickname != null and fish.nickname != ''}"/>
+                                </div>
+                                <div class="fish-sci">
+                                    <h:outputText value="#{fish.scientificName}"/>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </h:panelGroup>
+                </p:panel>
+
+                <!-- ---- CORALS / INVERTEBRATES PLACEHOLDER ---- -->
+                <p:panel header="#{msg['housereef.report.corals.h']}" styleClass="p-mt-2">
+                    <div class="coming-soon-box">
+                        <p:outputLabel value="#{msg['housereef.report.corals.comingsoon.t']}"/>
+                    </div>
+                </p:panel>
+
+                <!-- ---- VITAL DATA (MEASUREMENT CHARTS) ---- -->
+                <p:panel header="#{msg['housereef.report.vitaldata.h']}" styleClass="p-mt-2">
+                    <h:panelGroup rendered="#{empty houseReefReportView.unitIds}">
+                        <p style="color:#64748b;">#{msg['housereef.report.no.measurements.t']}</p>
+                    </h:panelGroup>
+                    <ui:repeat value="#{houseReefReportView.unitIds}" var="unitId">
+                        <div class="chart-wrap">
+                            <h3>#{houseReefReportView.getUnitSign(unitId)}</h3>
+                            <div class="card">
+                                <p:chart value="#{houseReefReportView.getChartFor(unitId)}"
+                                         style="width: 100%; height: 250px;"/>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </p:panel>
+
+            </div><!-- /report-body -->
+        </div><!-- /max-width wrapper -->
+    </h:panelGroup>
+
+</h:body>
+</html>

@@ -38,6 +38,10 @@ name: sabi-webclient
 sabi:
   backend:
     url: http://localhost:8080/sabi
+  # Public base URL for generating shareable HouseReef report links
+  webclient:
+    public:
+      base-url: ${SABI_PUBLIC_BASE_URL:http://localhost:8088}
 server:
   port: 8088
 

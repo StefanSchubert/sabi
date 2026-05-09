@@ -33,7 +33,10 @@ public enum Endpoint {
     FISH_STOCK("/api/fish"),
     FISH_CATALOGUE("/api/fish/catalogue"),
     FISH_CATALOGUE_ADMIN("/api/admin/fish/catalogue"),
-    FISH_ROLES("/api/fish/roles");
+    FISH_ROLES("/api/fish/roles"),
+    // Public HouseReef report (social feature)
+    PUBLIC_REPORT("/api/public/report"),
+    REPORT_LINK("/api/report/link");
 
 // ------------------------------ FIELDS ------------------------------
 
