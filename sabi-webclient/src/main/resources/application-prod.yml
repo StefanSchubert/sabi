@@ -14,9 +14,6 @@ joinfaces:
 sabi:
   backend:
     url: http://blackpearl4u:8080/sabi
-  admin:
-    # Admin-User — muss mit sabi-server/application-prod.yml übereinstimmen.
-    users: stefan@bluewhale.de
 
 # Session-Timeout für Produktion (dev: 3m)
 spring:
