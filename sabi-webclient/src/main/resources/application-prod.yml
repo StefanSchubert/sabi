@@ -14,9 +14,6 @@ joinfaces:
 sabi:
   backend:
     url: http://blackpearl4u:8080/sabi
-  admin:
-    # Admin-User — muss mit sabi-server/application-prod.yml übereinstimmen.
-    users: stefan@bluewhale.de
   webclient:
     public:
       base-url: https://sabi-project.net
