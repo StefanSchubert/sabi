@@ -27,30 +27,35 @@
     <link rel="icon" type="image/png" href="#{resource['images:icons8-crab-64.png']}"/>
     <h:outputStylesheet library="css" name="sabistyle.css"/>
     <style>
+        /* ==== REPORT HEADER: SABI Marine Theme (WCAG AA: white on #075985 = ~7:1) ==== */
         .report-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #065f46;
+            background: linear-gradient(135deg, #075985 0%, #0369a1 60%, #0891b2 100%);
             color: #ffffff;
-            padding: 1rem 1.5rem;
+            padding: 1.2rem 1.5rem;
             border-radius: 8px 8px 0 0;
         }
         .report-header h1 {
             margin: 0;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+            color: #ffffff;
         }
         .report-header .meta {
-            font-size: 0.8rem;
-            opacity: 0.85;
-            text-align: right;
+            font-size: 0.82rem;
+            color: #bae6fd;   /* Sky Blue: decorative only on dark bg */
+            margin-top: 0.3rem;
         }
+        /* ==== BADGE: ~6 cm at 96 dpi = 227px; transparent PNG – no blend mode needed ==== */
         .report-badge {
-            width: 48px;
+            width: 227px;
             height: auto;
         }
         .report-body {
             padding: 1rem;
+            position: relative;
+            z-index: 1;
         }
         .two-col {
             display: flex;
@@ -65,7 +70,7 @@
         .two-col .tank-photo img {
             width: 100%;
             border-radius: 6px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
         }
         .two-col .tank-params {
             flex: 1 1 260px;
@@ -74,31 +79,45 @@
             display: inline-flex;
             flex-direction: column;
             align-items: center;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
             padding: 0.75rem;
             margin: 0.5rem;
-            width: 160px;
+            width: 170px;
             vertical-align: top;
-            background: #f8fafc;
+            background: #f0f9ff;
         }
         .fish-card img {
-            width: 120px;
-            height: 90px;
+            width: 130px;
+            height: 98px;
             object-fit: cover;
             border-radius: 4px;
             margin-bottom: 0.5rem;
+        }
+        .fish-card img.fish-default {
+            object-fit: contain;
+            padding: 0.5rem;
+            background: #e0f2fe;
+            border-radius: 4px;
         }
         .fish-card .fish-name {
             font-weight: bold;
             text-align: center;
             font-size: 0.9rem;
+            color: #1e293b;
         }
         .fish-card .fish-sci {
             font-style: italic;
             font-size: 0.75rem;
             color: #475569;
             text-align: center;
+        }
+        .fish-card .fish-obs {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-align: center;
+            margin-top: 0.35rem;
+            font-style: normal;
         }
         .coming-soon-box {
             border: 2px dashed #cbd5e1;
@@ -110,10 +129,26 @@
         .chart-wrap {
             margin-bottom: 1.5rem;
         }
+        /* ==== CORAL REEF WATERMARK ==== */
+        .reef-watermark {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 200px;   /* 120px reef + 80px extended water area (~2cm extra) */
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
         @media (max-width: 600px) {
             .two-col { flex-direction: column; }
             .fish-card { width: 100%; flex-direction: row; align-items: flex-start; }
             .fish-card img { width: 80px; height: 60px; margin-right: 0.75rem; margin-bottom: 0; }
+            .reef-watermark { display: none; }
+        }
+        /* Coral sway uses transform-origin at element origin (= reef base after translate) */
+        .reef-watermark g[transform^="translate"] {
+            transform-box: fill-box;
         }
     </style>
 </h:head>
@@ -139,7 +174,7 @@
 
         <div style="max-width:960px; margin:1.5rem auto;">
 
-            <!-- ---- HEADER ---- -->
+            <!-- ==== HEADER ==== -->
             <div class="report-header">
                 <div>
                     <h1>#{houseReefReportView.report.ownerUsername}#{msg['housereef.report.title.suffix']}</h1>
@@ -160,7 +195,7 @@
 
             <div class="report-body">
 
-                <!-- ---- TWO-COLUMN: PHOTO + PARAMS ---- -->
+                <!-- ==== TWO-COLUMN: PHOTO + PARAMS ==== -->
                 <div class="two-col">
 
                     <!-- Tank photo -->
@@ -170,9 +205,9 @@
                                  alt="#{houseReefReportView.report.tank.description}"/>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{!houseReefReportView.report.tank.hasPhoto}">
-                            <div style="border:1px dashed #cbd5e1; border-radius:6px; padding:3rem; text-align:center; color:#94a3b8;">
-                                #{msg['housereef.report.no.photo.t']}
-                            </div>
+                            <h:graphicImage library="images" name="Clibanarius.JPG"
+                                            style="width:100%; border-radius:6px; border:1px solid #cbd5e1;"
+                                            alt="#{msg['housereef.report.no.photo.t']}"/>
                         </h:panelGroup>
                     </div>
 
@@ -180,73 +215,83 @@
                     <div class="tank-params">
                         <p:panel header="#{msg['housereef.report.tankparams.h']}">
                             <p:panelGrid columns="2" styleClass="ui-noborder">
-                                <h:outputText value="#{msg['tankview.watertype.l']}"/>
-                                <h:outputText value="#{houseReefReportView.report.tank.waterType}"/>
+                                 <h:outputText value="#{msg['tankview.waterType.l']}"/>
+                                 <h:outputText value="#{houseReefReportView.report.tank.waterType}"/>
 
-                                <h:outputText value="#{msg['tankview.size.l']}"/>
-                                <h:outputText value="#{houseReefReportView.report.tank.size} #{houseReefReportView.report.tank.sizeUnit}"/>
+                                 <h:outputText value="#{msg['tankview.volume.gross.l']}"/>
+                                 <h:outputText value="#{houseReefReportView.report.tank.size} #{houseReefReportView.report.tank.sizeUnit}"/>
 
-                                <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
-                                    <h:outputText value="#{msg['tankview.sizenet.l']}"/>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
-                                    <h:outputText value="#{houseReefReportView.report.tank.sizeNet} #{houseReefReportView.report.tank.sizeUnit}"/>
-                                </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
+                                     <h:outputText value="#{msg['tankview.volume.net.l']}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
+                                     <h:outputText value="#{houseReefReportView.report.tank.sizeNet} #{houseReefReportView.report.tank.sizeUnit}"/>
+                                 </h:panelGroup>
 
-                                <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
-                                    <h:outputText value="#{msg['tankview.ecosystemtype.l']}"/>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
-                                    <h:outputText value="#{houseReefReportView.report.tank.ecosystemType}"/>
-                                </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
+                                     <h:outputText value="#{msg['tankview.ecosystemType.l']}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
+                                     <h:outputText value="#{houseReefReportView.report.tank.ecosystemType}"/>
+                                 </h:panelGroup>
 
-                                <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
-                                    <h:outputText value="#{msg['tankview.inception.l']}"/>
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
-                                    <h:outputText value="#{houseReefReportView.report.tank.inceptionDate}">
-                                        <f:convertDateTime locale="#{userSession.locale}" type="date" dateStyle="medium"/>
-                                    </h:outputText>
-                                </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
+                                     <h:outputText value="#{msg['tankview.inceptionDate.l']}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
+                                     <h:outputText value="#{houseReefReportView.report.tank.inceptionDate}">
+                                         <f:convertDateTime locale="#{userSession.locale}" type="date" dateStyle="medium"/>
+                                     </h:outputText>
+                                 </h:panelGroup>
                             </p:panelGrid>
                         </p:panel>
                     </div>
                 </div>
 
-                <!-- ---- FISH INHABITANTS ---- -->
+                <!-- ==== FISH INHABITANTS ==== -->
                 <p:panel header="#{msg['housereef.report.inhabitants.h']}" styleClass="p-mt-2">
                     <h:panelGroup rendered="#{empty houseReefReportView.report.inhabitants}">
                         <p style="color:#64748b;">#{msg['housereef.report.no.fish.t']}</p>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{not empty houseReefReportView.report.inhabitants}">
                         <ui:repeat value="#{houseReefReportView.report.inhabitants}" var="fish">
-                            <div class="fish-card">
-                                <h:panelGroup rendered="#{fish.hasPhoto}">
-                                    <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/fish/#{fish.id}/photo"
-                                         alt="#{fish.commonName}"/>
-                                </h:panelGroup>
-                                <div class="fish-name">
-                                    <h:outputText value="#{fish.nickname != null and fish.nickname != '' ? fish.nickname : fish.commonName}"/>
-                                </div>
-                                <div class="fish-sci">
-                                    <h:outputText value="#{fish.commonName}" rendered="#{fish.nickname != null and fish.nickname != ''}"/>
-                                </div>
-                                <div class="fish-sci">
-                                    <h:outputText value="#{fish.scientificName}"/>
-                                </div>
-                            </div>
-                        </ui:repeat>
+                             <div class="fish-card">
+                                 <h:panelGroup rendered="#{fish.hasPhoto}">
+                                     <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/fish/#{fish.id}/photo"
+                                          alt="#{fish.commonName}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{!fish.hasPhoto}">
+                                     <h:graphicImage library="images" name="icons8-crab-64.png"
+                                                     styleClass="fish-default"
+                                                     alt="#{fish.commonName}"/>
+                                 </h:panelGroup>
+                                 <div class="fish-name">
+                                     <h:outputText value="#{fish.nickname != null and fish.nickname != '' ? fish.nickname : fish.commonName}"/>
+                                 </div>
+                                 <div class="fish-sci">
+                                     <h:outputText value="#{fish.commonName}" rendered="#{fish.nickname != null and fish.nickname != ''}"/>
+                                 </div>
+                                 <div class="fish-sci">
+                                     <h:outputText value="#{fish.scientificName}"/>
+                                 </div>
+                                 <h:panelGroup rendered="#{fish.observedBehavior != null and fish.observedBehavior != ''}">
+                                     <div class="fish-obs">
+                                         <h:outputText value="#{fish.observedBehavior}"/>
+                                     </div>
+                                 </h:panelGroup>
+                             </div>
+                         </ui:repeat>
                     </h:panelGroup>
                 </p:panel>
 
-                <!-- ---- CORALS / INVERTEBRATES PLACEHOLDER ---- -->
+                <!-- ==== CORALS / INVERTEBRATES PLACEHOLDER ==== -->
                 <p:panel header="#{msg['housereef.report.corals.h']}" styleClass="p-mt-2">
                     <div class="coming-soon-box">
                         <p:outputLabel value="#{msg['housereef.report.corals.comingsoon.t']}"/>
                     </div>
                 </p:panel>
 
-                <!-- ---- VITAL DATA (MEASUREMENT CHARTS) ---- -->
+                <!-- ==== VITAL DATA (MEASUREMENT CHARTS) ==== -->
                 <p:panel header="#{msg['housereef.report.vitaldata.h']}" styleClass="p-mt-2">
                     <h:panelGroup rendered="#{empty houseReefReportView.unitIds}">
                         <p style="color:#64748b;">#{msg['housereef.report.no.measurements.t']}</p>
@@ -265,6 +310,21 @@
             </div><!-- /report-body -->
         </div><!-- /max-width wrapper -->
     </h:panelGroup>
+
+    <!-- ==== CORAL REEF WATERMARK — generated dynamically by reef-generator.js ==== -->
+    <!-- Layer 1: Reef silhouette  |  Layer 2: Corals from reef  |  Layer 3: Fish -->
+    <div class="reef-watermark" id="reefWatermark" aria-hidden="true"/>
+
+    <!-- Inject aquarium-specific data for the reef generator (server-side EL → JS global) -->
+    <script>
+        //<![CDATA[
+        window.SABI_REEF_PARAMS = {
+            aquariumId : #{houseReefReportView.reportAvailable ? houseReefReportView.report.tank.id : 42},
+            fishCount  : #{houseReefReportView.reportAvailable ? houseReefReportView.report.inhabitants.size() : 0}
+        };
+        //]]>
+    </script>
+    <h:outputScript library="js" name="reef-generator.js" target="body"/>
 
 </h:body>
 </html>
