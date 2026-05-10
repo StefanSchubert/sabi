@@ -42,8 +42,6 @@ public class PublicReportServiceImpl extends APIServiceImpl implements PublicRep
                 return null;
             }
             return objectMapper.readValue(response.getBody(), PublicReportLinkTo.class);
-        } catch (HttpClientErrorException.NoContent e) {
-            return null;
         } catch (JacksonException e) {
             log.error("Failed to parse report link from {}", uri, e);
             throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);

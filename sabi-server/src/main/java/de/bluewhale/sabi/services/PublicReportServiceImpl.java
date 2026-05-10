@@ -194,7 +194,7 @@ public class PublicReportServiceImpl implements PublicReportService {
 
         // Resolve unit meta-data for all units present in measurements
         for (Integer unitId : measurementsByUnit.keySet()) {
-            unitRepository.findById(unitId).ifPresent(unitEntity -> {
+            unitRepository.findById(unitId.longValue()).ifPresent(unitEntity -> {
                 UnitTo unitTo = new UnitTo();
                 unitTo.setId(unitEntity.getId());
                 unitTo.setUnitSign(unitEntity.getName());
