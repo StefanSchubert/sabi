@@ -257,6 +257,13 @@ a:hover { color: var(--sabi-accent); text-decoration: underline; }
     background-color: #b91c1c !important;
 }
 
+/* Small button variant — use styleClass="sabi-btn-sm" */
+.ui-button.sabi-btn-sm {
+    padding: 0.28rem 0.75rem !important;
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+}
+
 /* =====================================================================
    Input Fields
    ===================================================================== */

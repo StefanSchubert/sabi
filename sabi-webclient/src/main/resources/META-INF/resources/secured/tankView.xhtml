@@ -16,11 +16,40 @@
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
+    <style>
+        .tank-photo-placeholder {
+            width: 200px;
+            height: 150px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: linear-gradient(135deg, #075985, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #bae6fd;
+            font-size: 2.5rem;
+        }
+        .tank-apikey-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 5px;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.78rem;
+            color: #0369a1;
+            word-break: break-all;
+        }
+        .tank-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e0f2fe;
+        }
+    </style>
 </h:head>
 
 <h:body>
     <ui:composition template="/template/masterLayout.xhtml">
-
         <ui:define name="content">
 
             <p:messages id="messages" showDetail="true" closable="true">
@@ -28,71 +57,96 @@
             </p:messages>
 
             <h:form id="master">
-                <p:dataList value="#{tankListView.tanks}" var="tank" type="definition">
-                    <f:facet name="header">#{msg['tankview.tanklist.h']}</f:facet>
 
-                    <p:panelGrid columns="2" layout="grid"
-                                 style="width:100%; border:none;"
-                                 columnClasses="ui-grid-col-5,ui-grid-col-7">
+                <ui:repeat value="#{tankListView.tanks}" var="tank">
+                    <p:panel styleClass="p-mb-3" style="margin-bottom:1rem;">
+                        <f:facet name="header">
+                            <span style="font-weight:700; font-size:1.05rem;">
+                                #{tank.description}
+                            </span>
+                        </f:facet>
 
-                        <p:outputLabel value="#{msg['tank.form.photo.label']}"/>
-                        <p:outputPanel>
-                            <p:graphicImage rendered="#{tank.hasPhoto}"
-                                            value="#{request.contextPath}/secured/tankPhoto?tankId=#{tank.id}"
-                                            style="max-width:80px; max-height:60px; border-radius:4px; display:block;"/>
-                            <h:panelGroup layout="inline" rendered="#{not tank.hasPhoto}"
-                                          styleClass="sabi-fish-placeholder sabi-fish-placeholder-sm"/>
-                        </p:outputPanel>
+                        <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                            <colgroup>
+                                <col style="width:220px;"/>
+                                <col/>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <!-- Photo cell -->
+                                <td style="vertical-align:top; padding-right:1.25rem;">
+                                    <p:graphicImage rendered="#{tank.hasPhoto}"
+                                                   value="#{request.contextPath}/secured/tankPhoto?tankId=#{tank.id}"
+                                                   style="width:200px; height:150px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; display:block;"/>
+                                    <h:panelGroup layout="block" rendered="#{not tank.hasPhoto}"
+                                                  styleClass="tank-photo-placeholder">
+                                        <span class="pi pi-image"/>
+                                    </h:panelGroup>
+                                </td>
+                                <!-- Parameters cell -->
+                                <td style="vertical-align:top;">
+                                    <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+                                        <tr style="border-bottom:1px solid #f1f5f9;">
+                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b; white-space:nowrap; width:150px;">#{msg['tankview.waterType.l']}</td>
+                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">#{tankListView.translatedWaterType[tank.waterType]}</td>
+                                        </tr>
+                                        <tr style="border-bottom:1px solid #f1f5f9;">
+                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.volume.gross.l']}</td>
+                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">#{tank.size} #{tank.sizeUnit.unitSign}</td>
+                                        </tr>
+                                        <ui:fragment rendered="#{tank.sizeNet != null}">
+                                        <tr style="border-bottom:1px solid #f1f5f9;">
+                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.volume.net.l']}</td>
+                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">#{tank.sizeNet} #{tank.sizeUnit.unitSign}</td>
+                                        </tr>
+                                        </ui:fragment>
+                                        <tr style="border-bottom:1px solid #f1f5f9;">
+                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.inceptionDate.l']}</td>
+                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">
+                                                <h:outputText value="#{tank.inceptionDate}">
+                                                    <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
+                                                </h:outputText>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.tempApiKey.l']}</td>
+                                            <td style="padding:0.3rem 0;">
+                                                <h:panelGroup rendered="#{tank.temperatureApiKey != null}">
+                                                    <div class="tank-apikey-box">#{tank.temperatureApiKey}</div>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{tank.temperatureApiKey == null}">
+                                                    <p:commandButton value="#{msg['tankview.tempApiKey.b']}"
+                                                                     action="#{tankListView.generateTemperatureApiKey(tank)}"
+                                                                     icon="pi pi-key"
+                                                                     styleClass="ui-button-secondary sabi-btn-sm"
+                                                                     update=":master"
+                                                                     title="#{msg['tankview.tempApiKey.b']}"/>
+                                                </h:panelGroup>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
 
-                        <p:outputLabel value="#{msg['tankview.description.l']}"/>
-                        <p:outputLabel value="#{tank.description}" style="font-weight:600;"/>
-
-                        <p:outputLabel value="#{msg['tankview.waterType.l']}"/>
-                        <p:outputLabel value="#{tankListView.translatedWaterType[tank.waterType]}"/>
-
-                        <p:outputLabel value="#{msg['tankview.volume.gross.l']}"/>
-                        <p:outputLabel value="#{tank.size} #{tank.sizeUnit.unitSign}"/>
-
-                        <p:outputLabel value="#{tank.sizeNet != null ? msg['tankview.volume.net.l'] : ''}"/>
-                        <p:outputLabel value="#{tank.sizeNet != null ? tank.sizeNet.toString().concat(' ').concat(tank.sizeUnit.unitSign) : ''}"/>
-
-                        <p:outputLabel value="#{msg['tankview.inceptionDate.l']}"/>
-                        <p:outputLabel value="#{tank.inceptionDate}">
-                            <!-- FIXME proper Timezone handling when we have the user profile -->
-                            <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
-                        </p:outputLabel>
-
-                        <p:outputLabel value="#{msg['tankview.tempApiKey.l']}"/>
-                        <p:outputPanel>
-                            <p:outputLabel rendered="#{tank.temperatureApiKey != null}"
-                                           value="#{tank.temperatureApiKey}"
-                                           style="font-size:0.8rem; word-break:break-all;"/>
-                            <p:commandButton rendered="#{tank.temperatureApiKey == null}"
-                                             value="#{msg['tankview.tempApiKey.b']}"
-                                             action="#{tankListView.generateTemperatureApiKey(tank)}"
-                                             id="temKeyAction" icon="pi pi-key"
-                                             update=":master" title="#{msg['tankview.tempApiKey.b']}"/>
-                        </p:outputPanel>
-
-                        <!-- Action Buttons -->
-                        <p:outputPanel>&#160;</p:outputPanel>
-                        <p:outputPanel style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <!-- Action buttons -->
+                        <div class="tank-actions">
                             <p:commandButton value="#{msg['common.edit.b']}"
                                              action="#{tankListView.edit(tank)}"
-                                             id="editAction" icon="pi pi-pencil"
+                                             icon="pi pi-pencil"
+                                             styleClass="sabi-btn-sm"
                                              title="#{msg['common.edit.b']}"/>
                             <p:commandButton value="#{msg['common.delete.b']}"
                                              action="#{tankListView.delete(tank)}"
-                                             id="delAction" ajax="true"
-                                             update=":master" icon="pi pi-trash"
-                                             styleClass="ui-button-danger"
+                                             ajax="true" update=":master"
+                                             icon="pi pi-trash"
+                                             styleClass="ui-button-danger sabi-btn-sm"
                                              title="#{msg['common.delete.b']}"/>
-                        </p:outputPanel>
-                    </p:panelGrid>
+                        </div>
 
-                    <p:separator/>
-
-                </p:dataList>
+                    </p:panel>
+                </ui:repeat>
 
                 <div style="margin-top:0.75rem;">
                     <p:commandButton value="#{msg['common.add.b']}"
@@ -100,10 +154,11 @@
                                      id="addAction" icon="pi pi-plus"
                                      title="#{msg['common.add.b']}"/>
                 </div>
+
             </h:form>
 
         </ui:define>
-
     </ui:composition>
 </h:body>
 </html>
+
