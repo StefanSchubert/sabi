@@ -12,7 +12,7 @@ EnvironmentFile=-/etc/sabi/sabi-backend.env
 ExecStart=/usr/local/share/sdkman/candidates/java/current/bin/java \
     -Djava.io.tmpdir=/var/sabi/tmp \
     -XX:-UsePerfData \
-    -Xmx144m \
+    -Xmx256m \
     -Xms96m \
     -XX:MaxMetaspaceSize=128m \
     -jar /var/sabi/sabi-service.jar

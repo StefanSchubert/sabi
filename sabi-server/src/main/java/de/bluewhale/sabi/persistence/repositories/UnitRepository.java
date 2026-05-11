@@ -13,6 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Stefan Schubert
  */
-public interface UnitRepository extends JpaRepository<UnitEntity, Long> {
+public interface UnitRepository extends JpaRepository<UnitEntity, Integer> {
 
 }

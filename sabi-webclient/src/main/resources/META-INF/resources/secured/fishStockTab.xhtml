@@ -48,6 +48,7 @@
                          var="fish"
                          value="#{fishStockView.activeFish}"
                          rendered="#{not empty fishStockView.activeFish}"
+                         responsiveLayout="stack"
                          styleClass="p-mt-2">
 
                 <!-- Thumbnail -->
@@ -81,7 +82,7 @@
                 </p:column>
 
                 <!-- Actions — navigate to entry page -->
-                <p:column headerText="" style="width:12rem; text-align:center;">
+                <p:column headerText="#{msg['common.actions']}" style="width:12rem; text-align:center;">
                     <p:commandButton icon="pi pi-pencil"
                                      title="#{msg['common.edit.b']}"
                                      ajax="false"
@@ -121,6 +122,7 @@
                          var="fish"
                          value="#{fishStockView.departedFish}"
                          rendered="#{not empty fishStockView.departedFish}"
+                         responsiveLayout="stack"
                          styleClass="p-mt-2">
 
                 <p:column headerText="#{msg['fishstock.form.commonname.label']}">
