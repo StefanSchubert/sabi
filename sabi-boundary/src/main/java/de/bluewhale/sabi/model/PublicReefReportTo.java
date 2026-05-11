@@ -7,9 +7,11 @@ package de.bluewhale.sabi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,4 +54,17 @@ public class PublicReefReportTo implements Serializable {
      */
     @Schema(description = "Unit metadata (sign, description) keyed by unitId.")
     private Map<Integer, UnitTo> unitMap;
+
+    /**
+     * Returns the report timestamp as UTC epoch milliseconds so the browser
+     * can format it in the viewer's local timezone via {@code new Date(ms).toLocaleString()}.
+     * Uses {@link ZoneId#systemDefault()} so the conversion is correct regardless of whether
+     * the server runs in UTC (production Docker) or a local timezone (dev Mac).
+     * Not included in JSON transport — only used by JSF/EL on the webclient side.
+     */
+    @JsonIgnore
+    public long getReportGeneratedAtEpochMillis() {
+        if (reportGeneratedAt == null) return 0L;
+        return reportGeneratedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
 }

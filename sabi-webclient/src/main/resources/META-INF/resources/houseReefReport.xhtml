@@ -119,6 +119,13 @@
             margin-top: 0.35rem;
             font-style: normal;
         }
+        /* Text-content wrapper inside fish-card */
+        .fish-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
         .coming-soon-box {
             border: 2px dashed #cbd5e1;
             border-radius: 8px;
@@ -144,6 +151,10 @@
             .two-col { flex-direction: column; }
             .fish-card { width: 100%; flex-direction: row; align-items: flex-start; }
             .fish-card img { width: 80px; height: 60px; margin-right: 0.75rem; margin-bottom: 0; }
+            .fish-info { align-items: flex-start; }
+            .fish-info .fish-name,
+            .fish-info .fish-sci,
+            .fish-info .fish-obs { text-align: left; }
             .reef-watermark { display: none; }
         }
         /* Coral sway uses transform-origin at element origin (= reef base after translate) */
@@ -181,15 +192,20 @@
                     <div class="meta">
                         #{houseReefReportView.report.tank.description}<br/>
                         #{msg['housereef.report.generated.l']}:
-                        <h:outputText value="#{houseReefReportView.report.reportGeneratedAt}">
-                            <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
-                        </h:outputText>
+                        <span id="reportGeneratedAt"
+                              data-epoch="#{houseReefReportView.report.reportGeneratedAtEpochMillis}">
+                            <h:outputText value="#{houseReefReportView.report.reportGeneratedAt} ">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                            </h:outputText>
+                        </span>
                     </div>
                 </div>
                 <div style="text-align:right;">
                     <div class="meta" style="margin-bottom:0.25rem;">#{msg['housereef.report.producedby.l']}</div>
-                    <h:graphicImage library="images" name="Sabi_Badge_Small.png" styleClass="report-badge"
-                                    alt="SABI Badge"/>
+                    <a href="https://www.sabi-project.net" target="_blank" rel="noopener noreferrer">
+                        <h:graphicImage library="images" name="Sabi_Badge_Small.png" styleClass="report-badge"
+                                        alt="SABI Badge" style="display:block;"/>
+                    </a>
                 </div>
             </div>
 
@@ -265,6 +281,7 @@
                                                      styleClass="fish-default"
                                                      alt="#{fish.commonName}"/>
                                  </h:panelGroup>
+                                 <div class="fish-info">
                                  <div class="fish-name">
                                      <h:outputText value="#{fish.nickname != null and fish.nickname != '' ? fish.nickname : fish.commonName}"/>
                                  </div>
@@ -279,6 +296,7 @@
                                          <h:outputText value="#{fish.observedBehavior}"/>
                                      </div>
                                  </h:panelGroup>
+                                 </div>
                              </div>
                          </ui:repeat>
                     </h:panelGroup>
@@ -325,6 +343,24 @@
         //]]>
     </script>
     <h:outputScript library="js" name="reef-generator.js" target="body"/>
+
+    <!-- Format "Generated on" timestamp in browser's local timezone -->
+    <script>
+        //<![CDATA[
+        (function () {
+            var el = document.getElementById('reportGeneratedAt');
+            if (!el) return;
+            var ms = parseInt(el.getAttribute('data-epoch'), 10);
+            if (!ms) return;
+            el.textContent = new Date(ms).toLocaleString(
+                navigator.languages && navigator.languages.length
+                    ? navigator.languages
+                    : (navigator.language || 'en'),
+                { dateStyle: 'medium', timeStyle: 'medium' }
+            );
+        }());
+        //]]>
+    </script>
 
 </h:body>
 </html>

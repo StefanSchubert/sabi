@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
         UserEntity existingUser;
 
         if (incompleteUserProfile(userProfileTo)) {
-            log.error("Tried to update {} with incomplete profile data {}", principalName, userProfileTo);
+            log.error("Rejected profile update: incomplete data submitted ({})", userProfileTo);
             throw BusinessException.with(CommonMessageCodes.INSUFFICIENT_DATA);
         }
 
