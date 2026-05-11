@@ -4,11 +4,11 @@
  * Changes vs v3:
  *  - FIXED reef profile: removed erroneous L{VIEW_LEFT},0 in path construction
  *    that was creating a rectangular spike from bottom to top.
- *  - Fish now swim on curved S-arc paths via animateMotion (cubic bezier):
- *      M145,fy  C80,fy-bv  -80,fy+bv  -145,fy
- *              C-80,fy+bv  80,fy-bv  145,fy
- *    bow variance bv = 8–12 px (very subtle, per-fish randomised).
- *    rotate="0" keeps fish horizontal (no tangent tilt).
+ *  - Fish now swim on curved S-arc paths via animateMotion (cubic bezier).
+ *  - preserveAspectRatio="none": SVG always spans full viewport height.
+ *    y=0 → browser top, y=900 → browser bottom — no gap at base regardless
+ *    of viewport height. Slight non-uniform y-scaling is imperceptible for
+ *    a decorative watermark.
  *  - Speed variation and flip logic preserved from v3.
  *
  * SVG coordinate system:
@@ -244,7 +244,7 @@
     container.innerHTML =
         '<svg xmlns="http://www.w3.org/2000/svg"' +
         ' viewBox="' + VIEW_LEFT + ' 0 ' + SVG_W + ' ' + H + '"' +
-        ' preserveAspectRatio="xMaxYMin meet"' +
+        ' preserveAspectRatio="none"' +
         ' role="presentation" aria-hidden="true"' +
         ' style="position:absolute;top:0;right:0;height:100%;width:100%;">' +
 

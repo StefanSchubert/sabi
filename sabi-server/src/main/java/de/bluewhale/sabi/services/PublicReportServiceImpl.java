@@ -109,7 +109,7 @@ public class PublicReportServiceImpl implements PublicReportService {
         entity.setValidUntil(validUntil);
 
         PublicReportLinkEntity saved = publicReportLinkRepository.saveAndFlush(entity);
-        log.info("Created/replaced public report link for aquarium {} by {}", aquariumId, userEmail);
+        log.info("Created/replaced public report link for aquarium {} by user_id={}", aquariumId, user.getId());
         return toTo(saved);
     }
 
@@ -122,7 +122,7 @@ public class PublicReportServiceImpl implements PublicReportService {
         AquariumEntity aq = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
         if (aq == null) return;
         publicReportLinkRepository.deleteByAquariumId(aquariumId);
-        log.info("Deleted public report link for aquarium {} by {}", aquariumId, userEmail);
+        log.info("Deleted public report link for aquarium {} by user_id={}", aquariumId, user.getId());
     }
 
     @Override
@@ -194,7 +194,7 @@ public class PublicReportServiceImpl implements PublicReportService {
 
         // Resolve unit meta-data for all units present in measurements
         for (Integer unitId : measurementsByUnit.keySet()) {
-            unitRepository.findById(unitId.longValue()).ifPresent(unitEntity -> {
+            unitRepository.findById(unitId).ifPresent(unitEntity -> {
                 UnitTo unitTo = new UnitTo();
                 unitTo.setId(unitEntity.getId());
                 unitTo.setUnitSign(unitEntity.getName());
