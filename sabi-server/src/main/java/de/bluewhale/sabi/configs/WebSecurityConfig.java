@@ -52,6 +52,8 @@ public class WebSecurityConfig {
                         // Allow Welcome Page
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/index.html").permitAll()
+                        // Security Infos according to https://securitytxt.org
+                        .requestMatchers(HttpMethod.GET, "/.well-known/security.txt").permitAll()
                         // Allow Monitoring Endpoint
                         .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         // Allow OAS3 api-doc access

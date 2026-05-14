@@ -5,11 +5,13 @@
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.mapper.AquariumEventMapper;
 import de.bluewhale.sabi.mapper.AquariumMapper;
 import de.bluewhale.sabi.mapper.FishStockMapper;
 import de.bluewhale.sabi.mapper.MeasurementMapper;
 import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.AquariumEventEntity;
 import de.bluewhale.sabi.persistence.model.PublicReportLinkEntity;
 import de.bluewhale.sabi.persistence.model.TankFishStockEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -78,6 +81,13 @@ public class PublicReportServiceImpl implements PublicReportService {
     @Qualifier("fishPhotoStorage")
     private PhotoStorageService fishPhotoStorage;
 
+    // 004-aquarium-events
+    @Autowired
+    private AquariumEventRepository aquariumEventRepository;
+
+    @Autowired
+    private AquariumEventMapper aquariumEventMapper;
+
     // -----------------------------------------------------------------------
 
     @Override
@@ -123,6 +133,22 @@ public class PublicReportServiceImpl implements PublicReportService {
         if (aq == null) return;
         publicReportLinkRepository.deleteByAquariumId(aquariumId);
         log.info("Deleted public report link for aquarium {} by user_id={}", aquariumId, user.getId());
+    }
+
+    @Override
+    @Transactional
+    public boolean updateIncludeEvents(Long aquariumId, boolean includeEvents, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return false;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return false;
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByAquariumId(aquariumId);
+        if (linkOpt.isEmpty()) return false;
+        PublicReportLinkEntity link = linkOpt.get();
+        link.setIncludeEvents(includeEvents);
+        publicReportLinkRepository.save(link);
+        log.info("Updated includeEvents={} for aquarium_id={} by user_id={}", includeEvents, aquariumId, user.getId());
+        return true;
     }
 
     @Override
@@ -208,6 +234,16 @@ public class PublicReportServiceImpl implements PublicReportService {
         report.setMeasurementsByUnit(measurementsByUnit);
         report.setUnitMap(unitMap);
 
+        // 004-aquarium-events: include events if opted-in (FR-014: rolling 365-day window)
+        if (link.isIncludeEvents()) {
+            LocalDate cutoff = LocalDate.now().minusDays(365);
+            List<AquariumEventEntity> eventEntities =
+                aquariumEventRepository.findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDesc(
+                    link.getAquariumId(), cutoff);
+            report.setRecentEvents(aquariumEventMapper.mapEntitiesToTos(eventEntities));
+        }
+        // else: recentEvents stays null (not opted-in)
+
         return report;
     }
 
@@ -219,6 +255,7 @@ public class PublicReportServiceImpl implements PublicReportService {
         to.setAquariumId(entity.getAquariumId());
         to.setLinkToken(entity.getLinkToken());
         to.setValidUntil(entity.getValidUntil());
+        to.setIncludeEvents(entity.isIncludeEvents());   // 004-aquarium-events: propagate flag to gateway
         return to;
     }
 
@@ -257,3 +294,4 @@ public class PublicReportServiceImpl implements PublicReportService {
                 .orElse(new byte[0]);
     }
 }
+

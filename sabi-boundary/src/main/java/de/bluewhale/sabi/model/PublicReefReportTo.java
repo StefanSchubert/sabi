@@ -55,6 +55,9 @@ public class PublicReefReportTo implements Serializable {
     @Schema(description = "Unit metadata (sign, description) keyed by unitId.")
     private Map<Integer, UnitTo> unitMap;
 
+    @Schema(description = "Events from the past 365 days; null when includeEvents = false for this report link.")
+    private List<AquariumEventTo> recentEvents;   // null = not opted-in; empty list = opted-in but no events
+
     /**
      * Returns the report timestamp as UTC epoch milliseconds so the browser
      * can format it in the viewer's local timezone via {@code new Date(ms).toLocaleString()}.

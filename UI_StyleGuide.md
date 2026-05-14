@@ -264,6 +264,67 @@ source page, causing `ArrayIndexOutOfBoundsException` in `UIComponentBase.restor
 
 ## 8. Forms & Input Pages
 
+### Canonical Form Layout Patterns
+
+SABI uses **two** form layout patterns — pick the right one for the context:
+
+#### Pattern A: Two-Column Label | Input  (`div.sabi-form-grid`)
+
+For **inline forms embedded in panels** (e.g. the event logbook inside tankView).  
+Use a `<div class="sabi-form-grid">` — defined in `sabistyle.css`.
+
+```xml
+<div class="sabi-form-grid">
+    <p:outputLabel for="myField" value="#{msg['form.field.label']}"/>
+    <p:inputText id="myField" value="#{view.field}" required="true"
+                 requiredMessage="#{msg['form.field.required']}"/>
+
+    <p:outputLabel for="mySelect" value="#{msg['form.select.label']}"/>
+    <p:selectOneMenu id="mySelect" value="#{view.selection}">
+        <f:selectItems value="#{view.options}"/>
+    </p:selectOneMenu>
+</div>
+```
+
+- CSS Grid: `35% label | 65% input`; stacks to 1-column on phones < 480px
+- Labels: `font-weight: 600; color: var(--sabi-text)` → WCAG AA+ in light and dark mode
+- All PrimeFaces inputs auto-stretched to 100% cell width via CSS
+
+#### Pattern B: Two-Column with `p:panelGrid` (standalone editor pages)
+
+For **standalone editor pages** (e.g. tankEditor.xhtml) where PrimeFaces panel already wraps the form.  
+Use `p:panelGrid columns="2" style="width:100%; border:none;"` without `columnClasses`.
+
+```xml
+<p:panelGrid columns="2" style="width:100%; border:none;">
+    <p:outputLabel for="fieldId" value="#{msg['form.field.label']}"/>
+    <p:inputText id="fieldId" value="#{view.field}"/>
+    <!-- ... more label-input pairs ... -->
+    <!-- Spacer + button row as last row: -->
+    <p:outputPanel>&#160;</p:outputPanel>
+    <p:outputPanel style="display:flex; gap:0.5rem;">
+        <p:commandButton value="#{msg['common.save.b']}" .../>
+        <p:commandButton value="#{msg['common.cancel.b']}" .../>
+    </p:outputPanel>
+</p:panelGrid>
+```
+
+- Labels get `font-weight: 600; color: var(--sabi-text)` via global `.ui-panelgrid .ui-outputlabel` rule
+- Do **NOT** use `columnClasses` — undefined class names cause unpredictable rendering
+
+#### Pattern C: Stacked (label above input)
+
+For **full-page forms** with many fields or complex layouts (e.g. fishStockEntryForm, fishCatalogueProposalForm).
+
+```xml
+<div class="p-field p-mb-2">
+    <p:outputLabel for="fieldId" value="#{msg['form.field.label']}"
+                   style="display:block; font-weight:600;"/>
+    <p:inputText id="fieldId" value="#{view.field}" style="width:100%;"/>
+    <p:message for="fieldId"/>
+</div>
+```
+
 ### Form Page Structure
 
 ```xml

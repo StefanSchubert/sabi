@@ -61,4 +61,15 @@ public interface PublicReportService extends Serializable {
      */
     @NotNull
     PublicReefReportTo getReport(@NotNull String token, @NotNull String lang) throws BusinessException;
+
+    /**
+     * Updates the includeEvents flag for the active report link of the given aquarium.
+     *
+     * @param aquariumId    tank PK
+     * @param includeEvents new flag value
+     * @param token         auth token
+     * @throws BusinessException on network or authorization error
+     */
+    void updateIncludeEventsFlag(@NotNull Long aquariumId, boolean includeEvents, @NotNull String token)
+            throws BusinessException;
 }

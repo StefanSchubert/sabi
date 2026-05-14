@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.13</version>
+    <version>1.2.14</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -41,7 +41,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
         <aspectj.version>1.5.4</aspectj.version>
-        <swagger.annotations.version>2.2.49</swagger.annotations.version>
+        <swagger.annotations.version>2.2.50</swagger.annotations.version>
         <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <jackson.annotations.version>2.19.0</jackson.annotations.version>
         <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>

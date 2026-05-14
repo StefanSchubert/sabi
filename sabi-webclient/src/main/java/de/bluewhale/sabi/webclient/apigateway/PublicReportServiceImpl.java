@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
+import de.bluewhale.sabi.exception.AuthExceptionCodes;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.model.PublicReefReportTo;
@@ -96,4 +97,23 @@ public class PublicReportServiceImpl extends APIServiceImpl implements PublicRep
             throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
         }
     }
+
+    @Override
+    public void updateIncludeEventsFlag(Long aquariumId, boolean includeEvents, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.REPORT_LINK.getPath() + "/" + aquariumId
+                     + "/include-events?includeEvents=" + includeEvents;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class);
+            renewBackendToken(response);
+        } catch (HttpClientErrorException.Forbidden e) {
+            throw new BusinessException(AuthExceptionCodes.INSUFFICIENT_PERMISSIONS);
+        } catch (RestClientException e) {
+            log.error("Failed to update includeEvents for aquarium_id={}", aquariumId, e);
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+    }
 }
+
