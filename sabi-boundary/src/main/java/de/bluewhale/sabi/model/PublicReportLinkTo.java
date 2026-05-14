@@ -35,4 +35,7 @@ public class PublicReportLinkTo implements Serializable {
 
     @Schema(description = "Timestamp when this link was created.")
     private LocalDateTime createdOn;
+
+    @Schema(description = "When true, events from the past 365 days are included in the public report.", required = false)
+    private boolean includeEvents = false;
 }

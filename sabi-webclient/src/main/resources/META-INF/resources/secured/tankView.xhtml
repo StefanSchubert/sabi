@@ -16,36 +16,6 @@
 
 <h:head>
     <title>SABI - Seawater Aquarium Business Intelligence</title>
-    <style>
-        .tank-photo-placeholder {
-            width: 200px;
-            height: 150px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            background: linear-gradient(135deg, #075985, #0891b2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #bae6fd;
-            font-size: 2.5rem;
-        }
-        .tank-apikey-box {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 5px;
-            padding: 0.3rem 0.5rem;
-            font-size: 0.78rem;
-            color: #0369a1;
-            word-break: break-all;
-        }
-        .tank-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #e0f2fe;
-        }
-    </style>
 </h:head>
 
 <h:body>
@@ -85,32 +55,32 @@
                                 </td>
                                 <!-- Parameters cell -->
                                 <td style="vertical-align:top;">
-                                    <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
-                                        <tr style="border-bottom:1px solid #f1f5f9;">
-                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b; white-space:nowrap; width:150px;">#{msg['tankview.waterType.l']}</td>
-                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">#{tankListView.translatedWaterType[tank.waterType]}</td>
+                                    <table class="tank-param-table">
+                                        <tr class="tank-param-row">
+                                            <td class="tank-param-label">#{msg['tankview.waterType.l']}</td>
+                                            <td class="tank-param-value">#{tankListView.translatedWaterType[tank.waterType]}</td>
                                         </tr>
-                                        <tr style="border-bottom:1px solid #f1f5f9;">
-                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.volume.gross.l']}</td>
-                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">#{tank.size} #{tank.sizeUnit.unitSign}</td>
+                                        <tr class="tank-param-row">
+                                            <td class="tank-param-label">#{msg['tankview.volume.gross.l']}</td>
+                                            <td class="tank-param-value">#{tank.size} #{tank.sizeUnit.unitSign}</td>
                                         </tr>
                                         <ui:fragment rendered="#{tank.sizeNet != null}">
-                                        <tr style="border-bottom:1px solid #f1f5f9;">
-                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.volume.net.l']}</td>
-                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">#{tank.sizeNet} #{tank.sizeUnit.unitSign}</td>
+                                        <tr class="tank-param-row">
+                                            <td class="tank-param-label">#{msg['tankview.volume.net.l']}</td>
+                                            <td class="tank-param-value">#{tank.sizeNet} #{tank.sizeUnit.unitSign}</td>
                                         </tr>
                                         </ui:fragment>
-                                        <tr style="border-bottom:1px solid #f1f5f9;">
-                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.inceptionDate.l']}</td>
-                                            <td style="padding:0.3rem 0; color:#1e293b; font-weight:500;">
+                                        <tr class="tank-param-row">
+                                            <td class="tank-param-label">#{msg['tankview.inceptionDate.l']}</td>
+                                            <td class="tank-param-value">
                                                 <h:outputText value="#{tank.inceptionDate}">
                                                     <f:convertDateTime dateStyle="medium" type="date" timeZone="Europe/Berlin"/>
                                                 </h:outputText>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td style="padding:0.3rem 0.75rem 0.3rem 0; color:#64748b;">#{msg['tankview.tempApiKey.l']}</td>
-                                            <td style="padding:0.3rem 0;">
+                                        <tr class="tank-param-row">
+                                            <td class="tank-param-label">#{msg['tankview.tempApiKey.l']}</td>
+                                            <td class="tank-param-value">
                                                 <h:panelGroup rendered="#{tank.temperatureApiKey != null}">
                                                     <div class="tank-apikey-box">#{tank.temperatureApiKey}</div>
                                                 </h:panelGroup>
@@ -156,6 +126,165 @@
                 </div>
 
             </h:form>
+
+            <!-- ===== AQUARIUM EVENT LOGBOOK (004-aquarium-events) ===== -->
+            <!-- Single form with explicit aquarium selector (p:selectOneMenu).
+                 AquariumEventView.selectedAquariumId drives all data and actions. -->
+            <p:panel header="#{msg['aquariumevent.panel.h']}"
+                     style="margin-top:1rem; margin-bottom:1rem;">
+
+                <h:form id="eventForm">
+
+                    <!-- Global messages for this form.
+                         showDetail="true": FacesMessage uses summary="" and detail=text,
+                         so detail must be shown, otherwise an empty box appears. -->
+                    <p:messages id="eventMessages" closable="true" showDetail="true">
+                        <p:autoUpdate/>
+                    </p:messages>
+
+                    <!-- Hidden fields: preserve event ID and optlock across @RequestScope.
+                         Without these, saveEvent() always sees id=null → creates new instead of update.
+                         String type for currentEventIdStr avoids JSF empty-string→null-Long issues. -->
+                    <h:inputHidden id="currentEventIdStr"
+                                   value="#{aquariumEventView.currentEventIdStr}"/>
+                    <h:inputHidden id="currentEventOptlock"
+                                   value="#{aquariumEventView.currentEventOptlock}"/>
+
+                    <!-- All fields in one consistent 2-column grid (label | input).
+                         Uses .sabi-form-grid (sabistyle.css) – the canonical form layout class. -->
+                    <div class="sabi-form-grid">
+
+                        <p:outputLabel for="aquariumSelector"
+                                       value="#{msg['aquariumevent.field.aquarium.l']}"/>
+                        <p:selectOneMenu id="aquariumSelector"
+                                         value="#{aquariumEventView.selectedAquariumId}">
+                            <f:selectItems value="#{tankListView.tanks}" var="t"
+                                           itemLabel="#{t.description}" itemValue="#{t.id}"/>
+                            <p:ajax update="@form" listener="#{aquariumEventView.onAquariumChange}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="eventDate"
+                                       value="#{msg['aquariumevent.field.date.l']}"/>
+                        <p:datePicker id="eventDate"
+                                      value="#{aquariumEventView.selectedEditForm.eventDate}"
+                                      pattern="dd.MM.yyyy" showTime="false"
+                                      locale="#{userSession.locale}"
+                                      showOtherMonths="true" yearNavigator="true"
+                                      readonlyInput="true" required="true"
+                                      requiredMessage="#{msg['aquariumevent.validation.date.required.t']}"/>
+
+                        <p:outputLabel for="eventDuration"
+                                       value="#{msg['aquariumevent.field.duration.l']}"/>
+                        <p:inputText id="eventDuration"
+                                     value="#{aquariumEventView.selectedEditForm.durationHours}"
+                                     placeholder="#{msg['aquariumevent.field.duration.placeholder.t']}">
+                            <f:convertNumber minFractionDigits="0" locale="#{userSession.locale}"/>
+                        </p:inputText>
+
+                        <p:outputLabel for="eventDesc"
+                                       value="#{msg['aquariumevent.field.description.l']}"/>
+                        <p:inputTextarea id="eventDesc"
+                                         value="#{aquariumEventView.selectedEditForm.description}"
+                                         rows="4" autoResize="true" required="true"
+                                         requiredMessage="#{msg['aquariumevent.validation.description.required.t']}"
+                                         placeholder="#{msg['aquariumevent.field.description.placeholder.t']}"/>
+
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
+                        <p:commandButton value="#{msg['common.save.b']}"
+                                         action="#{aquariumEventView.saveEvent}"
+                                         icon="pi pi-save"
+                                         update="@form"
+                                         ajax="true"/>
+                        <p:commandButton value="#{msg['common.new_record.b']}"
+                                         action="#{aquariumEventView.resetForm}"
+                                         icon="pi pi-refresh"
+                                         update="@form"
+                                         ajax="true" immediate="true"/>
+                    </div>
+
+                    <!-- Edit-mode indicator (only shown when editing an existing event) -->
+                    <p:staticMessage severity="warn" summary="INFO"
+                                     detail="#{msg['aquariumevent.mode.editrecord.l']}"
+                                     rendered="#{aquariumEventView.selectedEditForm.id != null}"
+                                     style="margin-top:0.5rem;"/>
+
+                    <!-- Event list: ALL events across all aquariums, sorted by date (newest first).
+                         process="@this" on action buttons prevents form-wide required validation
+                         (e.g. date/description fields) from firing when clicking Edit or Delete. -->
+                    <p:dataTable id="eventDT"
+                                 var="event"
+                                 value="#{aquariumEventView.allEvents}"
+                                 emptyMessage="#{msg['aquariumevent.list.empty.t']}"
+                                 styleClass="p-mt-2"
+                                 style="margin-top:0.75rem;">
+
+                        <p:column headerText="#{msg['aquariumevent.column.aquarium.h']}" style="width:130px;">
+                            <h:outputText value="#{aquariumEventView.tankDescriptionById[event.aquariumId]}"
+                                          style="font-weight:500;"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['aquariumevent.column.date.h']}" style="width:110px;">
+                            <h:outputText value="#{event.eventDate}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{msg['aquariumevent.column.duration.h']}" style="width:80px;">
+                            <h:outputText value="#{event.durationHours} h"
+                                          rendered="#{event.durationHours != null}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['aquariumevent.column.description.h']}">
+                            <h:outputText value="#{event.description}"
+                                          style="white-space:pre-wrap; word-break:break-word;"/>
+                        </p:column>
+
+                        <!-- Edit button: process="@this" → only submits itself, skips required
+                             validation on the date/description form fields above. -->
+                        <p:column style="width:3rem; text-align:center;">
+                            <p:commandButton icon="pi pi-pencil"
+                                             title="#{msg['common.edit.b']}"
+                                             action="#{aquariumEventView.startEditEvent(event)}"
+                                             update="@form"
+                                             process="@this"
+                                             ajax="true"/>
+                        </p:column>
+
+                        <!-- Delete button: aquariumId passed explicitly (combined list view) -->
+                        <p:column style="width:3rem; text-align:center;">
+                            <p:commandButton icon="pi pi-trash"
+                                             styleClass="ui-button-danger"
+                                             title="#{msg['common.delete.b']}"
+                                             ajax="true"
+                                             process="@this"
+                                             oncomplete="PF('confirmDeleteEvent_#{event.id}').show()"/>
+                            <p:confirmDialog widgetVar="confirmDeleteEvent_#{event.id}"
+                                              header="#{msg['aquariumevent.delete.confirm.header']}"
+                                              message="#{msg['aquariumevent.delete.confirm.message']}"
+                                              modal="true">
+                                <p:commandButton value="#{msg['common.confirm.b']}"
+                                                 action="#{aquariumEventView.deleteEvent(event.aquariumId, event.id)}"
+                                                 update="@form"
+                                                 process="@this"
+                                                 onclick="PF('confirmDeleteEvent_#{event.id}').hide()"
+                                                 ajax="true"
+                                                 styleClass="ui-button-danger"/>
+                                <p:commandButton value="#{msg['common.cancel.b']}"
+                                                 onclick="PF('confirmDeleteEvent_#{event.id}').hide()"
+                                                 type="button"
+                                                 styleClass="ui-button-secondary"/>
+                            </p:confirmDialog>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </h:form>
+
+            </p:panel>
+            <!-- ===== END AQUARIUM EVENT LOGBOOK ===== -->
 
         </ui:define>
     </ui:composition>

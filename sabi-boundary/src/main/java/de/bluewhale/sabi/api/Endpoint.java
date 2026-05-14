@@ -36,7 +36,9 @@ public enum Endpoint {
     FISH_ROLES("/api/fish/roles"),
     // Public HouseReef report (social feature)
     PUBLIC_REPORT("/api/public/report"),
-    REPORT_LINK("/api/report/link");
+    REPORT_LINK("/api/report/link"),
+    // 004-aquarium-events (shares base path with TankController)
+    TANK_EVENTS("/api/tank");
 
 // ------------------------------ FIELDS ------------------------------
 

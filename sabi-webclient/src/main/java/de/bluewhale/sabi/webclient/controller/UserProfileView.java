@@ -86,6 +86,13 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
      */
     private Map<Long, PublicReportLinkTo> reportLinks = new LinkedHashMap<>();
 
+    /**
+     * Map: aquariumId → current includeEvents flag value (bound to checkbox in UI).
+     * Populated in init() from the fetched PublicReportLinkTo.includeEvents.
+     * Feature: 004-aquarium-events.
+     */
+    private Map<Long, Boolean> includeEventsMap = new LinkedHashMap<>();
+
     /** The tank selected by the user in the link management dropdown. */
     private Long selectedTankIdForLink;
 
@@ -117,9 +124,12 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
                 try {
                     PublicReportLinkTo link = publicReportService.getLinkForTank(tank.getId(), userSession.getSabiBackendToken());
                     reportLinks.put(tank.getId(), link); // null means no link
+                    // 004-aquarium-events: populate includeEventsMap (null-safe)
+                    includeEventsMap.put(tank.getId(), link != null && link.isIncludeEvents());
                 } catch (BusinessException e) {
                     log.warn("Could not fetch report link for tank {}: {}", tank.getId(), e.getMessage());
                     reportLinks.put(tank.getId(), null);
+                    includeEventsMap.put(tank.getId(), false);
                 }
             }
         } catch (BusinessException e) {
@@ -297,6 +307,27 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             MessageUtil.info("messages", "housereef.report.link.deleted.t", userSession.getLocale());
         } catch (BusinessException e) {
             log.error("Could not delete public report link for tank {}: {}", aquariumId, e.getMessage());
+            MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    // ---- 004-aquarium-events: includeEvents flag ----
+
+    /**
+     * FR-021: Persists the includeEvents flag for the report link of the given tank.
+     * Called by the explicit Save button in reportLinkRow_#{tank.id}.
+     */
+    public String saveIncludeEvents(Long tankId) {
+        Boolean value = includeEventsMap.getOrDefault(tankId, false);
+        try {
+            publicReportService.updateIncludeEventsFlag(tankId, value, userSession.getSabiBackendToken());
+            // keep reportLinks in sync
+            PublicReportLinkTo link = reportLinks.get(tankId);
+            if (link != null) link.setIncludeEvents(value);
+            MessageUtil.info("messages", "aquariumevent.includeevents.saved.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not save includeEvents for tank_id={}: {}", tankId, e.getMessage());
             MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
         return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();

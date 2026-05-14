@@ -157,6 +157,33 @@
             .fish-info .fish-obs { text-align: left; }
             .reef-watermark { display: none; }
         }
+        .event-entry {
+            border: 1px solid #e0f2fe;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.6rem;
+            background: #f0f9ff;
+        }
+        .event-entry .event-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: baseline;
+            margin-bottom: 0.3rem;
+        }
+        .event-entry .event-date {
+            font-weight: 600;
+            color: #075985;
+        }
+        .event-entry .event-duration {
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+        .event-entry .event-desc {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #1e293b;
+        }
         /* Coral sway uses transform-origin at element origin (= reef base after translate) */
         .reef-watermark g[transform^="translate"] {
             transform-box: fill-box;
@@ -324,6 +351,41 @@
                         </div>
                     </ui:repeat>
                 </p:panel>
+
+                <!-- ==== 004-aquarium-events: EVENTS SECTION ==== -->
+                <!-- Uses p:panel to match the design of all other report sections. -->
+                <ui:fragment rendered="#{houseReefReportView.report.recentEvents != null}">
+                    <p:panel header="#{msg['aquariumevent.report.section.h']}" styleClass="p-mt-2">
+
+                        <h:panelGroup rendered="#{empty houseReefReportView.report.recentEvents}">
+                            <p style="color:#64748b; font-style:italic;">
+                                #{msg['aquariumevent.report.no.events.t']}
+                            </p>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not empty houseReefReportView.report.recentEvents}">
+                            <ui:repeat value="#{houseReefReportView.report.recentEvents}" var="ev">
+                                <div class="event-entry">
+                                    <div class="event-meta">
+                                        <span class="event-date">
+                                            <h:outputText value="#{ev.eventDate}">
+                                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                                            </h:outputText>
+                                        </span>
+                                        <h:panelGroup rendered="#{ev.durationHours != null}">
+                                            <span class="event-duration">
+                                                #{ev.durationHours} #{msg['aquariumevent.report.hours.suffix.t']}
+                                            </span>
+                                        </h:panelGroup>
+                                    </div>
+                                    <p class="event-desc">#{ev.description}</p>
+                                </div>
+                            </ui:repeat>
+                        </h:panelGroup>
+
+                    </p:panel>
+                </ui:fragment>
+                <!-- end 004-aquarium-events events section -->
 
             </div><!-- /report-body -->
         </div><!-- /max-width wrapper -->

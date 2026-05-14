@@ -150,4 +150,23 @@ public class PublicReportController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(bytes);
     }
+
+    // ---- 004-aquarium-events: include-events flag management ----
+
+    @Operation(summary = "Set or clear the includeEvents flag for the active report link of the given aquarium.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Flag updated."),
+        @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user or no link exists."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @PutMapping(value = "/api/report/link/{aquariumId}/include-events")
+    public ResponseEntity<Void> updateIncludeEvents(
+            @PathVariable Long aquariumId,
+            @RequestParam(value = "includeEvents") boolean includeEvents,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("PUT /api/report/link/{}/include-events?includeEvents={} for user_id=?", aquariumId, includeEvents);
+        boolean success = publicReportService.updateIncludeEvents(aquariumId, includeEvents, principal.getName());
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 }

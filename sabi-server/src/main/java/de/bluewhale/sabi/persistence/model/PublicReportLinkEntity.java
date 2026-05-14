@@ -41,4 +41,8 @@ public class PublicReportLinkEntity extends Auditable {
     @Basic
     private LocalDateTime validUntil;
 
+    @Column(name = "include_events", nullable = false)
+    @Basic
+    private boolean includeEvents = false;
+
 }

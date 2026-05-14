@@ -81,4 +81,16 @@ public interface PublicReportService {
      */
     @NotNull
     byte[] getFishPhotoBytes(@NotNull String linkToken, @NotNull Long fishId);
+
+    /**
+     * Persists the includeEvents flag for an existing report link.
+     * Verifies that the aquarium belongs to the user before updating.
+     *
+     * @param aquariumId    tank PK
+     * @param includeEvents new flag value
+     * @param userEmail     authenticated user email
+     * @return true on success, false if aquarium/link does not exist or belongs to another user
+     */
+    @Transactional
+    boolean updateIncludeEvents(@NotNull Long aquariumId, boolean includeEvents, @NotNull String userEmail);
 }
