@@ -229,6 +229,20 @@ a:hover { color: var(--sabi-accent); text-decoration: underline; }
     border: none !important;
 }
 
+/* Form label standard: font-weight 600 (WCAG + UX standard; same as Material/Ant Design).
+   color: var(--sabi-text) = #1e293b (light, ~15:1) / #e2e8f0 (dark, ~15:1) — always WCAG AA+ */
+.ui-panelgrid .ui-outputlabel {
+    font-weight: 600;
+    color: var(--sabi-text);
+    white-space: nowrap;
+}
+
+/* Dark mode: prevent PrimeFaces saga-blue from leaking white cell backgrounds
+   into dark panels. The arya-blue theme handles text color via .ui-outputlabel above. */
+body.dark-mode .ui-panelgrid td {
+    background: transparent !important;
+}
+
 /* =====================================================================
    Buttons
    ===================================================================== */
@@ -255,6 +269,13 @@ a:hover { color: var(--sabi-accent); text-decoration: underline; }
 }
 .ui-button.ui-button-danger:hover {
     background-color: #b91c1c !important;
+}
+
+/* Small button variant — use styleClass="sabi-btn-sm" */
+.ui-button.sabi-btn-sm {
+    padding: 0.28rem 0.75rem !important;
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
 }
 
 /* =====================================================================
@@ -689,6 +710,80 @@ body.dark-mode .sabi-back-link:hover {
 }
 
 /* =====================================================================
+   Tank View: Aquarium Panel – parameter display table + photo/actions
+   All colors use CSS variables → correct contrast in both light and dark mode.
+   ===================================================================== */
+
+/* Photo placeholder (decorative element – gradient bg, light icon) */
+.tank-photo-placeholder {
+    width: 200px;
+    height: 150px;
+    border-radius: var(--sabi-radius);
+    border: 1px solid var(--sabi-border);
+    background: linear-gradient(135deg, #075985, #0891b2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bae6fd;
+    font-size: 2.5rem;
+}
+
+/* Parameter table (Wassertyp, Volumen, …) */
+.tank-param-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tank-param-row {
+    border-bottom: 1px solid var(--sabi-border);
+}
+
+/* Label cell: muted text, semi-bold for legibility (WCAG AA in both modes via --sabi-text-muted:
+   light #64748b ~4.6:1 on white | dark #94a3b8 ~5.6:1 on #0f172a) */
+.tank-param-label {
+    padding: 0.3rem 0.75rem 0.3rem 0;
+    color: var(--sabi-text-muted);
+    white-space: nowrap;
+    width: 150px;
+    font-weight: 600;
+    vertical-align: top;
+}
+
+/* Value cell: full body text color */
+.tank-param-value {
+    padding: 0.3rem 0;
+    color: var(--sabi-text);
+    font-weight: 500;
+}
+
+/* Temperature API key display box */
+.tank-apikey-box {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 5px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.78rem;
+    color: #0369a1;
+    word-break: break-all;
+}
+
+body.dark-mode .tank-apikey-box {
+    background: #1e3a5f;
+    border-color: #1e4a7a;
+    color: #7dd3fc; /* ~5:1 on #1e3a5f */
+}
+
+/* Action button row below each tank panel */
+.tank-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--sabi-border);
+}
+
+/* =====================================================================
    No-Tank Hint Panel
    ===================================================================== */
 .no-tank-hint {
@@ -722,6 +817,11 @@ body.dark-mode .sabi-back-link:hover {
     .ui-panelgrid td {
         display: block !important;
         width: 100% !important;
+    }
+
+    /* .sabi-form-grid: stack to single column on small phones (mirrors ui-panelgrid behaviour) */
+    .sabi-form-grid {
+        grid-template-columns: 1fr !important;
     }
 
     /* Stack button rows on small screens */
@@ -900,5 +1000,42 @@ body.dark-mode .ui-datatable tbody td {
 
 body.dark-mode .ui-datatable tbody tr:hover {
     background-color: var(--sabi-accent-light) !important;
+}
+
+/* =====================================================================
+   .sabi-form-grid – canonical two-column form layout (label | input)
+   Use this class on a <div> wherever a 2-column label|input form is needed.
+   Replaces ad-hoc p:panelGrid columnClasses hacks for inline forms.
+   p:panelGrid without columnClasses is still fine for standalone editor pages.
+   ===================================================================== */
+.sabi-form-grid {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    align-items: center;
+    gap: 0.45rem 0.75rem;
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+/* Same font-weight and color standard as .ui-panelgrid .ui-outputlabel above */
+.sabi-form-grid .ui-outputlabel {
+    font-weight: 600;
+    color: var(--sabi-text);
+    white-space: nowrap;
+}
+
+/* stretch all PrimeFaces input widgets to fill their grid cell */
+.sabi-form-grid .ui-selectonemenu,
+.sabi-form-grid .ui-calendar,
+.sabi-form-grid .ui-inputfield,
+.sabi-form-grid .ui-inputtextarea {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* textarea: align to top of its grid row (not vertically centered) */
+.sabi-form-grid .ui-inputtextarea {
+    align-self: start;
+    margin-top: 0.1rem;
 }
 

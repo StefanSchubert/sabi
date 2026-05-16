@@ -52,6 +52,8 @@ public class WebSecurityConfig {
                         // Allow Welcome Page
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/index.html").permitAll()
+                        // Security Infos according to https://securitytxt.org
+                        .requestMatchers(HttpMethod.GET, "/.well-known/security.txt").permitAll()
                         // Allow Monitoring Endpoint
                         .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                         // Allow OAS3 api-doc access
@@ -75,13 +77,15 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/app/motd/**").permitAll()
                         // Allow IOT Endpoints, they are checked internally based on specific API-Keys
                         .requestMatchers(HttpMethod.POST, Endpoint.IOT_API.getPath() + "/**").permitAll()
+                        // Public HouseReef report – no authentication required
+                        .requestMatchers(HttpMethod.GET, Endpoint.PUBLIC_REPORT.getPath() + "/**").permitAll()
                         // Admin endpoints require ADMIN role (T062 — 002-fish-stock-catalogue)
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // all others require JWT authentication
                         .anyRequest().authenticated()
                 )
                 // ...existing code...
-                .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), sabiAuthenticationProvider),
+                .addFilterBefore(new JWTLoginFilter(Endpoint.LOGIN.getPath(), sabiAuthenticationProvider, adminUsers),
                         UsernamePasswordAuthenticationFilter.class)
                 // And filter other requests to check the presence of a valid JWT in header
                 .addFilter(new JWTAuthorizationFilter(sabiAuthenticationProvider, adminUsers))

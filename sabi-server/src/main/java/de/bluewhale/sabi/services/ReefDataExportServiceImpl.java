@@ -86,6 +86,9 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     @Autowired
     private LocalizedFishRoleRepository localizedFishRoleRepository;
 
+    @Autowired
+    private AquariumEventRepository aquariumEventRepository;
+
     // -------------------------------------------------------------------------
     // Public API
     // -------------------------------------------------------------------------
@@ -161,6 +164,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         ato.setFish(buildFishExports(aquarium.getId()));
         ato.setCorals(buildCoralExports(aquarium.getId()));
         ato.setTreatments(buildTreatmentExports(aquarium.getId()));
+        ato.setEvents(buildEventExports(aquarium.getId()));
 
         return ato;
     }
@@ -367,6 +371,20 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
             tto.setVendor(vendor);
 
             result.add(tto);
+        }
+        return result;
+    }
+
+    private List<EventExportTo> buildEventExports(Long aquariumId) {
+        List<AquariumEventEntity> entities =
+                aquariumEventRepository.findByAquariumIdOrderByEventDateDesc(aquariumId);
+        List<EventExportTo> result = new ArrayList<>();
+        for (AquariumEventEntity e : entities) {
+            EventExportTo eto = new EventExportTo();
+            eto.setEventDate(e.getEventDate() != null ? e.getEventDate().toString() : null);
+            eto.setDurationHours(e.getDurationHours());
+            eto.setDescription(e.getDescription());
+            result.add(eto);
         }
         return result;
     }

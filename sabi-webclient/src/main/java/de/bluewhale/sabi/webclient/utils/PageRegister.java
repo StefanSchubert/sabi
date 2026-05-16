@@ -18,7 +18,8 @@ public enum PageRegister {
     TANK_VIEW_PAGE("tankView"),
     MEASUREMENT_VIEW_PAGE("measureView"),
     USER_PROFILE_VIEW_PAGE("userProfile"),
-    PASSWORD_FORGOTTEN_PAGE ("pwreset");
+    PASSWORD_FORGOTTEN_PAGE ("pwreset"),
+    HOUSE_REEF_REPORT_PAGE("houseReefReport");
 
     String address;
 

@@ -412,6 +412,45 @@ docker compose -f docker-compose-arm.yml run --rm flyway
 
 ---
 
+## Backend Logging: PII Rules (MANDATORY)
+
+**Email addresses and user names are personal data (GDPR/DSGVO) and MUST NOT appear in log files.**
+
+### Allowed vs. Forbidden
+
+| ✅ Allowed in logs         | ❌ Forbidden in logs          |
+|---------------------------|-------------------------------|
+| `user_id=42`              | `stefan@example.com`          |
+| `aquarium_id=104`         | `principal.getName()` at INFO+ |
+| Action/resource references | Usernames or display names   |
+
+### Rules by Log Level
+
+- **INFO / WARN / ERROR**: NEVER log email addresses or `principal.getName()`. Use `user_id=` (from the already-resolved `UserEntity`) instead.
+- **DEBUG**: Strongly prefer `user_id=` too. Since DEBUG is disabled in production, the risk is lower — but consistency is better.
+- **TRACE**: No additional restrictions.
+
+### Standard Patterns
+
+```java
+// ✅ CORRECT — use resolved user entity ID
+UserEntity user = userRepository.getByEmail(userEmail);
+log.info("Created link for aquarium {} by user_id={}", aquariumId, user.getId());
+
+// ✅ CORRECT — omit user identity if not meaningful
+log.error("Rejected profile update: incomplete data submitted ({})", profileTo);
+
+// ❌ WRONG — leaks PII into log file
+log.info("Created link for aquarium {} by {}", aquariumId, userEmail);
+log.debug("GET /api/tank for {}", principal.getName());
+```
+
+### Where to find the user_id
+
+After ownership check, `user.getId()` is always in scope. If the user entity is not yet resolved (e.g. validation before DB lookup), omit the user reference from the log message.
+
+---
+
 ## Backend Security: Ownership Checks (MANDATORY)
 
 ### Principle: Every mutating operation MUST verify that the caller owns the affected record.

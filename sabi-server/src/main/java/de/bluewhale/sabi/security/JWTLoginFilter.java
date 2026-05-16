@@ -31,9 +31,17 @@ import java.io.IOException;
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 // --------------------------- CONSTRUCTORS ---------------------------
 
+    /** Comma-separated admin email string — used to embed the ADMIN role in the issued JWT. */
+    private final String adminUsersProperty;
+
     public JWTLoginFilter(String url, AuthenticationManager authenticationManager) {
+        this(url, authenticationManager, null);
+    }
+
+    public JWTLoginFilter(String url, AuthenticationManager authenticationManager, String adminUsersProperty) {
         super(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, url));
         setAuthenticationManager(authenticationManager);
+        this.adminUsersProperty = adminUsersProperty;
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -88,7 +96,8 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             HttpServletResponse pResponse, FilterChain chain,
             Authentication auth) throws IOException, ServletException {
         if (auth.isAuthenticated()) {
-            TokenAuthenticationService.addAuthentication(pResponse, auth.getName());
+            boolean isAdmin = TokenAuthenticationService.isAdminEmail(auth.getName(), adminUsersProperty);
+            TokenAuthenticationService.addAuthentication(pResponse, auth.getName(), isAdmin);
             pResponse.setStatus(HttpStatus.ACCEPTED.value());
         } else {
             // Should never happen. If so you have a logic flaw in your authController!

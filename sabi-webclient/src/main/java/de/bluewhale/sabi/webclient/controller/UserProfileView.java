@@ -6,12 +6,10 @@
 package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
-import de.bluewhale.sabi.model.MeasurementReminderTo;
-import de.bluewhale.sabi.model.SupportedLocales;
-import de.bluewhale.sabi.model.UnitTo;
-import de.bluewhale.sabi.model.UserProfileTo;
+import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
+import de.bluewhale.sabi.webclient.apigateway.PublicReportService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
 import de.bluewhale.sabi.webclient.apigateway.UserService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
@@ -23,6 +21,7 @@ import jakarta.inject.Named;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -60,6 +59,12 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
     @Autowired
     TankService tankService;
 
+    @Autowired
+    PublicReportService publicReportService;
+
+    @Value("${sabi.webclient.public.base-url:https://sabi-project.net}")
+    private String publicBaseUrl;
+
     public List<SupportedLocales> supportedLocales;
 
     public List<MeasurementReminderTo> measurementReminderTos;
@@ -71,6 +76,28 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
 
     private boolean hasTanks;
     private boolean darkModeActive;
+
+    /** Active tanks for which the user may generate public report links. */
+    private List<AquariumTo> activeTanks = new ArrayList<>();
+
+    /**
+     * Map: aquariumId → active public link (null if no link exists for that tank).
+     * Populated in {@link #init()}.
+     */
+    private Map<Long, PublicReportLinkTo> reportLinks = new LinkedHashMap<>();
+
+    /**
+     * Map: aquariumId → current includeEvents flag value (bound to checkbox in UI).
+     * Populated in init() from the fetched PublicReportLinkTo.includeEvents.
+     * Feature: 004-aquarium-events.
+     */
+    private Map<Long, Boolean> includeEventsMap = new LinkedHashMap<>();
+
+    /** The tank selected by the user in the link management dropdown. */
+    private Long selectedTankIdForLink;
+
+    /** Optional expiry for a newly generated link (ISO date-time string, blank = no expiry). */
+    private String newLinkValidUntil;
 
     @PostConstruct
     public void init() {
@@ -90,7 +117,21 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         }
 
         try {
-            hasTanks = !tankService.getUsersTanks(userSession.getSabiBackendToken()).isEmpty();
+            activeTanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
+            hasTanks = !activeTanks.isEmpty();
+            // Load any existing report links
+            for (AquariumTo tank : activeTanks) {
+                try {
+                    PublicReportLinkTo link = publicReportService.getLinkForTank(tank.getId(), userSession.getSabiBackendToken());
+                    reportLinks.put(tank.getId(), link); // null means no link
+                    // 004-aquarium-events: populate includeEventsMap (null-safe)
+                    includeEventsMap.put(tank.getId(), link != null && link.isIncludeEvents());
+                } catch (BusinessException e) {
+                    log.warn("Could not fetch report link for tank {}: {}", tank.getId(), e.getMessage());
+                    reportLinks.put(tank.getId(), null);
+                    includeEventsMap.put(tank.getId(), false);
+                }
+            }
         } catch (BusinessException e) {
             hasTanks = false;
             log.error("Could not fetch users tanks for portal hint. {}", e.getMessage());
@@ -211,4 +252,85 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             MessageUtil.warn("messages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
     }
+
+    // ---- Public report link management ----
+
+    /**
+     * Returns the full public URL for the given share token.
+     */
+    public String getPublicReportUrl(String linkToken) {
+        return publicBaseUrl + "/houseReefReport.xhtml?token=" + linkToken;
+    }
+
+    /**
+     * Returns the existing link for a tank, or null if none.
+     */
+    public PublicReportLinkTo getReportLinkFor(Long aquariumId) {
+        return reportLinks.get(aquariumId);
+    }
+
+    /**
+     * Generates (or replaces) the public report link for the selected tank.
+     */
+    public String generateReportLink() {
+        if (selectedTankIdForLink == null) {
+            MessageUtil.warn("messages", "housereef.report.link.no_tank_selected.t", userSession.getLocale());
+            return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+        }
+        try {
+            LocalDateTime validUntil = null;
+            if (newLinkValidUntil != null && !newLinkValidUntil.isBlank()) {
+                try {
+                    validUntil = LocalDateTime.parse(newLinkValidUntil);
+                } catch (Exception ex) {
+                    log.warn("Could not parse validUntil '{}': {}", newLinkValidUntil, ex.getMessage());
+                }
+            }
+            PublicReportLinkTo link = publicReportService.createOrReplaceLink(
+                    selectedTankIdForLink, validUntil, userSession.getSabiBackendToken());
+            reportLinks.put(selectedTankIdForLink, link);
+            MessageUtil.info("messages", "housereef.report.link.generated.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not generate public report link for tank {}: {}", selectedTankIdForLink, e.getMessage());
+            MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    /**
+     * Deletes the public report link for the given tank.
+     */
+    public String deleteReportLink(Long aquariumId) {
+        try {
+            publicReportService.deleteLink(aquariumId, userSession.getSabiBackendToken());
+            reportLinks.put(aquariumId, null);
+            MessageUtil.info("messages", "housereef.report.link.deleted.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not delete public report link for tank {}: {}", aquariumId, e.getMessage());
+            MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    // ---- 004-aquarium-events: includeEvents flag ----
+
+    /**
+     * FR-021: Persists the includeEvents flag for the report link of the given tank.
+     * Called by the explicit Save button in reportLinkRow_#{tank.id}.
+     */
+    public String saveIncludeEvents(Long tankId) {
+        Boolean value = includeEventsMap.getOrDefault(tankId, false);
+        try {
+            publicReportService.updateIncludeEventsFlag(tankId, value, userSession.getSabiBackendToken());
+            // keep reportLinks in sync
+            PublicReportLinkTo link = reportLinks.get(tankId);
+            if (link != null) link.setIncludeEvents(value);
+            MessageUtil.info("messages", "aquariumevent.includeevents.saved.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not save includeEvents for tank_id={}: {}", tankId, e.getMessage());
+            MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
 }
+

@@ -38,9 +38,10 @@ name: sabi-webclient
 sabi:
   backend:
     url: http://localhost:8080/sabi
-  # Admin users — mirrors sabi-server's sabi.admin.users; used for frontend menu visibility (T066)
-  admin:
-    users: ${SABI_ADMIN_USERS:sabi@bluewhale.de}
+  # Public base URL for generating shareable HouseReef report links
+  webclient:
+    public:
+      base-url: ${SABI_PUBLIC_BASE_URL:http://localhost:8088}
 server:
   port: 8088
 

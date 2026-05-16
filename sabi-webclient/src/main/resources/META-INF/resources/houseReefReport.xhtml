@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - See project LICENSE file for the detailed terms and conditions.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<f:metadata>
+    <f:viewParam name="token" value="#{houseReefReportView.token}"/>
+    <f:event type="preRenderView" listener="#{houseReefReportView.loadReport}"/>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+    <f:loadBundle basename="i18n.messages" var="msg"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI – #{msg['housereef.report.page.title']}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="robots" content="noindex, nofollow"/>
+    <link rel="icon" type="image/png" href="#{resource['images:icons8-crab-64.png']}"/>
+    <h:outputStylesheet library="css" name="sabistyle.css"/>
+    <style>
+        /* ==== REPORT HEADER: SABI Marine Theme (WCAG AA: white on #075985 = ~7:1) ==== */
+        .report-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #075985 0%, #0369a1 60%, #0891b2 100%);
+            color: #ffffff;
+            padding: 1.2rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+        }
+        .report-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+        .report-header .meta {
+            font-size: 0.82rem;
+            color: #bae6fd;   /* Sky Blue: decorative only on dark bg */
+            margin-top: 0.3rem;
+        }
+        /* ==== BADGE: ~6 cm at 96 dpi = 227px; transparent PNG – no blend mode needed ==== */
+        .report-badge {
+            width: 227px;
+            height: auto;
+        }
+        .report-body {
+            padding: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        .two-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .two-col .tank-photo {
+            flex: 1 1 280px;
+            max-width: 420px;
+        }
+        .two-col .tank-photo img {
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+        .two-col .tank-params {
+            flex: 1 1 260px;
+        }
+        .fish-card {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.5rem;
+            width: 170px;
+            vertical-align: top;
+            background: #f0f9ff;
+        }
+        .fish-card img {
+            width: 130px;
+            height: 98px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        .fish-card img.fish-default {
+            object-fit: contain;
+            padding: 0.5rem;
+            background: #e0f2fe;
+            border-radius: 4px;
+        }
+        .fish-card .fish-name {
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+        .fish-card .fish-sci {
+            font-style: italic;
+            font-size: 0.75rem;
+            color: #475569;
+            text-align: center;
+        }
+        .fish-card .fish-obs {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-align: center;
+            margin-top: 0.35rem;
+            font-style: normal;
+        }
+        /* Text-content wrapper inside fish-card */
+        .fish-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .coming-soon-box {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            color: #64748b;
+        }
+        .chart-wrap {
+            margin-bottom: 1.5rem;
+        }
+        /* ==== CORAL REEF WATERMARK ==== */
+        .reef-watermark {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 200px;   /* 120px reef + 80px extended water area (~2cm extra) */
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        @media (max-width: 600px) {
+            .two-col { flex-direction: column; }
+            .fish-card { width: 100%; flex-direction: row; align-items: flex-start; }
+            .fish-card img { width: 80px; height: 60px; margin-right: 0.75rem; margin-bottom: 0; }
+            .fish-info { align-items: flex-start; }
+            .fish-info .fish-name,
+            .fish-info .fish-sci,
+            .fish-info .fish-obs { text-align: left; }
+            .reef-watermark { display: none; }
+        }
+        .event-entry {
+            border: 1px solid #e0f2fe;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.6rem;
+            background: #f0f9ff;
+        }
+        .event-entry .event-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: baseline;
+            margin-bottom: 0.3rem;
+        }
+        .event-entry .event-date {
+            font-weight: 600;
+            color: #075985;
+        }
+        .event-entry .event-duration {
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+        .event-entry .event-desc {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #1e293b;
+        }
+        /* Coral sway uses transform-origin at element origin (= reef base after translate) */
+        .reef-watermark g[transform^="translate"] {
+            transform-box: fill-box;
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <!-- ============================================================
+         EXPIRED / NOT FOUND
+         ============================================================ -->
+    <h:panelGroup layout="block" rendered="#{houseReefReportView.report.linkExpired or !houseReefReportView.reportAvailable}">
+        <div style="max-width:600px; margin:4rem auto; text-align:center; padding:2rem;">
+            <h:graphicImage library="images" name="ByeBye.png" style="max-width:320px; width:100%;"/>
+            <h2 style="color:#065f46; margin-top:1.5rem;">#{msg['housereef.report.expired.h']}</h2>
+            <p>#{msg['housereef.report.expired.t']}</p>
+            <p><a href="/" style="color:#0369a1;">#{msg['housereef.report.backtosabi.l']}</a></p>
+        </div>
+    </h:panelGroup>
+
+    <!-- ============================================================
+         FULL REPORT
+         ============================================================ -->
+    <h:panelGroup layout="block" rendered="#{houseReefReportView.reportAvailable}">
+
+        <div style="max-width:960px; margin:1.5rem auto;">
+
+            <!-- ==== HEADER ==== -->
+            <div class="report-header">
+                <div>
+                    <h1>#{houseReefReportView.report.ownerUsername}#{msg['housereef.report.title.suffix']}</h1>
+                    <div class="meta">
+                        #{houseReefReportView.report.tank.description}<br/>
+                        #{msg['housereef.report.generated.l']}:
+                        <span id="reportGeneratedAt"
+                              data-epoch="#{houseReefReportView.report.reportGeneratedAtEpochMillis}">
+                            <h:outputText value="#{houseReefReportView.report.reportGeneratedAt} ">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="meta" style="margin-bottom:0.25rem;">#{msg['housereef.report.producedby.l']}</div>
+                    <a href="https://www.sabi-project.net" target="_blank" rel="noopener noreferrer">
+                        <h:graphicImage library="images" name="Sabi_Badge_Small.png" styleClass="report-badge"
+                                        alt="SABI Badge" style="display:block;"/>
+                    </a>
+                </div>
+            </div>
+
+            <div class="report-body">
+
+                <!-- ==== TWO-COLUMN: PHOTO + PARAMS ==== -->
+                <div class="two-col">
+
+                    <!-- Tank photo -->
+                    <div class="tank-photo">
+                        <h:panelGroup rendered="#{houseReefReportView.report.tank.hasPhoto}">
+                            <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/photo"
+                                 alt="#{houseReefReportView.report.tank.description}"/>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{!houseReefReportView.report.tank.hasPhoto}">
+                            <h:graphicImage library="images" name="Clibanarius.JPG"
+                                            style="width:100%; border-radius:6px; border:1px solid #cbd5e1;"
+                                            alt="#{msg['housereef.report.no.photo.t']}"/>
+                        </h:panelGroup>
+                    </div>
+
+                    <!-- Tank parameters -->
+                    <div class="tank-params">
+                        <p:panel header="#{msg['housereef.report.tankparams.h']}">
+                            <p:panelGrid columns="2" styleClass="ui-noborder">
+                                 <h:outputText value="#{msg['tankview.waterType.l']}"/>
+                                 <h:outputText value="#{houseReefReportView.report.tank.waterType}"/>
+
+                                 <h:outputText value="#{msg['tankview.volume.gross.l']}"/>
+                                 <h:outputText value="#{houseReefReportView.report.tank.size} #{houseReefReportView.report.tank.sizeUnit}"/>
+
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
+                                     <h:outputText value="#{msg['tankview.volume.net.l']}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.sizeNet != null}">
+                                     <h:outputText value="#{houseReefReportView.report.tank.sizeNet} #{houseReefReportView.report.tank.sizeUnit}"/>
+                                 </h:panelGroup>
+
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
+                                     <h:outputText value="#{msg['tankview.ecosystemType.l']}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.ecosystemType != null}">
+                                     <h:outputText value="#{houseReefReportView.report.tank.ecosystemType}"/>
+                                 </h:panelGroup>
+
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
+                                     <h:outputText value="#{msg['tankview.inceptionDate.l']}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{houseReefReportView.report.tank.inceptionDate != null}">
+                                     <h:outputText value="#{houseReefReportView.report.tank.inceptionDate}">
+                                         <f:convertDateTime locale="#{userSession.locale}" type="date" dateStyle="medium"/>
+                                     </h:outputText>
+                                 </h:panelGroup>
+                            </p:panelGrid>
+                        </p:panel>
+                    </div>
+                </div>
+
+                <!-- ==== FISH INHABITANTS ==== -->
+                <p:panel header="#{msg['housereef.report.inhabitants.h']}" styleClass="p-mt-2">
+                    <h:panelGroup rendered="#{empty houseReefReportView.report.inhabitants}">
+                        <p style="color:#64748b;">#{msg['housereef.report.no.fish.t']}</p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not empty houseReefReportView.report.inhabitants}">
+                        <ui:repeat value="#{houseReefReportView.report.inhabitants}" var="fish">
+                             <div class="fish-card">
+                                 <h:panelGroup rendered="#{fish.hasPhoto}">
+                                     <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/fish/#{fish.id}/photo"
+                                          alt="#{fish.commonName}"/>
+                                 </h:panelGroup>
+                                 <h:panelGroup rendered="#{!fish.hasPhoto}">
+                                     <h:graphicImage library="images" name="icons8-crab-64.png"
+                                                     styleClass="fish-default"
+                                                     alt="#{fish.commonName}"/>
+                                 </h:panelGroup>
+                                 <div class="fish-info">
+                                 <div class="fish-name">
+                                     <h:outputText value="#{fish.nickname != null and fish.nickname != '' ? fish.nickname : fish.commonName}"/>
+                                 </div>
+                                 <div class="fish-sci">
+                                     <h:outputText value="#{fish.commonName}" rendered="#{fish.nickname != null and fish.nickname != ''}"/>
+                                 </div>
+                                 <div class="fish-sci">
+                                     <h:outputText value="#{fish.scientificName}"/>
+                                 </div>
+                                 <h:panelGroup rendered="#{fish.observedBehavior != null and fish.observedBehavior != ''}">
+                                     <div class="fish-obs">
+                                         <h:outputText value="#{fish.observedBehavior}"/>
+                                     </div>
+                                 </h:panelGroup>
+                                 </div>
+                             </div>
+                         </ui:repeat>
+                    </h:panelGroup>
+                </p:panel>
+
+                <!-- ==== CORALS / INVERTEBRATES PLACEHOLDER ==== -->
+                <p:panel header="#{msg['housereef.report.corals.h']}" styleClass="p-mt-2">
+                    <div class="coming-soon-box">
+                        <p:outputLabel value="#{msg['housereef.report.corals.comingsoon.t']}"/>
+                    </div>
+                </p:panel>
+
+                <!-- ==== VITAL DATA (MEASUREMENT CHARTS) ==== -->
+                <p:panel header="#{msg['housereef.report.vitaldata.h']}" styleClass="p-mt-2">
+                    <h:panelGroup rendered="#{empty houseReefReportView.unitIds}">
+                        <p style="color:#64748b;">#{msg['housereef.report.no.measurements.t']}</p>
+                    </h:panelGroup>
+                    <ui:repeat value="#{houseReefReportView.unitIds}" var="unitId">
+                        <div class="chart-wrap">
+                            <h3>#{houseReefReportView.getUnitSign(unitId)}</h3>
+                            <div class="card">
+                                <p:chart value="#{houseReefReportView.getChartFor(unitId)}"
+                                         style="width: 100%; height: 250px;"/>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </p:panel>
+
+                <!-- ==== 004-aquarium-events: EVENTS SECTION ==== -->
+                <!-- Uses p:panel to match the design of all other report sections. -->
+                <ui:fragment rendered="#{houseReefReportView.report.recentEvents != null}">
+                    <p:panel header="#{msg['aquariumevent.report.section.h']}" styleClass="p-mt-2">
+
+                        <h:panelGroup rendered="#{empty houseReefReportView.report.recentEvents}">
+                            <p style="color:#64748b; font-style:italic;">
+                                #{msg['aquariumevent.report.no.events.t']}
+                            </p>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not empty houseReefReportView.report.recentEvents}">
+                            <ui:repeat value="#{houseReefReportView.report.recentEvents}" var="ev">
+                                <div class="event-entry">
+                                    <div class="event-meta">
+                                        <span class="event-date">
+                                            <h:outputText value="#{ev.eventDate}">
+                                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                                            </h:outputText>
+                                        </span>
+                                        <h:panelGroup rendered="#{ev.durationHours != null}">
+                                            <span class="event-duration">
+                                                #{ev.durationHours} #{msg['aquariumevent.report.hours.suffix.t']}
+                                            </span>
+                                        </h:panelGroup>
+                                    </div>
+                                    <p class="event-desc">#{ev.description}</p>
+                                </div>
+                            </ui:repeat>
+                        </h:panelGroup>
+
+                    </p:panel>
+                </ui:fragment>
+                <!-- end 004-aquarium-events events section -->
+
+            </div><!-- /report-body -->
+        </div><!-- /max-width wrapper -->
+    </h:panelGroup>
+
+    <!-- ==== CORAL REEF WATERMARK — generated dynamically by reef-generator.js ==== -->
+    <!-- Layer 1: Reef silhouette  |  Layer 2: Corals from reef  |  Layer 3: Fish -->
+    <div class="reef-watermark" id="reefWatermark" aria-hidden="true"/>
+
+    <!-- Inject aquarium-specific data for the reef generator (server-side EL → JS global) -->
+    <script>
+        //<![CDATA[
+        window.SABI_REEF_PARAMS = {
+            aquariumId : #{houseReefReportView.reportAvailable ? houseReefReportView.report.tank.id : 42},
+            fishCount  : #{houseReefReportView.reportAvailable ? houseReefReportView.report.inhabitants.size() : 0}
+        };
+        //]]>
+    </script>
+    <h:outputScript library="js" name="reef-generator.js" target="body"/>
+
+    <!-- Format "Generated on" timestamp in browser's local timezone -->
+    <script>
+        //<![CDATA[
+        (function () {
+            var el = document.getElementById('reportGeneratedAt');
+            if (!el) return;
+            var ms = parseInt(el.getAttribute('data-epoch'), 10);
+            if (!ms) return;
+            el.textContent = new Date(ms).toLocaleString(
+                navigator.languages && navigator.languages.length
+                    ? navigator.languages
+                    : (navigator.language || 'en'),
+                { dateStyle: 'medium', timeStyle: 'medium' }
+            );
+        }());
+        //]]>
+    </script>
+
+</h:body>
+</html>

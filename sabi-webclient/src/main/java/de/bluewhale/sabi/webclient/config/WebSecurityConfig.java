@@ -68,6 +68,10 @@ public class WebSecurityConfig {
                         .requestMatchers(path.matcher("/.well-known/**")).permitAll()
                         .requestMatchers(path.matcher("/error")).permitAll() // Error Controller
                         .requestMatchers(path.matcher("/images/**")).permitAll()
+                        // Public HouseReef report (no login required)
+                        .requestMatchers(path.matcher("/houseReefReport.xhtml")).permitAll()
+                        // Public photo proxy for HouseReef report (token-gated on backend side)
+                        .requestMatchers(path.matcher("/api/public/report/**")).permitAll()
                         // OIDC login flow (sabi-150): Spring Security OAuth2 redirect URIs
                         .requestMatchers(path.matcher("/oauth2/**")).permitAll()
                         .requestMatchers(path.matcher("/login/oauth2/**")).permitAll()
@@ -77,8 +81,33 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // On session timeout redirect back to index (splash) page
-                .sessionManagement(session -> session.invalidSessionUrl("/"))
+                // On session timeout redirect back to index (splash) page.
+                // For public pages (e.g. houseReefReport.xhtml) we redirect to the SAME URL so
+                // that the token query parameter is preserved and the page renders on the next
+                // request (with a fresh session). For all other URLs we redirect to "/" as before.
+                //
+                // IMPORTANT: request.getSession() MUST be called before sendRedirect to force the
+                // servlet container to create a new session and send a fresh Set-Cookie header.
+                // Without this, the browser retains the stale JSESSIONID → infinite redirect loop
+                // (same root cause as Spring's SimpleRedirectInvalidSessionStrategy#createNewSession=true).
+                .sessionManagement(session -> session.invalidSessionStrategy((request, response) -> {
+                    // Create a fresh server-side session so the response carries a new JSESSIONID
+                    // cookie, replacing the stale one that triggered this strategy.
+                    request.getSession(true);
+                    String uri = request.getRequestURI();
+                    if (uri != null && uri.contains("houseReefReport")) {
+                        // Preserve the original URL (incl. ?token=...) so the public report
+                        // renders correctly after the new session has been established.
+                        String redirectUrl = uri;
+                        String query = request.getQueryString();
+                        if (query != null) {
+                            redirectUrl += "?" + query;
+                        }
+                        response.sendRedirect(redirectUrl);
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/");
+                    }
+                }))
 
                 // login - using this the browser redirect to this page if login is required and you are not logged in.
                 // IMPORTANT: use defaultSuccessUrl (redirect) instead of successForwardUrl (forward)

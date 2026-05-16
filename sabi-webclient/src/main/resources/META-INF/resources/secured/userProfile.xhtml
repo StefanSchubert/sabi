@@ -177,6 +177,117 @@
 
                     </p:panel>
 
+                    <p:divider align="center"/>
+                    <p:spacer width="10px"/>
+
+                    <!-- Public HouseReef Report links (social feature) -->
+                    <p:panel header="#{msg['housereef.report.link.section.h']}">
+
+                        <p:outputLabel value="#{msg['housereef.report.link.intro.t']}"/>
+
+                        <p:spacer height="12px"/>
+
+                        <h:panelGroup rendered="#{!userProfileView.hasTanks}">
+                            <p:outputLabel value="#{msg['userprofile.aiexport.notanks.hint.t']}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{userProfileView.hasTanks}">
+
+                            <!-- Generate new / replace link -->
+                            <h:form id="reportLinkForm">
+                                <p:panelGrid columns="3" layout="grid" style="border:0;">
+
+                                    <p:outputLabel for="reportTankSelect"
+                                                   value="#{msg['housereef.report.link.selecttank.l']}"/>
+                                    <p:selectOneMenu id="reportTankSelect"
+                                                     value="#{userProfileView.selectedTankIdForLink}"
+                                                     style="min-width:14rem; width:100%;">
+                                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue=""/>
+                                        <f:selectItems value="#{userProfileView.activeTanks}"
+                                                       var="t"
+                                                       itemValue="#{t.id}"
+                                                       itemLabel="#{t.description}"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer/>
+
+                                    <p:outputLabel for="reportValidUntil"
+                                                   value="#{msg['housereef.report.link.validuntil.l']}"/>
+                                    <p:inputText id="reportValidUntil"
+                                                 value="#{userProfileView.newLinkValidUntil}"
+                                                 placeholder="2026-12-31T23:59:00"
+                                                 style="width:100%;"/>
+                                    <p:commandButton value="#{msg['housereef.report.link.generate.b']}"
+                                                     action="#{userProfileView.generateReportLink}"
+                                                     ajax="false"
+                                                     style="background:#065f46; color:#ffffff;"/>
+
+                                </p:panelGrid>
+
+                                <p:messages id="reportLinkMsg" for="messages" showDetail="true" closable="true">
+                                    <p:autoUpdate/>
+                                </p:messages>
+
+                            </h:form>
+
+                            <!-- Active links table -->
+                            <p:spacer height="12px"/>
+                            <p:outputLabel value="#{msg['housereef.report.link.current.h']}"
+                                           style="font-weight:bold;"/>
+                            <p:spacer height="6px"/>
+
+                            <ui:repeat value="#{userProfileView.activeTanks}" var="tank">
+                                <h:panelGroup rendered="#{userProfileView.getReportLinkFor(tank.id) != null}">
+                        <h:form>
+                            <p:panelGrid columns="2" styleClass="ui-noborder" style="margin-bottom:0.5rem;">
+
+                                <h:outputText value="#{msg['housereef.report.link.tank.l']}"/>
+                                <h:outputText value="#{tank.description}" style="font-weight:bold;"/>
+
+                                <h:outputText value="#{msg['housereef.report.link.url.l']}"/>
+                                <h:outputLink value="#{userProfileView.getPublicReportUrl(userProfileView.getReportLinkFor(tank.id).linkToken)}"
+                                              target="_blank"
+                                              style="color:#0369a1; word-break:break-all;">
+                                    <h:outputText value="#{userProfileView.getPublicReportUrl(userProfileView.getReportLinkFor(tank.id).linkToken)}"/>
+                                </h:outputLink>
+
+                                <h:outputText value="#{msg['housereef.report.link.expires.l']}"/>
+                                <h:panelGroup>
+                                    <h:outputText
+                                        value="#{userProfileView.getReportLinkFor(tank.id).validUntil}"
+                                        rendered="#{userProfileView.getReportLinkFor(tank.id).validUntil != null}">
+                                        <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                                    </h:outputText>
+                                    <h:outputText
+                                        value="#{msg['housereef.report.link.noexpiry.l']}"
+                                        rendered="#{userProfileView.getReportLinkFor(tank.id).validUntil == null}"/>
+                                </h:panelGroup>
+
+                            </p:panelGrid>
+                            <p:commandButton value="#{msg['housereef.report.link.delete.b']}"
+                                             action="#{userProfileView.deleteReportLink(tank.id)}"
+                                             ajax="false"
+                                             styleClass="ui-button-danger"/>
+
+                            <!-- 004-aquarium-events: include events opt-in -->
+                            <!-- Note: no EL in id/for attributes inside ui:repeat — repeat provides row-level uniqueness -->
+                            <p:panelGrid columns="3" styleClass="ui-noborder" style="margin-top:0.5rem;">
+                                <p:outputLabel for="includeEventsCb"
+                                               value="#{msg['aquariumevent.includeevents.label.l']}"/>
+                                <p:selectBooleanCheckbox id="includeEventsCb"
+                                                         value="#{userProfileView.includeEventsMap[tank.id]}"/>
+                                <p:commandButton value="#{msg['common.save.b']}"
+                                                 action="#{userProfileView.saveIncludeEvents(tank.id)}"
+                                                 ajax="false"
+                                                 styleClass="ui-button-primary"/>
+                            </p:panelGrid>
+                        </h:form>
+                                </h:panelGroup>
+                            </ui:repeat>
+
+                        </h:panelGroup>
+
+                    </p:panel>
+
                 </p:outputPanel>
 
             </p:panel>

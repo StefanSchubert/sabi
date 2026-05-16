@@ -16,12 +16,10 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -41,8 +39,8 @@ public class UserSession implements Serializable {
     private String userName = "";
 
     /**
-     * The authenticated user's email address — distinct from userName which may be a display name.
-     * Used for admin role checks (sabi.admin.users is a list of emails).
+     * The authenticated user's email address — extracted from the JWT subject claim after login.
+     * Guaranteed to be the canonical email regardless of whether the user logged in via email or username.
      */
     private String userEmail = "";
 
@@ -52,11 +50,10 @@ public class UserSession implements Serializable {
     private boolean darkModeEnabled = false;
 
     /**
-     * Comma-separated list of admin emails — mirrors sabi-server's sabi.admin.users property.
-     * Used by #{userSession.admin} in header.xhtml (T066).
+     * Admin role flag — derived from the {@code roles} claim in the Sabi JWT after login.
+     * Replaces the former config-based admin list check in the frontend.
      */
-    @Value("${sabi.admin.users:admin@sabi-project.net}")
-    private String adminUsers;
+    private boolean adminRole = false;
 
     /**
      * Temporary storage for the tank currently being edited/created.
@@ -265,23 +262,21 @@ public class UserSession implements Serializable {
     }
 
     /**
-     * Returns true if the currently logged-in user is an admin.
-     * Admin users are defined by the sabi.admin.users property (comma-separated list of emails).
-     * Uses userEmail (explicit) with fallback to userName (legacy direct-login path stores email there).
+     * Returns true if the currently logged-in user has the ADMIN role.
+     * The role is derived from the {@code roles} claim in the Sabi JWT and set during login.
      * Used in header.xhtml via #{userSession.admin} (T066).
      */
     public boolean isAdmin() {
-        if (adminUsers == null || adminUsers.isBlank()) {
-            return false;
-        }
-        // Primary check: use the dedicated email field (set by both login paths)
-        String candidate = (userEmail != null && !userEmail.isBlank()) ? userEmail : userName;
-        if (candidate == null || candidate.isBlank()) {
-            return false;
-        }
-        return Arrays.stream(adminUsers.split(","))
-                .map(String::trim)
-                .anyMatch(email -> email.equalsIgnoreCase(candidate));
+        return adminRole;
+    }
+
+    /**
+     * Sets the admin role flag.  Called during login after decoding the Sabi JWT.
+     *
+     * @param adminRole {@code true} if the JWT contains the ADMIN role claim.
+     */
+    public void setAdminRole(boolean adminRole) {
+        this.adminRole = adminRole;
     }
 
     /** Invalidates Frontend Session in case of logout. */
