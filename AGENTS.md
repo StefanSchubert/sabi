@@ -228,6 +228,37 @@ key is missing from any of the language files.
 
 ---
 
+## Sitemap Maintenance (MANDATORY)
+
+The sitemap is located at:
+`sabi-webclient/src/main/resources/META-INF/resources/sitemap.xml`
+
+It is served publicly via Spring Security `permitAll()` for `/sitemap.xml`.
+The `robots.txt` references it at `https://sabi-project.net/sitemap.xml`.
+
+**Rules:**
+- **When a new publicly accessible page is added** (i.e. added to `WebSecurityConfig` with
+  `permitAll()` AND intended for search engine indexing), add a corresponding `<url>` entry to
+  `sitemap.xml`.
+- **Update `<lastmod>`** of affected entries to the current date whenever the page content
+  changes significantly.
+- **Do NOT add** to the sitemap: token-gated pages (`houseReefReport.xhtml`), technical
+  endpoints (`/actuator/**`, `/.well-known/**`, `/api/**`), auth-flow pages
+  (`login.xhtml`, `logout.xhtml`, `pwreset.xhtml`, `preregistration.xhtml`).
+
+**Currently indexed public pages (as of 2026-05-16):**
+
+| URL | Priority | Note |
+|-----|----------|------|
+| `https://sabi-project.net/` | 1.0 | Landing page |
+| `https://sabi-project.net/register.xhtml` | 0.6 | Registration |
+| `https://sabi-project.net/gdpr.xhtml` | 0.4 | Privacy Policy |
+| `https://sabi-project.net/terms_of_usage.xhtml` | 0.4 | Terms of Usage |
+| `https://sabi-project.net/impressum.xhtml` | 0.3 | Legal Notice |
+| `https://sabi-project.net/credits.xhtml` | 0.3 | Credits |
+
+---
+
 ## UI Style Guide (MANDATORY)
 
 > **Before implementing any frontend feature, read [`UI_StyleGuide.md`](./UI_StyleGuide.md) in the

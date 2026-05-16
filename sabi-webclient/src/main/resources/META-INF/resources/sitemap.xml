@@ -5,10 +5,46 @@
   -->
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Landing page -->
     <url>
         <loc>https://sabi-project.net/</loc>
-        <lastmod>2022-06-05</lastmod>
+        <lastmod>2026-05-16</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
+        <priority>1.0</priority>
+    </url>
+    <!-- Registration -->
+    <url>
+        <loc>https://sabi-project.net/register.xhtml</loc>
+        <lastmod>2026-05-16</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <!-- GDPR / Privacy Policy -->
+    <url>
+        <loc>https://sabi-project.net/gdpr.xhtml</loc>
+        <lastmod>2026-05-16</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.4</priority>
+    </url>
+    <!-- Terms of Usage -->
+    <url>
+        <loc>https://sabi-project.net/terms_of_usage.xhtml</loc>
+        <lastmod>2026-05-16</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.4</priority>
+    </url>
+    <!-- Legal Notice (Impressum) -->
+    <url>
+        <loc>https://sabi-project.net/impressum.xhtml</loc>
+        <lastmod>2026-05-16</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    <!-- Credits -->
+    <url>
+        <loc>https://sabi-project.net/credits.xhtml</loc>
+        <lastmod>2026-05-16</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
     </url>
 </urlset>
