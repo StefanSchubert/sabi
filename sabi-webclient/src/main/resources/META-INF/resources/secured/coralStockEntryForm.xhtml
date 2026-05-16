@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T057
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Form fragment included by coralStockEntryPage.xhtml -->
+
+    <div class="sabi-two-col">
+
+        <!-- LEFT: Photo + Notes -->
+        <div>
+            <h3 style="margin-top:0; color:var(--sabi-accent);">#{msg['coralstock.form.photo.label']}</h3>
+
+            <!-- Photo preview when editing and photo exists — fills the placeholder area -->
+            <h:panelGroup layout="block"
+                          rendered="#{coralStockEntryView.edit and coralStockEntryView.currentEntry.hasPhoto}"
+                          styleClass="p-field p-mb-2 sabi-photo-preview-box">
+                <p:graphicImage value="#{request.contextPath}/secured/coralPhoto?coralId=#{coralStockEntryView.currentEntry.id}"
+                                style="width:100%; height:100%; object-fit:cover; display:block; border-radius:6px;"
+                                alt="#{msg['coralstock.form.photo.label']}"/>
+            </h:panelGroup>
+
+            <!-- Coral placeholder when no photo -->
+            <h:panelGroup layout="block"
+                          rendered="#{not coralStockEntryView.currentEntry.hasPhoto}"
+                          styleClass="p-field p-mb-2">
+                <span class="sabi-coral-placeholder"/>
+            </h:panelGroup>
+
+            <!-- Photo upload -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel value="#{msg['coralstock.form.photo.upload']}"
+                               style="display:block; font-size:0.9rem; color:var(--sabi-text-muted);"/>
+                <div class="sabi-file-upload-row">
+                    <label for="coralPhotoFileInput" class="sabi-file-btn">
+                        <i class="pi pi-upload"/>
+                        #{msg['coralstock.form.photo.choose']}
+                    </label>
+                    <span id="coralPhotoFileNameDisplay" class="sabi-file-name"/>
+                    <input type="file" id="coralPhotoFileInput"
+                           accept="image/jpeg,image/png,image/webp,image/gif"
+                           onchange="sabiValidateCoralPhotoSize(this); sabiUpdateCoralFileName(this);"/>
+                </div>
+                <small style="color:var(--sabi-text-muted);">#{msg['coralstock.form.photo.hint']}</small>
+                <span id="coralPhotoUploadError" style="display:none; color:#b91c1c; font-size:0.875rem;"/>
+            </div>
+
+            <!-- Notes -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="coralNotes" value="#{msg['coralstock.form.notes.label']}" style="display:block;"/>
+                <p:inputTextarea id="coralNotes"
+                                 value="#{coralStockEntryView.currentEntry.notes}"
+                                 rows="4" style="width:100%;"/>
+            </div>
+        </div>
+
+        <!-- RIGHT: Species + Date + Classification + CareLevel + Catalogue + RefUrl -->
+        <div>
+            <h3 style="margin-top:0; color:var(--sabi-accent);">&#160;</h3>
+
+            <!-- Species name (mandatory) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="speciesName" value="#{msg['coralstock.form.speciesname.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:inputText id="speciesName"
+                             value="#{coralStockEntryView.currentEntry.speciesName}"
+                             required="true"
+                             requiredMessage="#{msg['coralstock.form.speciesname.required']}"
+                             maxlength="255" style="width:100%;"/>
+                <p:message for="speciesName"/>
+            </div>
+
+            <!-- Entry date (mandatory) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="addedOn" value="#{msg['coralstock.form.entrdate.label']}"
+                               style="display:block; font-weight:600;"/>
+                <p:datePicker id="addedOn"
+                              value="#{coralStockEntryView.currentEntry.addedOn}"
+                              required="true"
+                              requiredMessage="#{msg['coralstock.form.entrydate.required']}"
+                              pattern="dd.MM.yyyy" showIcon="true" style="width:100%;"/>
+                <p:message for="addedOn"/>
+            </div>
+
+            <!-- Classification -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="classification" value="#{msg['coralstock.form.classification.label']}"
+                               style="display:block;"/>
+                <p:selectOneMenu id="classification"
+                                 value="#{coralStockEntryView.currentEntry.classification}"
+                                 style="width:100%;">
+                    <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{coralStockEntryView.classifications}"
+                                   var="cls"
+                                   itemLabel="#{msg['coralstock.classification.'.concat(cls.name())]}"
+                                   itemValue="#{cls}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <!-- Care level -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="careLevel" value="#{msg['coralstock.form.carelevel.label']}"
+                               style="display:block;"/>
+                <p:selectOneMenu id="careLevel"
+                                 value="#{coralStockEntryView.currentEntry.careLevel}"
+                                 style="width:100%;">
+                    <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{coralStockEntryView.careLevels}" var="cl"
+                                   itemLabel="#{msg['coralstock.carelevel.'.concat(cl.name())]}"
+                                   itemValue="#{cl}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <!-- Catalogue search -->
+            <h3 style="color:var(--sabi-accent); margin-top:1rem; margin-bottom:0.5rem;">
+                #{msg['coralstock.form.catalogue.search.label']}
+            </h3>
+
+            <div class="p-field p-mb-2">
+                <p:autoComplete id="catalogueSearch"
+                                completeMethod="#{coralStockEntryView.onSearchCatalogue}"
+                                var="result"
+                                itemLabel="#{empty result.commonName ? result.scientificName : result.commonName.concat(' (').concat(result.scientificName).concat(')')}"
+                                itemValue="#{result}"
+                                converter="coralCatalogueSearchResultConverter"
+                                minQueryLength="2"
+                                placeholder="#{msg['coralstock.form.catalogue.search.label']}"
+                                emptyMessage="#{msg['coralstock.form.catalogue.noresults']}"
+                                style="width:100%;">
+                    <p:ajax event="itemSelect"
+                            listener="#{coralStockEntryView.onSelectCatalogue}"
+                            update="scientificName externalRefUrl classification careLevel"/>
+                </p:autoComplete>
+                <div style="margin-top:0.4rem;">
+                    <h:outputLink value="#{request.contextPath}/secured/coralCatalogueProposalForm.xhtml">
+                        <i class="pi pi-plus-circle" style="margin-right:0.2rem;"/>#{msg['coralstock.form.catalogue.propose_link']}
+                    </h:outputLink>
+                    <p:commandButton rendered="#{coralStockEntryView.currentEntry.coralCatalogueId != null}"
+                                     value="#{msg['coralstock.form.catalogue.unlink.button']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     style="margin-top:0.25rem;"
+                                     actionListener="#{coralStockEntryView.onRemoveCatalogueLink()}"
+                                     update="scientificName externalRefUrl catalogueSearch classification careLevel"/>
+                </div>
+            </div>
+
+            <!-- Scientific name (auto-filled or free text) -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="scientificName" value="#{msg['coralstock.form.scientificname.label']}"
+                               style="display:block; font-style:italic;"/>
+                <p:inputText id="scientificName"
+                             value="#{coralStockEntryView.currentEntry.scientificName}"
+                             maxlength="255" style="width:100%; font-style:italic;"/>
+            </div>
+
+            <!-- Reference URL -->
+            <div class="p-field p-mb-2">
+                <p:outputLabel for="externalRefUrl" value="#{msg['coralstock.form.refurl.label']}"
+                               style="display:block;"/>
+                <div style="display:flex; gap:0.4rem; align-items:center;">
+                    <p:inputText id="externalRefUrl"
+                                 value="#{coralStockEntryView.currentEntry.externalRefUrl}"
+                                 maxlength="512" style="flex:1 1 auto;"/>
+                    <p:commandButton type="button"
+                                     icon="pi pi-external-link"
+                                     styleClass="ui-button-secondary"
+                                     title="#{msg['coralstock.form.refurl.label']}"
+                                     onclick="var f=document.querySelector('[id$=externalRefUrl]'); var v=f?f.value:''; if(v &amp;&amp; (v.startsWith('http://') || v.startsWith('https://'))){window.open(v,'_blank');} return false;"/>
+                </div>
+                <p:message for="externalRefUrl"/>
+            </div>
+
+        </div>
+    </div>
+
+</ui:composition>
+

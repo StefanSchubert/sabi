@@ -47,8 +47,6 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     @Autowired
     private PlagueRecordEntityRepository plagueRecordRepository;
 
-    @Autowired
-    private FishRepository fishRepository;
 
     @Autowired
     private TankFishStockRepository tankFishStockRepository;
@@ -57,13 +55,15 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     private FishSizeHistoryRepository fishSizeHistoryRepository;
 
     @Autowired
-    private CoralRepository coralRepository;
+    private LocalizedUnitRepository localizedUnitRepository;
+
+    // 005-coral-stock: coral export uses CoralStockService (coral_stock table)
+    @Autowired
+    private CoralStockService coralStockService;
 
     @Autowired
     private TreatmentRepository treatmentRepository;
 
-    @Autowired
-    private LocalizedUnitRepository localizedUnitRepository;
 
     @Autowired
     private UnitRepository unitRepository;
@@ -75,10 +75,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     private LocalizedPlagueStatusRepository localizedPlagueStatusRepository;
 
     @Autowired
-    private FishCatalogueRepository fishCatalogueRepository;
-
-    @Autowired
-    private CoralCatalogueRepository coralCatalogueRepository;
+    private FishCatalogueEntryRepository fishCatalogueEntryRepository;
 
     @Autowired
     private RemedyRepository remedyRepository;
@@ -263,8 +260,8 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
             // scientific name: prefer entity field (denormalised), fall back to catalogue lookup
             String scientificName = f.getScientificName();
             if (scientificName == null && f.getFishCatalogueId() != null) {
-                Optional<FishCatalogueEntity> catOpt = fishCatalogueRepository.findById(f.getFishCatalogueId());
-                scientificName = catOpt.map(FishCatalogueEntity::getScientificName).orElse(null);
+                Optional<FishCatalogueEntryEntity> catOpt = fishCatalogueEntryRepository.findById(f.getFishCatalogueId());
+                scientificName = catOpt.map(FishCatalogueEntryEntity::getScientificName).orElse(null);
             }
             fto.setScientificName(scientificName);
 
@@ -306,23 +303,13 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     }
 
     private List<CoralExportTo> buildCoralExports(Long aquariumId) {
-        List<CoralEntity> entities = coralRepository.findCoralEntitiesByAquariumId(aquariumId);
-        List<CoralExportTo> result = new ArrayList<>();
-        for (CoralEntity c : entities) {
-            CoralExportTo cto = new CoralExportTo();
-            // Note: source field is coralCatalougeId (typo preserved from entity)
-            cto.setCoralCatalogueId(c.getCoralCatalougeId());
-            cto.setObservedBehavior(c.getObservedBehavior());
-
-            // T015: coral catalogue resolution
-            String scientificName = null;
-            Optional<CoralCatalogueEntity> catOpt = coralCatalogueRepository.findById(c.getCoralCatalougeId());
-            scientificName = catOpt.map(CoralCatalogueEntity::getScientificName).orElse(null);
-            cto.setScientificName(scientificName);
-
-            result.add(cto);
+        // 005-coral-stock: delegates to CoralStockService (coral_stock table, replaces legacy coral table)
+        try {
+            return coralStockService.getCorralsForExport(aquariumId);
+        } catch (Exception e) {
+            log.error("Failed to export coral data for aquarium {}", aquariumId, e);
+            return java.util.Collections.emptyList();
         }
-        return result;
     }
 
     private List<TreatmentExportTo> buildTreatmentExports(Long aquariumId) {

@@ -12,13 +12,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Registers two named {@link PhotoStorageService} beans with separate configuration prefixes:
+ * Registers named {@link PhotoStorageService} beans with separate configuration prefixes:
  * <ul>
  *   <li>{@code fishPhotoStorage}    — bound to {@code sabi.fish.photo.*}</li>
  *   <li>{@code aquariumPhotoStorage} — bound to {@code sabi.aquarium.photo.*}</li>
+ *   <li>{@code coralPhotoStorage}    — bound to {@code sabi.coral.photo.*}</li>
  * </ul>
  *
- * Inject via {@code @Qualifier("fishPhotoStorage")} or {@code @Qualifier("aquariumPhotoStorage")}.
+ * Inject via {@code @Qualifier("fishPhotoStorage")}, {@code @Qualifier("aquariumPhotoStorage")},
+ * or {@code @Qualifier("coralPhotoStorage")}.
  *
  * @author Stefan Schubert
  */
@@ -34,6 +36,12 @@ public class PhotoStorageConfig {
     @Bean("aquariumPhotoStorage")
     @ConfigurationProperties(prefix = "sabi.aquarium.photo")
     public PhotoStorageService aquariumPhotoStorage() {
+        return new PhotoStorageServiceImpl();
+    }
+
+    @Bean("coralPhotoStorage")
+    @ConfigurationProperties(prefix = "sabi.coral.photo")
+    public PhotoStorageService coralPhotoStorage() {
         return new PhotoStorageServiceImpl();
     }
 }

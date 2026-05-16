@@ -31,10 +31,11 @@
                 <p:menuitem value="#{msg['menu.measureView.l']}" outcome="/secured/measureView" icon="pi pi-pencil"/>
                 <p:menuitem value="#{msg['menu.report.l']}"      outcome="/secured/reportView"  icon="pi pi-file-excel"/>
                 <p:menuitem value="#{msg['menu.fishStockView.l']}" outcome="/secured/fishStockView" icon="pi pi-tag"/>
+                <p:menuitem value="#{msg['coralstock.tab.label']}" outcome="/secured/coralStockView" icon="pi pi-star"/>
                 <p:separator rendered="#{userSession.admin}"/>
                 <p:menuitem rendered="#{userSession.admin}"
-                            value="#{msg['fishcatalogue.admin.title']}"
-                            outcome="/secured/admin/fishCatalogueAdminView"
+                            value="#{msg['menu.catalogueAdmin.l']}"
+                            outcome="/secured/admin/catalogueDashboard"
                             icon="pi pi-book"/>
                 <p:menuitem value="#{msg['menu.plagueView.l']}"      outcome="/secured/plagueView"      icon="pi pi-exclamation-triangle"/>
                 <p:menuitem value="#{msg['menu.statistics.l']}"  outcome="/secured/projectStats" icon="pi pi-chart-bar"/>

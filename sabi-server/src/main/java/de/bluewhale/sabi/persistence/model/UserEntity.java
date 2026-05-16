@@ -33,9 +33,6 @@ public class UserEntity extends Auditable {
     private List<AquariumEntity> aquariums = new ArrayList<AquariumEntity>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<CoralEntity> corals = new ArrayList<CoralEntity>();
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<FishEntity> fishes = new ArrayList<FishEntity>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

@@ -90,6 +90,13 @@
         owner: sabi
         group: sabi
         mode: '0750'
+    - name: Create coral photo storage directory
+      file:
+        path: "{{ sabi_coral_photo_dir | default('/var/sabi-data/coral-photos') }}"
+        state: directory
+        owner: sabi
+        group: sabi
+        mode: '0750'
     - name: Deploy OIDC client-id env file (sabi-150)
       copy:
         content: |
@@ -104,6 +111,7 @@
           SABI_SMTP_PASSWORD={{ sabi_smtp_password }}
           SABI_AQUARIUM_PHOTO_STORAGE_DIR={{ sabi_aquarium_photo_dir | default('/var/sabi-data/aquarium-photos') }}
           SABI_FISH_PHOTO_STORAGE_DIR={{ sabi_fish_photo_dir | default('/var/sabi-data/fish-photos') }}
+          SABI_CORAL_PHOTO_STORAGE_DIR={{ sabi_coral_photo_dir | default('/var/sabi-data/coral-photos') }}
         dest: /etc/sabi/sabi-backend.env
         owner: root
         group: sabi

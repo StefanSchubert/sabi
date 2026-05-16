@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T097
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head><title>SABI - Coral Catalogue Administration</title></h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <div style="margin-bottom:0.75rem;">
+                <h:link outcome="/secured/admin/catalogueDashboard" styleClass="sabi-back-link">
+                    &#8592; #{msg['catalogue.dashboard.title']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985;">#{msg['coralcatalogue.admin.title']}</h2>
+
+            <h:form id="adminForm">
+                <p:messages id="adminMessages" showDetail="true" closable="true"/>
+
+                <p:remoteCommand name="sabiLoadCoralProposals"
+                                 actionListener="#{coralCatalogueAdminView.refreshProposals()}"
+                                 update="pendingPanel"
+                                 autoRun="true"/>
+                <p:remoteCommand name="sabiLoadCoralCatalogue"
+                                 actionListener="#{coralCatalogueAdminView.refreshCatalogue()}"
+                                 update="catalogueBrowserPanel"
+                                 autoRun="true"/>
+
+                <!-- SECTION 1: Pending Proposals -->
+                <p:panel id="pendingPanel" style="margin-bottom:2rem;">
+                    <f:facet name="header">
+                        <span style="font-weight:600;">#{msg['coralcatalogue.admin.pending.list.title']}</span>
+                    </f:facet>
+                    <p:dataTable id="pendingTable"
+                                 var="proposal"
+                                 value="#{coralCatalogueAdminView.pendingProposals}"
+                                 emptyMessage="#{msg['coralcatalogue.admin.no.pending']}">
+                        <p:column headerText="#{msg['coralcatalogue.scientificname.label']}">
+                            <p:outputLabel value="#{proposal.scientificName}" style="font-style:italic;"/>
+                        </p:column>
+                        <p:column headerText="#{msg['coralcatalogue.classification.label']}" style="width:6rem;">
+                            <p:outputLabel value="#{proposal.classification}"/>
+                        </p:column>
+                        <p:column headerText="#{msg['coralcatalogue.admin.proposaldate.label']}" style="width:8rem;">
+                            <p:outputLabel value="#{proposal.proposalDate}">
+                                <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msg['coralcatalogue.admin.proposer.label']}" style="width:6rem;">
+                            <p:outputLabel value="User ##{proposal.proposerUserId}"/>
+                        </p:column>
+                        <p:column headerText="" style="width:5rem; text-align:center;">
+                            <p:commandButton icon="pi pi-search"
+                                             title="#{msg['common.edit.b']}"
+                                             actionListener="#{coralCatalogueAdminView.onOpenProposal(proposal)}"
+                                             update=":adminForm:proposalDetailDialog"
+                                             oncomplete="PF('coralProposalDetailWidget').show()"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <!-- Detail Dialog for pending proposals -->
+                <p:dialog id="proposalDetailDialog"
+                          header="#{coralCatalogueAdminView.selectedProposal != null ? coralCatalogueAdminView.selectedProposal.scientificName : ''}"
+                          widgetVar="coralProposalDetailWidget"
+                          modal="true" responsive="true" width="700"
+                          closeOnEscape="true" dynamic="true">
+                    <p:messages id="detailMessages" showDetail="true" closable="true"/>
+                    <p:tabView rendered="#{coralCatalogueAdminView.selectedProposal != null}">
+                        <p:tab title="#{msg['fishcatalogue.tab.de']}">
+                            <p:outputLabel value="#{coralCatalogueAdminView.selectedProposal.i18nEntries[0].commonName}" style="display:block;"/>
+                            <p:outputLabel value="#{coralCatalogueAdminView.selectedProposal.i18nEntries[0].description}" style="display:block;"/>
+                        </p:tab>
+                        <p:tab title="#{msg['fishcatalogue.tab.en']}">
+                            <p:outputLabel value="#{coralCatalogueAdminView.selectedProposal.i18nEntries[1].commonName}" style="display:block;"/>
+                            <p:outputLabel value="#{coralCatalogueAdminView.selectedProposal.i18nEntries[1].description}" style="display:block;"/>
+                        </p:tab>
+                    </p:tabView>
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                        <p:commandButton value="#{msg['coralcatalogue.admin.approve.button']}"
+                                         icon="pi pi-check"
+                                         style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                         actionListener="#{coralCatalogueAdminView.onApprove()}"
+                                         update=":adminForm"
+                                         oncomplete="PF('coralProposalDetailWidget').hide();"/>
+                        <p:commandButton value="#{msg['coralcatalogue.admin.reject.button']}"
+                                         icon="pi pi-times"
+                                         style="background:#991b1b; border-color:#991b1b; color:#ffffff;"
+                                         actionListener="#{coralCatalogueAdminView.onReject()}"
+                                         update=":adminForm"
+                                         oncomplete="PF('coralProposalDetailWidget').hide();"/>
+                        <p:commandButton value="#{msg['common.cancel.b']}"
+                                         icon="pi pi-ban"
+                                         styleClass="ui-button-secondary"
+                                         onclick="PF('coralProposalDetailWidget').hide(); return false;"/>
+                    </div>
+                </p:dialog>
+
+                <!-- SECTION 2: Full Catalogue Browser + Inline Editor -->
+                <p:panel id="catalogueBrowserPanel">
+                    <f:facet name="header">
+                        <span style="font-weight:600;">#{msg['coralcatalogue.admin.catalogue.browser.title']}</span>
+                    </f:facet>
+                    <p:panelGrid columns="2" style="width:100%; border:none;" columnClasses="ui-g-4,ui-g-8">
+
+                        <!-- LEFT: entry list -->
+                        <p:panel id="entryListPanel"
+                                 style="height:600px; overflow-y:auto; border-right:1px solid #e5e7eb; padding-right:0.5rem;">
+                            <p:dataTable id="catalogueTable"
+                                         var="entry"
+                                         value="#{coralCatalogueAdminView.catalogueEntries}"
+                                         emptyMessage="#{msg['common.no.data.l']}"
+                                         rowStyleClass="#{coralCatalogueAdminView.selectedEntry != null and entry.id eq coralCatalogueAdminView.selectedEntry.id ? 'sabi-selected-row' : ''}"
+                                         style="width:100%;">
+                                <p:column headerText="#{msg['coralcatalogue.scientificname.label']}">
+                                    <p:commandLink value="#{entry.scientificName}"
+                                                   style="font-style:italic; color:#0369a1; text-decoration:underline;"
+                                                   actionListener="#{coralCatalogueAdminView.onSelectEntry(entry)}"
+                                                   update=":adminForm:editorPanel"/>
+                                </p:column>
+                                <p:column headerText="#{msg['coralcatalogue.status.label']}" style="width:7rem; text-align:center;">
+                                    <p:tag rendered="#{entry.status.name() == 'PUBLIC'}"
+                                           value="#{msg['coralcatalogue.status.public']}" severity="success"/>
+                                    <p:tag rendered="#{entry.status.name() == 'PENDING'}"
+                                           value="#{msg['coralcatalogue.status.pending']}" severity="warn"/>
+                                    <p:tag rendered="#{entry.status.name() == 'REJECTED'}"
+                                           value="#{msg['coralcatalogue.status.rejected']}" severity="danger"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+
+                        <!-- RIGHT: inline editor -->
+                        <p:panel id="editorPanel" style="padding-left:1rem;">
+                            <p:panel rendered="#{coralCatalogueAdminView.selectedEntry == null}"
+                                     style="color:#6b7280; font-style:italic; padding:2rem; text-align:center;">
+                                <p:outputLabel value="#{msg['coralcatalogue.admin.editor.select.hint']}"/>
+                            </p:panel>
+                            <h:panelGroup rendered="#{coralCatalogueAdminView.selectedEntry != null}">
+                                <h3 style="color:#075985; margin-top:0;">#{msg['coralcatalogue.admin.editor.title']}</h3>
+                                <div class="p-field p-mb-2">
+                                    <p:outputLabel for="editorScientificName"
+                                                   value="#{msg['coralcatalogue.scientificname.label']}"
+                                                   style="display:block; font-weight:600;"/>
+                                    <p:inputText id="editorScientificName"
+                                                 value="#{coralCatalogueAdminView.selectedEntry.scientificName}"
+                                                 required="true" maxlength="255" style="width:100%;"/>
+                                    <p:message for="editorScientificName"/>
+                                </div>
+                                <div class="p-field p-mb-2">
+                                    <p:outputLabel value="#{msg['coralcatalogue.status.label']}" style="display:block; font-weight:600;"/>
+                                    <p:tag rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'PUBLIC'}"
+                                           value="#{msg['coralcatalogue.status.public']}" severity="success"/>
+                                    <p:tag rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'PENDING'}"
+                                           value="#{msg['coralcatalogue.status.pending']}" severity="warn"/>
+                                    <p:tag rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'REJECTED'}"
+                                           value="#{msg['coralcatalogue.status.rejected']}" severity="danger"/>
+                                </div>
+                                <p:tabView style="margin-top:1rem;">
+                                    <p:tab title="#{msg['fishcatalogue.tab.de']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[0].commonName}" maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[0].description}" maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[0].referenceUrl}" maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="#{msg['fishcatalogue.tab.en']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[1].commonName}" maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[1].description}" maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[1].referenceUrl}" maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="#{msg['fishcatalogue.tab.es']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[2].commonName}" maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[2].description}" maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[2].referenceUrl}" maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="#{msg['fishcatalogue.tab.fr']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[3].commonName}" maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[3].description}" maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[3].referenceUrl}" maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="#{msg['fishcatalogue.tab.it']}">
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.commonname.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[4].commonName}" maxlength="255" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.description.label']}" style="display:block;"/>
+                                            <p:inputTextarea value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[4].description}" maxlength="2000" rows="4" style="width:100%;"/>
+                                        </div>
+                                        <div class="p-field p-mb-2">
+                                            <p:outputLabel value="#{msg['fishcatalogue.i18n.refurl.label']}" style="display:block;"/>
+                                            <p:inputText value="#{coralCatalogueAdminView.selectedEntry.i18nEntries[4].referenceUrl}" maxlength="512" style="width:100%;"/>
+                                        </div>
+                                    </p:tab>
+                                </p:tabView>
+                                <p:panel rendered="#{coralCatalogueAdminView.selectedEntry.status.name() != 'PUBLIC'}"
+                                         style="background:#fef3c7; border:1px solid #d97706; padding:0.5rem; border-radius:4px; margin-top:1rem; color:#92400e;">
+                                    <p:outputLabel rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'PENDING'}"
+                                                   value="#{msg['coralcatalogue.admin.editor.pending.hint']}"/>
+                                    <p:outputLabel rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'REJECTED'}"
+                                                   value="#{msg['coralcatalogue.admin.editor.rejected.hint']}"/>
+                                </p:panel>
+                                <div style="display:flex; gap:0.5rem; margin-top:1rem; flex-wrap:wrap;">
+                                    <!-- Approve button: only for PENDING entries -->
+                                    <p:commandButton value="#{msg['coralcatalogue.admin.approve.button']}"
+                                                     icon="pi pi-check-circle"
+                                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                                     rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'PENDING'}"
+                                                     actionListener="#{coralCatalogueAdminView.onApproveEntry()}"
+                                                     update=":adminForm:adminMessages :adminForm:catalogueBrowserPanel :adminForm:pendingPanel"/>
+                                    <!-- Reject button: only for PENDING entries -->
+                                    <p:commandButton value="#{msg['coralcatalogue.admin.reject.button']}"
+                                                     icon="pi pi-times-circle"
+                                                     style="background:#991b1b; border-color:#991b1b; color:#ffffff;"
+                                                     rendered="#{coralCatalogueAdminView.selectedEntry.status.name() == 'PENDING'}"
+                                                     actionListener="#{coralCatalogueAdminView.onRejectEntry()}"
+                                                     update=":adminForm:adminMessages :adminForm:catalogueBrowserPanel :adminForm:pendingPanel"/>
+                                    <!-- Save button: for all statuses (admin can edit content of any entry) -->
+                                    <p:commandButton value="#{msg['common.save.b']}"
+                                                     icon="pi pi-save"
+                                                     style="background:#1e40af; border-color:#1e40af; color:#ffffff;"
+                                                     actionListener="#{coralCatalogueAdminView.onSaveEntry()}"
+                                                     update=":adminForm:adminMessages :adminForm:catalogueBrowserPanel"/>
+                                    <p:commandButton value="#{msg['common.cancel.b']}"
+                                                     icon="pi pi-ban"
+                                                     styleClass="ui-button-secondary"
+                                                     actionListener="#{coralCatalogueAdminView.onCancelEdit()}"
+                                                     update=":adminForm:editorPanel"
+                                                     immediate="true"/>
+                                </div>
+                            </h:panelGroup>
+                        </p:panel>
+
+                    </p:panelGrid>
+                </p:panel>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

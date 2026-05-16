@@ -20,4 +20,12 @@ public interface NotificationService {
     void sendPasswordResetToken(String email, String resetValidationToken) throws MessagingException;
 
     void sendPasswordResetConfirmation(String emailAddress) throws MessagingException;
+
+    /**
+     * Notifies all admin users that a new catalogue proposal has been submitted.
+     *
+     * @param catalogueType  e.g. "Fish" or "Coral"
+     * @param scientificName the scientific name of the proposed entry
+     */
+    void sendCatalogueProposalNotification(String catalogueType, String scientificName) throws MessagingException;
 }

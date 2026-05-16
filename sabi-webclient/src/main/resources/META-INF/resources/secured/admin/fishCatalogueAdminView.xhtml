@@ -19,6 +19,13 @@
     <ui:composition template="/template/masterLayout.xhtml">
         <ui:define name="content">
 
+            <!-- Back navigation to Catalogue Dashboard -->
+            <div style="margin-bottom:0.75rem;">
+                <h:link outcome="/secured/admin/catalogueDashboard" styleClass="sabi-back-link">
+                    &#8592; #{msg['catalogue.dashboard.title']}
+                </h:link>
+            </div>
+
             <h2 style="color:#075985;">#{msg['fishcatalogue.admin.title']}</h2>
 
             <h:form id="adminForm">

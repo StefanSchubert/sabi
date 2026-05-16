@@ -71,8 +71,6 @@ public class ReefDataExportServiceTest {
     @MockitoBean
     private FishRepository fishRepository;
     @MockitoBean
-    private CoralRepository coralRepository;
-    @MockitoBean
     private TreatmentRepository treatmentRepository;
     @MockitoBean
     private LocalizedUnitRepository localizedUnitRepository;
@@ -83,7 +81,7 @@ public class ReefDataExportServiceTest {
     @MockitoBean
     private LocalizedPlagueStatusRepository localizedPlagueStatusRepository;
     @MockitoBean
-    private FishCatalogueRepository fishCatalogueRepository;
+    private FishCatalogueEntryRepository fishCatalogueEntryRepository;
     @MockitoBean
     private CoralCatalogueRepository coralCatalogueRepository;
     @MockitoBean
@@ -243,7 +241,6 @@ public class ReefDataExportServiceTest {
         // Stub empty lists for other sub-data
         given(plagueRecordRepository.findByAquarium_Id(aquarium.getId())).willReturn(Collections.emptyList());
         given(fishRepository.findFishEntitiesByAquariumId(aquarium.getId())).willReturn(Collections.emptyList());
-        given(coralRepository.findCoralEntitiesByAquariumId(aquarium.getId())).willReturn(Collections.emptyList());
         given(treatmentRepository.findTreatmentEntitiesByAquariumId(aquarium.getId())).willReturn(Collections.emptyList());
 
         // When
