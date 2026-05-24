@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+ * See project LICENSE file for the detailed terms and conditions.
+ */
+
+package de.bluewhale.sabi.model;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.io.Serializable;
+
+/**
+ * Care level difficulty for a coral.
+ * Part of 005-coral-stock.
+ *
+ * @author Stefan Schubert
+ */
+public enum CoralCareLevel implements Serializable {
+    EASY,
+    MODERATE,
+    DEMANDING;
+
+    @JsonValue
+    public String toValue() {
+        return name();
+    }
+
+    @JsonCreator
+    public static CoralCareLevel fromValue(String value) {
+        return valueOf(value.toUpperCase());
+    }
+}
+

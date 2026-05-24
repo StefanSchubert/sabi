@@ -88,6 +88,10 @@ public class PublicReportServiceImpl implements PublicReportService {
     @Autowired
     private AquariumEventMapper aquariumEventMapper;
 
+    // 005-coral-stock
+    @Autowired
+    private CoralStockService coralStockService;
+
     // -----------------------------------------------------------------------
 
     @Override
@@ -148,6 +152,22 @@ public class PublicReportServiceImpl implements PublicReportService {
         link.setIncludeEvents(includeEvents);
         publicReportLinkRepository.save(link);
         log.info("Updated includeEvents={} for aquarium_id={} by user_id={}", includeEvents, aquariumId, user.getId());
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateIncludeCorals(Long aquariumId, boolean includeCorals, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return false;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return false;
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByAquariumId(aquariumId);
+        if (linkOpt.isEmpty()) return false;
+        PublicReportLinkEntity link = linkOpt.get();
+        link.setIncludeCorals(includeCorals);
+        publicReportLinkRepository.save(link);
+        log.info("Updated includeCorals={} for aquarium_id={} by user_id={}", includeCorals, aquariumId, user.getId());
         return true;
     }
 
@@ -244,6 +264,14 @@ public class PublicReportServiceImpl implements PublicReportService {
         }
         // else: recentEvents stays null (not opted-in)
 
+        // 005-coral-stock: include active corals if opted-in (FR-032)
+        if (link.isIncludeCorals()) {
+            List<PublicReefReportCoralTo> coralData =
+                    coralStockService.getActiveCoralsForReport(link.getAquariumId());
+            report.setCoralInhabitants(coralData);
+        }
+        // else: coralInhabitants stays null (not opted-in)
+
         return report;
     }
 
@@ -256,6 +284,7 @@ public class PublicReportServiceImpl implements PublicReportService {
         to.setLinkToken(entity.getLinkToken());
         to.setValidUntil(entity.getValidUntil());
         to.setIncludeEvents(entity.isIncludeEvents());   // 004-aquarium-events: propagate flag to gateway
+        to.setIncludeCorals(entity.isIncludeCorals());   // 005-coral-stock: propagate flag to gateway
         return to;
     }
 

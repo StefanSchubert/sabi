@@ -424,21 +424,18 @@ bash server_redeploy.sh --boundary --flyway
 2. `--boundary`: `mvn install -DskipTests` in `sabi-boundary/`
 3. `mvn package -DskipTests` in `sabi-server/`
 4. Runs `copyjars.sh` to copy the JAR into the Docker context
-5. `docker compose -f docker-compose-arm.yml up --build -d sabi-backend`
+5. `docker compose -f docker-compose.yml up --build -d sabi-backend`
 6. `--flyway`: runs the Flyway container (`docker compose run --rm flyway`) — it exits after applying pending migrations
 7. Tails the container log for 25 s so startup errors are visible immediately
-
-**For AMD64 servers** use `docker-compose.yml`; for ARM development (MacBook M1/M2/M3/M4)
-always use `docker-compose-arm.yml` with `Dockerfile_ARM`.
 
 **Manual steps (fallback, if script is not usable):**
 ```bash
 cd sabi-server && mvn package -DskipTests
 cd devops/sabi_docker_sdk && bash copyjars.sh
-docker compose -f docker-compose-arm.yml stop sabi-backend
-docker compose -f docker-compose-arm.yml up --build -d sabi-backend
+docker compose stop sabi-backend
+docker compose up --build -d sabi-backend
 # With migrations:
-docker compose -f docker-compose-arm.yml run --rm flyway
+docker compose run --rm flyway
 ```
 
 ---
@@ -534,6 +531,18 @@ if (entity == null) {
 | FishCatalogueController | PUT `/{id}` (updateEntry) | `isCreator` OR `isAdmin` check | ✅ |
 | FishCatalogueAdminController | PUT `/{id}/approve`, `/{id}/reject` | `isAdmin()` check in service | ✅ |
 | UserProfileController | PUT `` (updateProfile) | `getByEmail(principalName)` | ✅ |
+| CoralStockController | GET `/{aquariumId}/list` | `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| CoralStockController | POST `/` (addCoral) | `getAquariumEntityByIdAndUser_IdIs` | ✅ |
+| CoralStockController | PUT `/{coralId}` (updateCoral) | `findByIdAndUserId` | ✅ |
+| CoralStockController | DELETE `/{coralId}` (deleteCoral) | `findByIdAndUserId` | ✅ |
+| CoralStockController | PUT `/{coralId}/departure` | `findByIdAndUserId` | ✅ |
+| CoralStockController | DELETE `/{coralId}/catalogue-link` | `findByIdAndUserId` | ✅ |
+| CoralStockController | POST/GET/DELETE `/{coralId}/photo` | `findByIdAndUserId` | ✅ |
+| CoralStockController | POST/PUT/DELETE `/{coralId}/growth` | parent coral `findByIdAndUserId` | ✅ |
+| CoralStockController | POST/PUT/DELETE `/{coralId}/polyp` | parent coral `findByIdAndUserId` | ✅ |
+| CoralCatalogueController | POST `/` (proposeEntry) | creator set from JWT | ✅ |
+| CoralCatalogueController | PUT `/{id}` (updateEntry) | `isCreator` OR `isAdmin` check | ✅ |
+| CoralCatalogueAdminController | PUT `/{id}/approve`, `/{id}/reject` | `isAdmin()` check in service | ✅ |
 
 ### Rules for New Endpoints
 

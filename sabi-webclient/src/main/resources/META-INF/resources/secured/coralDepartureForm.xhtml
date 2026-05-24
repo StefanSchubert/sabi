@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T063
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}"
+            contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head>
+    <title>SABI - #{msg['coralstock.departure.form.title']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/coralStockView" styleClass="sabi-back-link">
+                    &#8592; #{msg['coralstock.list.title']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
+                #{msg['coralstock.departure.form.title']}
+                <h:outputText value=" — #{coralDepartureView.speciesName}"
+                              rendered="#{coralDepartureView.speciesName != null}"
+                              style="font-weight:400; font-size:1rem; color:#475569;"/>
+            </h2>
+
+            <h:form id="coralDepartureForm">
+
+                <p:messages id="coralDepartureMessages" showDetail="true" closable="true"/>
+
+                <div class="sabi-form-grid">
+
+                    <!-- Departure date -->
+                    <p:outputLabel for="departureDate" value="#{msg['coralstock.departure.date.label']}"
+                                   style="font-weight:600;"/>
+                    <div>
+                        <p:datePicker id="departureDate"
+                                      value="#{coralDepartureView.departureRecord.departureDate}"
+                                      required="true"
+                                      requiredMessage="#{msg['coralstock.departure.date.required']}"
+                                      pattern="dd.MM.yyyy" showIcon="true" style="width:100%;"/>
+                        <p:message for="departureDate"/>
+                    </div>
+
+                    <!-- Departure reason -->
+                    <p:outputLabel for="departureReason" value="#{msg['coralstock.departure.reason.label']}"
+                                   style="font-weight:600;"/>
+                    <div>
+                        <p:selectOneMenu id="departureReason"
+                                         value="#{coralDepartureView.departureRecord.departureReason}"
+                                         required="true"
+                                         requiredMessage="#{msg['coralstock.departure.reason.required']}"
+                                         style="width:100%;">
+                            <f:selectItems value="#{coralDepartureView.departureReasons}" var="r"
+                                           itemLabel="#{msg['coralstock.departure.reason.'.concat(r.name())]}"
+                                           itemValue="#{r}"/>
+                        </p:selectOneMenu>
+                        <p:message for="departureReason"/>
+                    </div>
+
+                    <!-- Departure note -->
+                    <p:outputLabel for="departureNote" value="#{msg['coralstock.departure.note.label']}"/>
+                    <div>
+                        <p:inputTextarea id="departureNote"
+                                         value="#{coralDepartureView.departureRecord.departureNote}"
+                                         rows="3" maxlength="500" style="width:100%;"/>
+                        <p:message for="departureNote"/>
+                    </div>
+
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--sabi-border);">
+                    <p:commandButton value="#{msg['coralstock.save.button.label']}"
+                                     icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{coralDepartureView.onSave()}"
+                                     update="coralDepartureMessages"/>
+                    <p:commandButton value="#{msg['coralstock.cancel.button.label']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/coralStockView.xhtml';"/>
+                </div>
+
+            </h:form>
+
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

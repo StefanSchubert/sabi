@@ -93,4 +93,15 @@ public interface PublicReportService {
      */
     @Transactional
     boolean updateIncludeEvents(@NotNull Long aquariumId, boolean includeEvents, @NotNull String userEmail);
+
+    /**
+     * Persists the includeCorals flag for an existing report link (005-coral-stock).
+     *
+     * @param aquariumId     tank PK
+     * @param includeCorals  new flag value
+     * @param userEmail      authenticated user email
+     * @return true on success, false if aquarium/link does not exist or belongs to another user
+     */
+    @Transactional
+    boolean updateIncludeCorals(@NotNull Long aquariumId, boolean includeCorals, @NotNull String userEmail);
 }

@@ -38,4 +38,7 @@ public class PublicReportLinkTo implements Serializable {
 
     @Schema(description = "When true, events from the past 365 days are included in the public report.", required = false)
     private boolean includeEvents = false;
+
+    @Schema(description = "When true, active coral stock is included in the public report.", required = false)
+    private boolean includeCorals = false;
 }

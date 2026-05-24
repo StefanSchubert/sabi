@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T069
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}"
+            contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head>
+    <title>SABI - #{msg['coralstock.growth.title']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/coralStockView" styleClass="sabi-back-link">
+                    &#8592; #{msg['coralstock.list.title']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">#{msg['coralstock.growth.title']}</h2>
+
+            <h:form id="growthForm">
+
+                <p:messages id="growthMessages" showDetail="true" closable="true"/>
+
+                <!-- Toggle button: table ↔ chart -->
+                <p:commandButton value="#{coralGrowthHistoryView.chartMode ? msg['coralstock.growth.toggle.table'] : msg['coralstock.growth.toggle.chart']}"
+                                 icon="#{coralGrowthHistoryView.chartMode ? 'pi pi-table' : 'pi pi-chart-line'}"
+                                 styleClass="ui-button-secondary"
+                                 actionListener="#{coralGrowthHistoryView.toggleChartView}"
+                                 update="growthContainer"
+                                 style="margin-bottom:0.75rem;"/>
+
+                <h:panelGroup id="growthContainer" layout="block">
+
+                    <!-- TABLE MODE -->
+                    <p:dataTable value="#{coralGrowthHistoryView.growthHistory}"
+                                 var="rec"
+                                 rendered="#{not coralGrowthHistoryView.chartMode and not empty coralGrowthHistoryView.growthHistory}"
+                                 responsiveLayout="stack" styleClass="p-mt-2">
+
+                        <p:column headerText="#{msg['coralstock.growth.form.date.label']}">
+                            <h:outputText value="#{rec.measuredOn}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="#{msg['coralstock.growth.form.type.label']}">
+                            <h:outputText value="#{msg['coralstock.growthtype.'.concat(rec.measurementType.name())]}"/>
+                        </p:column>
+
+                        <p:column headerText="#{msg['coralstock.growth.form.value.label']}" style="text-align:right; width:6rem;">
+                            <h:outputText value="#{rec.measurementValue}"/>
+                        </p:column>
+
+                        <p:column style="width:5rem; text-align:center;">
+                            <p:commandButton icon="pi pi-trash"
+                                             styleClass="ui-button-danger"
+                                             title="#{msg['coralstock.growth.delete.button']}"
+                                             actionListener="#{coralGrowthHistoryView.onDeleteGrowthRecord(rec)}"
+                                             update="growthContainer growthMessages"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <!-- CHART MODE -->
+                    <p:lineChart model="#{coralGrowthHistoryView.chartModel}"
+                                 rendered="#{coralGrowthHistoryView.chartMode and not empty coralGrowthHistoryView.growthHistory}"
+                                 style="width:100%; height:350px;"/>
+
+                    <!-- Empty message -->
+                    <p:outputLabel value="#{msg['coralstock.growth.no.entries']}"
+                                   rendered="#{empty coralGrowthHistoryView.growthHistory}"
+                                   style="font-style:italic; color:#64748b;"/>
+                </h:panelGroup>
+
+                <!-- Add new measurement -->
+                <p:panel header="#{msg['coralstock.growth.add.button']}" style="margin-top:1rem;">
+                    <div class="sabi-form-grid">
+                        <p:outputLabel for="newMeasuredOn" value="#{msg['coralstock.growth.form.date.label']}"/>
+                        <p:datePicker id="newMeasuredOn"
+                                      value="#{coralGrowthHistoryView.newMeasuredOn}"
+                                      pattern="dd.MM.yyyy" showIcon="true" style="width:100%;"/>
+
+                        <p:outputLabel for="newMeasurementType" value="#{msg['coralstock.growth.form.type.label']}"/>
+                        <p:selectOneMenu id="newMeasurementType"
+                                         value="#{coralGrowthHistoryView.newMeasurementType}"
+                                         style="width:100%;">
+                            <f:selectItems value="#{coralGrowthHistoryView.growthTypes}" var="gt"
+                                           itemLabel="#{msg['coralstock.growthtype.'.concat(gt.name())]}"
+                                           itemValue="#{gt}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="newMeasurementValue" value="#{msg['coralstock.growth.form.value.label']}"/>
+                        <p:inputNumber id="newMeasurementValue"
+                                       value="#{coralGrowthHistoryView.newMeasurementValue}"
+                                       minValue="0.1" decimalPlaces="1" style="width:100%;"/>
+                    </div>
+                    <div style="margin-top:0.75rem;">
+                        <p:commandButton value="#{msg['coralstock.growth.add.button']}"
+                                         icon="pi pi-plus"
+                                         style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                         actionListener="#{coralGrowthHistoryView.onAddGrowthRecord}"
+                                         update="growthContainer growthMessages"/>
+                    </div>
+                </p:panel>
+
+                <!-- Back -->
+                <div style="margin-top:1rem;">
+                    <p:commandButton value="#{msg['coralstock.cancel.button.label']}"
+                                     icon="pi pi-arrow-left"
+                                     styleClass="ui-button-secondary"
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/coralStockView.xhtml';"/>
+                </div>
+
+            </h:form>
+
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

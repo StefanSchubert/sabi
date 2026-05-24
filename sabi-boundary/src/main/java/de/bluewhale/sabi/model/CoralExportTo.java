@@ -8,9 +8,12 @@ package de.bluewhale.sabi.model;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a single coral entry in the AI Chatbot Data Export.
+ * Extended in 005-coral-stock with full growth history and polyp condition history.
  *
  * @author Stefan Schubert
  */
@@ -19,5 +22,15 @@ public class CoralExportTo implements Serializable {
 
     private Long coralCatalogueId;
     private String scientificName;
-    private String observedBehavior;
+    private String speciesName;
+    private String classification;
+    /** ISO date string */
+    private String addedOn;
+    /** ISO date string; null if still active */
+    private String departedOn;
+    private String departureReason;
+    private String departureNote;
+    private String notes;
+    private List<CoralGrowthHistoryExportTo> growthHistory = new ArrayList<>();
+    private List<CoralPolypConditionExportTo> polypConditionHistory = new ArrayList<>();
 }

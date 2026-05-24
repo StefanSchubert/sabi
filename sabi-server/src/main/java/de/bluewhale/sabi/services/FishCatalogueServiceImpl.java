@@ -53,6 +53,9 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
     @Autowired
     private FishCatalogueMapper fishCatalogueMapper;
 
+    @Autowired
+    private NotificationService notificationService;
+
     /** Comma-separated list of admin emails. Configurable via sabi.admin.users property. */
     @Value("${sabi.admin.users:admin@sabi-project.net}")
     private String adminUsers;
@@ -151,6 +154,13 @@ public class FishCatalogueServiceImpl implements FishCatalogueService {
                         Message.warning(FishCatalogueMessageCodes.CATALOGUE_DUPLICATE_WARNING,
                                 entryTo.getScientificName()));
             }
+        }
+
+        // Notify admins asynchronously — failure must not block the user's proposal
+        try {
+            notificationService.sendCatalogueProposalNotification("Fish", entryTo.getScientificName());
+        } catch (Exception e) {
+            log.warn("Failed to send admin notification for fish proposal id={}", savedId, e);
         }
 
         return new ResultTo<>(savedTo,

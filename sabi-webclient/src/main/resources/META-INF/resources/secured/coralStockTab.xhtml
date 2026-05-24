@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T054/T055
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Coral Stock Tab Content — MARINE tanks only (C-8 guard applied here) -->
+    <h:form id="coralStockForm">
+
+        <h:inputHidden id="selectedAquariumIdHidden" value="#{coralStockView.selectedAquariumId}"/>
+
+        <p:remoteCommand name="sabiRefreshCoralTable"
+                         actionListener="#{coralStockView.onTankSelected}"
+                         update=":coralStockForm"
+                         process=":coralStockForm:selectedAquariumIdHidden"/>
+
+        <p:messages id="coralStockMessages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
+        <!-- Add Coral Button -->
+        <div style="margin-bottom:0.75rem;">
+            <p:commandButton value="#{msg['coralstock.add.button.label']}"
+                             icon="pi pi-plus"
+                             ajax="false"
+                             style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                             action="#{coralStockView.onAddCoral()}"
+                             title="#{msg['coralstock.add.button.label']}"
+                             disabled="#{coralStockView.selectedAquariumId == null}"/>
+        </div>
+
+        <!-- Section: Currently in Tank -->
+        <p:panel header="#{msg['coralstock.active.section.label']}" styleClass="greenColoredPanel">
+
+            <p:outputLabel rendered="#{empty coralStockView.activeCorals}"
+                           value="#{msg['coralstock.no.entries.label']}"
+                           style="color:#065f46; font-style:italic;"/>
+
+            <p:dataTable id="activeCoralsTable"
+                         var="coral"
+                         value="#{coralStockView.activeCorals}"
+                         rendered="#{not empty coralStockView.activeCorals}"
+                         responsiveLayout="stack"
+                         styleClass="p-mt-2">
+
+                <!-- Thumbnail -->
+                <p:column headerText="#{msg['coralstock.form.photo.label']}" style="width:3.5rem;">
+                    <p:graphicImage rendered="#{coral.hasPhoto}"
+                                    value="#{request.contextPath}/secured/coralPhoto?coralId=#{coral.id}"
+                                    style="max-width:48px; max-height:48px; border-radius:4px; display:block;"/>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.form.speciesname.label']}">
+                    <p:outputLabel value="#{coral.speciesName}" style="font-weight:600;"/>
+                    <p:outputLabel rendered="#{coral.scientificName != null and coral.scientificName != ''}"
+                                   value=" (#{coral.scientificName})"
+                                   style="color:#64748b; font-size:0.85rem; font-style:italic;"/>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.form.classification.label']}">
+                    <p:outputLabel value="#{coral.classification != null ? msg['coralstock.classification.'.concat(coral.classification.name())] : ''}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.form.entrdate.label']}">
+                    <p:outputLabel value="#{coral.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['common.actions']}" style="width:12rem; text-align:center;">
+                    <p:commandButton icon="pi pi-pencil"
+                                     title="#{msg['coralstock.edit.button.label']}"
+                                     ajax="false"
+                                     action="#{coralStockView.onEditCoral(coral)}"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-arrow-right"
+                                     title="#{msg['coralstock.departure.button.label']}"
+                                     styleClass="ui-button-warning"
+                                     ajax="false"
+                                     action="#{coralStockView.onRecordDeparture(coral)}"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-trash"
+                                     title="#{msg['coralstock.delete.button.label']}"
+                                     styleClass="ui-button-danger"
+                                     actionListener="#{coralStockView.onDeleteCoral(coral)}"
+                                     update=":coralStockForm"/>
+                </p:column>
+
+            </p:dataTable>
+        </p:panel>
+
+        <p:spacer height="10px"/>
+
+        <!-- Section: Departed Corals (FR-007: collapsed by default) -->
+        <p:fieldset legend="#{msg['coralstock.departed.section.label']}"
+                    toggleable="true"
+                    collapsed="true">
+
+            <p:dataTable id="departedCoralsTable"
+                         var="coral"
+                         value="#{coralStockView.departedCorals}"
+                         rendered="#{not empty coralStockView.departedCorals}"
+                         responsiveLayout="stack"
+                         styleClass="p-mt-2">
+
+                <p:column headerText="#{msg['coralstock.form.speciesname.label']}">
+                    <p:outputLabel value="#{coral.speciesName}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.form.classification.label']}">
+                    <p:outputLabel value="#{coral.classification != null ? msg['coralstock.classification.'.concat(coral.classification.name())] : ''}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.form.entrdate.label']}">
+                    <p:outputLabel value="#{coral.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.departure.date.label']}">
+                    <p:outputLabel value="#{coral.departedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['coralstock.departure.reason.label']}">
+                    <p:outputLabel value="#{coral.departureReason != null ? msg['coralstock.departure.reason.'.concat(coral.departureReason.name())] : ''}"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:outputLabel rendered="#{empty coralStockView.departedCorals}"
+                           value="#{msg['coralstock.no.entries.label']}"
+                           style="font-style:italic; color:#64748b;"/>
+        </p:fieldset>
+
+    </h:form>
+
+</ui:composition>
+
