@@ -1,7 +1,7 @@
 -- 006-invertebrate-tracking: Invertebrate stock per user tank.
 -- Mirrors coral_stock; adds invertebrate-specific classification columns.
 
-CREATE TABLE sabi.invertebrate_stock (
+CREATE TABLE invertebrate_stock (
     id                         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     aquarium_id                BIGINT(20) UNSIGNED NOT NULL,
     user_id                    BIGINT(20) UNSIGNED NOT NULL,
@@ -30,9 +30,9 @@ CREATE TABLE sabi.invertebrate_stock (
     INDEX  idx_invert_stock_user        (user_id),
     INDEX  idx_invert_stock_deleted_at  (deleted_at),
     CONSTRAINT fk_invert_stock_aquarium
-        FOREIGN KEY (aquarium_id) REFERENCES sabi.aquarium (id) ON DELETE CASCADE,
+        FOREIGN KEY (aquarium_id) REFERENCES aquarium (id) ON DELETE CASCADE,
     CONSTRAINT fk_invert_stock_user
-        FOREIGN KEY (user_id) REFERENCES sabi.users (id),
+        FOREIGN KEY (user_id) REFERENCES users (id),
     CONSTRAINT fk_invert_stock_catalogue
-        FOREIGN KEY (invertebrate_catalogue_id) REFERENCES sabi.invertebrate_catalogue (id) ON DELETE SET NULL
+        FOREIGN KEY (invertebrate_catalogue_id) REFERENCES invertebrate_catalogue (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

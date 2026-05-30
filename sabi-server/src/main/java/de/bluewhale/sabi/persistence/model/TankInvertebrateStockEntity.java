@@ -126,6 +126,6 @@ public class TankInvertebrateStockEntity extends Auditable {
     /**
      * Water sensitivity units — managed via service layer (delete-all + re-insert).
      */
-    @OneToMany(mappedBy = "invertebrateStockId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "invertebrateStock", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<InvertebrateWaterSensitivityEntity> waterSensitivities = new ArrayList<>();
 }

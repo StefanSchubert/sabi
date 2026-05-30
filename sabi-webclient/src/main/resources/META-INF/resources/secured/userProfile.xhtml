@@ -280,6 +280,30 @@
                                                  ajax="false"
                                                  styleClass="ui-button-primary"/>
                             </p:panelGrid>
+
+                            <!-- 005-coral-stock: include corals opt-in -->
+                            <p:panelGrid columns="3" styleClass="ui-noborder" style="margin-top:0.25rem;">
+                                <p:outputLabel for="includeCoralsCb"
+                                               value="#{msg['userprofile.include.corals.label.l']}"/>
+                                <p:selectBooleanCheckbox id="includeCoralsCb"
+                                                         value="#{userProfileView.includeCoralsMap[tank.id]}"/>
+                                <p:commandButton value="#{msg['common.save.b']}"
+                                                 action="#{userProfileView.saveIncludeCorals(tank.id)}"
+                                                 ajax="false"
+                                                 styleClass="ui-button-primary"/>
+                            </p:panelGrid>
+
+                            <!-- 006-invertebrate-tracking: include invertebrates opt-in -->
+                            <p:panelGrid columns="3" styleClass="ui-noborder" style="margin-top:0.25rem;">
+                                <p:outputLabel for="includeInvertsCb"
+                                               value="#{msg['reportview.invertebrates.include.toggle']}"/>
+                                <p:selectBooleanCheckbox id="includeInvertsCb"
+                                                         value="#{userProfileView.includeInvertebratesMap[tank.id]}"/>
+                                <p:commandButton value="#{msg['common.save.b']}"
+                                                 action="#{userProfileView.saveIncludeInvertebrates(tank.id)}"
+                                                 ajax="false"
+                                                 styleClass="ui-button-primary"/>
+                            </p:panelGrid>
                         </h:form>
                                 </h:panelGroup>
                             </ui:repeat>

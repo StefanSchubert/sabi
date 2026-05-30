@@ -1,7 +1,7 @@
 -- 006-invertebrate-tracking: Photo metadata for invertebrate stock entries.
 -- Mirrors coral_photo. One photo per invertebrate entry (UNIQUE constraint).
 
-CREATE TABLE sabi.invertebrate_photo (
+CREATE TABLE invertebrate_photo (
     id                     BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     invertebrate_stock_id  BIGINT(20) UNSIGNED NOT NULL,
     file_path              VARCHAR(512)        NOT NULL,
@@ -13,5 +13,5 @@ CREATE TABLE sabi.invertebrate_photo (
     PRIMARY KEY (id),
     UNIQUE idx_invert_photo_stock_id (invertebrate_stock_id),
     CONSTRAINT fk_invert_photo_stock
-        FOREIGN KEY (invertebrate_stock_id) REFERENCES sabi.invertebrate_stock (id) ON DELETE CASCADE
+        FOREIGN KEY (invertebrate_stock_id) REFERENCES invertebrate_stock (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

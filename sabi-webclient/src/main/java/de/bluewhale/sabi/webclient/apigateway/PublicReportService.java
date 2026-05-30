@@ -72,4 +72,28 @@ public interface PublicReportService extends Serializable {
      */
     void updateIncludeEventsFlag(@NotNull Long aquariumId, boolean includeEvents, @NotNull String token)
             throws BusinessException;
+
+    /**
+     * Updates the includeCorals flag for the active report link of the given aquarium.
+     * Feature: 005-coral-stock.
+     *
+     * @param aquariumId    tank PK
+     * @param includeCorals new flag value
+     * @param token         auth token
+     * @throws BusinessException on network or authorization error
+     */
+    void updateIncludeCoralsFlag(@NotNull Long aquariumId, boolean includeCorals, @NotNull String token)
+            throws BusinessException;
+
+    /**
+     * Updates the includeInvertebrates flag for the active report link of the given aquarium.
+     * Feature: 006-invertebrate-tracking.
+     *
+     * @param aquariumId           tank PK
+     * @param includeInvertebrates new flag value
+     * @param token                auth token
+     * @throws BusinessException on network or authorization error
+     */
+    void updateIncludeInvertebratesFlag(@NotNull Long aquariumId, boolean includeInvertebrates, @NotNull String token)
+            throws BusinessException;
 }

@@ -336,6 +336,39 @@
                     </div>
                 </p:panel>
 
+                <!-- ==== 006-invertebrate-tracking: INVERTEBRATE SECTION ==== -->
+                <ui:fragment rendered="#{houseReefReportView.report.invertebrateInhabitants != null}">
+                    <p:panel header="#{msg['housereefReport.invertebrates.section.title']}" styleClass="p-mt-2">
+
+                        <h:panelGroup rendered="#{empty houseReefReportView.report.invertebrateInhabitants}">
+                            <p style="color:#64748b; font-style:italic;">
+                                #{msg['housereefReport.invertebrates.empty']}
+                            </p>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not empty houseReefReportView.report.invertebrateInhabitants}">
+                            <p:dataTable value="#{houseReefReportView.report.invertebrateInhabitants}"
+                                         var="invertebrate"
+                                         responsiveLayout="stack"
+                                         style="margin-top:0.5rem;">
+                                <p:column headerText="#{msg['invertebratestock.form.speciesname.label']}">
+                                    <h:outputText value="#{invertebrate.speciesName}"/>
+                                </p:column>
+                                <p:column headerText="#{msg['invertebratestock.form.taxonomiccategory.label']}">
+                                    <h:outputText rendered="#{invertebrate.taxonomicCategory != null}"
+                                                  value="#{msg['invertebratestock.taxonomiccategory.'.concat(invertebrate.taxonomicCategory.name())]}"/>
+                                </p:column>
+                                <p:column headerText="#{msg['invertebratestock.form.scientificname.label']}"
+                                          rendered="#{not empty houseReefReportView.report.invertebrateInhabitants}">
+                                    <h:outputText value="#{invertebrate.scientificName}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGroup>
+
+                    </p:panel>
+                </ui:fragment>
+                <!-- end 006-invertebrate-tracking invertebrate section -->
+
                 <!-- ==== VITAL DATA (MEASUREMENT CHARTS) ==== -->
                 <p:panel header="#{msg['housereef.report.vitaldata.h']}" styleClass="p-mt-2">
                     <h:panelGroup rendered="#{empty houseReefReportView.unitIds}">

@@ -169,4 +169,42 @@ public class PublicReportController {
         boolean success = publicReportService.updateIncludeEvents(aquariumId, includeEvents, principal.getName());
         return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
+
+    // ---- 005-coral-stock: include-corals flag management ----
+
+    @Operation(summary = "Set or clear the includeCorals flag for the active report link of the given aquarium.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Flag updated."),
+        @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user or no link exists."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @PutMapping(value = "/api/report/link/{aquariumId}/include-corals")
+    public ResponseEntity<Void> updateIncludeCorals(
+            @PathVariable Long aquariumId,
+            @RequestParam(value = "includeCorals") boolean includeCorals,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("PUT /api/report/link/{}/include-corals?includeCorals={} for user_id=?", aquariumId, includeCorals);
+        boolean success = publicReportService.updateIncludeCorals(aquariumId, includeCorals, principal.getName());
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    // ---- 006-invertebrate-tracking: include-invertebrates flag management ----
+
+    @Operation(summary = "Set or clear the includeInvertebrates flag for the active report link of the given aquarium.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Flag updated."),
+        @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user or no link exists."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @PutMapping(value = "/api/report/link/{aquariumId}/include-invertebrates")
+    public ResponseEntity<Void> updateIncludeInvertebrates(
+            @PathVariable Long aquariumId,
+            @RequestParam(value = "includeInvertebrates") boolean includeInvertebrates,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("PUT /api/report/link/{}/include-invertebrates?includeInvertebrates={} for user_id=?", aquariumId, includeInvertebrates);
+        boolean success = publicReportService.updateIncludeInvertebrates(aquariumId, includeInvertebrates, principal.getName());
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 }

@@ -93,6 +93,20 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
      */
     private Map<Long, Boolean> includeEventsMap = new LinkedHashMap<>();
 
+    /**
+     * Map: aquariumId → current includeCorals flag value (bound to checkbox in UI).
+     * Populated in init() from the fetched PublicReportLinkTo.includeCorals.
+     * Feature: 005-coral-stock.
+     */
+    private Map<Long, Boolean> includeCoralsMap = new LinkedHashMap<>();
+
+    /**
+     * Map: aquariumId → current includeInvertebrates flag value (bound to checkbox in UI).
+     * Populated in init() from the fetched PublicReportLinkTo.includeInvertebrates.
+     * Feature: 006-invertebrate-tracking.
+     */
+    private Map<Long, Boolean> includeInvertebratesMap = new LinkedHashMap<>();
+
     /** The tank selected by the user in the link management dropdown. */
     private Long selectedTankIdForLink;
 
@@ -126,10 +140,16 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
                     reportLinks.put(tank.getId(), link); // null means no link
                     // 004-aquarium-events: populate includeEventsMap (null-safe)
                     includeEventsMap.put(tank.getId(), link != null && link.isIncludeEvents());
+                    // 005-coral-stock: populate includeCoralsMap (null-safe)
+                    includeCoralsMap.put(tank.getId(), link != null && link.isIncludeCorals());
+                    // 006-invertebrate-tracking: populate includeInvertebratesMap (null-safe)
+                    includeInvertebratesMap.put(tank.getId(), link != null && link.isIncludeInvertebrates());
                 } catch (BusinessException e) {
                     log.warn("Could not fetch report link for tank {}: {}", tank.getId(), e.getMessage());
                     reportLinks.put(tank.getId(), null);
                     includeEventsMap.put(tank.getId(), false);
+                    includeCoralsMap.put(tank.getId(), false);
+                    includeInvertebratesMap.put(tank.getId(), false);
                 }
             }
         } catch (BusinessException e) {
@@ -328,6 +348,44 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             MessageUtil.info("messages", "aquariumevent.includeevents.saved.t", userSession.getLocale());
         } catch (BusinessException e) {
             log.error("Could not save includeEvents for tank_id={}: {}", tankId, e.getMessage());
+            MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    // ---- 005-coral-stock: includeCorals flag ----
+
+    /**
+     * Persists the includeCorals flag for the report link of the given tank.
+     */
+    public String saveIncludeCorals(Long tankId) {
+        Boolean value = includeCoralsMap.getOrDefault(tankId, false);
+        try {
+            publicReportService.updateIncludeCoralsFlag(tankId, value, userSession.getSabiBackendToken());
+            PublicReportLinkTo link = reportLinks.get(tankId);
+            if (link != null) link.setIncludeCorals(value);
+            MessageUtil.info("messages", "aquariumevent.includeevents.saved.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not save includeCorals for tank_id={}: {}", tankId, e.getMessage());
+            MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+        return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    // ---- 006-invertebrate-tracking: includeInvertebrates flag ----
+
+    /**
+     * Persists the includeInvertebrates flag for the report link of the given tank.
+     */
+    public String saveIncludeInvertebrates(Long tankId) {
+        Boolean value = includeInvertebratesMap.getOrDefault(tankId, false);
+        try {
+            publicReportService.updateIncludeInvertebratesFlag(tankId, value, userSession.getSabiBackendToken());
+            PublicReportLinkTo link = reportLinks.get(tankId);
+            if (link != null) link.setIncludeInvertebrates(value);
+            MessageUtil.info("messages", "aquariumevent.includeevents.saved.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not save includeInvertebrates for tank_id={}: {}", tankId, e.getMessage());
             MessageUtil.error("messages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
         return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();

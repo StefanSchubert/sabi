@@ -27,9 +27,15 @@ public class InvertebrateWaterSensitivityEntity extends Auditable {
     @Basic
     private Long id;
 
-    @Column(name = "invertebrate_stock_id", nullable = false)
+    /** Scalar FK column — set by service/mapper when creating entities. */
+    @Column(name = "invertebrate_stock_id", nullable = false, insertable = true, updatable = false)
     @Basic
     private Long invertebrateStockId;
+
+    /** JPA relationship — required for @OneToMany(mappedBy) on the parent entity. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invertebrate_stock_id", insertable = false, updatable = false)
+    private TankInvertebrateStockEntity invertebrateStock;
 
     @Column(name = "unit_id", nullable = false)
     @Basic
