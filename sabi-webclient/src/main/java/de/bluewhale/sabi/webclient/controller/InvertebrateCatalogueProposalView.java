@@ -98,7 +98,7 @@ public class InvertebrateCatalogueProposalView implements Serializable {
                 invertebrateCatalogueService.proposeEntry(currentEntry, token);
                 MessageUtil.info(null, "invertebratecatalogue.propose.success", userSession.getLocale());
             }
-            return "/secured/tankEditor?faces-redirect=true";
+            return "/secured/invertebrateStockView?faces-redirect=true";
         } catch (BusinessException e) {
             log.error("Failed to save invertebrate catalogue entry", e);
             MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());

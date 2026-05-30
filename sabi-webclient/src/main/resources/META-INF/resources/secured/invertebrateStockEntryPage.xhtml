@@ -65,6 +65,11 @@
                     <p:outputLabel rendered="#{invertebrateStockEntryView.currentEntry.invertebrateCatalogueId != null}"
                                    value="#{msg['coralstock.catalogue.linked.info']}: ##{invertebrateStockEntryView.currentEntry.invertebrateCatalogueId}"
                                    style="display:block; color:#065f46; font-size:0.85rem; margin-top:0.25rem;"/>
+                    <div style="margin-top:0.4rem;">
+                        <h:outputLink value="#{request.contextPath}/secured/invertebrateCatalogueProposalForm.xhtml">
+                            <i class="pi pi-plus-circle" style="margin-right:0.2rem;"/>#{msg['invertebratecatalogue.propose.link']}
+                        </h:outputLink>
+                    </div>
                 </div>
 
                 <div class="sabi-form-grid">

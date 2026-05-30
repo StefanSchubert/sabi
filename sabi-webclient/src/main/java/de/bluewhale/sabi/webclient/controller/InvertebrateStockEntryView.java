@@ -136,7 +136,7 @@ public class InvertebrateStockEntryView implements Serializable {
                 handlePhotoUpload();
             }
             invertebrateEntryNavContext.clear();
-            return "/secured/tankEditor?faces-redirect=true";
+            return "/secured/invertebrateStockView?faces-redirect=true";
         } catch (BusinessException e) {
             log.error("Failed to save invertebrate", e);
             MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
@@ -146,7 +146,7 @@ public class InvertebrateStockEntryView implements Serializable {
 
     public String onCancel() {
         invertebrateEntryNavContext.clear();
-        return "/secured/tankEditor?faces-redirect=true";
+        return "/secured/invertebrateStockView?faces-redirect=true";
     }
 
     public void onPhotoUpload() {
