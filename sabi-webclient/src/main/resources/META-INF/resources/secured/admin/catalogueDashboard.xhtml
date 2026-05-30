@@ -80,18 +80,20 @@
                     </div>
                 </div>
 
-                <!-- Invertebrate Catalogue Card (coming soon) -->
-                <div style="border:1px solid #e5e7eb; border-radius:8px; padding:1.5rem; background:#f9fafb; display:flex; flex-direction:column; gap:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.07); opacity:0.65;">
+                <!-- Invertebrate Catalogue Card -->
+                <div style="border:1px solid #e5e7eb; border-radius:8px; padding:1.5rem; background:#ffffff; display:flex; flex-direction:column; gap:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.07);">
                     <div style="display:flex; align-items:center; gap:0.75rem;">
-                        <i class="pi pi-globe" style="font-size:2rem; color:#6b7280;"/>
-                        <h3 style="margin:0; color:#6b7280;">#{msg['catalogue.dashboard.invertebrate.title']}</h3>
+                        <i class="pi pi-globe" style="font-size:2rem; color:#075985;"/>
+                        <h3 style="margin:0; color:#075985;">#{msg['catalogue.dashboard.invertebrate.title']}</h3>
                     </div>
                     <p style="margin:0; color:#6b7280; font-size:0.95rem; flex:1;">#{msg['catalogue.dashboard.invertebrate.description']}</p>
                     <div>
-                        <span style="display:inline-block; background:#e5e7eb; color:#6b7280; padding:0.4rem 1rem; border-radius:4px; font-size:0.9rem;">
-                            <i class="pi pi-clock" style="margin-right:0.3rem;"/>
-                            #{msg['catalogue.dashboard.coming_soon']}
-                        </span>
+                        <h:link outcome="/secured/admin/invertebrateCatalogueAdminView"
+                                styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+                                style="background:#065f46; border-color:#065f46; color:#ffffff; padding:0.4rem 1rem; text-decoration:none; border-radius:4px; font-size:0.9rem;">
+                            <i class="pi pi-arrow-right" style="margin-right:0.3rem;"/>
+                            #{msg['catalogue.dashboard.go.button']}
+                        </h:link>
                     </div>
                 </div>
 

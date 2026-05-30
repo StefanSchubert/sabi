@@ -92,6 +92,10 @@ public class PublicReportServiceImpl implements PublicReportService {
     @Autowired
     private CoralStockService coralStockService;
 
+    // 006-invertebrate-tracking
+    @Autowired
+    private InvertebrateStockService invertebrateStockService;
+
     // -----------------------------------------------------------------------
 
     @Override
@@ -168,6 +172,22 @@ public class PublicReportServiceImpl implements PublicReportService {
         link.setIncludeCorals(includeCorals);
         publicReportLinkRepository.save(link);
         log.info("Updated includeCorals={} for aquarium_id={} by user_id={}", includeCorals, aquariumId, user.getId());
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateIncludeInvertebrates(Long aquariumId, boolean includeInvertebrates, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return false;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return false;
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByAquariumId(aquariumId);
+        if (linkOpt.isEmpty()) return false;
+        PublicReportLinkEntity link = linkOpt.get();
+        link.setIncludeInvertebrates(includeInvertebrates);
+        publicReportLinkRepository.save(link);
+        log.info("Updated includeInvertebrates={} for aquarium_id={} by user_id={}", includeInvertebrates, aquariumId, user.getId());
         return true;
     }
 
@@ -272,6 +292,14 @@ public class PublicReportServiceImpl implements PublicReportService {
         }
         // else: coralInhabitants stays null (not opted-in)
 
+        // 006-invertebrate-tracking: include active invertebrates if opted-in
+        if (link.isIncludeInvertebrates()) {
+            List<InvertebrateStockEntryTo> invertebrateData =
+                    invertebrateStockService.getActiveInvertebratesForReport(link.getAquariumId());
+            report.setInvertebrateInhabitants(invertebrateData);
+        }
+        // else: invertebrateInhabitants stays null (not opted-in)
+
         return report;
     }
 
@@ -285,6 +313,7 @@ public class PublicReportServiceImpl implements PublicReportService {
         to.setValidUntil(entity.getValidUntil());
         to.setIncludeEvents(entity.isIncludeEvents());   // 004-aquarium-events: propagate flag to gateway
         to.setIncludeCorals(entity.isIncludeCorals());   // 005-coral-stock: propagate flag to gateway
+        to.setIncludeInvertebrates(entity.isIncludeInvertebrates());  // 006-invertebrate-tracking
         return to;
     }
 

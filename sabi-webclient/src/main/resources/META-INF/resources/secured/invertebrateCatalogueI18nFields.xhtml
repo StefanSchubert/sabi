@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 006-invertebrate-tracking — reusable composite for i18n fields
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Reusable i18n field group for one language of an invertebrate catalogue entry.
+         Attributes: lang (String like "de","en"), i18nEntry (InvertebrateCatalogueI18nTo) -->
+
+    <h3 style="color:var(--sabi-accent); text-transform:uppercase; font-size:0.9rem; margin-bottom:0.5rem;">
+        #{lang}
+    </h3>
+
+    <div class="sabi-form-grid">
+        <p:outputLabel value="#{msg['invertebratecatalogue.i18n.commonname.label']}"/>
+        <p:inputText value="#{i18nEntry.commonName}" maxlength="255" style="width:100%;"/>
+
+        <p:outputLabel value="#{msg['invertebratecatalogue.i18n.description.label']}"/>
+        <p:inputTextarea value="#{i18nEntry.description}" rows="3" maxlength="2000" style="width:100%;"/>
+
+        <p:outputLabel value="#{msg['invertebratecatalogue.i18n.refurl.label']}"/>
+        <p:inputText value="#{i18nEntry.referenceUrl}" maxlength="512" style="width:100%;"/>
+    </div>
+
+</ui:composition>

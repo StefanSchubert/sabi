@@ -41,4 +41,7 @@ public class PublicReportLinkTo implements Serializable {
 
     @Schema(description = "When true, active coral stock is included in the public report.", required = false)
     private boolean includeCorals = false;
+
+    @Schema(description = "When true, active invertebrate stock is included in the public report.", required = false)
+    private boolean includeInvertebrates = false;
 }

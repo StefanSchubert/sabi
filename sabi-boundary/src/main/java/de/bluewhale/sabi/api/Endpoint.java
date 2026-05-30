@@ -42,7 +42,11 @@ public enum Endpoint {
     // 005-coral-stock
     CORAL_STOCK("/api/coral"),
     CORAL_CATALOGUE("/api/coral/catalogue"),
-    CORAL_CATALOGUE_ADMIN("/api/admin/coral/catalogue");
+    CORAL_CATALOGUE_ADMIN("/api/admin/coral/catalogue"),
+    // 006-invertebrate-tracking
+    INVERTEBRATE_STOCK("/api/invertebrate"),
+    INVERTEBRATE_CATALOGUE("/api/invertebrate-catalogue"),
+    INVERTEBRATE_CATALOGUE_ADMIN("/api/admin/invertebrate-catalogue");
 
 // ------------------------------ FIELDS ------------------------------
 

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 006-invertebrate-tracking — T035
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}"
+            contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head>
+    <title>SABI - #{msg['invertebratestock.entry.form.title']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/invertebrateStockView" styleClass="sabi-back-link">
+                    &#8592; #{msg['invertebratestock.list.title']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
+                #{invertebrateStockEntryView.edit ? msg['invertebratestock.edit.form.title'] : msg['invertebratestock.add.form.title']}
+            </h2>
+
+            <h:form id="invertebrateEntryForm">
+
+                <p:messages id="invertebrateEntryMessages" showDetail="true" closable="true"/>
+
+                <!-- Catalogue Search (outside grid) -->
+                <div style="margin-bottom:1rem;">
+                    <p:outputLabel for="catalogueSearch" value="#{msg['invertebratestock.catalogue.search.label']}"
+                                   style="display:block; font-weight:600; margin-bottom:0.25rem;"/>
+                    <p:autoComplete id="catalogueSearch"
+                                    completeMethod="#{invertebrateStockEntryView.onSearchCatalogue}"
+                                    itemLabel="#{result.scientificName}"
+                                    itemValue="#{result}"
+                                    converter="invertebrateCatalogueSearchResultConverter"
+                                    minQueryLength="2"
+                                    delay="300"
+                                    dropdown="false"
+                                    forceSelection="true"
+                                    style="width:100%;"
+                                    placeholder="#{msg['invertebratestock.catalogue.search.placeholder']}"
+                                    var="result">
+                        <p:ajax event="itemSelect" listener="#{invertebrateStockEntryView.onSelectCatalogue}"
+                                update="invertebrateEntryForm:scientificName invertebrateEntryForm:taxonomicCategory invertebrateEntryForm:careLevel invertebrateEntryMessages"/>
+                    </p:autoComplete>
+                    <p:commandButton value="#{msg['coralstock.catalogue.unlink.button']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     rendered="#{invertebrateStockEntryView.currentEntry.invertebrateCatalogueId != null}"
+                                     actionListener="#{invertebrateStockEntryView.onRemoveCatalogueLink()}"
+                                     update="invertebrateEntryForm"
+                                     style="margin-top:0.5rem; font-size:0.85rem;"/>
+                    <p:outputLabel rendered="#{invertebrateStockEntryView.currentEntry.invertebrateCatalogueId != null}"
+                                   value="#{msg['coralstock.catalogue.linked.info']}: ##{invertebrateStockEntryView.currentEntry.invertebrateCatalogueId}"
+                                   style="display:block; color:#065f46; font-size:0.85rem; margin-top:0.25rem;"/>
+                </div>
+
+                <div class="sabi-form-grid">
+
+                    <!-- Species name -->
+                    <p:outputLabel for="speciesName" value="#{msg['invertebratestock.form.speciesname.label']}"
+                                   style="font-weight:600;"/>
+                    <div>
+                        <p:inputText id="speciesName"
+                                     value="#{invertebrateStockEntryView.currentEntry.speciesName}"
+                                     required="true"
+                                     requiredMessage="#{msg['invertebratestock.form.speciesname.required']}"
+                                     maxlength="150" style="width:100%;"/>
+                        <p:message for="speciesName"/>
+                    </div>
+
+                    <!-- Scientific name -->
+                    <p:outputLabel for="scientificName" value="#{msg['invertebratestock.form.scientificname.label']}"/>
+                    <div>
+                        <p:inputText id="scientificName"
+                                     value="#{invertebrateStockEntryView.currentEntry.scientificName}"
+                                     maxlength="150" style="width:100%;"/>
+                        <p:message for="scientificName"/>
+                    </div>
+
+                    <!-- Taxonomic category -->
+                    <p:outputLabel for="taxonomicCategory" value="#{msg['invertebratestock.form.taxonomiccategory.label']}"/>
+                    <div>
+                        <p:selectOneMenu id="taxonomicCategory"
+                                         value="#{invertebrateStockEntryView.currentEntry.taxonomicCategory}"
+                                         style="width:100%;">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{invertebrateStockEntryView.taxonomicCategories}" var="tc"
+                                           itemLabel="#{msg['invertebratestock.taxonomiccategory.'.concat(tc.name())]}"
+                                           itemValue="#{tc}"/>
+                        </p:selectOneMenu>
+                        <p:message for="taxonomicCategory"/>
+                    </div>
+
+                    <!-- Care level -->
+                    <p:outputLabel for="careLevel" value="#{msg['invertebratestock.form.carelevel.label']}"/>
+                    <div>
+                        <p:selectOneMenu id="careLevel"
+                                         value="#{invertebrateStockEntryView.currentEntry.careLevel}"
+                                         style="width:100%;">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{invertebrateStockEntryView.careLevels}" var="cl"
+                                           itemLabel="#{msg['coralstock.carelevel.'.concat(cl.name())]}"
+                                           itemValue="#{cl}"/>
+                        </p:selectOneMenu>
+                        <p:message for="careLevel"/>
+                    </div>
+
+                    <!-- Mobility -->
+                    <p:outputLabel for="mobility" value="#{msg['invertebratestock.form.mobility.label']}"/>
+                    <div>
+                        <p:selectOneMenu id="mobility"
+                                         value="#{invertebrateStockEntryView.currentEntry.mobility}"
+                                         style="width:100%;">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{invertebrateStockEntryView.mobilityOptions}" var="m"
+                                           itemLabel="#{msg['invertebratestock.mobility.'.concat(m.name())]}"
+                                           itemValue="#{m}"/>
+                        </p:selectOneMenu>
+                        <p:message for="mobility"/>
+                    </div>
+
+                    <!-- Ecological role -->
+                    <p:outputLabel for="ecologicalRole" value="#{msg['invertebratestock.form.ecologicalrole.label']}"/>
+                    <div>
+                        <p:selectOneMenu id="ecologicalRole"
+                                         value="#{invertebrateStockEntryView.currentEntry.ecologicalRole}"
+                                         style="width:100%;">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{invertebrateStockEntryView.ecologicalRoles}" var="er"
+                                           itemLabel="#{msg['invertebratestock.ecologicalrole.'.concat(er.name())]}"
+                                           itemValue="#{er}"/>
+                        </p:selectOneMenu>
+                        <p:message for="ecologicalRole"/>
+                    </div>
+
+                    <!-- Activity pattern -->
+                    <p:outputLabel for="activityPattern" value="#{msg['invertebratestock.form.activitypattern.label']}"/>
+                    <div>
+                        <p:selectOneMenu id="activityPattern"
+                                         value="#{invertebrateStockEntryView.currentEntry.activityPattern}"
+                                         style="width:100%;">
+                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{invertebrateStockEntryView.activityPatterns}" var="ap"
+                                           itemLabel="#{msg['invertebratestock.activitypattern.'.concat(ap.name())]}"
+                                           itemValue="#{ap}"/>
+                        </p:selectOneMenu>
+                        <p:message for="activityPattern"/>
+                    </div>
+
+                    <!-- Entry date -->
+                    <p:outputLabel for="addedOn" value="#{msg['invertebratestock.form.entrdate.label']}"
+                                   style="font-weight:600;"/>
+                    <div>
+                        <p:datePicker id="addedOn"
+                                      value="#{invertebrateStockEntryView.currentEntry.addedOn}"
+                                      required="true"
+                                      requiredMessage="#{msg['invertebratestock.form.entrdate.required']}"
+                                      pattern="dd.MM.yyyy" showIcon="true" style="width:100%;"/>
+                        <p:message for="addedOn"/>
+                    </div>
+
+                    <!-- External ref URL -->
+                    <p:outputLabel for="externalRefUrl" value="#{msg['invertebratestock.form.externalrefurl.label']}"/>
+                    <div>
+                        <p:inputText id="externalRefUrl"
+                                     value="#{invertebrateStockEntryView.currentEntry.externalRefUrl}"
+                                     maxlength="512" style="width:100%;"/>
+                        <p:message for="externalRefUrl"/>
+                    </div>
+
+                    <!-- Notes -->
+                    <p:outputLabel for="notes" value="#{msg['invertebratestock.form.notes.label']}"/>
+                    <div>
+                        <p:inputTextarea id="notes"
+                                         value="#{invertebrateStockEntryView.currentEntry.notes}"
+                                         rows="3" maxlength="2000" style="width:100%;"/>
+                        <p:message for="notes"/>
+                    </div>
+
+                    <!-- Photo upload -->
+                    <p:outputLabel for="photoUpload" value="#{msg['invertebratestock.form.photo.label']}"/>
+                    <div>
+                        <p:fileUpload id="photoUpload"
+                                      fileLimit="1"
+                                      sizeLimit="5242880"
+                                      accept="image/*"
+                                      mode="simple"
+                                      skinSimple="true"
+                                      value="#{invertebrateStockEntryView.uploadedFile}"
+                                      listener="#{invertebrateStockEntryView.onPhotoUpload}"
+                                      style="width:100%;"/>
+                        <p:graphicImage rendered="#{invertebrateStockEntryView.previewPhoto != null}"
+                                        value="#{invertebrateStockEntryView.previewPhoto}"
+                                        style="max-width:200px; max-height:150px; margin-top:0.5rem; border-radius:4px;"/>
+                        <p:message for="photoUpload"/>
+                    </div>
+
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--sabi-border);">
+                    <p:commandButton value="#{msg['invertebratestock.save.button.label']}"
+                                     icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{invertebrateStockEntryView.onSave()}"
+                                     update="invertebrateEntryMessages"/>
+                    <p:commandButton value="#{msg['invertebratestock.cancel.button.label']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     ajax="false"
+                                     action="#{invertebrateStockEntryView.onCancel()}"/>
+                </div>
+
+            </h:form>
+
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

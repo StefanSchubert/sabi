@@ -104,4 +104,15 @@ public interface PublicReportService {
      */
     @Transactional
     boolean updateIncludeCorals(@NotNull Long aquariumId, boolean includeCorals, @NotNull String userEmail);
+
+    /**
+     * Toggle whether invertebrate stock is included in the public report for an aquarium.
+     *
+     * @param aquariumId        ID of the aquarium
+     * @param includeInvertebrates  whether to include active invertebrate stock
+     * @param userEmail         authenticated user's email
+     * @return true if update succeeded, false if link not found or not yours
+     */
+    @Transactional
+    boolean updateIncludeInvertebrates(@NotNull Long aquariumId, boolean includeInvertebrates, @NotNull String userEmail);
 }

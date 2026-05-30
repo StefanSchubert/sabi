@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 006-invertebrate-tracking — T036
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+
+<h:head>
+    <title>SABI - #{msg['invertebratestock.list.title']}</title>
+</h:head>
+
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <!-- Tank selector -->
+            <h:form id="tankSelectorForm" style="margin-bottom:1rem;">
+                <p:outputLabel value="#{msg['tankview.tanklist.h']}" style="font-weight:600; display:block; margin-bottom:0.5rem;"/>
+                <p:selectOneMenu id="tankSelector"
+                                 value="#{invertebrateStockView.selectedAquariumId}"
+                                 style="width:100%; max-width:400px;">
+                    <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{tankListView.tanks}" var="tank"
+                                   itemLabel="#{tank.description}" itemValue="#{tank.id}"/>
+                    <p:ajax event="change"
+                            listener="#{invertebrateStockView.onTankSelected}"
+                            update=":invertebrateStockForm :messages"/>
+                </p:selectOneMenu>
+            </h:form>
+
+            <!-- Invertebrate Stock Tab content -->
+            <ui:include src="/secured/invertebrateStockTab.xhtml"/>
+
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
