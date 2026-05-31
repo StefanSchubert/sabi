@@ -463,6 +463,121 @@ test.describe('Invertebrate Stock Flow', () => {
     }
   });
 
+  // ── Edit mit Taxonomie-Änderung (Regression: CNIDARIAN 400-Bug) ──────────────────────
+
+  test('Zwei Einträge mit unterschiedlicher Taxonomie anlegen, bearbeiten und Änderung persistiert', async ({ page }) => {
+    const ts = Date.now();
+    const name1 = `E2E-TaxEdit1-${ts}`;
+    const name2 = `E2E-TaxEdit2-${ts}`;
+
+    // ── Hilfsfunktion: Eintrag anlegen ──
+    async function createEntry(speciesName: string, taxonomy: string) {
+      await page.goto('/secured/invertebrateStockView.xhtml', { waitUntil: 'networkidle' });
+      await selectNanoReef(page);
+      const addBtn = page.locator('#invertebrateStockForm button').filter({ hasText: /hinzuf|add/i }).first();
+      await expect(addBtn).toBeEnabled({ timeout: 10_000 });
+      await addBtn.click();
+      await page.waitForLoadState('networkidle');
+      await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+      await page.locator('[id$="speciesName"]').fill(speciesName);
+      await page.locator('[id$="addedOn_input"]').fill(todayString());
+      await page.locator('[id$="speciesName"]').click();
+      await page.waitForTimeout(300);
+      await selectTaxonomicCategory(page, taxonomy);
+
+      const saveBtn = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+      await saveBtn.scrollIntoViewIfNeeded();
+      await saveBtn.click({ force: true });
+      await page.waitForURL(/invertebrateStockView/, { timeout: 15_000 });
+    }
+
+    // ── Hilfsfunktion: Taxonomy-Label im Edit-Formular lesen ──
+    async function getSelectedTaxonomy(page: Page): Promise<string> {
+      return page.evaluate(() => {
+        const sel = document.querySelector<HTMLSelectElement>('select[id$="taxonomicCategory_input"]');
+        return sel ? sel.value : '';
+      });
+    }
+
+    // 1. Beide Einträge anlegen
+    await createEntry(name1, 'CRUSTACEAN');
+    await createEntry(name2, 'ECHINODERM');
+
+    // 2. Eintrag 1: Taxonomie von CRUSTACEAN → CNIDARIAN ändern
+    await page.goto('/secured/invertebrateStockView.xhtml', { waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    await expect(page.locator('#invertebrateStockForm')).toContainText(name1, { timeout: 10_000 });
+
+    const row1 = page.locator('tr').filter({ hasText: name1 }).first();
+    await row1.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    // Verify the loaded taxonomy
+    const loadedTax1 = await getSelectedTaxonomy(page);
+    expect(loadedTax1).toBe('CRUSTACEAN');
+
+    // Taxonomie auf CNIDARIAN ändern und speichern
+    await selectTaxonomicCategory(page, 'CNIDARIAN');
+    const saveBtn1 = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+    await saveBtn1.scrollIntoViewIfNeeded();
+    await saveBtn1.click({ force: true });
+    await page.waitForURL(/invertebrateStockView/, { timeout: 15_000 });
+
+    // 3. Eintrag 1 erneut öffnen → CNIDARIAN muss gespeichert sein
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    const row1After = page.locator('tr').filter({ hasText: name1 }).first();
+    await row1After.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const updatedTax1 = await getSelectedTaxonomy(page);
+    expect(updatedTax1).toBe('CNIDARIAN');
+
+    // 4. Eintrag 2: Taxonomie von ECHINODERM → MOLLUSC ändern
+    await page.goto('/secured/invertebrateStockView.xhtml', { waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    await expect(page.locator('#invertebrateStockForm')).toContainText(name2, { timeout: 10_000 });
+
+    const row2 = page.locator('tr').filter({ hasText: name2 }).first();
+    await row2.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const loadedTax2 = await getSelectedTaxonomy(page);
+    expect(loadedTax2).toBe('ECHINODERM');
+
+    await selectTaxonomicCategory(page, 'MOLLUSC');
+    const saveBtn2 = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+    await saveBtn2.scrollIntoViewIfNeeded();
+    await saveBtn2.click({ force: true });
+    await page.waitForURL(/invertebrateStockView/, { timeout: 15_000 });
+
+    // 5. Eintrag 2 erneut öffnen → MOLLUSC muss gespeichert sein
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    const row2After = page.locator('tr').filter({ hasText: name2 }).first();
+    await row2After.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const updatedTax2 = await getSelectedTaxonomy(page);
+    expect(updatedTax2).toBe('MOLLUSC');
+
+    // ── Cleanup ──
+    for (const name of [name1, name2]) {
+      await page.goto('/secured/invertebrateStockView.xhtml', { waitUntil: 'networkidle' });
+      await selectNanoReef(page);
+      const row = page.locator('tr').filter({ hasText: name }).first();
+      if (await row.isVisible()) {
+        await row.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+        await page.waitForLoadState('networkidle');
+      }
+    }
+  });
+
   test('Foto-Upload: zweiter Upload überschreibt erstes Foto (kein Duplicate-Key-Fehler)', async ({ page }) => {
     const invertName = `E2E-FotoReplace-${Date.now()}`;
     const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');

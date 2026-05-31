@@ -151,6 +151,36 @@ public class PublicReportController {
                 .body(bytes);
     }
 
+    @Operation(summary = "Returns a coral photo for a valid share token.")
+    @GetMapping(value = "/api/public/report/{token}/coral/{coralId}/photo")
+    public ResponseEntity<byte[]> getCoralPhoto(
+            @PathVariable("token") String token,
+            @PathVariable("coralId") Long coralId) {
+        log.debug("GET /api/public/report/{}/coral/{}/photo", token, coralId);
+        byte[] bytes = publicReportService.getCoralPhotoBytes(token, coralId);
+        if (bytes.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
+    }
+
+    @Operation(summary = "Returns an invertebrate photo for a valid share token.")
+    @GetMapping(value = "/api/public/report/{token}/invertebrate/{invertebrateId}/photo")
+    public ResponseEntity<byte[]> getInvertebratePhoto(
+            @PathVariable("token") String token,
+            @PathVariable("invertebrateId") Long invertebrateId) {
+        log.debug("GET /api/public/report/{}/invertebrate/{}/photo", token, invertebrateId);
+        byte[] bytes = publicReportService.getInvertebratePhotoBytes(token, invertebrateId);
+        if (bytes.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
+    }
+
     // ---- 004-aquarium-events: include-events flag management ----
 
     @Operation(summary = "Set or clear the includeEvents flag for the active report link of the given aquarium.")
@@ -205,6 +235,23 @@ public class PublicReportController {
             Principal principal) {
         log.debug("PUT /api/report/link/{}/include-invertebrates?includeInvertebrates={} for user_id=?", aquariumId, includeInvertebrates);
         boolean success = publicReportService.updateIncludeInvertebrates(aquariumId, includeInvertebrates, principal.getName());
+        return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @Operation(summary = "Set or clear the includeFish flag for the active report link of the given aquarium.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Flag updated."),
+        @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user or no link exists."),
+        @ApiResponse(responseCode = "401", description = "Unauthorized.")
+    })
+    @PutMapping(value = "/api/report/link/{aquariumId}/include-fish")
+    public ResponseEntity<Void> updateIncludeFish(
+            @PathVariable Long aquariumId,
+            @RequestParam(value = "includeFish") boolean includeFish,
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token,
+            Principal principal) {
+        log.debug("PUT /api/report/link/{}/include-fish?includeFish={} for user_id=?", aquariumId, includeFish);
+        boolean success = publicReportService.updateIncludeFish(aquariumId, includeFish, principal.getName());
         return success ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 }

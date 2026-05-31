@@ -115,7 +115,7 @@ public class UserSession implements Serializable {
      * @param sabiBackendToken
      */
     public void setSabiBackendToken(String sabiBackendToken) {
-        log.info("setSabiBackendToken: prefix='{}', length={}",
+        log.debug("setSabiBackendToken: prefix='{}', length={}",
                 sabiBackendToken != null && sabiBackendToken.length() > 10
                         ? sabiBackendToken.substring(0, 10) + "..."
                         : sabiBackendToken,

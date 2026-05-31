@@ -507,6 +507,8 @@ public class CoralStockServiceImpl implements CoralStockService {
             String latestCondition = polypHistory.isEmpty() ? null : polypHistory.get(0).getPolypCondition();
 
             PublicReefReportCoralTo to = new PublicReefReportCoralTo();
+            to.setId(coral.getId());
+            to.setHasPhoto(photoRepository.findByCoralStockId(coral.getId()).isPresent());
             to.setSpeciesName(coral.getSpeciesName());
             to.setClassification(coral.getClassification());
             to.setLatestGrowthByType(latestByType);

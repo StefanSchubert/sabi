@@ -83,6 +83,28 @@ public interface PublicReportService {
     byte[] getFishPhotoBytes(@NotNull String linkToken, @NotNull Long fishId);
 
     /**
+     * Returns the raw coral photo bytes for the given token and coral ID.
+     * Validates that the token is valid and that the coral belongs to the associated aquarium.
+     *
+     * @param linkToken UUID share token
+     * @param coralId   ID of the coral stock entry
+     * @return photo bytes or empty array
+     */
+    @NotNull
+    byte[] getCoralPhotoBytes(@NotNull String linkToken, @NotNull Long coralId);
+
+    /**
+     * Returns the raw invertebrate photo bytes for the given token and invertebrate ID.
+     * Validates that the token is valid and that the invertebrate belongs to the associated aquarium.
+     *
+     * @param linkToken       UUID share token
+     * @param invertebrateId  ID of the invertebrate stock entry
+     * @return photo bytes or empty array
+     */
+    @NotNull
+    byte[] getInvertebratePhotoBytes(@NotNull String linkToken, @NotNull Long invertebrateId);
+
+    /**
      * Persists the includeEvents flag for an existing report link.
      * Verifies that the aquarium belongs to the user before updating.
      *
@@ -115,4 +137,15 @@ public interface PublicReportService {
      */
     @Transactional
     boolean updateIncludeInvertebrates(@NotNull Long aquariumId, boolean includeInvertebrates, @NotNull String userEmail);
+
+    /**
+     * Toggle whether fish inhabitants are included in the public report for an aquarium.
+     *
+     * @param aquariumId  ID of the aquarium
+     * @param includeFish whether to include active fish stock
+     * @param userEmail   authenticated user's email
+     * @return true if update succeeded, false if link not found or not yours
+     */
+    @Transactional
+    boolean updateIncludeFish(@NotNull Long aquariumId, boolean includeFish, @NotNull String userEmail);
 }

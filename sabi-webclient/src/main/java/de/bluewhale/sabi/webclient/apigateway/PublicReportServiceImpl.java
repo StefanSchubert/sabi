@@ -151,5 +151,23 @@ public class PublicReportServiceImpl extends APIServiceImpl implements PublicRep
             throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
         }
     }
+
+    @Override
+    public void updateIncludeFishFlag(Long aquariumId, boolean includeFish, String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.REPORT_LINK.getPath() + "/" + aquariumId
+                     + "/include-fish?includeFish=" + includeFish;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class);
+            renewBackendToken(response);
+        } catch (HttpClientErrorException.Forbidden e) {
+            throw new BusinessException(AuthExceptionCodes.INSUFFICIENT_PERMISSIONS);
+        } catch (RestClientException e) {
+            log.error("Failed to update includeFish for aquarium_id={}", aquariumId, e);
+            throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+    }
 }
 

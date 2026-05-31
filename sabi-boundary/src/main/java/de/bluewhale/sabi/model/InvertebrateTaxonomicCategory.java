@@ -20,7 +20,8 @@ public enum InvertebrateTaxonomicCategory implements Serializable {
     CRUSTACEAN,
     MOLLUSC,
     ECHINODERM,
-    WORM;
+    WORM,
+    CNIDARIAN;
 
     @JsonValue
     public String toValue() {

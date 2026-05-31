@@ -329,11 +329,44 @@
                     </h:panelGroup>
                 </p:panel>
 
-                <!-- ==== CORALS / INVERTEBRATES PLACEHOLDER ==== -->
+                <!-- ==== CORALS ==== -->
                 <p:panel header="#{msg['housereef.report.corals.h']}" styleClass="p-mt-2">
-                    <div class="coming-soon-box">
-                        <p:outputLabel value="#{msg['housereef.report.corals.comingsoon.t']}"/>
-                    </div>
+                    <h:panelGroup rendered="#{houseReefReportView.report.coralInhabitants == null}">
+                        <p style="color:#64748b; font-style:italic;">#{msg['housereef.report.corals.notshared.t']}</p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{houseReefReportView.report.coralInhabitants != null and empty houseReefReportView.report.coralInhabitants}">
+                        <p style="color:#64748b;">#{msg['housereef.report.no.corals.t']}</p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not empty houseReefReportView.report.coralInhabitants}">
+                        <ui:repeat value="#{houseReefReportView.report.coralInhabitants}" var="coral">
+                            <div class="fish-card">
+                                <h:panelGroup rendered="#{coral.hasPhoto}">
+                                    <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/coral/#{coral.id}/photo"
+                                         alt="#{coral.speciesName}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{!coral.hasPhoto}">
+                                    <h:graphicImage library="images" name="icons8-crab-64.png"
+                                                    styleClass="fish-default"
+                                                    alt="#{coral.speciesName}"/>
+                                </h:panelGroup>
+                                <div class="fish-info">
+                                    <div class="fish-name">
+                                        <h:outputText value="#{coral.speciesName}"/>
+                                    </div>
+                                    <h:panelGroup rendered="#{coral.classification != null and coral.classification != ''}">
+                                        <div class="fish-sci">
+                                            <h:outputText value="#{coral.classification}"/>
+                                        </div>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{coral.latestPolypCondition != null and coral.latestPolypCondition != ''}">
+                                        <div class="fish-obs">
+                                            <h:outputText value="#{msg['housereef.report.coral.polyp.l']}: #{coral.latestPolypCondition}"/>
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </h:panelGroup>
                 </p:panel>
 
                 <!-- ==== 006-invertebrate-tracking: INVERTEBRATE SECTION ==== -->
@@ -347,22 +380,34 @@
                         </h:panelGroup>
 
                         <h:panelGroup rendered="#{not empty houseReefReportView.report.invertebrateInhabitants}">
-                            <p:dataTable value="#{houseReefReportView.report.invertebrateInhabitants}"
-                                         var="invertebrate"
-                                         responsiveLayout="stack"
-                                         style="margin-top:0.5rem;">
-                                <p:column headerText="#{msg['invertebratestock.form.speciesname.label']}">
-                                    <h:outputText value="#{invertebrate.speciesName}"/>
-                                </p:column>
-                                <p:column headerText="#{msg['invertebratestock.form.taxonomiccategory.label']}">
-                                    <h:outputText rendered="#{invertebrate.taxonomicCategory != null}"
-                                                  value="#{msg['invertebratestock.taxonomiccategory.'.concat(invertebrate.taxonomicCategory.name())]}"/>
-                                </p:column>
-                                <p:column headerText="#{msg['invertebratestock.form.scientificname.label']}"
-                                          rendered="#{not empty houseReefReportView.report.invertebrateInhabitants}">
-                                    <h:outputText value="#{invertebrate.scientificName}"/>
-                                </p:column>
-                            </p:dataTable>
+                            <ui:repeat value="#{houseReefReportView.report.invertebrateInhabitants}" var="invertebrate">
+                                <div class="fish-card">
+                                    <h:panelGroup rendered="#{invertebrate.hasPhoto}">
+                                        <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/invertebrate/#{invertebrate.id}/photo"
+                                             alt="#{invertebrate.speciesName}"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{!invertebrate.hasPhoto}">
+                                        <h:graphicImage library="images" name="icons8-crab-64.png"
+                                                        styleClass="fish-default"
+                                                        alt="#{invertebrate.speciesName}"/>
+                                    </h:panelGroup>
+                                    <div class="fish-info">
+                                        <div class="fish-name">
+                                            <h:outputText value="#{invertebrate.speciesName}"/>
+                                        </div>
+                                        <h:panelGroup rendered="#{invertebrate.scientificName != null and invertebrate.scientificName != ''}">
+                                            <div class="fish-sci">
+                                                <h:outputText value="#{invertebrate.scientificName}"/>
+                                            </div>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{invertebrate.taxonomicCategory != null}">
+                                            <div class="fish-obs">
+                                                <h:outputText value="#{msg['invertebratestock.taxonomiccategory.'.concat(invertebrate.taxonomicCategory.name())]}"/>
+                                            </div>
+                                        </h:panelGroup>
+                                    </div>
+                                </div>
+                            </ui:repeat>
                         </h:panelGroup>
 
                     </p:panel>
