@@ -329,7 +329,11 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
                         eto.setSpeciesName(e.getSpeciesName());
                         eto.setTaxonomicCategory(e.getTaxonomicCategory() != null ? e.getTaxonomicCategory().name() : null);
                         eto.setMobility(e.getMobility() != null ? e.getMobility().name() : null);
-                        eto.setEcologicalRole(e.getEcologicalRole() != null ? e.getEcologicalRole().name() : null);
+                        eto.setEcologicalRoles(e.getEcologicalRoles() != null
+                                ? e.getEcologicalRoles().stream()
+                                        .map(de.bluewhale.sabi.model.InvertebrateEcologicalRole::name)
+                                        .collect(java.util.stream.Collectors.toList())
+                                : new java.util.ArrayList<>());
                         eto.setActivityPattern(e.getActivityPattern() != null ? e.getActivityPattern().name() : null);
                         eto.setAddedOn(e.getAddedOn() != null ? e.getAddedOn().toString() : null);
                         eto.setDepartedOn(e.getDepartedOn() != null ? e.getDepartedOn().toString() : null);

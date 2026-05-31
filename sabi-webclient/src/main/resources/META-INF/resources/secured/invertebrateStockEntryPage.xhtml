@@ -139,18 +139,19 @@
                         <p:message for="mobility"/>
                     </div>
 
-                    <!-- Ecological role -->
-                    <p:outputLabel for="ecologicalRole" value="#{msg['invertebratestock.form.ecologicalrole.label']}"/>
+                    <!-- Ecological roles (multi-select checkboxes) -->
+                    <p:outputLabel for="ecologicalRoles" value="#{msg['invertebratestock.form.ecologicalrole.label']}"/>
                     <div>
-                        <p:selectOneMenu id="ecologicalRole"
-                                         value="#{invertebrateStockEntryView.currentEntry.ecologicalRole}"
-                                         style="width:100%;">
-                            <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                        <p:selectManyCheckbox id="ecologicalRoles"
+                                              value="#{invertebrateStockEntryView.currentEntry.ecologicalRoles}"
+                                              layout="pageDirection"
+                                              converter="invertebrateEcologicalRoleConverter">
                             <f:selectItems value="#{invertebrateStockEntryView.ecologicalRoles}" var="er"
                                            itemLabel="#{msg['invertebratestock.ecologicalrole.'.concat(er.name())]}"
+                                           itemDescription="#{msg['invertebratestock.ecologicalrole.desc.'.concat(er.name())]}"
                                            itemValue="#{er}"/>
-                        </p:selectOneMenu>
-                        <p:message for="ecologicalRole"/>
+                        </p:selectManyCheckbox>
+                        <p:message for="ecologicalRoles"/>
                     </div>
 
                     <!-- Activity pattern -->

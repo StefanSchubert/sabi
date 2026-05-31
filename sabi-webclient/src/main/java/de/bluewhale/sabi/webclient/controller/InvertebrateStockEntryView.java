@@ -71,7 +71,7 @@ public class InvertebrateStockEntryView implements Serializable {
         return InvertebrateMobility.values();
     }
 
-    /** All available ecological roles for the dropdown. */
+    /** All available ecological roles for the checkbox group. */
     public InvertebrateEcologicalRole[] getEcologicalRoles() {
         return InvertebrateEcologicalRole.values();
     }

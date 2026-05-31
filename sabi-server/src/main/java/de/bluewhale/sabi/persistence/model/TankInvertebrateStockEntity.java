@@ -72,9 +72,14 @@ public class TankInvertebrateStockEntity extends Auditable {
     @Basic
     private String mobility;
 
-    @Column(name = "ecological_role", nullable = true, length = 15)
-    @Basic
-    private String ecologicalRole;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "invertebrate_stock_ecological_roles",
+            joinColumns = @JoinColumn(name = "invertebrate_stock_id"),
+            schema = "sabi"
+    )
+    @Column(name = "ecological_role", nullable = false, length = 30)
+    private List<String> ecologicalRoles = new ArrayList<>();
 
     @Column(name = "activity_pattern", nullable = true, length = 10)
     @Basic

@@ -254,18 +254,18 @@ public class InvertebrateStockServiceTest {
         AquariumEntity aquarium = testAquarium(user);
         InvertebrateStockEntryTo entry = testEntryTo();
         entry.setMobility(InvertebrateMobility.MOBILE);
-        entry.setEcologicalRole(InvertebrateEcologicalRole.CLEANUP_CREW);
+        entry.setEcologicalRoles(Arrays.asList(InvertebrateEcologicalRole.CLEANER, InvertebrateEcologicalRole.GRAZER));
         entry.setActivityPattern(InvertebrateActivityPattern.NOCTURNAL);
         entry.setWaterSensitivityUnitIds(Arrays.asList(1, 3));
 
         TankInvertebrateStockEntity savedEntity = testEntity();
         savedEntity.setMobility("MOBILE");
-        savedEntity.setEcologicalRole("CLEANUP_CREW");
+        savedEntity.setEcologicalRoles(Arrays.asList("CLEANER", "GRAZER"));
         savedEntity.setActivityPattern("NOCTURNAL");
 
         InvertebrateStockEntryTo resultTo = testEntryTo();
         resultTo.setMobility(InvertebrateMobility.MOBILE);
-        resultTo.setEcologicalRole(InvertebrateEcologicalRole.CLEANUP_CREW);
+        resultTo.setEcologicalRoles(Arrays.asList(InvertebrateEcologicalRole.CLEANER, InvertebrateEcologicalRole.GRAZER));
         resultTo.setActivityPattern(InvertebrateActivityPattern.NOCTURNAL);
         resultTo.setWaterSensitivityUnitIds(Arrays.asList(1, 3));
 
@@ -282,7 +282,8 @@ public class InvertebrateStockServiceTest {
         assertNotNull(result);
         assertEquals(Message.CATEGORY.INFO, result.getMessage().getType());
         assertEquals(InvertebrateMobility.MOBILE, result.getValue().getMobility());
-        assertEquals(InvertebrateEcologicalRole.CLEANUP_CREW, result.getValue().getEcologicalRole());
+        assertEquals(2, result.getValue().getEcologicalRoles().size());
+        assertTrue(result.getValue().getEcologicalRoles().contains(InvertebrateEcologicalRole.CLEANER));
         assertEquals(InvertebrateActivityPattern.NOCTURNAL, result.getValue().getActivityPattern());
         assertEquals(2, result.getValue().getWaterSensitivityUnitIds().size());
     }

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -140,7 +141,11 @@ public class InvertebrateStockServiceImpl implements InvertebrateStockService {
         entity.setTaxonomicCategory(entry.getTaxonomicCategory() != null ? entry.getTaxonomicCategory().name() : null);
         entity.setCareLevel(entry.getCareLevel() != null ? entry.getCareLevel().name() : null);
         entity.setMobility(entry.getMobility() != null ? entry.getMobility().name() : null);
-        entity.setEcologicalRole(entry.getEcologicalRole() != null ? entry.getEcologicalRole().name() : null);
+        entity.setEcologicalRoles(entry.getEcologicalRoles() != null
+                ? entry.getEcologicalRoles().stream()
+                        .map(InvertebrateEcologicalRole::name)
+                        .collect(Collectors.toList())
+                : new ArrayList<>());
         entity.setActivityPattern(entry.getActivityPattern() != null ? entry.getActivityPattern().name() : null);
         entity.setExternalRefUrl(entry.getExternalRefUrl());
         entity.setNotes(entry.getNotes());

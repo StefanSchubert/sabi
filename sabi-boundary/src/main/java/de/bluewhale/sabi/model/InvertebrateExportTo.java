@@ -25,7 +25,7 @@ public class InvertebrateExportTo implements Serializable {
     private String speciesName;
     private String taxonomicCategory;
     private String mobility;
-    private String ecologicalRole;
+    private List<String> ecologicalRoles = new ArrayList<>();
     private String activityPattern;
     /** ISO date string */
     private String addedOn;

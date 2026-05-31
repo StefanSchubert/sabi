@@ -405,6 +405,14 @@
                                                 <h:outputText value="#{msg['invertebratestock.taxonomiccategory.'.concat(invertebrate.taxonomicCategory.name())]}"/>
                                             </div>
                                         </h:panelGroup>
+                                        <h:panelGroup rendered="#{not empty invertebrate.ecologicalRoles}">
+                                            <div class="fish-obs">
+                                                <ui:repeat value="#{invertebrate.ecologicalRoles}" var="role" varStatus="status">
+                                                    <h:outputText value="#{msg['invertebratestock.ecologicalrole.'.concat(role.name())]}"/>
+                                                    <h:outputText value=", " rendered="#{!status.last}"/>
+                                                </ui:repeat>
+                                            </div>
+                                        </h:panelGroup>
                                     </div>
                                 </div>
                             </ui:repeat>

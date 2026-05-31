@@ -51,8 +51,8 @@ public class InvertebrateStockEntryTo implements Serializable {
     /** MOBILE / SESSILE — optional. */
     private InvertebrateMobility mobility;
 
-    /** CLEANUP_CREW / NEUTRAL / DETRIMENTAL — optional. */
-    private InvertebrateEcologicalRole ecologicalRole;
+    /** Ecological functions in the tank ecosystem. Zero, one, or multiple roles possible. */
+    private List<InvertebrateEcologicalRole> ecologicalRoles = new ArrayList<>();
 
     /** DIURNAL / NOCTURNAL / BOTH — optional. */
     private InvertebrateActivityPattern activityPattern;

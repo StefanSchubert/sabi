@@ -38,8 +38,11 @@ public class InvertebrateStockMapper {
                 ? CoralCareLevel.valueOf(entity.getCareLevel()) : null);
         to.setMobility(entity.getMobility() != null
                 ? InvertebrateMobility.valueOf(entity.getMobility()) : null);
-        to.setEcologicalRole(entity.getEcologicalRole() != null
-                ? InvertebrateEcologicalRole.valueOf(entity.getEcologicalRole()) : null);
+        to.setEcologicalRoles(entity.getEcologicalRoles() != null
+                ? entity.getEcologicalRoles().stream()
+                        .map(InvertebrateEcologicalRole::valueOf)
+                        .collect(Collectors.toList())
+                : new ArrayList<>());
         to.setActivityPattern(entity.getActivityPattern() != null
                 ? InvertebrateActivityPattern.valueOf(entity.getActivityPattern()) : null);
         to.setExternalRefUrl(entity.getExternalRefUrl());
@@ -70,7 +73,11 @@ public class InvertebrateStockMapper {
         entity.setTaxonomicCategory(to.getTaxonomicCategory() != null ? to.getTaxonomicCategory().name() : null);
         entity.setCareLevel(to.getCareLevel() != null ? to.getCareLevel().name() : null);
         entity.setMobility(to.getMobility() != null ? to.getMobility().name() : null);
-        entity.setEcologicalRole(to.getEcologicalRole() != null ? to.getEcologicalRole().name() : null);
+        entity.setEcologicalRoles(to.getEcologicalRoles() != null
+                ? to.getEcologicalRoles().stream()
+                        .map(InvertebrateEcologicalRole::name)
+                        .collect(Collectors.toList())
+                : new ArrayList<>());
         entity.setActivityPattern(to.getActivityPattern() != null ? to.getActivityPattern().name() : null);
         entity.setExternalRefUrl(to.getExternalRefUrl());
         entity.setNotes(to.getNotes());
@@ -111,7 +118,9 @@ public class InvertebrateStockMapper {
         exportTo.setDepartureNote(entity.getDepartureNote());
         exportTo.setNotes(entity.getNotes());
         exportTo.setMobility(entity.getMobility());
-        exportTo.setEcologicalRole(entity.getEcologicalRole());
+        exportTo.setEcologicalRoles(entity.getEcologicalRoles() != null
+                ? new ArrayList<>(entity.getEcologicalRoles())
+                : new ArrayList<>());
         exportTo.setActivityPattern(entity.getActivityPattern());
         // Water sensitivity units mapped by caller (service injects unit names)
         return exportTo;
