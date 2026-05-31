@@ -154,9 +154,21 @@
                         <p:message for="ecologicalRoles"/>
                     </div>
 
-                    <!-- Activity pattern -->
-                    <p:outputLabel for="activityPattern" value="#{msg['invertebratestock.form.activitypattern.label']}"/>
+                    <!-- Water sensitivity (multi-select checkboxes) -->
+                    <p:outputLabel for="waterSensitivity" value="#{msg['invertebratestock.form.watersensitivity.label']}"/>
                     <div>
+                        <p:selectManyCheckbox id="waterSensitivity"
+                                              value="#{invertebrateStockEntryView.currentEntry.waterSensitivityUnitIds}"
+                                              layout="pageDirection">
+                            <f:selectItems value="#{invertebrateStockEntryView.availableWaterUnits}" var="unit"
+                                           itemLabel="#{unit.unitSign} - #{unit.description}"
+                                           itemValue="#{unit.id}"/>
+                        </p:selectManyCheckbox>
+                        <p:message for="waterSensitivity"/>
+                    </div>
+
+                    <!-- Activity pattern -->
+                    <p:outputLabel for="activityPattern" value="#{msg['invertebratestock.form.activitypattern.label']}"/>                    <div>
                         <p:selectOneMenu id="activityPattern"
                                          value="#{invertebrateStockEntryView.currentEntry.activityPattern}"
                                          style="width:100%;">

@@ -315,6 +315,7 @@ public class InvertebrateStockServiceImpl implements InvertebrateStockService {
 
     private void persistWaterSensitivities(Long invertebrateStockId, List<Integer> unitIds) {
         waterSensitivityRepository.deleteAllByInvertebrateStockId(invertebrateStockId);
+        waterSensitivityRepository.flush();
         if (unitIds != null && !unitIds.isEmpty()) {
             List<InvertebrateWaterSensitivityEntity> entities = mapper.toWaterSensitivityEntities(invertebrateStockId, unitIds);
             waterSensitivityRepository.saveAll(entities);

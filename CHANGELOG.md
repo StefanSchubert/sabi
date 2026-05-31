@@ -1,5 +1,10 @@
 # History of changes (since 5/2022)
 
+## Release 1.3.6
+
+### Feature
+* Ability to record invertebrate inhabitants in tanks
+
 ## Release 1.3.5 (since 1.2.9)
 
 ### Technical Maintenance

@@ -413,6 +413,14 @@
                                                 </ui:repeat>
                                             </div>
                                         </h:panelGroup>
+                                        <h:panelGroup rendered="#{not empty invertebrate.waterSensitivityUnitIds}">
+                                            <div class="fish-obs">
+                                                <ui:repeat value="#{invertebrate.waterSensitivityUnitIds}" var="unitId" varStatus="status">
+                                                    <h:outputText value="#{houseReefReportView.getUnitSign(unitId)}"/>
+                                                    <h:outputText value=", " rendered="#{!status.last}"/>
+                                                </ui:repeat>
+                                            </div>
+                                        </h:panelGroup>
                                     </div>
                                 </div>
                             </ui:repeat>

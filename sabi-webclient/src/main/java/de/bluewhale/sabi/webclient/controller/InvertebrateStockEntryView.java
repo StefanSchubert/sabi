@@ -10,6 +10,7 @@ import de.bluewhale.sabi.model.*;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.InvertebrateCatalogueService;
 import de.bluewhale.sabi.webclient.apigateway.InvertebrateStockService;
+import de.bluewhale.sabi.webclient.apigateway.MeasurementService;
 import de.bluewhale.sabi.webclient.utils.MessageUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -24,6 +25,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +48,9 @@ public class InvertebrateStockEntryView implements Serializable {
     @Autowired
     InvertebrateCatalogueService invertebrateCatalogueService;
 
+    @Autowired
+    MeasurementService measurementService;
+
     @Inject
     UserSession userSession;
 
@@ -55,6 +60,7 @@ public class InvertebrateStockEntryView implements Serializable {
     private InvertebrateStockEntryTo currentEntry = new InvertebrateStockEntryTo();
     private byte[] previewPhoto;
     private UploadedFile uploadedFile;
+    private List<UnitTo> availableWaterUnits = new ArrayList<>();
 
     /** All available taxonomic categories for the dropdown. */
     public InvertebrateTaxonomicCategory[] getTaxonomicCategories() {
@@ -105,6 +111,14 @@ public class InvertebrateStockEntryView implements Serializable {
                     userSession.getSelectedTank() != null ? userSession.getSelectedTank().getId() : null);
             fallback.setAddedOn(LocalDate.now());
             init(fallback);
+        }
+
+        try {
+            availableWaterUnits = measurementService.getAvailableMeasurementUnits(
+                    userSession.getSabiBackendToken(), userSession.getLanguage());
+        } catch (BusinessException e) {
+            log.warn("Could not load water sensitivity units", e);
+            availableWaterUnits = new ArrayList<>();
         }
     }
 
