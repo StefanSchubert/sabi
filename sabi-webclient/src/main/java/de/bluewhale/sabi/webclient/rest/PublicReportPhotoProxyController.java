@@ -69,6 +69,36 @@ public class PublicReportPhotoProxyController {
         return fetchImageFromBackend(backendUrl);
     }
 
+    // ---- Coral photo ---------------------------------------------------
+
+    /**
+     * Proxies a coral photo from the sabi-backend to the browser.
+     * URL pattern matches the one embedded in {@code houseReefReport.xhtml}.
+     */
+    @GetMapping(value = "/{token}/coral/{coralId}/photo")
+    public ResponseEntity<byte[]> getCoralPhoto(
+            @PathVariable("token") String token,
+            @PathVariable("coralId") Long coralId) {
+        String backendUrl = sabiBackendUrl + "/api/public/report/" + token + "/coral/" + coralId + "/photo";
+        log.debug("Proxy: GET coral photo for token {}, coralId {}", token, coralId);
+        return fetchImageFromBackend(backendUrl);
+    }
+
+    // ---- Invertebrate photo --------------------------------------------
+
+    /**
+     * Proxies an invertebrate photo from the sabi-backend to the browser.
+     * URL pattern matches the one embedded in {@code houseReefReport.xhtml}.
+     */
+    @GetMapping(value = "/{token}/invertebrate/{invertebrateId}/photo")
+    public ResponseEntity<byte[]> getInvertebratePhoto(
+            @PathVariable("token") String token,
+            @PathVariable("invertebrateId") Long invertebrateId) {
+        String backendUrl = sabiBackendUrl + "/api/public/report/" + token + "/invertebrate/" + invertebrateId + "/photo";
+        log.debug("Proxy: GET invertebrate photo for token {}, invertebrateId {}", token, invertebrateId);
+        return fetchImageFromBackend(backendUrl);
+    }
+
     // ---- Internal helper -----------------------------------------------
 
     private ResponseEntity<byte[]> fetchImageFromBackend(String url) {

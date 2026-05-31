@@ -92,6 +92,30 @@ public class PublicReportServiceImpl implements PublicReportService {
     @Autowired
     private CoralStockService coralStockService;
 
+    @Autowired
+    private TankCoralStockRepository coralStockRepository;
+
+    @Autowired
+    private CoralPhotoRepository coralPhotoRepository;
+
+    @Autowired
+    @Qualifier("coralPhotoStorage")
+    private PhotoStorageService coralPhotoStorage;
+
+    // 006-invertebrate-tracking
+    @Autowired
+    private InvertebrateStockService invertebrateStockService;
+
+    @Autowired
+    private TankInvertebrateStockRepository invertebrateStockRepository;
+
+    @Autowired
+    private InvertebratePhotoRepository invertebratePhotoRepository;
+
+    @Autowired
+    @Qualifier("invertebratePhotoStorage")
+    private PhotoStorageService invertebratePhotoStorage;
+
     // -----------------------------------------------------------------------
 
     @Override
@@ -172,6 +196,38 @@ public class PublicReportServiceImpl implements PublicReportService {
     }
 
     @Override
+    @Transactional
+    public boolean updateIncludeInvertebrates(Long aquariumId, boolean includeInvertebrates, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return false;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return false;
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByAquariumId(aquariumId);
+        if (linkOpt.isEmpty()) return false;
+        PublicReportLinkEntity link = linkOpt.get();
+        link.setIncludeInvertebrates(includeInvertebrates);
+        publicReportLinkRepository.save(link);
+        log.info("Updated includeInvertebrates={} for aquarium_id={} by user_id={}", includeInvertebrates, aquariumId, user.getId());
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateIncludeFish(Long aquariumId, boolean includeFish, String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) return false;
+        AquariumEntity aquarium = aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId());
+        if (aquarium == null) return false;
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByAquariumId(aquariumId);
+        if (linkOpt.isEmpty()) return false;
+        PublicReportLinkEntity link = linkOpt.get();
+        link.setIncludeFish(includeFish);
+        publicReportLinkRepository.save(link);
+        log.info("Updated includeFish={} for aquarium_id={} by user_id={}", includeFish, aquariumId, user.getId());
+        return true;
+    }
+
+    @Override
     public PublicReefReportTo getReport(String linkToken, String language) {
         PublicReefReportTo report = new PublicReefReportTo();
         report.setReportGeneratedAt(LocalDateTime.now());
@@ -210,17 +266,20 @@ public class PublicReportServiceImpl implements PublicReportService {
         UserEntity owner = aq.getUser();
         report.setOwnerUsername(owner != null ? owner.getUsername() : "Unknown");
 
-        // Current fish inhabitants (no departure)
-        List<TankFishStockEntity> allFish = tankFishStockRepository.findAllByAquariumId(link.getAquariumId());
-        List<FishStockEntryTo> inhabitants = allFish.stream()
-                .filter(f -> f.getExodusOn() == null)
-                .map(f -> {
-                    FishStockEntryTo to = fishStockMapper.mapEntity2To(f);
-                    to.setHasPhoto(fishPhotoRepository.findByFishId(f.getId()).isPresent());
-                    return to;
-                })
-                .collect(Collectors.toList());
-        report.setInhabitants(inhabitants);
+        // Current fish inhabitants (no departure) — only when includeFish = true (default)
+        if (link.isIncludeFish()) {
+            List<TankFishStockEntity> allFish = tankFishStockRepository.findAllByAquariumId(link.getAquariumId());
+            List<FishStockEntryTo> inhabitants = allFish.stream()
+                    .filter(f -> f.getExodusOn() == null)
+                    .map(f -> {
+                        FishStockEntryTo to = fishStockMapper.mapEntity2To(f);
+                        to.setHasPhoto(fishPhotoRepository.findByFishId(f.getId()).isPresent());
+                        return to;
+                    })
+                    .collect(Collectors.toList());
+            report.setInhabitants(inhabitants);
+        }
+        // else: inhabitants stays empty list (not opted-in)
 
         // Measurements: last 3 months, grouped by unitId
         LocalDateTime since = LocalDateTime.now().minusMonths(3);
@@ -272,6 +331,14 @@ public class PublicReportServiceImpl implements PublicReportService {
         }
         // else: coralInhabitants stays null (not opted-in)
 
+        // 006-invertebrate-tracking: include active invertebrates if opted-in
+        if (link.isIncludeInvertebrates()) {
+            List<InvertebrateStockEntryTo> invertebrateData =
+                    invertebrateStockService.getActiveInvertebratesForReport(link.getAquariumId());
+            report.setInvertebrateInhabitants(invertebrateData);
+        }
+        // else: invertebrateInhabitants stays null (not opted-in)
+
         return report;
     }
 
@@ -283,8 +350,10 @@ public class PublicReportServiceImpl implements PublicReportService {
         to.setAquariumId(entity.getAquariumId());
         to.setLinkToken(entity.getLinkToken());
         to.setValidUntil(entity.getValidUntil());
-        to.setIncludeEvents(entity.isIncludeEvents());   // 004-aquarium-events: propagate flag to gateway
-        to.setIncludeCorals(entity.isIncludeCorals());   // 005-coral-stock: propagate flag to gateway
+        to.setIncludeEvents(entity.isIncludeEvents());
+        to.setIncludeCorals(entity.isIncludeCorals());
+        to.setIncludeInvertebrates(entity.isIncludeInvertebrates());
+        to.setIncludeFish(entity.isIncludeFish());
         return to;
     }
 
@@ -322,5 +391,45 @@ public class PublicReportServiceImpl implements PublicReportService {
                 .map(photo -> fishPhotoStorage.load(photo.getFilePath()))
                 .orElse(new byte[0]);
     }
-}
 
+    @Override
+    public byte[] getCoralPhotoBytes(String linkToken, Long coralId) {
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByLinkToken(linkToken);
+        if (linkOpt.isEmpty()) return new byte[0];
+        PublicReportLinkEntity link = linkOpt.get();
+        if (link.getValidUntil() != null && link.getValidUntil().isBefore(LocalDateTime.now())) {
+            return new byte[0];
+        }
+        boolean coralBelongsToAquarium = coralStockRepository.findById(coralId)
+                .map(c -> link.getAquariumId().equals(c.getAquariumId()))
+                .orElseGet(() -> {
+                    log.warn("Public report photo requested for non-existent coralId={} with token={}", coralId, linkToken);
+                    return false;
+                });
+        if (!coralBelongsToAquarium) return new byte[0];
+        return coralPhotoRepository.findByCoralStockId(coralId)
+                .map(photo -> coralPhotoStorage.load(photo.getFilePath()))
+                .orElse(new byte[0]);
+    }
+
+    @Override
+    public byte[] getInvertebratePhotoBytes(String linkToken, Long invertebrateId) {
+        Optional<PublicReportLinkEntity> linkOpt = publicReportLinkRepository.findByLinkToken(linkToken);
+        if (linkOpt.isEmpty()) return new byte[0];
+        PublicReportLinkEntity link = linkOpt.get();
+        if (link.getValidUntil() != null && link.getValidUntil().isBefore(LocalDateTime.now())) {
+            return new byte[0];
+        }
+        boolean invertBelongsToAquarium = invertebrateStockRepository.findById(invertebrateId)
+                .map(i -> link.getAquariumId().equals(i.getAquariumId()))
+                .orElseGet(() -> {
+                    log.warn("Public report photo requested for non-existent invertebrateId={} with token={}", invertebrateId, linkToken);
+                    return false;
+                });
+        if (!invertBelongsToAquarium) return new byte[0];
+        return invertebratePhotoRepository.findByInvertebrateStockId(invertebrateId)
+                .map(photo -> invertebratePhotoStorage.load(photo.getFilePath()))
+                .orElse(new byte[0]);
+    }
+
+}

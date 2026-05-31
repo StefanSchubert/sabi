@@ -14,13 +14,14 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Registers named {@link PhotoStorageService} beans with separate configuration prefixes:
  * <ul>
- *   <li>{@code fishPhotoStorage}    — bound to {@code sabi.fish.photo.*}</li>
- *   <li>{@code aquariumPhotoStorage} — bound to {@code sabi.aquarium.photo.*}</li>
- *   <li>{@code coralPhotoStorage}    — bound to {@code sabi.coral.photo.*}</li>
+ *   <li>{@code fishPhotoStorage}         — bound to {@code sabi.fish.photo.*}</li>
+ *   <li>{@code aquariumPhotoStorage}      — bound to {@code sabi.aquarium.photo.*}</li>
+ *   <li>{@code coralPhotoStorage}         — bound to {@code sabi.coral.photo.*}</li>
+ *   <li>{@code invertebratePhotoStorage}  — bound to {@code sabi.invertebrate.photo.*}</li>
  * </ul>
  *
  * Inject via {@code @Qualifier("fishPhotoStorage")}, {@code @Qualifier("aquariumPhotoStorage")},
- * or {@code @Qualifier("coralPhotoStorage")}.
+ * {@code @Qualifier("coralPhotoStorage")}, or {@code @Qualifier("invertebratePhotoStorage")}.
  *
  * @author Stefan Schubert
  */
@@ -42,6 +43,12 @@ public class PhotoStorageConfig {
     @Bean("coralPhotoStorage")
     @ConfigurationProperties(prefix = "sabi.coral.photo")
     public PhotoStorageService coralPhotoStorage() {
+        return new PhotoStorageServiceImpl();
+    }
+
+    @Bean("invertebratePhotoStorage")
+    @ConfigurationProperties(prefix = "sabi.invertebrate.photo")
+    public PhotoStorageService invertebratePhotoStorage() {
         return new PhotoStorageServiceImpl();
     }
 }

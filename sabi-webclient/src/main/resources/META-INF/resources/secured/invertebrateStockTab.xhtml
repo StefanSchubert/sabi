@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 006-invertebrate-tracking — T034
+  -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Invertebrate Stock Tab Content — MARINE tanks only -->
+    <h:form id="invertebrateStockForm">
+
+        <h:inputHidden id="selectedAquariumIdHidden" value="#{invertebrateStockView.selectedAquariumId}"/>
+
+        <p:remoteCommand name="sabiRefreshInvertebrateTable"
+                         actionListener="#{invertebrateStockView.onTankSelected}"
+                         update=":invertebrateStockForm"
+                         process=":invertebrateStockForm:selectedAquariumIdHidden"/>
+
+        <p:messages id="invertebrateStockMessages" showDetail="true" closable="true">
+            <p:autoUpdate/>
+        </p:messages>
+
+        <!-- Add Invertebrate Button -->
+        <div style="margin-bottom:0.75rem;">
+            <p:commandButton value="#{msg['invertebratestock.add.button.label']}"
+                             icon="pi pi-plus"
+                             ajax="false"
+                             style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                             action="#{invertebrateStockView.onAddInvertebrate()}"
+                             title="#{msg['invertebratestock.add.button.label']}"
+                             disabled="#{invertebrateStockView.selectedAquariumId == null}"/>
+        </div>
+
+        <!-- Section: Currently in Tank -->
+        <p:panel header="#{msg['invertebratestock.active.section.label']}" styleClass="greenColoredPanel">
+
+            <p:outputLabel rendered="#{empty invertebrateStockView.activeInvertebrates}"
+                           value="#{msg['invertebratestock.no.entries.label']}"
+                           style="color:#065f46; font-style:italic;"/>
+
+            <p:dataTable id="activeInvertebratesTable"
+                         var="invertebrate"
+                         value="#{invertebrateStockView.activeInvertebrates}"
+                         rendered="#{not empty invertebrateStockView.activeInvertebrates}"
+                         responsiveLayout="stack"
+                         styleClass="p-mt-2">
+
+                <!-- Thumbnail -->
+                <p:column headerText="#{msg['invertebratestock.form.photo.label']}" style="width:3.5rem;">
+                    <p:graphicImage rendered="#{invertebrate.hasPhoto}"
+                                    value="#{request.contextPath}/secured/invertebratePhoto?invertebrateId=#{invertebrate.id}"
+                                    style="max-width:48px; max-height:48px; border-radius:4px; display:block;"/>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.form.speciesname.label']}">
+                    <p:outputLabel value="#{invertebrate.speciesName}" style="font-weight:600;"/>
+                    <p:outputLabel rendered="#{invertebrate.scientificName != null and invertebrate.scientificName != ''}"
+                                   value=" (#{invertebrate.scientificName})"
+                                   style="color:#64748b; font-size:0.85rem; font-style:italic;"/>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.form.taxonomiccategory.label']}">
+                    <p:outputLabel value="#{invertebrate.taxonomicCategory != null ? msg['invertebratestock.taxonomiccategory.'.concat(invertebrate.taxonomicCategory.name())] : ''}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.form.entrdate.label']}">
+                    <p:outputLabel value="#{invertebrate.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['common.actions']}" style="width:12rem; text-align:center;">
+                    <p:commandButton icon="pi pi-pencil"
+                                     title="#{msg['invertebratestock.edit.button.label']}"
+                                     ajax="false"
+                                     action="#{invertebrateStockView.onEditInvertebrate(invertebrate)}"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-arrow-right"
+                                     title="#{msg['invertebratestock.departure.button.label']}"
+                                     styleClass="ui-button-warning"
+                                     ajax="false"
+                                     action="#{invertebrateStockView.onRecordDeparture(invertebrate)}"
+                                     style="margin-right:0.25rem;"/>
+                    <p:commandButton icon="pi pi-trash"
+                                     title="#{msg['invertebratestock.delete.button.label']}"
+                                     styleClass="ui-button-danger"
+                                     actionListener="#{invertebrateStockView.onDeleteInvertebrate(invertebrate)}"
+                                     update=":invertebrateStockForm"/>
+                </p:column>
+
+            </p:dataTable>
+        </p:panel>
+
+        <p:spacer height="10px"/>
+
+        <!-- Section: Departed Invertebrates (collapsed by default) -->
+        <p:fieldset legend="#{msg['invertebratestock.departed.section.label']}"
+                    toggleable="true"
+                    collapsed="true">
+
+            <p:dataTable id="departedInvertebratesTable"
+                         var="invertebrate"
+                         value="#{invertebrateStockView.departedInvertebrates}"
+                         rendered="#{not empty invertebrateStockView.departedInvertebrates}"
+                         responsiveLayout="stack"
+                         styleClass="p-mt-2">
+
+                <p:column headerText="#{msg['invertebratestock.form.speciesname.label']}">
+                    <p:outputLabel value="#{invertebrate.speciesName}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.form.taxonomiccategory.label']}">
+                    <p:outputLabel value="#{invertebrate.taxonomicCategory != null ? msg['invertebratestock.taxonomiccategory.'.concat(invertebrate.taxonomicCategory.name())] : ''}"/>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.form.entrdate.label']}">
+                    <p:outputLabel value="#{invertebrate.addedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.departure.date.label']}">
+                    <p:outputLabel value="#{invertebrate.departedOn}">
+                        <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="#{msg['invertebratestock.departure.reason.label']}">
+                    <p:outputLabel value="#{invertebrate.departureReason != null ? msg['invertebratestock.departure.reason.'.concat(invertebrate.departureReason.name())] : ''}"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <p:outputLabel rendered="#{empty invertebrateStockView.departedInvertebrates}"
+                           value="#{msg['invertebratestock.no.entries.label']}"
+                           style="font-style:italic; color:#64748b;"/>
+        </p:fieldset>
+
+    </h:form>
+
+</ui:composition>

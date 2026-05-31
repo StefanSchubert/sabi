@@ -9,6 +9,7 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.CoralCatalogueAdminService;
 import de.bluewhale.sabi.webclient.apigateway.FishCatalogueAdminService;
+import de.bluewhale.sabi.webclient.apigateway.InvertebrateCatalogueAdminService;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -38,6 +39,9 @@ public class CatalogueDashboardView implements Serializable {
     @Autowired
     CoralCatalogueAdminService coralCatalogueAdminService;
 
+    @Autowired
+    InvertebrateCatalogueAdminService invertebrateCatalogueAdminService;
+
     @Inject
     UserSession userSession;
 
@@ -45,6 +49,8 @@ public class CatalogueDashboardView implements Serializable {
     private int fishApprovedCount = 0;
     private int coralPendingCount  = 0;
     private int coralApprovedCount = 0;
+    private int invertebratePendingCount  = 0;
+    private int invertebrateApprovedCount = 0;
 
     @PostConstruct
     public void init() {
@@ -74,6 +80,19 @@ public class CatalogueDashboardView implements Serializable {
                     : 0;
         } catch (BusinessException e) {
             log.warn("Failed to load coral catalogue stats for dashboard", e);
+        }
+
+        try {
+            var invertAll     = invertebrateCatalogueAdminService.listAll(token);
+            var invertPending = invertebrateCatalogueAdminService.listPending(token);
+            invertebratePendingCount  = invertPending != null ? invertPending.size() : 0;
+            invertebrateApprovedCount = invertAll != null
+                    ? (int) invertAll.stream()
+                        .filter(e -> e.getStatus() != null && "PUBLIC".equals(e.getStatus().name()))
+                        .count()
+                    : 0;
+        } catch (BusinessException e) {
+            log.warn("Failed to load invertebrate catalogue stats for dashboard", e);
         }
     }
 }

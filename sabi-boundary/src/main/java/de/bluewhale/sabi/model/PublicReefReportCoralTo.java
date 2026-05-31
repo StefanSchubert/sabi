@@ -20,8 +20,14 @@ import java.util.Map;
 @Data
 public class PublicReefReportCoralTo implements Serializable {
 
+    /** DB ID of the coral stock entry — used to fetch the photo via the public photo endpoint. */
+    private Long id;
+
     private String speciesName;
     private String classification;
+
+    /** True when a photo has been uploaded for this coral. */
+    private boolean hasPhoto;
     /** Latest growth measurement value per measurement type (e.g. SURFACE_AREA_CM2 → 45.5). */
     private Map<String, BigDecimal> latestGrowthByType;
     /** Latest polyp condition string, or null if no observations exist. */

@@ -21,10 +21,12 @@ services:
       - SABI_FISH_PHOTO_STORAGE_DIR=/var/sabi-data/fish-photos
       - SABI_FISH_AQUARIUM_STORAGE_DIR=/var/sabi-data/aquarium-photos
       - SABI_CORAL_PHOTO_STORAGE_DIR=/var/sabi-data/coral-photos
+      - SABI_INVERTEBRATE_PHOTO_STORAGE_DIR=/var/sabi-data/invertebrate-photos
     volumes:
       - sabi-fish-photos:/var/sabi-data/fish-photos
       - sabi-aquarium-photos:/var/sabi-data/aquarium-photos
       - sabi-coral-photos:/var/sabi-data/coral-photos
+      - sabi-invertebrate-photos:/var/sabi-data/invertebrate-photos
     networks:
       - sabinet
     ports:
@@ -34,7 +36,7 @@ services:
       db:
         condition: service_healthy
   flyway:
-    image: flyway/flyway:12.6-alpine
+    image: flyway/flyway:12.7-alpine
     command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 baseline migrate
     volumes:
       - ../../sabi-database/src/main/resources:/flyway/sql
@@ -106,6 +108,8 @@ volumes:
   sabi-aquarium-photos:
   # Coral photo storage — persistent across container restarts
   sabi-coral-photos:
+  # Invertebrate photo storage — persistent across container restarts
+  sabi-invertebrate-photos:
 
 # Notice: application.properties files contains "localhost" this does not matches the hosts,
 # db, fakeSMTP etc... so the application.properties need to be externalized as in production
