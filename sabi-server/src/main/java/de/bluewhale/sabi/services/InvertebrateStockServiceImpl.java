@@ -254,16 +254,15 @@ public class InvertebrateStockServiceImpl implements InvertebrateStockService {
 
         TankInvertebrateStockEntity entity = entityOpt.get();
 
-        // Delete existing photo
-        photoRepository.findByInvertebrateStockId(invertebrateId).ifPresent(photo -> {
-            photoStorageService.delete(photo.getFilePath());
-            photoRepository.delete(photo);
-        });
-
         String filePath = photoStorageService.store(user.getId(), invertebrateId, file.getBytes(), file.getContentType());
 
-        InvertebratePhotoEntity photoEntity = new InvertebratePhotoEntity();
-        photoEntity.setInvertebrateStockId(invertebrateId);
+        // Upsert: update existing photo record or create new one (avoids unique-key violation on re-upload)
+        InvertebratePhotoEntity photoEntity = photoRepository.findByInvertebrateStockId(invertebrateId)
+                .orElseGet(() -> {
+                    InvertebratePhotoEntity p = new InvertebratePhotoEntity();
+                    p.setInvertebrateStockId(invertebrateId);
+                    return p;
+                });
         photoEntity.setFilePath(filePath);
         photoEntity.setContentType(file.getContentType());
         photoEntity.setUploadDate(LocalDate.now());

@@ -22,6 +22,7 @@
  * App: http://localhost:8088
  */
 import { test, expect, Page } from '@playwright/test';
+import path from 'path';
 
 // ──────────────────────────────────────────────────────────────
 // Helper: Login
@@ -66,6 +67,21 @@ function todayString(): string {
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const yyyy = today.getFullYear();
   return `${dd}.${mm}.${yyyy}`;
+}
+
+// ──────────────────────────────────────────────────────────────
+// Helper: Taxonomische Kategorie im Entry-Formular auswählen
+// (taxonomicCategory hat @NotNull → muss bei jedem Save gesetzt sein)
+//
+// HINWEIS: PrimeFaces SelectOneMenu bindet nach dem Trigger-Click einen Document-Click-Listener
+// mit ~250ms Verzögerung. Der Trigger-Click bubbled hoch und schließt das Panel nach exakt
+// 251ms → Klick auf Panel-Item schlägt fehl. Workaround: nativen <select> direkt setzen
+// (force:true wegen display:none durch PrimeFaces).
+// ──────────────────────────────────────────────────────────────
+async function selectTaxonomicCategory(page: Page, value: string = 'CRUSTACEAN') {
+  // PrimeFaces rendert <select id="...taxonomicCategory_input"> versteckt (display:none).
+  // force:true umgeht den Visibility-Check — das Element ist funktional vorhanden.
+  await page.locator('select[id$="taxonomicCategory_input"]').selectOption({ value }, { force: true });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -135,7 +151,10 @@ test.describe('Invertebrate Stock Flow', () => {
     await speciesNameInput.click(); // blur → DatePicker schließen
     await page.waitForTimeout(300);
 
-    // 4. Speichern
+    // 4. Pflichtfeld: Taxonomische Kategorie (@NotNull)
+    await selectTaxonomicCategory(page);
+
+    // 5. Speichern
     const saveButton = page.locator('button').filter({ hasText: /speicher|save/i }).first();
     await saveButton.scrollIntoViewIfNeeded();
     await expect(saveButton).toBeVisible({ timeout: 5_000 });
@@ -168,7 +187,7 @@ test.describe('Invertebrate Stock Flow', () => {
     await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
 
     // Cancel-Button klicken
-    const cancelButton = page.locator('button').filter({ hasText: /abbrech|cancel/i }).first();
+    const cancelButton = page.locator('button').filter({ hasText: /abbruch|abbrech|cancel/i }).first();
     await expect(cancelButton).toBeVisible({ timeout: 5_000 });
     await cancelButton.click();
     await page.waitForURL(/invertebrateStockView/, { timeout: 10_000 });
@@ -194,8 +213,9 @@ test.describe('Invertebrate Stock Flow', () => {
   // ── Wirbellose bearbeiten ────────────────────────────────────
 
   test('Wirbellose bearbeiten — Art-Name ändern, speichern, in Tabelle aktualisiert', async ({ page }) => {
-    const originalName = `E2E-Edit-${Date.now()}`;
-    const updatedName = `${originalName}-updated`;
+    const ts = Date.now();
+    const originalName = `E2E-EditOrig-${ts}`;
+    const updatedName  = `E2E-EditUpd-${ts}`; // no substring overlap with originalName
 
     // 1. Anlegen
     await selectNanoReef(page);
@@ -210,6 +230,9 @@ test.describe('Invertebrate Stock Flow', () => {
     await dateInput.fill(todayString());
     await speciesNameInput.click();
     await page.waitForTimeout(300);
+
+    // Pflichtfeld: Taxonomische Kategorie (@NotNull)
+    await selectTaxonomicCategory(page);
 
     const saveButton = page.locator('button').filter({ hasText: /speicher|save/i }).first();
     await saveButton.scrollIntoViewIfNeeded();
@@ -323,12 +346,184 @@ test.describe('Invertebrate Stock Flow', () => {
     const href = await backLink.getAttribute('href');
     expect(href).toContain('invertebrateStockView');
 
-    // Cancel-Button prüfen
-    const cancelButton = page.locator('button[type="button"]').filter({ hasText: /abbrech|cancel/i }).first();
+    // Cancel-Button prüfen (label = "Abbruch" via common.cancel.b)
+    const cancelButton = page.locator('button[type="button"]').filter({ hasText: /abbruch|abbrech|cancel/i }).first();
     await expect(cancelButton).toBeVisible({ timeout: 5_000 });
     await cancelButton.click();
     await page.waitForURL(/invertebrateStockView/, { timeout: 10_000 });
     await expect(page).toHaveURL(/invertebrateStockView/);
+  });
+
+  // ── Foto-Upload ─────────────────────────────────────────────
+
+  test('Foto-Upload: file-input vorhanden mit korrektem accept-Attribut', async ({ page }) => {
+    await selectNanoReef(page);
+    const addButton = page.locator('#invertebrateStockForm button').filter({ hasText: /hinzuf|add/i }).first();
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
+    await addButton.click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const fileInput = page.locator('input[type="file"]#invertebratePhotoFileInput');
+    await expect(fileInput).toBeAttached({ timeout: 8_000 });
+
+    const accept = await fileInput.getAttribute('accept');
+    expect(accept).toContain('image/jpeg');
+    expect(accept).toContain('image/png');
+  });
+
+  test('Foto-Upload: Bild hochladen und Thumbnail in Tabelle sichtbar', async ({ page }) => {
+    const invertName = `E2E-FotoInvert-${Date.now()}`;
+    const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');
+
+    // 1. Zur Eingabeseite navigieren
+    await selectNanoReef(page);
+    const addButton = page.locator('#invertebrateStockForm button').filter({ hasText: /hinzuf|add/i }).first();
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
+    await addButton.click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    // 2. Pflichtfelder ausfüllen
+    const speciesNameInput = page.locator('[id$="speciesName"]');
+    await expect(speciesNameInput).toBeVisible({ timeout: 8_000 });
+    await speciesNameInput.fill(invertName);
+
+    const dateInput = page.locator('[id$="addedOn_input"]');
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    await dateInput.fill(`${dd}.${mm}.${yyyy}`);
+    await speciesNameInput.click();
+    await page.waitForTimeout(300);
+
+    // Pflichtfeld: Taxonomische Kategorie (@NotNull)
+    await selectTaxonomicCategory(page);
+
+    // 3. Foto setzen
+    const fileInput = page.locator('input[type="file"]#invertebratePhotoFileInput');
+    await expect(fileInput).toBeAttached({ timeout: 8_000 });
+    await fileInput.setInputFiles(testImagePath);
+
+    // 4. Speichern (oncomplete → sabiUploadInvertebratePhotoAndRedirect → fetch → redirect)
+    const saveButton = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+    await saveButton.scrollIntoViewIfNeeded();
+    await expect(saveButton).toBeVisible({ timeout: 5_000 });
+    await saveButton.click({ force: true });
+    await page.waitForURL(/invertebrateStockView/, { timeout: 20_000 });
+
+    // 5. Reload + Nano-Reef erneut wählen
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    await expect(page.locator('#invertebrateStockForm')).toContainText(invertName, { timeout: 10_000 });
+
+    // 6. KERN-ASSERTION: Thumbnail in Tabelle vorhanden
+    const invertRow = page.locator('tr').filter({ hasText: invertName }).first();
+    await expect(invertRow).toBeVisible({ timeout: 5_000 });
+
+    const thumbnail = invertRow.locator('img');
+    await expect(thumbnail).toBeVisible({ timeout: 8_000 });
+
+    const styles = await page.evaluate((nameStr) => {
+      const rows = Array.from(document.querySelectorAll('tr'));
+      const row = rows.find(r => r.textContent?.includes(nameStr));
+      if (!row) return { error: 'row not found' };
+      const img = row.querySelector('img');
+      if (!img) return { error: 'img not found' };
+      const cs = window.getComputedStyle(img);
+      return {
+        width: cs.width,
+        height: cs.height,
+        display: cs.display,
+        src: img.getAttribute('src'),
+      };
+    }, invertName);
+
+    expect(styles).not.toHaveProperty('error');
+    expect(styles.display).not.toBe('none');
+    expect(styles.src).toContain('invertebratePhoto');
+
+    // 7. Edit-Seite öffnen — Foto-Vorschau muss sichtbar sein
+    await invertRow.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const photoPreview = page.locator('img[src*="invertebratePhoto"]').first();
+    await expect(photoPreview).toBeVisible({ timeout: 8_000 });
+
+    // ── Cleanup ──
+    await page.goto('/secured/invertebrateStockView.xhtml', { waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    const invertRowCleanup = page.locator('tr').filter({ hasText: invertName }).first();
+    if (await invertRowCleanup.isVisible()) {
+      await invertRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+      await page.waitForLoadState('networkidle');
+      await expect(page.locator('#invertebrateStockForm')).not.toContainText(invertName, { timeout: 10_000 });
+    }
+  });
+
+  test('Foto-Upload: zweiter Upload überschreibt erstes Foto (kein Duplicate-Key-Fehler)', async ({ page }) => {
+    const invertName = `E2E-FotoReplace-${Date.now()}`;
+    const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');
+
+    // Invertebrat anlegen und erstes Foto hochladen
+    await selectNanoReef(page);
+    const addButton = page.locator('#invertebrateStockForm button').filter({ hasText: /hinzuf|add/i }).first();
+    await addButton.click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const speciesNameInput = page.locator('[id$="speciesName"]');
+    await speciesNameInput.fill(invertName);
+    const dateInput = page.locator('[id$="addedOn_input"]');
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    await dateInput.fill(`${dd}.${mm}.${yyyy}`);
+    await speciesNameInput.click();
+    await page.waitForTimeout(300);
+
+    // Pflichtfeld: Taxonomische Kategorie (@NotNull)
+    await selectTaxonomicCategory(page);
+
+    const fileInput = page.locator('input[type="file"]#invertebratePhotoFileInput');
+    await fileInput.setInputFiles(testImagePath);
+
+    const saveButton = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+    await saveButton.scrollIntoViewIfNeeded();
+    await saveButton.click({ force: true });
+    await page.waitForURL(/invertebrateStockView/, { timeout: 20_000 });
+
+    // Zweiten Upload: Edit-Seite öffnen und Foto erneut hochladen
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    await expect(page.locator('#invertebrateStockForm')).toContainText(invertName, { timeout: 10_000 });
+
+    const invertRow = page.locator('tr').filter({ hasText: invertName }).first();
+    await invertRow.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    const fileInputEdit = page.locator('input[type="file"]#invertebratePhotoFileInput');
+    await fileInputEdit.setInputFiles(testImagePath);
+
+    const saveButtonEdit = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+    await saveButtonEdit.scrollIntoViewIfNeeded();
+    await saveButtonEdit.click({ force: true });
+    // Kein Fehler → Redirect zu invertebrateStockView (kein Duplicate-Key mehr)
+    await page.waitForURL(/invertebrateStockView/, { timeout: 20_000 });
+    await expect(page).toHaveURL(/invertebrateStockView/);
+
+    // ── Cleanup ──
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    const invertRowCleanup = page.locator('tr').filter({ hasText: invertName }).first();
+    if (await invertRowCleanup.isVisible()) {
+      await invertRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+      await page.waitForLoadState('networkidle');
+    }
   });
 
 });

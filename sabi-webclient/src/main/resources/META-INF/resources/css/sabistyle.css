@@ -541,6 +541,12 @@ body.dark-mode .sabi-back-link:hover {
     left: -9999px;
 }
 
+#invertebratePhotoFileInput {
+    display: none;
+    position: absolute;
+    left: -9999px;
+}
+
 /* Unified photo preview container — same size as the lg placeholder.
    Used for both fish and coral entry forms. */
 .sabi-photo-preview-box {

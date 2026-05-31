@@ -120,7 +120,7 @@ public class InvertebrateStockEntryView implements Serializable {
         }
     }
 
-    public String onSave() {
+    public void onSave() {
         try {
             ResultTo<InvertebrateStockEntryTo> result;
             if (isEdit()) {
@@ -131,16 +131,9 @@ public class InvertebrateStockEntryView implements Serializable {
                     currentEntry.setId(result.getValue().getId());
                 }
             }
-            // Handle pending photo upload
-            if (uploadedFile != null && currentEntry.getId() != null) {
-                handlePhotoUpload();
-            }
-            invertebrateEntryNavContext.clear();
-            return "/secured/invertebrateStockView?faces-redirect=true";
         } catch (BusinessException e) {
             log.error("Failed to save invertebrate", e);
             MessageUtil.error(null, "common.error.backend_unreachable.l", userSession.getLocale());
-            return null;
         }
     }
 
@@ -200,6 +193,7 @@ public class InvertebrateStockEntryView implements Serializable {
         if (result != null) {
             currentEntry.setScientificName(result.getScientificName());
             currentEntry.setInvertebrateCatalogueId(result.getId());
+            currentEntry.setExternalRefUrl(result.getReferenceUrl());
             if (result.getTaxonomicCategory() != null) {
                 currentEntry.setTaxonomicCategory(result.getTaxonomicCategory());
             }

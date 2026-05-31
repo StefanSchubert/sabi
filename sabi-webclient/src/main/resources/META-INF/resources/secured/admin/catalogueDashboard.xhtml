@@ -87,6 +87,17 @@
                         <h3 style="margin:0; color:#075985;">#{msg['catalogue.dashboard.invertebrate.title']}</h3>
                     </div>
                     <p style="margin:0; color:#6b7280; font-size:0.95rem; flex:1;">#{msg['catalogue.dashboard.invertebrate.description']}</p>
+                    <!-- KPIs -->
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#fef3c7; color:#92400e; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-clock"/>
+                            #{msg['catalogue.dashboard.pending.label']}: #{catalogueDashboardView.invertebratePendingCount}
+                        </span>
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#d1fae5; color:#065f46; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-check-circle"/>
+                            #{msg['catalogue.dashboard.approved.label']}: #{catalogueDashboardView.invertebrateApprovedCount}
+                        </span>
+                    </div>
                     <div>
                         <h:link outcome="/secured/admin/invertebrateCatalogueAdminView"
                                 styleClass="ui-button ui-widget ui-state-default ui-corner-all"

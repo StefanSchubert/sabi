@@ -174,12 +174,14 @@ public class InvertebrateStockServiceImpl extends APIServiceImpl implements Inve
     @Override
     public byte[] getPhoto(Long invertebrateId, String token) throws BusinessException {
         String uri = sabiBackendUrl + Endpoint.INVERTEBRATE_STOCK.getPath() + "/" + invertebrateId + "/photo";
+        RestTemplate restTemplate = new RestTemplate();
         try {
-            ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
-            if (response.getBody() == null) return new byte[0];
-            return response.getBody().getBytes();
-        } catch (BusinessException e) {
-            log.warn("No photo for invertebrate {}", invertebrateId);
+            HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
+            HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+            ResponseEntity<byte[]> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, byte[].class);
+            return response.getBody() != null ? response.getBody() : new byte[0];
+        } catch (Exception e) {
+            log.warn("Could not load photo for invertebrate {}: {}", invertebrateId, e.getMessage());
             return new byte[0];
         }
     }
