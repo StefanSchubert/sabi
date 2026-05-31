@@ -533,11 +533,40 @@ body.dark-mode .sabi-back-link:hover {
     vertical-align: middle !important;
 }
 
-/* Photo upload: hidden native input + styled label button */
-#photoFileInput {
+/* Photo upload: hidden native file inputs + styled label buttons */
+#photoFileInput,
+#coralPhotoFileInput {
     display: none;
     position: absolute;
     left: -9999px;
+}
+
+#invertebratePhotoFileInput {
+    display: none;
+    position: absolute;
+    left: -9999px;
+}
+
+/* Unified photo preview container — same size as the lg placeholder.
+   Used for both fish and coral entry forms. */
+.sabi-photo-preview-box {
+    width: 100%;
+    max-width: 200px;
+    height: 120px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+    display: block;
+}
+
+.sabi-photo-preview-box img,
+.sabi-photo-preview-box .ui-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    border-radius: 6px;
 }
 
 /* =====================================================================
@@ -617,6 +646,53 @@ body.dark-mode .sabi-back-link:hover {
     bottom: 6px;
     right: 6px;
 }
+
+/* =====================================================================
+   Coral photo placeholder — same structure as fish placeholder,
+   but uses a coral emoji. Shares the -lg variant dimensions.
+   ===================================================================== */
+.sabi-coral-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #f1f5f9;
+    border: 1px dashed var(--sabi-border);
+    border-radius: var(--sabi-radius);
+    vertical-align: middle;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 200px;
+    height: 120px;
+    margin-bottom: 0.5rem;
+}
+
+.sabi-coral-placeholder::before {
+    content: '🪸';
+    font-size: 3.5rem;
+    opacity: 0.5;
+}
+
+.sabi-coral-placeholder::after {
+    content: '?';
+    position: absolute;
+    background: #94a3b8;
+    color: #ffffff;
+    border-radius: 50%;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
+    line-height: 24px;
+    bottom: 6px;
+    right: 6px;
+}
+
 
 .sabi-file-upload-row {
     display: flex;

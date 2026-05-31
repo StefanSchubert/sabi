@@ -32,6 +32,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${spring.mail.username}")
     String senderAddress;
 
+    @Value("${sabi.admin.users:admin@sabi-project.net}")
+    String adminUsers;
+
     @Override
     public void sendValidationMail(UserTo createdUser) throws MessagingException {
         MimeMessage message = mailer.createMimeMessage();
@@ -122,5 +125,26 @@ public class NotificationServiceImpl implements NotificationService {
                 "<p></p>" +
                 "</body></html>", true);
         mailer.send(message);
+    }
+
+    @Override
+    public void sendCatalogueProposalNotification(String catalogueType, String scientificName) throws MessagingException {
+        if (adminUsers == null || adminUsers.isBlank()) return;
+        for (String adminEmail : adminUsers.split(",")) {
+            adminEmail = adminEmail.trim();
+            if (adminEmail.isEmpty()) continue;
+            MimeMessage message = mailer.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(adminEmail);
+            helper.setSubject("[sabi] New " + catalogueType + " Catalogue Proposal");
+            helper.setFrom(senderAddress);
+            helper.setText("<html><body>" +
+                    "<h2>New Catalogue Proposal</h2>" +
+                    "<p>A user has submitted a new <b>" + catalogueType + "</b> catalogue proposal:</p>" +
+                    "<p><b>Scientific name:</b> " + scientificName + "</p>" +
+                    "<p>Please review the proposal in the <a href=\"https://sabi-project.net/secured/admin/catalogueDashboard.xhtml\">Admin Catalogue Dashboard</a>.</p>" +
+                    "</body></html>", true);
+            mailer.send(message);
+        }
     }
 }

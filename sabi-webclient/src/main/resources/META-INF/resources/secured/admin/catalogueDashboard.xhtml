@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Admin Catalogue Dashboard - central entry point for all catalogue management.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head><title>SABI - #{msg['catalogue.dashboard.title']}</title></h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <h2 style="color:#075985; margin-top:0;">#{msg['catalogue.dashboard.title']}</h2>
+
+            <!-- Three-column dashboard -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem; margin-top:1rem;">
+
+                <!-- Fish Catalogue Card -->
+                <div style="border:1px solid #e5e7eb; border-radius:8px; padding:1.5rem; background:#ffffff; display:flex; flex-direction:column; gap:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.07);">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <i class="pi pi-book" style="font-size:2rem; color:#075985;"/>
+                        <h3 style="margin:0; color:#075985;">#{msg['catalogue.dashboard.fish.title']}</h3>
+                    </div>
+                    <p style="margin:0; color:#6b7280; font-size:0.95rem; flex:1;">#{msg['catalogue.dashboard.fish.description']}</p>
+                    <!-- KPIs -->
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#fef3c7; color:#92400e; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-clock"/>
+                            #{msg['catalogue.dashboard.pending.label']}: #{catalogueDashboardView.fishPendingCount}
+                        </span>
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#d1fae5; color:#065f46; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-check-circle"/>
+                            #{msg['catalogue.dashboard.approved.label']}: #{catalogueDashboardView.fishApprovedCount}
+                        </span>
+                    </div>
+                    <div>
+                        <h:link outcome="/secured/admin/fishCatalogueAdminView"
+                                styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+                                style="background:#065f46; border-color:#065f46; color:#ffffff; padding:0.4rem 1rem; text-decoration:none; border-radius:4px; font-size:0.9rem;">
+                            <i class="pi pi-arrow-right" style="margin-right:0.3rem;"/>
+                            #{msg['catalogue.dashboard.go.button']}
+                        </h:link>
+                    </div>
+                </div>
+
+                <!-- Coral Catalogue Card -->
+                <div style="border:1px solid #e5e7eb; border-radius:8px; padding:1.5rem; background:#ffffff; display:flex; flex-direction:column; gap:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.07);">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <i class="pi pi-star-fill" style="font-size:2rem; color:#075985;"/>
+                        <h3 style="margin:0; color:#075985;">#{msg['catalogue.dashboard.coral.title']}</h3>
+                    </div>
+                    <p style="margin:0; color:#6b7280; font-size:0.95rem; flex:1;">#{msg['catalogue.dashboard.coral.description']}</p>
+                    <!-- KPIs -->
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#fef3c7; color:#92400e; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-clock"/>
+                            #{msg['catalogue.dashboard.pending.label']}: #{catalogueDashboardView.coralPendingCount}
+                        </span>
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#d1fae5; color:#065f46; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-check-circle"/>
+                            #{msg['catalogue.dashboard.approved.label']}: #{catalogueDashboardView.coralApprovedCount}
+                        </span>
+                    </div>
+                    <div>
+                        <h:link outcome="/secured/admin/coralCatalogueAdminView"
+                                styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+                                style="background:#065f46; border-color:#065f46; color:#ffffff; padding:0.4rem 1rem; text-decoration:none; border-radius:4px; font-size:0.9rem;">
+                            <i class="pi pi-arrow-right" style="margin-right:0.3rem;"/>
+                            #{msg['catalogue.dashboard.go.button']}
+                        </h:link>
+                    </div>
+                </div>
+
+                <!-- Invertebrate Catalogue Card -->
+                <div style="border:1px solid #e5e7eb; border-radius:8px; padding:1.5rem; background:#ffffff; display:flex; flex-direction:column; gap:0.75rem; box-shadow:0 1px 3px rgba(0,0,0,0.07);">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <i class="pi pi-globe" style="font-size:2rem; color:#075985;"/>
+                        <h3 style="margin:0; color:#075985;">#{msg['catalogue.dashboard.invertebrate.title']}</h3>
+                    </div>
+                    <p style="margin:0; color:#6b7280; font-size:0.95rem; flex:1;">#{msg['catalogue.dashboard.invertebrate.description']}</p>
+                    <!-- KPIs -->
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#fef3c7; color:#92400e; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-clock"/>
+                            #{msg['catalogue.dashboard.pending.label']}: #{catalogueDashboardView.invertebratePendingCount}
+                        </span>
+                        <span style="display:inline-flex; align-items:center; gap:0.3rem; background:#d1fae5; color:#065f46; border-radius:12px; padding:0.2rem 0.6rem; font-size:0.85rem;">
+                            <i class="pi pi-check-circle"/>
+                            #{msg['catalogue.dashboard.approved.label']}: #{catalogueDashboardView.invertebrateApprovedCount}
+                        </span>
+                    </div>
+                    <div>
+                        <h:link outcome="/secured/admin/invertebrateCatalogueAdminView"
+                                styleClass="ui-button ui-widget ui-state-default ui-corner-all"
+                                style="background:#065f46; border-color:#065f46; color:#ffffff; padding:0.4rem 1rem; text-decoration:none; border-radius:4px; font-size:0.9rem;">
+                            <i class="pi pi-arrow-right" style="margin-right:0.3rem;"/>
+                            #{msg['catalogue.dashboard.go.button']}
+                        </h:link>
+                    </div>
+                </div>
+
+            </div>
+
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

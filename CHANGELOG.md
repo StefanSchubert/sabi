@@ -1,5 +1,37 @@
 # History of changes (since 5/2022)
 
+## Release 1.3.6
+
+### Feature
+* Ability to record invertebrate inhabitants in tanks
+
+## Release 1.3.5 (since 1.2.9)
+
+### Technical Maintenance
+
+* Common Patch-Management (JSpringBoot 4.0.6 / Java 25 / Primefaces 15 / Dependencies)
+* Agentic coding support through elaborated instructions for the AI agent, which allows to generate code snippets for the SABI project. This is a major improvement in terms of development speed and efficiency, as it allows developers to quickly generate code snippets for common tasks and functionalities, without having to write them from scratch.
+* Introduced Ansible-Vaults to safley commit productive credentials to the repository, which is a major improvement in terms of security and best practices, as it allows to securely store and manage sensitive information such as API keys, database credentials, etc. without exposing them in the codebase.
+* Ansible playbook enhancements for SABI project, which allows to automate the deployment and management of the SABI application, including tasks such as provisioning infrastructure, configuring servers, deploying code, etc. This is a major improvement in terms of efficiency and scalability, as it allows to quickly and easily deploy and manage the SABI application in a consistent and repeatable manner.
+
+### Feature
+* Ability to record fish inhabitants in tanks
+* Ability to record events in tanks (e.g. water change, filter change, etc.)
+* Support for AI based consulting by JSON download through their user profile
+* Ability tp provide a public "homepage" for each tank, which can be shared with friends and family (without login)
+* Ability to record coral inhabitants in tanks
+* Introduced OIDC ability for authentication and authorization, which allows to use external identity providers (e.g. Keycloak, Auth0, etc.) and also supports SSO (Single Sign-On) across multiple applications. This is a major improvement in terms of security and user experience, as it allows users to authenticate once and access multiple applications without having to log in again.
+* Introduction of the SABI Project Badge
+* Aquarium metadata enhancement (ecosystem-type, net volume, etc.)
+* UI Design overhaul with Primefaces 15, which allows to use the latest features and improvements of the Primefaces library, such as new components, improved performance, better accessibility, etc. This is a major improvement in terms of user experience and visual appeal, as it allows to create a more modern and responsive UI for the SABI application.
+* General UI/UX improvements (e.g. better mobile support, more intuitive navigation, etc.)
+* UI support for dark mode
+
+### Fixes
+
+* Datepicker-Rendering in Safari (iOS) fixed
+* CI-Pipeline configuration
+
 ## Release 1.2.9
 
 ### Technical Maintenance

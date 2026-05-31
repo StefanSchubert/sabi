@@ -1,0 +1,643 @@
+openapi: "3.0.3"
+info:
+  title: Sabi – Invertebrate Stock & Catalogue API
+  description: |
+    REST contract for the Invertebrate Stock Management & Catalogue feature (spec 006).
+    All endpoints marked `[AUTH]` require a valid JWT Bearer token supplied via the
+    `X-Auth-Token` request header (same header used by all other Sabi endpoints).
+    Endpoints marked `[ADMIN]` additionally require the `ADMIN` role.
+  version: "1.8.0"
+  contact:
+    name: Stefan Schubert
+    url: https://github.com/StefanSchubert/sabi
+
+servers:
+  - url: /api
+    description: Sabi backend (relative)
+
+tags:
+  - name: Invertebrate Stock
+    description: CRUD operations for invertebrate entries in a user's aquarium.
+  - name: Invertebrate Catalogue
+    description: Community invertebrate catalogue (search, propose, view, update).
+  - name: Invertebrate Catalogue Admin
+    description: Admin operations for catalogue governance (list pending, approve, reject).
+  - name: Public Report – Invertebrates
+    description: Invertebrate opt-in flag management on public reef-report links.
+
+# ─────────────────────────────────────────────────────────────────────
+# INVERTEBRATE STOCK ENDPOINTS
+# ─────────────────────────────────────────────────────────────────────
+paths:
+
+  /invertebrate/{aquariumId}/list:
+    get:
+      tags: [Invertebrate Stock]
+      summary: List all invertebrates (active and departed) for the given aquarium [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/AquariumIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200":
+          description: List of invertebrate stock entries (may be empty).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvertebrateStockEntryTo'
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate/{invertebrateId}:
+    get:
+      tags: [Invertebrate Stock]
+      summary: Get a single invertebrate entry by ID [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200":
+          description: Invertebrate entry returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvertebrateStockEntryTo'
+        "404": { description: Not found. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+    put:
+      tags: [Invertebrate Stock]
+      summary: Update an existing invertebrate entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvertebrateStockEntryTo'
+      responses:
+        "202":
+          description: Invertebrate updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultToInvertebrate'
+        "400": { description: Validation error. }
+        "403": { description: Not your invertebrate. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+    delete:
+      tags: [Invertebrate Stock]
+      summary: Physically delete an invertebrate entry (blocked if departure record exists) [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "204": { description: Invertebrate deleted. }
+        "409": { description: Has departure record – cannot delete. }
+        "403": { description: Not your invertebrate. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate/:
+    post:
+      tags: [Invertebrate Stock]
+      summary: Add a new invertebrate to an aquarium [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvertebrateStockEntryTo'
+      responses:
+        "201":
+          description: Invertebrate created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultToInvertebrate'
+        "400": { description: Validation error. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate/{invertebrateId}/departure:
+    put:
+      tags: [Invertebrate Stock]
+      summary: Record a departure for an invertebrate entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvertebrateDepartureRecordTo'
+      responses:
+        "202":
+          description: Departure recorded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultToInvertebrate'
+        "422": { description: Departure date is before entry date. }
+        "400": { description: Validation error. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate/{invertebrateId}/catalogue-link:
+    delete:
+      tags: [Invertebrate Stock]
+      summary: Remove the catalogue link from an invertebrate entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "202":
+          description: Catalogue link removed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultToInvertebrate'
+        "403": { description: Not your invertebrate. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate/{invertebrateId}/photo:
+    post:
+      tags: [Invertebrate Stock]
+      summary: Upload a photo for an invertebrate entry (max 5 MB, JPEG/PNG/WebP/GIF) [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "204": { description: Photo uploaded. }
+        "400": { description: Photo too large or invalid format. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+    get:
+      tags: [Invertebrate Stock]
+      summary: Get the photo bytes for an invertebrate entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200":
+          description: Photo bytes returned.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "404": { description: No photo found. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+    delete:
+      tags: [Invertebrate Stock]
+      summary: Delete the photo of an invertebrate entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/InvertebrateIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "204": { description: Photo deleted. }
+        "403": { description: Not your invertebrate. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+# ─────────────────────────────────────────────────────────────────────
+# INVERTEBRATE CATALOGUE ENDPOINTS
+# ─────────────────────────────────────────────────────────────────────
+
+  /invertebrate-catalogue/search:
+    get:
+      tags: [Invertebrate Catalogue]
+      summary: Search the invertebrate catalogue by partial name (scientific or common) [AUTH]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Partial search string (min 2 characters).
+          schema:
+            type: string
+            minLength: 2
+        - name: lang
+          in: query
+          required: false
+          description: "Language code for common name display (default: en)."
+          schema:
+            type: string
+            default: en
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200":
+          description: Matching catalogue entries (may be empty).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvertebrateCatalogueSearchResultTo'
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate-catalogue/:
+    post:
+      tags: [Invertebrate Catalogue]
+      summary: Propose a new invertebrate catalogue entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvertebrateCatalogueEntryTo'
+      responses:
+        "201":
+          description: Proposal saved with status PENDING.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultToCatalogueEntry'
+        "409": { description: Scientific name already exists (PENDING or PUBLIC) — non-blocking warning returned. }
+        "400": { description: Validation error. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /invertebrate-catalogue/{catalogueId}:
+    get:
+      tags: [Invertebrate Catalogue]
+      summary: Get full details of a catalogue entry [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/CatalogueIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200":
+          description: Catalogue entry returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvertebrateCatalogueEntryTo'
+        "404": { description: Not found or not visible to the requesting user. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+    put:
+      tags: [Invertebrate Catalogue]
+      summary: Update a catalogue entry (creator/admin only) [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/CatalogueIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvertebrateCatalogueEntryTo'
+      responses:
+        "202":
+          description: Catalogue entry updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultToCatalogueEntry'
+        "403": { description: Not the creator and not admin. }
+        "404": { description: Not found. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+# ─────────────────────────────────────────────────────────────────────
+# ADMIN CATALOGUE ENDPOINTS
+# ─────────────────────────────────────────────────────────────────────
+
+  /admin/invertebrate-catalogue/pending:
+    get:
+      tags: [Invertebrate Catalogue Admin]
+      summary: List all pending invertebrate catalogue proposals [AUTH][ADMIN]
+      parameters:
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200":
+          description: List of pending proposals sorted by proposal_date ascending.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvertebrateCatalogueEntryTo'
+        "403": { description: Not an admin. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /admin/invertebrate-catalogue/{catalogueId}/approve:
+    put:
+      tags: [Invertebrate Catalogue Admin]
+      summary: Approve a pending catalogue entry [AUTH][ADMIN]
+      parameters:
+        - $ref: '#/components/parameters/CatalogueIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: false
+        description: Optional updated fields to save as part of the approval action.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvertebrateCatalogueEntryTo'
+      responses:
+        "202": { description: Entry status changed to PUBLIC. }
+        "404": { description: Not found. }
+        "403": { description: Not an admin. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /admin/invertebrate-catalogue/{catalogueId}/reject:
+    put:
+      tags: [Invertebrate Catalogue Admin]
+      summary: Reject a pending catalogue entry [AUTH][ADMIN]
+      parameters:
+        - $ref: '#/components/parameters/CatalogueIdPath'
+        - $ref: '#/components/parameters/AuthToken'
+      requestBody:
+        required: false
+        description: Optional rejection reason.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "202": { description: Entry status changed to REJECTED. }
+        "404": { description: Not found. }
+        "403": { description: Not an admin. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+# ─────────────────────────────────────────────────────────────────────
+# PUBLIC REPORT – include-invertebrates flag
+# ─────────────────────────────────────────────────────────────────────
+
+  /report/link/{aquariumId}/include-invertebrates:
+    put:
+      tags: [Public Report – Invertebrates]
+      summary: Set or clear the includeInvertebrates flag for a tank's public report link [AUTH]
+      parameters:
+        - $ref: '#/components/parameters/AquariumIdPath'
+        - name: includeInvertebrates
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/AuthToken'
+      responses:
+        "200": { description: Flag updated. }
+        "403": { description: Aquarium does not belong to user or no link exists. }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+# ─────────────────────────────────────────────────────────────────────
+# REUSABLE COMPONENTS
+# ─────────────────────────────────────────────────────────────────────
+components:
+
+  parameters:
+    AuthToken:
+      name: X-Auth-Token
+      in: header
+      required: true
+      schema:
+        type: string
+      description: JWT Bearer token (existing Sabi auth mechanism).
+
+    AquariumIdPath:
+      name: aquariumId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    InvertebrateIdPath:
+      name: invertebrateId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    CatalogueIdPath:
+      name: catalogueId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT token.
+
+  schemas:
+
+    InvertebrateTaxonomicCategory:
+      type: string
+      enum: [CRUSTACEAN, MOLLUSC, ECHINODERM, WORM]
+
+    InvertebrateMobility:
+      type: string
+      enum: [MOBILE, SESSILE]
+
+    InvertebrateEcologicalRole:
+      type: string
+      enum: [CLEANUP_CREW, NEUTRAL, DETRIMENTAL]
+
+    InvertebrateActivityPattern:
+      type: string
+      enum: [DIURNAL, NOCTURNAL, BOTH]
+
+    InvertebrateDepartureReason:
+      type: string
+      enum: [DIED, SOLD, GIVEN_AWAY, MOVED_TO_OTHER_TANK, OTHER]
+
+    InvertebrateCareLevel:
+      type: string
+      enum: [EASY, MODERATE, DEMANDING]
+
+    CatalogueStatus:
+      type: string
+      enum: [PENDING, PUBLIC, REJECTED]
+
+    InvertebrateStockEntryTo:
+      type: object
+      required: [aquariumId, speciesName, taxonomicCategory, addedOn]
+      properties:
+        id:
+          type: integer
+          format: int64
+        aquariumId:
+          type: integer
+          format: int64
+        speciesName:
+          type: string
+          minLength: 1
+        scientificName:
+          type: string
+          nullable: true
+        taxonomicCategory:
+          $ref: '#/components/schemas/InvertebrateTaxonomicCategory'
+        careLevel:
+          $ref: '#/components/schemas/InvertebrateCareLevel'
+          nullable: true
+        mobility:
+          $ref: '#/components/schemas/InvertebrateMobility'
+          nullable: true
+        ecologicalRole:
+          $ref: '#/components/schemas/InvertebrateEcologicalRole'
+          nullable: true
+        activityPattern:
+          $ref: '#/components/schemas/InvertebrateActivityPattern'
+          nullable: true
+        waterSensitivityUnitIds:
+          type: array
+          items:
+            type: integer
+          description: Unit IDs from the existing unit table. Empty list = no sensitivity specified.
+        externalRefUrl:
+          type: string
+          nullable: true
+          pattern: '^(https?://.*)?$'
+        notes:
+          type: string
+          nullable: true
+        addedOn:
+          type: string
+          format: date
+          description: Not in the future.
+        departedOn:
+          type: string
+          format: date
+          nullable: true
+        departureReason:
+          $ref: '#/components/schemas/InvertebrateDepartureReason'
+          nullable: true
+        departureNote:
+          type: string
+          maxLength: 500
+          nullable: true
+        invertebrateCatalogueId:
+          type: integer
+          format: int64
+          nullable: true
+        hasPhoto:
+          type: boolean
+
+    InvertebrateDepartureRecordTo:
+      type: object
+      required: [departedOn, departureReason]
+      properties:
+        departedOn:
+          type: string
+          format: date
+        departureReason:
+          $ref: '#/components/schemas/InvertebrateDepartureReason'
+        departureNote:
+          type: string
+          maxLength: 500
+          nullable: true
+
+    InvertebrateCatalogueEntryTo:
+      type: object
+      required: [scientificName, taxonomicCategory, careLevel]
+      properties:
+        id:
+          type: integer
+          format: int64
+          nullable: true
+        scientificName:
+          type: string
+          minLength: 1
+        taxonomicCategory:
+          $ref: '#/components/schemas/InvertebrateTaxonomicCategory'
+        careLevel:
+          $ref: '#/components/schemas/InvertebrateCareLevel'
+        status:
+          $ref: '#/components/schemas/CatalogueStatus'
+          nullable: true
+        proposerUserId:
+          type: integer
+          format: int64
+          nullable: true
+        proposalDate:
+          type: string
+          format: date
+          nullable: true
+        i18nEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvertebrateCatalogueI18nTo'
+
+    InvertebrateCatalogueI18nTo:
+      type: object
+      required: [languageCode, commonName]
+      properties:
+        id:
+          type: integer
+          format: int64
+          nullable: true
+        languageCode:
+          type: string
+          enum: [DE, EN, ES, FR, IT]
+        commonName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          maxLength: 2000
+          nullable: true
+        refUrl:
+          type: string
+          nullable: true
+
+    InvertebrateCatalogueSearchResultTo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        scientificName:
+          type: string
+        taxonomicCategory:
+          $ref: '#/components/schemas/InvertebrateTaxonomicCategory'
+        commonName:
+          type: string
+          description: Common name in the requested language (falls back to any available language).
+        status:
+          $ref: '#/components/schemas/CatalogueStatus'
+
+    ResultToInvertebrate:
+      type: object
+      description: Generic result wrapper (mirrors existing Sabi ResultTo<T> pattern).
+      properties:
+        payload:
+          $ref: '#/components/schemas/InvertebrateStockEntryTo'
+        message:
+          type: object
+          nullable: true
+          properties:
+            type:
+              type: string
+              enum: [INFO, WARN, ERROR]
+            code:
+              type: object
+              nullable: true
+
+    ResultToCatalogueEntry:
+      type: object
+      properties:
+        payload:
+          $ref: '#/components/schemas/InvertebrateCatalogueEntryTo'
+        message:
+          type: object
+          nullable: true

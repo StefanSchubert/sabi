@@ -45,4 +45,16 @@ public class PublicReportLinkEntity extends Auditable {
     @Basic
     private boolean includeEvents = false;
 
+    @Column(name = "include_corals", nullable = false)
+    @Basic
+    private boolean includeCorals = false;
+
+    @Column(name = "include_invertebrates", nullable = false)
+    @Basic
+    private boolean includeInvertebrates = false;
+
+    @Column(name = "include_fish", nullable = false)
+    @Basic
+    private boolean includeFish = true;
+
 }

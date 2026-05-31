@@ -36,7 +36,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-COMPOSE_FILE="${SCRIPT_DIR}/docker-compose-arm.yml"
+COMPOSE_FILE="${SCRIPT_DIR}/docker-compose.yml"
 BOUNDARY_DIR="${REPO_ROOT}/sabi-boundary"
 SERVER_DIR="${REPO_ROOT}/sabi-server"
 
@@ -113,6 +113,5 @@ echo ""
 echo "========================================"
 echo "  Redeploy complete."
 echo "  Container : sabi-as"
-echo "  Compose   : docker-compose-arm.yml"
 echo "========================================"
 

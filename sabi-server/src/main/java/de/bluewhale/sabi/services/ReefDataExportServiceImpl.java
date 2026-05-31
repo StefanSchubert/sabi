@@ -47,8 +47,6 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     @Autowired
     private PlagueRecordEntityRepository plagueRecordRepository;
 
-    @Autowired
-    private FishRepository fishRepository;
 
     @Autowired
     private TankFishStockRepository tankFishStockRepository;
@@ -57,13 +55,19 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     private FishSizeHistoryRepository fishSizeHistoryRepository;
 
     @Autowired
-    private CoralRepository coralRepository;
+    private LocalizedUnitRepository localizedUnitRepository;
+
+    // 005-coral-stock: coral export uses CoralStockService (coral_stock table)
+    @Autowired
+    private CoralStockService coralStockService;
+
+    // 006-invertebrate-tracking: invertebrate export uses InvertebrateStockService
+    @Autowired
+    private InvertebrateStockService invertebrateStockService;
 
     @Autowired
     private TreatmentRepository treatmentRepository;
 
-    @Autowired
-    private LocalizedUnitRepository localizedUnitRepository;
 
     @Autowired
     private UnitRepository unitRepository;
@@ -75,10 +79,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     private LocalizedPlagueStatusRepository localizedPlagueStatusRepository;
 
     @Autowired
-    private FishCatalogueRepository fishCatalogueRepository;
-
-    @Autowired
-    private CoralCatalogueRepository coralCatalogueRepository;
+    private FishCatalogueEntryRepository fishCatalogueEntryRepository;
 
     @Autowired
     private RemedyRepository remedyRepository;
@@ -163,6 +164,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         ato.setPlagueRecords(buildPlagueRecordExports(aquarium.getId()));
         ato.setFish(buildFishExports(aquarium.getId()));
         ato.setCorals(buildCoralExports(aquarium.getId()));
+        ato.setInvertebrates(buildInvertebrateExports(aquarium.getId()));
         ato.setTreatments(buildTreatmentExports(aquarium.getId()));
         ato.setEvents(buildEventExports(aquarium.getId()));
 
@@ -263,8 +265,8 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
             // scientific name: prefer entity field (denormalised), fall back to catalogue lookup
             String scientificName = f.getScientificName();
             if (scientificName == null && f.getFishCatalogueId() != null) {
-                Optional<FishCatalogueEntity> catOpt = fishCatalogueRepository.findById(f.getFishCatalogueId());
-                scientificName = catOpt.map(FishCatalogueEntity::getScientificName).orElse(null);
+                Optional<FishCatalogueEntryEntity> catOpt = fishCatalogueEntryRepository.findById(f.getFishCatalogueId());
+                scientificName = catOpt.map(FishCatalogueEntryEntity::getScientificName).orElse(null);
             }
             fto.setScientificName(scientificName);
 
@@ -306,23 +308,45 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     }
 
     private List<CoralExportTo> buildCoralExports(Long aquariumId) {
-        List<CoralEntity> entities = coralRepository.findCoralEntitiesByAquariumId(aquariumId);
-        List<CoralExportTo> result = new ArrayList<>();
-        for (CoralEntity c : entities) {
-            CoralExportTo cto = new CoralExportTo();
-            // Note: source field is coralCatalougeId (typo preserved from entity)
-            cto.setCoralCatalogueId(c.getCoralCatalougeId());
-            cto.setObservedBehavior(c.getObservedBehavior());
-
-            // T015: coral catalogue resolution
-            String scientificName = null;
-            Optional<CoralCatalogueEntity> catOpt = coralCatalogueRepository.findById(c.getCoralCatalougeId());
-            scientificName = catOpt.map(CoralCatalogueEntity::getScientificName).orElse(null);
-            cto.setScientificName(scientificName);
-
-            result.add(cto);
+        // 005-coral-stock: delegates to CoralStockService (coral_stock table, replaces legacy coral table)
+        try {
+            return coralStockService.getCorralsForExport(aquariumId);
+        } catch (Exception e) {
+            log.error("Failed to export coral data for aquarium {}", aquariumId, e);
+            return java.util.Collections.emptyList();
         }
-        return result;
+    }
+
+    private List<InvertebrateExportTo> buildInvertebrateExports(Long aquariumId) {
+        // 006-invertebrate-tracking: export all invertebrates (active + departed) as InvertebrateExportTo
+        try {
+            List<InvertebrateStockEntryTo> entries = invertebrateStockService.getActiveInvertebratesForReport(aquariumId);
+            return entries.stream()
+                    .map(e -> {
+                        de.bluewhale.sabi.model.InvertebrateExportTo eto = new de.bluewhale.sabi.model.InvertebrateExportTo();
+                        eto.setCatalogueId(e.getInvertebrateCatalogueId());
+                        eto.setScientificName(e.getScientificName());
+                        eto.setSpeciesName(e.getSpeciesName());
+                        eto.setTaxonomicCategory(e.getTaxonomicCategory() != null ? e.getTaxonomicCategory().name() : null);
+                        eto.setMobility(e.getMobility() != null ? e.getMobility().name() : null);
+                        eto.setEcologicalRoles(e.getEcologicalRoles() != null
+                                ? e.getEcologicalRoles().stream()
+                                        .map(de.bluewhale.sabi.model.InvertebrateEcologicalRole::name)
+                                        .collect(java.util.stream.Collectors.toList())
+                                : new java.util.ArrayList<>());
+                        eto.setActivityPattern(e.getActivityPattern() != null ? e.getActivityPattern().name() : null);
+                        eto.setAddedOn(e.getAddedOn() != null ? e.getAddedOn().toString() : null);
+                        eto.setDepartedOn(e.getDepartedOn() != null ? e.getDepartedOn().toString() : null);
+                        eto.setDepartureReason(e.getDepartureReason() != null ? e.getDepartureReason().name() : null);
+                        eto.setDepartureNote(e.getDepartureNote());
+                        eto.setNotes(e.getNotes());
+                        return eto;
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+        } catch (Exception ex) {
+            log.error("Failed to export invertebrate data for aquarium {}", aquariumId, ex);
+            return java.util.Collections.emptyList();
+        }
     }
 
     private List<TreatmentExportTo> buildTreatmentExports(Long aquariumId) {

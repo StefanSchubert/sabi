@@ -33,7 +33,6 @@ public interface UserMapper {
             @Mapping(target ="language", source="language"),
             @Mapping(target ="country", source="country"),
             @Mapping(target ="aquariums", ignore = true),
-            @Mapping(target ="corals", ignore = true),
             @Mapping(target ="fishes", ignore = true),
             @Mapping(target ="measurements", ignore = true),
             @Mapping(target ="plagueRecords", ignore = true),

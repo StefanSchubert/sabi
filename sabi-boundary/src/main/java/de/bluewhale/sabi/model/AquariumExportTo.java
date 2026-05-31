@@ -33,6 +33,7 @@ public class AquariumExportTo implements Serializable {
     private List<PlagueRecordExportTo> plagueRecords = new ArrayList<>();
     private List<FishExportTo> fish = new ArrayList<>();
     private List<CoralExportTo> corals = new ArrayList<>();
+    private List<InvertebrateExportTo> invertebrates = new ArrayList<>();
     private List<TreatmentExportTo> treatments = new ArrayList<>();
     /** Logbook events for this aquarium (004-aquarium-events). */
     private List<EventExportTo> events = new ArrayList<>();

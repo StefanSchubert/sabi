@@ -58,6 +58,12 @@ public class PublicReefReportTo implements Serializable {
     @Schema(description = "Events from the past 365 days; null when includeEvents = false for this report link.")
     private List<AquariumEventTo> recentEvents;   // null = not opted-in; empty list = opted-in but no events
 
+    @Schema(description = "Currently-present corals; null when includeCorals = false for this report link.")
+    private List<PublicReefReportCoralTo> coralInhabitants;  // null = not opted-in; empty list = opted-in, no corals
+
+    @Schema(description = "Currently-present invertebrates; null when includeInvertebrates = false for this report link.")
+    private List<InvertebrateStockEntryTo> invertebrateInhabitants;  // null = not opted-in; empty list = opted-in, no invertebrates
+
     /**
      * Returns the report timestamp as UTC epoch milliseconds so the browser
      * can format it in the viewer's local timezone via {@code new Date(ms).toLocaleString()}.

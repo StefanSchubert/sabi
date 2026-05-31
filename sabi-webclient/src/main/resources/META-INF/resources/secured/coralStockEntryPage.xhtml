@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T056
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}"
+            contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head>
+    <title>SABI - #{coralStockEntryView.edit ? msg['coralstock.edit.button.label'] : msg['coralstock.add.button.label']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/coralStockView" styleClass="sabi-back-link">
+                    &#8592; #{msg['coralstock.list.title']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
+                #{coralStockEntryView.edit ? msg['coralstock.edit.button.label'] : msg['coralstock.add.button.label']}
+            </h2>
+
+            <h:form id="coralEntryForm">
+
+                <h:inputHidden id="coralEntryId" value="#{coralStockEntryView.currentEntry.id}"/>
+                <h:inputHidden id="coralAquariumId" value="#{coralStockEntryView.currentEntry.aquariumId}"/>
+
+                <p:messages id="coralEntryMessages" showDetail="true" closable="true"/>
+
+                <!-- Include the entry form fragment -->
+                <ui:include src="/secured/coralStockEntryForm.xhtml"/>
+
+                <!-- ═══════════════════════════════════════════════════════
+                     SECTION: Growth History (edit mode only)
+                     ═══════════════════════════════════════════════════════ -->
+                <h:panelGroup id="growthHistoryPanel" layout="block"
+                              rendered="#{coralStockEntryView.edit}"
+                              style="margin-top:2rem; padding-top:1.25rem; border-top:1px solid var(--sabi-border);">
+
+                    <h3 style="color:var(--sabi-accent); margin-top:0; margin-bottom:0.75rem;">
+                        #{msg['coralstock.growth.title']}
+                    </h3>
+
+                    <!-- Add new measurement row -->
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:flex-end; margin-bottom:0.75rem;">
+
+                        <!-- Date -->
+                        <div>
+                            <p:outputLabel for="newGrowthDate" value="#{msg['coralstock.growth.form.date.label']}"
+                                           style="display:block; font-size:0.85rem; color:var(--sabi-text-muted);"/>
+                            <p:datePicker id="newGrowthDate"
+                                          value="#{coralStockEntryView.newGrowthDate}"
+                                          pattern="dd.MM.yyyy" showIcon="true"
+                                          style="width:160px;"/>
+                        </div>
+
+                        <!-- Type -->
+                        <div>
+                            <p:outputLabel for="newGrowthType" value="#{msg['coralstock.growth.form.type.label']}"
+                                           style="display:block; font-size:0.85rem; color:var(--sabi-text-muted);"/>
+                            <p:selectOneMenu id="newGrowthType"
+                                             value="#{coralStockEntryView.newGrowthType}"
+                                             style="width:200px;">
+                                <f:selectItems value="#{coralStockEntryView.growthTypes}"
+                                               var="growthType"
+                                               itemLabel="#{msg['coralstock.growthtype.'.concat(growthType.name())]}"
+                                               itemValue="#{growthType}"/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <!-- Value -->
+                        <div>
+                            <p:outputLabel for="newGrowthValue" value="#{msg['coralstock.growth.form.value.label']}"
+                                           style="display:block; font-size:0.85rem; color:var(--sabi-text-muted);"/>
+                            <p:inputNumber id="newGrowthValue"
+                                           value="#{coralStockEntryView.newGrowthValue}"
+                                           minValue="0.1" maxValue="99999.9" decimalPlaces="1"
+                                           placeholder="z.B. 5.2" style="width:110px;"/>
+                        </div>
+
+                        <!-- Add button -->
+                        <p:commandButton value="#{msg['coralstock.growth.add.button']}"
+                                         icon="pi pi-plus"
+                                         style="background:#065f46; border-color:#065f46; color:#ffffff; align-self:flex-end;"
+                                         actionListener="#{coralStockEntryView.onAddGrowthRecord()}"
+                                         process="newGrowthDate newGrowthType newGrowthValue @this"
+                                         update=":coralEntryForm:growthHistoryPanel :coralEntryForm:coralEntryMessages"/>
+                    </div>
+
+                    <!-- History table -->
+                    <p:dataTable value="#{coralStockEntryView.growthHistory}"
+                                 var="gh"
+                                 emptyMessage="#{msg['coralstock.growth.no.entries']}"
+                                 styleClass="sabi-size-history-table"
+                                 style="width:100%;">
+                        <p:column headerText="#{msg['coralstock.growth.form.date.label']}" style="width:120px;">
+                            <h:outputText value="#{gh.measuredOn}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msg['coralstock.growth.form.type.label']}" style="width:200px;">
+                            <h:outputText value="#{msg['coralstock.growthtype.'.concat(gh.measurementType.name())]}"/>
+                        </p:column>
+                        <p:column headerText="#{msg['coralstock.growth.form.value.label']}" style="width:100px; text-align:right;">
+                            <h:outputText value="#{gh.measurementValue}"/>
+                        </p:column>
+                        <p:column style="width:3rem; text-align:center;">
+                            <p:commandButton icon="pi pi-trash"
+                                             styleClass="ui-button-danger ui-button-sm"
+                                             title="#{msg['coralstock.growth.delete.button']}"
+                                             actionListener="#{coralStockEntryView.onDeleteGrowthRecord(gh)}"
+                                             process="@this"
+                                             update=":coralEntryForm:growthHistoryPanel :coralEntryForm:coralEntryMessages"/>
+                        </p:column>
+                    </p:dataTable>
+
+                </h:panelGroup>
+
+                <!-- ═══════════════════════════════════════════════════════
+                     SECTION: Polyp Condition History (edit mode only)
+                     ═══════════════════════════════════════════════════════ -->
+                <h:panelGroup id="polypHistoryPanel" layout="block"
+                              rendered="#{coralStockEntryView.edit}"
+                              style="margin-top:1.75rem; padding-top:1.25rem; border-top:1px solid var(--sabi-border);">
+
+                    <h3 style="color:var(--sabi-accent); margin-top:0; margin-bottom:0.75rem;">
+                        #{msg['coralstock.polyp.title']}
+                    </h3>
+
+                    <!-- Add new observation row -->
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:flex-end; margin-bottom:0.75rem;">
+
+                        <!-- Date -->
+                        <div>
+                            <p:outputLabel for="newPolypDate" value="#{msg['coralstock.polyp.form.date.label']}"
+                                           style="display:block; font-size:0.85rem; color:var(--sabi-text-muted);"/>
+                            <p:datePicker id="newPolypDate"
+                                          value="#{coralStockEntryView.newPolypDate}"
+                                          pattern="dd.MM.yyyy" showIcon="true"
+                                          style="width:160px;"/>
+                        </div>
+
+                        <!-- Condition -->
+                        <div>
+                            <p:outputLabel for="newPolypCondition" value="#{msg['coralstock.polyp.form.condition.label']}"
+                                           style="display:block; font-size:0.85rem; color:var(--sabi-text-muted);"/>
+                            <p:selectOneMenu id="newPolypCondition"
+                                             value="#{coralStockEntryView.newPolypCondition}"
+                                             style="width:220px;">
+                                <f:selectItems value="#{coralStockEntryView.polypConditions}"
+                                               var="pc"
+                                               itemLabel="#{msg['coralstock.condition.'.concat(pc.name())]}"
+                                               itemValue="#{pc}"/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <!-- Add button -->
+                        <p:commandButton value="#{msg['coralstock.polyp.add.button']}"
+                                         icon="pi pi-plus"
+                                         style="background:#065f46; border-color:#065f46; color:#ffffff; align-self:flex-end;"
+                                         actionListener="#{coralStockEntryView.onAddPolypObservation()}"
+                                         process="newPolypDate newPolypCondition @this"
+                                         update=":coralEntryForm:polypHistoryPanel :coralEntryForm:coralEntryMessages"/>
+                    </div>
+
+                    <!-- History table -->
+                    <p:dataTable value="#{coralStockEntryView.polypHistory}"
+                                 var="ph"
+                                 emptyMessage="#{msg['coralstock.polyp.no.entries']}"
+                                 styleClass="sabi-size-history-table"
+                                 style="width:100%;">
+                        <p:column headerText="#{msg['coralstock.polyp.form.date.label']}" style="width:120px;">
+                            <h:outputText value="#{ph.observedOn}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msg['coralstock.polyp.form.condition.label']}">
+                            <h:outputText value="#{msg['coralstock.condition.'.concat(ph.condition.name())]}"/>
+                        </p:column>
+                        <p:column style="width:3rem; text-align:center;">
+                            <p:commandButton icon="pi pi-trash"
+                                             styleClass="ui-button-danger ui-button-sm"
+                                             title="#{msg['coralstock.polyp.delete.button']}"
+                                             actionListener="#{coralStockEntryView.onDeletePolypObservation(ph)}"
+                                             process="@this"
+                                             update=":coralEntryForm:polypHistoryPanel :coralEntryForm:coralEntryMessages"/>
+                        </p:column>
+                    </p:dataTable>
+
+                </h:panelGroup>
+
+                <!-- Action Buttons -->
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--sabi-border);">
+                    <p:commandButton value="#{msg['coralstock.save.button.label']}"
+                                     icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     actionListener="#{coralStockEntryView.onSave()}"
+                                     update="coralEntryMessages coralEntryId"
+                                     oncomplete="if (!args.validationFailed) sabiUploadCoralPhotoAndRedirect();"/>
+                    <p:commandButton value="#{msg['coralstock.cancel.button.label']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/coralStockView.xhtml';"/>
+                </div>
+
+            </h:form>
+
+            <script type="text/javascript">
+            //<![CDATA[
+            var SABI_MAX_PHOTO_BYTES = 5242880;
+            var SABI_CORAL_PHOTO_SIZE_ERROR_MSG = '#{msg["coralstock.form.photo.too_large"]}';
+            var SABI_CONTEXT_PATH = '#{request.contextPath}';
+
+            function sabiValidateCoralPhotoSize(input) {
+                var errorEl = document.getElementById('coralPhotoUploadError');
+                if (!errorEl) return;
+                if (input.files && input.files.length > 0 && input.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                    errorEl.textContent = SABI_CORAL_PHOTO_SIZE_ERROR_MSG;
+                    errorEl.style.display = 'block';
+                    input.value = '';
+                    sabiUpdateCoralFileName(input);
+                } else {
+                    errorEl.style.display = 'none';
+                }
+            }
+
+            function sabiUpdateCoralFileName(input) {
+                var display = document.getElementById('coralPhotoFileNameDisplay');
+                if (!display) return;
+                if (input.files && input.files.length > 0) {
+                    display.textContent = input.files[0].name;
+                    display.style.color = 'var(--sabi-text)';
+                } else {
+                    display.textContent = '';
+                }
+            }
+
+            function sabiUploadCoralPhotoAndRedirect() {
+                var fileInput = document.getElementById('coralPhotoFileInput');
+                var errorEl = document.getElementById('coralPhotoUploadError');
+                var redirect = function() {
+                    window.location.href = SABI_CONTEXT_PATH + '/secured/coralStockView.xhtml';
+                };
+                if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                    redirect();
+                    return;
+                }
+                if (fileInput.files[0].size > SABI_MAX_PHOTO_BYTES) {
+                    if (errorEl) { errorEl.textContent = SABI_CORAL_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                    return;
+                }
+                var coralIdEl = document.querySelector('[id$="coralEntryId"]');
+                var coralId = coralIdEl ? coralIdEl.value : null;
+                if (!coralId || coralId === '0' || coralId === '') {
+                    redirect();
+                    return;
+                }
+                var formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                fetch(SABI_CONTEXT_PATH + '/secured/coralPhoto?coralId=' + coralId, { method: 'POST', body: formData })
+                    .then(function(resp) {
+                        if (!resp.ok) {
+                            if (errorEl) { errorEl.textContent = SABI_CORAL_PHOTO_SIZE_ERROR_MSG; errorEl.style.display = 'block'; }
+                            console.warn('Coral photo upload returned status ' + resp.status);
+                        } else {
+                            redirect();
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error('Coral photo upload failed:', err);
+                        redirect();
+                    });
+            }
+            //]]>
+            </script>
+
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2026 by Stefan Schubert under the MIT License (MIT).
+  - Part of 005-coral-stock — T091 (Coral Catalogue Proposal Form)
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:metadata>
+    <f:view locale="#{userSession.locale}" language="#{userSession.language}" contentType="text/html" encoding="utf-8"/>
+</f:metadata>
+<h:head><title>SABI - Coral Catalogue</title></h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+
+            <!-- Breadcrumb / back link -->
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/coralStockView"
+                        styleClass="sabi-back-link">
+                    &#8592; #{msg['coralstock.back.to.list']}
+                </h:link>
+            </div>
+
+            <h2 style="color:#075985; margin-top:0;">
+                #{coralCatalogueProposalView.editMode ? msg['coralcatalogue.edit.title'] : msg['coralcatalogue.propose.title']}
+            </h2>
+
+            <h:form id="proposalForm">
+
+                <p:messages id="proposalMessages" showDetail="true" closable="true"/>
+
+                <!-- Duplicate Warning Panel -->
+                <p:panel rendered="#{coralCatalogueProposalView.duplicateWarning}"
+                         style="background:#fef3c7; border:1px solid #d97706; padding:0.75rem; border-radius:4px; margin-bottom:1rem; color:#92400e;">
+                    <p:outputLabel value="#{msg['coralcatalogue.duplicate_warning']}"/>
+                </p:panel>
+
+                <!-- Scientific Name (mandatory) -->
+                <div class="p-field p-mb-2">
+                    <p:outputLabel for="scientificName"
+                                   value="#{msg['coralcatalogue.scientificname.label']}"
+                                   style="display:block; font-weight:600;"/>
+                    <p:inputText id="scientificName"
+                                 value="#{coralCatalogueProposalView.currentEntry.scientificName}"
+                                 required="true"
+                                 requiredMessage="#{msg['coralcatalogue.scientificname.required']}"
+                                 maxlength="255"
+                                 style="width:100%;"/>
+                    <p:message for="scientificName"/>
+                </div>
+
+                <!-- Classification (mandatory) -->
+                <div class="p-field p-mb-2">
+                    <p:outputLabel for="classification"
+                                   value="#{msg['coralcatalogue.classification.label']}"
+                                   style="display:block; font-weight:600;"/>
+                    <p:selectOneMenu id="classification"
+                                     value="#{coralCatalogueProposalView.currentEntry.classification}"
+                                     required="true"
+                                     requiredMessage="#{msg['coralcatalogue.classification.required']}"
+                                     style="width:100%;">
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{coralCatalogueProposalView.classifications}"
+                                       var="cls"
+                                       itemLabel="#{msg['coralstock.classification.'.concat(cls.name())]}"
+                                       itemValue="#{cls}"/>
+                    </p:selectOneMenu>
+                    <p:message for="classification"/>
+                </div>
+
+                <!-- Care Level (mandatory) -->
+                <div class="p-field p-mb-2">
+                    <p:outputLabel for="careLevel"
+                                   value="#{msg['coralcatalogue.carelevel.label']}"
+                                   style="display:block; font-weight:600;"/>
+                    <p:selectOneMenu id="careLevel"
+                                     value="#{coralCatalogueProposalView.currentEntry.careLevel}"
+                                     required="true"
+                                     requiredMessage="#{msg['coralcatalogue.carelevel.required']}"
+                                     style="width:100%;">
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{coralCatalogueProposalView.careLevels}"
+                                       var="cl"
+                                       itemLabel="#{msg['coralstock.carelevel.'.concat(cl.name())]}"
+                                       itemValue="#{cl}"/>
+                    </p:selectOneMenu>
+                    <p:message for="careLevel"/>
+                </div>
+
+                <!-- i18n Tabs (DE/EN/ES/FR/IT) -->
+                <p:tabView style="margin-top:1rem;">
+                    <p:tab title="#{msg['fishcatalogue.tab.de']}">
+                        <ui:include src="/secured/coralCatalogueI18nFields.xhtml">
+                            <ui:param name="lang" value="de"/>
+                            <ui:param name="i18nEntry" value="#{coralCatalogueProposalView.i18nByLang['de']}"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.en']}">
+                        <ui:include src="/secured/coralCatalogueI18nFields.xhtml">
+                            <ui:param name="lang" value="en"/>
+                            <ui:param name="i18nEntry" value="#{coralCatalogueProposalView.i18nByLang['en']}"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.es']}">
+                        <ui:include src="/secured/coralCatalogueI18nFields.xhtml">
+                            <ui:param name="lang" value="es"/>
+                            <ui:param name="i18nEntry" value="#{coralCatalogueProposalView.i18nByLang['es']}"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.fr']}">
+                        <ui:include src="/secured/coralCatalogueI18nFields.xhtml">
+                            <ui:param name="lang" value="fr"/>
+                            <ui:param name="i18nEntry" value="#{coralCatalogueProposalView.i18nByLang['fr']}"/>
+                        </ui:include>
+                    </p:tab>
+                    <p:tab title="#{msg['fishcatalogue.tab.it']}">
+                        <ui:include src="/secured/coralCatalogueI18nFields.xhtml">
+                            <ui:param name="lang" value="it"/>
+                            <ui:param name="i18nEntry" value="#{coralCatalogueProposalView.i18nByLang['it']}"/>
+                        </ui:include>
+                    </p:tab>
+                </p:tabView>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+                    <p:commandButton value="#{msg['common.save.b']}"
+                                     icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46;"
+                                     action="#{coralCatalogueProposalView.onSave()}"
+                                     update="proposalMessages proposalForm"/>
+                    <p:commandButton value="#{msg['common.cancel.b']}"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/coralStockView.xhtml';"/>
+                </div>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

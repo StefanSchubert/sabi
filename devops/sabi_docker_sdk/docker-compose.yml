@@ -5,7 +5,6 @@ services:
     # available by http://localhost:8081/captcha/swagger-ui.html
     container_name: captcha-as
     build: ./captcha
-    platform: linux/amd64
     networks:
       - sabinet
     ports:
@@ -14,7 +13,6 @@ services:
     # available by http://localhost:8080/sabi/swagger-ui.html
     container_name: sabi-as
     build: ./sabi-backend
-    platform: linux/amd64
     environment:
       - TZ=Europe/Berlin
       # Aktiviert application-local.yml für lokale Google-OIDC-Tests.
@@ -22,42 +20,52 @@ services:
       - SPRING_PROFILES_ACTIVE=local
       - SABI_FISH_PHOTO_STORAGE_DIR=/var/sabi-data/fish-photos
       - SABI_FISH_AQUARIUM_STORAGE_DIR=/var/sabi-data/aquarium-photos
+      - SABI_CORAL_PHOTO_STORAGE_DIR=/var/sabi-data/coral-photos
+      - SABI_INVERTEBRATE_PHOTO_STORAGE_DIR=/var/sabi-data/invertebrate-photos
     volumes:
       - sabi-fish-photos:/var/sabi-data/fish-photos
       - sabi-aquarium-photos:/var/sabi-data/aquarium-photos
+      - sabi-coral-photos:/var/sabi-data/coral-photos
+      - sabi-invertebrate-photos:/var/sabi-data/invertebrate-photos
     networks:
       - sabinet
     ports:
       - "8080:8080"
       - "8880:8880"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   flyway:
-    image: flyway/flyway:12.1.0-alpine
-    platform: linux/amd64
+    image: flyway/flyway:12.7-alpine
     command: -url=jdbc:mariadb://db:3306/sabi -defaultSchema=sabi -schemas=sabi -user=sabiapp -password=sabi123 -connectRetries=60 baseline migrate
     volumes:
       - ../../sabi-database/src/main/resources:/flyway/sql
     networks:
       - sabinet
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: mariadb:12.2.2
-    platform: linux/amd64
     environment:
       - MYSQL_ROOT_PASSWORD=SuperDooper
       - MYSQL_DATABASE=sabi
       - MYSQL_USER=sabiapp
       - MYSQL_PASSWORD=sabi123
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 20s
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - sabinet
     ports:
       - "3306:3306"
+# To check what emails will be send and for being able to test the registration workflow
   fakeSMTP:
     image: gessnerfl/fake-smtp-server:2.5.0
-    platform: linux/amd64
     environment:
       - server.port=5080
       - fakesmtp.port=2525
@@ -70,8 +78,7 @@ services:
       - "5080:5080"
 # Monitoring Sample with Prometheus Grafana
   grafana:
-    image: grafana/grafana:12.3
-    platform: linux/amd64
+    image: grafana/grafana:main-distroless-slim
     volumes:
      - ./grafanaData:/var/lib/grafana
     ports:
@@ -82,7 +89,6 @@ services:
       - prometheus
   prometheus:
     image: prom/prometheus:v3.9.1
-    platform: linux/amd64
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"
@@ -96,11 +102,15 @@ networks:
     driver: bridge
 
 volumes:
-  # Fish photo storage — persistent across container restarts (T072)
+  # Fish photo storage — persistent across container restarts
   sabi-fish-photos:
+  # Aquartium photo storage — persistent across container restarts
   sabi-aquarium-photos:
+  # Coral photo storage — persistent across container restarts
+  sabi-coral-photos:
+  # Invertebrate photo storage — persistent across container restarts
+  sabi-invertebrate-photos:
 
-
-# TODO: application.properties files contains "localhost" this does not matches the hosts,
-# db, fakeSMTP etc.. so the application.properties need to be externalized as in production
+# Notice: application.properties files contains "localhost" this does not matches the hosts,
+# db, fakeSMTP etc... so the application.properties need to be externalized as in production
 # through the assets.
