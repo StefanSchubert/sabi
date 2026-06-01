@@ -188,6 +188,43 @@
         .reef-watermark g[transform^="translate"] {
             transform-box: fill-box;
         }
+        /* ==== LIGHTBOX ==== */
+        .sabi-lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.87);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .sabi-lightbox-overlay.open {
+            display: flex;
+        }
+        .sabi-lightbox-img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 6px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            object-fit: contain;
+            cursor: default;
+        }
+        .sabi-lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2.5rem;
+            color: #fff;
+            cursor: pointer;
+            line-height: 1;
+            user-select: none;
+            opacity: 0.85;
+        }
+        .sabi-lightbox-close:hover { opacity: 1; }
+        img.sabi-zoomable {
+            cursor: zoom-in;
+        }
     </style>
 </h:head>
 
@@ -245,7 +282,9 @@
                     <div class="tank-photo">
                         <h:panelGroup rendered="#{houseReefReportView.report.tank.hasPhoto}">
                             <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/photo"
-                                 alt="#{houseReefReportView.report.tank.description}"/>
+                                 alt="#{houseReefReportView.report.tank.description}"
+                                 class="sabi-zoomable"
+                                 onclick="sabiOpenLightbox(this.src,this.alt)"/>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{!houseReefReportView.report.tank.hasPhoto}">
                             <h:graphicImage library="images" name="Clibanarius.JPG"
@@ -301,7 +340,10 @@
                              <div class="fish-card">
                                  <h:panelGroup rendered="#{fish.hasPhoto}">
                                      <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/fish/#{fish.id}/photo"
-                                          alt="#{fish.commonName}"/>
+                                          alt="#{fish.commonName}"
+                                          loading="lazy"
+                                          class="sabi-zoomable"
+                                          onclick="sabiOpenLightbox(this.src,this.alt)"/>
                                  </h:panelGroup>
                                  <h:panelGroup rendered="#{!fish.hasPhoto}">
                                      <h:graphicImage library="images" name="icons8-crab-64.png"
@@ -342,7 +384,10 @@
                             <div class="fish-card">
                                 <h:panelGroup rendered="#{coral.hasPhoto}">
                                     <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/coral/#{coral.id}/photo"
-                                         alt="#{coral.speciesName}"/>
+                                         alt="#{coral.speciesName}"
+                                         loading="lazy"
+                                         class="sabi-zoomable"
+                                         onclick="sabiOpenLightbox(this.src,this.alt)"/>
                                 </h:panelGroup>
                                 <h:panelGroup rendered="#{!coral.hasPhoto}">
                                     <h:graphicImage library="images" name="icons8-crab-64.png"
@@ -384,7 +429,10 @@
                                 <div class="fish-card">
                                     <h:panelGroup rendered="#{invertebrate.hasPhoto}">
                                         <img src="#{request.contextPath}/api/public/report/#{houseReefReportView.token}/invertebrate/#{invertebrate.id}/photo"
-                                             alt="#{invertebrate.speciesName}"/>
+                                             alt="#{invertebrate.speciesName}"
+                                             loading="lazy"
+                                             class="sabi-zoomable"
+                                             onclick="sabiOpenLightbox(this.src,this.alt)"/>
                                     </h:panelGroup>
                                     <h:panelGroup rendered="#{!invertebrate.hasPhoto}">
                                         <h:graphicImage library="images" name="icons8-crab-64.png"
@@ -514,6 +562,36 @@
                     : (navigator.language || 'en'),
                 { dateStyle: 'medium', timeStyle: 'medium' }
             );
+        }());
+        //]]>
+    </script>
+
+    <!-- ==== LIGHTBOX OVERLAY ==== -->
+    <div id="sabiLightbox" class="sabi-lightbox-overlay">
+        <span class="sabi-lightbox-close" id="sabiLightboxClose">&#x00D7;</span>
+        <img id="sabiLightboxImg" class="sabi-lightbox-img" src="" alt=""/>
+    </div>
+
+    <script>
+        //<![CDATA[
+        (function () {
+            var overlay = document.getElementById('sabiLightbox');
+            var img     = document.getElementById('sabiLightboxImg');
+            var close   = document.getElementById('sabiLightboxClose');
+
+            window.sabiOpenLightbox = function (src, alt) {
+                img.src = src;
+                img.alt = alt || '';
+                overlay.classList.add('open');
+            };
+
+            overlay.addEventListener('click', function (e) {
+                if (e.target !== img) { overlay.classList.remove('open'); }
+            });
+            close.addEventListener('click', function () { overlay.classList.remove('open'); });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { overlay.classList.remove('open'); }
+            });
         }());
         //]]>
     </script>
