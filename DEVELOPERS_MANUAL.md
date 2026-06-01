@@ -63,7 +63,8 @@ With a look at [Building-Block View](https://github.com/StefanSchubert/sabi/wiki
             <nvd.api.key>YOUR_API_KEY</nvd.api.key>
         </properties>
 
-* If you work with IntelliJ: Install the "Jakarta Server Faces (JSF)" Plugin
+* If you work with IntelliJ: see section "JSF/Facelets Namespace Resolution" below to suppress
+  Facelets false-positive warnings in the IDE.
 
 #### Prepare your local docker environment
 
@@ -126,6 +127,42 @@ in JoinFaces/Spring Boot:
   the target component ID doesn't exist in the DOM.
 
 **Rule: After every XHTML change → restart the server → only then test.**
+
+#### IntelliJ: JSF/Facelets Namespace Resolution (false positives)
+
+**Background — the DOCTYPE dilemma**
+
+All Facelets source files in `sabi-webclient` use `<!DOCTYPE html>` (HTML5). This is correct for
+browsers and enables modern HTML5 attributes (e.g. `loading="lazy"` on `<img>`). However,
+IntelliJ's HTML5 validator does not understand XML namespace prefixes (`f:`, `h:`, `p:`, etc.)
+because HTML5 has no concept of XML namespaces. As a result, IntelliJ reports false positives such as:
+
+> `f:metadata` cannot be resolved  
+> `h:outputText` is not a valid HTML element  
+> `p:panel` is not a valid HTML element
+
+These warnings are **IDE-only false positives**. The JSF runtime (JoinFaces/Spring Boot) processes
+Facelets as XML internally, so everything works correctly at runtime regardless.
+
+**Note on JSF plugin support:** IntelliJ IDEA Ultimate ships with a "Jakarta EE: JavaServer Faces"
+plugin, but its JSF Facelet file type and facet configuration do **not** work with JoinFaces/Spring
+Boot projects (no `faces-config.xml`, non-standard deployment). The plugin-based solutions
+(File Types → JSF Facelet, or Module Facet → JavaServer Faces) are therefore not applicable here.
+
+**Fix: Suppress "Unknown HTML tag" inspection for `*.xhtml` via custom scope**
+
+1. Open **Settings** (`⌘,`) → **Editor → Inspections**
+2. In the search box type `Unknown HTML tag` → select the entry under **HTML**
+3. At the bottom of the panel click the scope `+` icon → **Add Scope**
+4. In the scope dialog click **+** → **Local** → name it e.g. `xhtml-facelets`
+5. In the pattern field enter: `file[sabi-webclient]:*.xhtml`  
+   (or `file:*.xhtml` to cover all modules)
+6. Click **OK** — the new scope row appears in the list
+7. Set its severity column to **No highlighting (suppress)**
+8. Repeat steps 2–7 for the inspection **"Unknown XML tag"** if it also fires
+
+After closing Settings the false positives on `f:metadata`, `h:outputText`, `p:panel` etc.
+disappear for all `.xhtml` files while HTML validation remains active for regular `.html` files.
 
 #### Spring Security + JSF: Forward vs. Redirect
 
