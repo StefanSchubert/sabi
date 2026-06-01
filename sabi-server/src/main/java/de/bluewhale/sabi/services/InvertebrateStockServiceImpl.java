@@ -330,7 +330,11 @@ public class InvertebrateStockServiceImpl implements InvertebrateStockService {
     public List<InvertebrateStockEntryTo> getActiveInvertebratesForReport(Long aquariumId) {
         return invertebrateStockRepository.findActiveByAquariumId(aquariumId)
                 .stream()
-                .map(mapper::toTo)
+                .map(e -> {
+                    InvertebrateStockEntryTo to = mapper.toTo(e);
+                    to.setHasPhoto(photoRepository.findByInvertebrateStockId(e.getId()).isPresent());
+                    return to;
+                })
                 .collect(Collectors.toList());
     }
 }
