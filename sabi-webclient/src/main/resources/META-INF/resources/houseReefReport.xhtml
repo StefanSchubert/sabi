@@ -24,6 +24,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta name="robots" content="noindex, nofollow"/>
     <link rel="icon" type="image/png" href="#{resource['images:icons8-crab-64.png']}"/>
+    <!-- iOS home screen icon (Apple Touch Icon) -->
+    <link rel="apple-touch-icon" href="#{resource['images:Sabi_Badge_Small.png']}"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-title" content="SABI Report"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <h:outputStylesheet library="css" name="sabistyle.css"/>
     <style>
         /* ==== REPORT HEADER: SABI Marine Theme (WCAG AA: white on #075985 = ~7:1) ==== */
@@ -265,7 +270,7 @@
                 </div>
                 <div style="text-align:right;">
                     <div class="meta" style="margin-bottom:0.25rem;">#{msg['housereef.report.producedby.l']}</div>
-                    <a href="https://www.sabi-project.net" target="_blank" rel="noopener noreferrer">
+                    <a href="https://sabi-project.net" target="_blank" rel="noopener noreferrer">
                         <h:graphicImage library="images" name="Sabi_Badge_Small.png" styleClass="report-badge"
                                         alt="SABI Badge" style="display:block;"/>
                     </a>
