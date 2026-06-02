@@ -54,7 +54,7 @@
                                     placeholder="#{msg['invertebratestock.catalogue.search.placeholder']}"
                                     var="result">
                         <p:ajax event="itemSelect" listener="#{invertebrateStockEntryView.onSelectCatalogue}"
-                                update="invertebrateEntryForm:scientificName invertebrateEntryForm:taxonomicCategory invertebrateEntryForm:careLevel invertebrateEntryMessages"/>
+                                update="invertebrateEntryForm:speciesName invertebrateEntryForm:scientificName invertebrateEntryForm:externalRefUrl invertebrateEntryForm:taxonomicCategory invertebrateEntryForm:careLevel invertebrateEntryMessages"/>
                     </p:autoComplete>
                     <p:commandButton value="#{msg['coralstock.catalogue.unlink.button']}"
                                      icon="pi pi-times"

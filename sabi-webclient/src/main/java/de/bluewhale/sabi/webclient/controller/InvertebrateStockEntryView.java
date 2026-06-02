@@ -214,6 +214,11 @@ public class InvertebrateStockEntryView implements Serializable {
             if (result.getCareLevel() != null) {
                 currentEntry.setCareLevel(result.getCareLevel());
             }
+            // Pre-fill speciesName with the common name if not yet set by the user
+            if ((currentEntry.getSpeciesName() == null || currentEntry.getSpeciesName().isBlank())
+                    && result.getCommonName() != null && !result.getCommonName().isBlank()) {
+                currentEntry.setSpeciesName(result.getCommonName());
+            }
         }
     }
 
