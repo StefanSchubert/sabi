@@ -1078,6 +1078,14 @@ body.dark-mode .ui-datatable tbody tr:hover {
     background-color: var(--sabi-accent-light) !important;
 }
 
+body.dark-mode .credits-who {
+    color: var(--sabi-primary-light); /* Sky Blue – readable on dark surface */
+}
+
+body.dark-mode .credits-who a {
+    color: #7dd3fc;
+}
+
 /* =====================================================================
    .sabi-form-grid – canonical two-column form layout (label | input)
    Use this class on a <div> wherever a 2-column label|input form is needed.
@@ -1113,5 +1121,81 @@ body.dark-mode .ui-datatable tbody tr:hover {
 .sabi-form-grid .ui-inputtextarea {
     align-self: start;
     margin-top: 0.1rem;
+}
+
+/* =====================================================================
+   Credits Page
+   ===================================================================== */
+.credits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-right: 215px; /* room for reef watermark on the right */
+}
+
+.credits-card {
+    background: var(--sabi-surface);
+    border: 1px solid var(--sabi-border);
+    border-left: 4px solid var(--sabi-accent);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    box-shadow: var(--sabi-shadow);
+    transition: box-shadow var(--sabi-transition), border-left-color var(--sabi-transition);
+}
+
+.credits-card:hover {
+    box-shadow: var(--sabi-shadow-lg);
+    border-left-color: var(--sabi-primary);
+}
+
+.credits-who {
+    font-weight: 600;
+    color: var(--sabi-primary-dark);
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+}
+
+.credits-who a {
+    color: var(--sabi-primary);
+    text-decoration: none;
+}
+
+.credits-who a:hover {
+    color: var(--sabi-accent);
+    text-decoration: underline;
+}
+
+.credits-text {
+    color: var(--sabi-text);
+    font-weight: normal;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* =====================================================================
+   Reef Watermark — reusable across credits and houseReefReport
+   (houseReefReport also defines this inline for its standalone head)
+   ===================================================================== */
+.reef-watermark {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 200px;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+@media (max-width: 700px) {
+    .credits-grid {
+        padding-right: 0;
+    }
+    .reef-watermark {
+        display: none;
+    }
 }
 
