@@ -53,7 +53,8 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
     UserSession userSession;
 
     // View Modell
-    private List<AquariumTo> tanks;
+    private List<AquariumTo> tanks;     // nur aktive Tanks (für Dropdown beim Erfassen neuer Messungen)
+    private List<AquariumTo> allTanks;  // alle Tanks inkl. inaktiver (für Namensauflösung in der Historienansicht)
     private List<UnitTo> knownUnits;
     private List<MeasurementTo> measurementsTakenByUser = Collections.emptyList();
     private MeasurementTo measurement = new MeasurementTo();
@@ -71,6 +72,14 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
             tanks = Collections.emptyList();
             log.error(e.getLocalizedMessage());
             MessageUtil.error("troubleMsg","common.token.expired.t",userSession.getLocale());
+        }
+
+        // All tanks incl. inactive - required to resolve tank names for historical measurements
+        try {
+            allTanks = tankService.getAllUsersTanks(userSession.getSabiBackendToken());
+        } catch (BusinessException e) {
+            allTanks = tanks; // Fallback: active tanks only
+            log.warn("Could not load all tanks (incl. inactive) for name resolution: {}", e.getLocalizedMessage());
         }
 
         try {
@@ -114,7 +123,7 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
      */
     @NotNull
     public String getTankNameForId(Long tankId) {
-        return getTankNameForId(tankId,tanks);
+        return getTankNameForId(tankId, allTanks);
     }
 
 

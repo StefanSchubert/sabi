@@ -39,7 +39,8 @@ public abstract class AbstractControllerTools {
                 }
             }
         }
-        if (result.equals("N/A")) {
+        if (result.equals("N/A") && unitId != null && unitId != 0) {
+            // unitId=0 is the primitive default (MeasurementTo.unitId not yet set) – no warning needed
             log.warn("Could not determine the unit sign for unitID: {}", unitId);
         }
         return result;
@@ -64,7 +65,8 @@ public abstract class AbstractControllerTools {
                 }
             }
         }
-        if (result.equals("")) {
+        if (result.equals("") && unitId != null && unitId != 0) {
+            // unitId=0 is the primitive default (MeasurementTo.unitId not yet set) – no warning needed
             log.warn("Could not determine the unit description for unitID: {}", unitId);
         }
         return result;

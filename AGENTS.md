@@ -479,6 +479,51 @@ After ownership check, `user.getId()` is always in scope. If the user entity is 
 
 ---
 
+## JPA: OneToMany + orphanRemoval Pattern (MANDATORY)
+
+**Problem:** Wenn ein Service Kindentitäten direkt über ein eigenes Repository (`saveAll`, `deleteAll`)
+persistiert, anstatt über die JPA-Collection der Parententität, werden die Änderungen beim
+Transaktionscommit rückgängig gemacht.
+
+**Ursache:** Bei `@OneToMany(orphanRemoval = true)` vergleicht JPA beim Commit die DB-Zeilen mit der
+In-Memory-Collection des Parent. Ist die Java-Collection leer (nie befüllt), löscht JPA alle
+soeben via `saveAll` eingefügten Rows als „Orphans".
+
+**Symptom:** Daten werden gespeichert (SQL-INSERT im Log sichtbar, DB-Row kurzzeitig vorhanden),
+sind aber beim nächsten Lesen verschwunden.
+
+**Diagnosefrage:** Gibt es eine analoge Relation im selben Aggregat, die nachweislich funktioniert?
+Wenn ja: Was macht diese anders? Das funktionierende Pattern direkt übernehmen.
+
+**Korrektes Pattern — immer über die Collection arbeiten:**
+
+```java
+// ✅ RICHTIG: über die Parent-Collection
+TankInvertebrateStockEntity parent = repository.findById(parentId).orElseThrow();
+parent.getChildren().clear();                  // orphanRemoval entfernt alte Rows
+for (Integer unitId : unitIds) {
+    ChildEntity child = new ChildEntity();
+    child.setParentId(parentId);               // scalar FK (insertable=true)
+    child.setParent(parent);                   // ManyToOne-Referenz (insertable=false)
+    parent.getChildren().add(child);
+}
+repository.saveAndFlush(parent);               // JPA cascade schreibt die Kinder
+
+// ❌ FALSCH: Repository-Bypass
+childRepository.deleteAllByParentId(parentId);
+childRepository.flush();
+childRepository.saveAll(newChildren);          // → wird beim Commit durch orphanRemoval gelöscht!
+```
+
+**Dual-FK-Pattern** (häufig in Sabi): Kindentität hat sowohl einen skalaren FK
+(`insertable=true, updatable=false`) als auch eine `@ManyToOne`-Referenz (`insertable=false,
+updatable=false`). **Beide müssen beim Erzeugen neuer Kinder gesetzt werden.**
+
+**Bestehende Implementierungen, die dieses Pattern korrekt verwenden:**
+- `TankInvertebrateStockEntity.waterSensitivities` → `InvertebrateStockServiceImpl.persistWaterSensitivities()` (gefixt 2026-06-04)
+
+---
+
 ## Backend Security: Ownership Checks (MANDATORY)
 
 ### Principle: Every mutating operation MUST verify that the caller owns the affected record.

@@ -3,8 +3,7 @@
   - Copyright (c) 2023 by Stefan Schubert under the MIT License (MIT).
   - See project LICENSE file for the detailed terms and conditions.
   -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -22,30 +21,55 @@
 
     <ui:composition template="/template/masterLayout.xhtml">
         <ui:define name="content">
+
             <h3 style="margin-top:0">#{msg['credits.sponsor_thx.h']}</h3>
-            <p:panelGrid columns="3">
 
-                <p:outputLabel value="AI Buddy" />
-                <p:link href="https://github.com/features/copilot" value="https://github.com/features/copilot" />
-                <p:outputLabel value="#{msg['credits.sponsor_copilot.t']}" />
+            <div class="credits-grid">
 
-                <p:outputLabel value="Daniel Knop" />
-                <p:link href="https://www.koralle-magazin.de" value="https://www.koralle-magazin.de" />
-                <p:outputLabel value="#{msg['credits.sponsor_magazin_article.t']}" />
+                <div class="credits-card">
+                    <div class="credits-who">
+                        <a href="https://github.com/features/copilot" target="_blank">AI Buddy (GitHub Copilot)</a>
+                    </div>
+                    <div class="credits-text">#{msg['credits.sponsor_copilot.t']}</div>
+                </div>
 
-                <p:outputLabel value="icons8.com" />
-                <p:link href="https://icons8.com" value="https://icons8.com" />
-                <p:outputLabel value="#{msg['credits.sponsor_icon8.t']}" />
+                <div class="credits-card">
+                    <div class="credits-who">
+                        <a href="https://www.koralle-magazin.de" target="_blank">Daniel Knop – KORALLE</a>
+                    </div>
+                    <div class="credits-text">#{msg['credits.sponsor_magazin_article.t']}</div>
+                </div>
 
-                <p:outputLabel value="#{msg['credits.sponsor_developer.l']}" />
-                <p:link href="https://github.com/StefanSchubert/sabi/graphs/contributors" value="https://github.com/StefanSchubert/sabi/graphs/contributors" />
-                <p:outputLabel value="#{msg['credits.sponsor_developer.t']}" />
+                <div class="credits-card">
+                    <div class="credits-who">
+                        <a href="https://icons8.com" target="_blank">icons8.com</a>
+                    </div>
+                    <div class="credits-text">#{msg['credits.sponsor_icon8.t']}</div>
+                </div>
 
-                <p:outputLabel value="#{msg['credits.sponsor_wife.l']}" />
-                <p:outputLabel value="Angelika" />
-                <p:outputLabel value="#{msg['credits.sponsor_wife.t']}" />
+                <div class="credits-card">
+                    <div class="credits-who">
+                        <a href="https://github.com/StefanSchubert/sabi/graphs/contributors" target="_blank">#{msg['credits.sponsor_developer.l']}</a>
+                    </div>
+                    <div class="credits-text">#{msg['credits.sponsor_developer.t']}</div>
+                </div>
 
-            </p:panelGrid>
+                <div class="credits-card">
+                    <div class="credits-who">#{msg['credits.sponsor_wife.l']}: Angelika</div>
+                    <div class="credits-text">#{msg['credits.sponsor_wife.t']}</div>
+                </div>
+
+            </div>
+
+            <!-- Reef watermark — same animation as houseReefReport, decorative only -->
+            <div class="reef-watermark" id="reefWatermark" aria-hidden="true"/>
+            <script>
+                //<![CDATA[
+                window.SABI_REEF_PARAMS = { aquariumId: 42, fishCount: 5 };
+                //]]>
+            </script>
+            <h:outputScript library="js" name="reef-generator.js" target="body"/>
+
         </ui:define>
     </ui:composition>
 

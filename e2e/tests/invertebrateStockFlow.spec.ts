@@ -578,6 +578,86 @@ test.describe('Invertebrate Stock Flow', () => {
     }
   });
 
+  // ── Regression: Wasserwertsensitivität persistiert ──────────
+
+  test('Wasserwertsensitivität — Häkchen bleiben nach Speichern erhalten (Regression)', async ({ page }) => {
+    const invertName = `E2E-WaterSens-${Date.now()}`;
+
+    // 1. Zur Eingabeseite navigieren
+    await selectNanoReef(page);
+    const addButton = page.locator('#invertebrateStockForm button').filter({ hasText: /hinzuf|add/i }).first();
+    await expect(addButton).toBeEnabled({ timeout: 10_000 });
+    await addButton.click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    // 2. Pflichtfelder ausfüllen
+    await page.locator('[id$="speciesName"]').fill(invertName);
+    await page.locator('[id$="addedOn_input"]').fill(todayString());
+    // Kalender-Overlay schließen: Escape drücken
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    await selectTaxonomicCategory(page);
+
+    // 3. Wasserwertsensitivität: erste verfügbare Checkbox prüfen + anklicken
+    const wsBoxes = page.locator('[id*="waterSensitivity"] .ui-chkbox-box');
+    const wsCount = await wsBoxes.count();
+    expect(wsCount).toBeGreaterThan(0);
+
+    const firstBox = wsBoxes.first();
+    await expect(firstBox).toBeVisible({ timeout: 5_000 });
+    await firstBox.click();
+    // PrimeFaces setzt ui-state-active wenn Checkbox aktiviert ist
+    await expect(firstBox).toHaveClass(/ui-state-active/, { timeout: 3_000 });
+
+    // Unit-ID der ersten Checkbox merken (für spätere Verifikation)
+    const firstUnitId = await page.locator('[id*="waterSensitivity"] input[type="checkbox"]').first().getAttribute('value');
+    expect(firstUnitId).toBeTruthy();
+
+    // 4. Speichern
+    const saveButton = page.locator('button').filter({ hasText: /speicher|save/i }).first();
+    await saveButton.scrollIntoViewIfNeeded();
+    await expect(saveButton).toBeVisible({ timeout: 5_000 });
+    await saveButton.click({ force: true });
+    await page.waitForURL(/invertebrateStockView/, { timeout: 15_000 });
+
+    // 5. Reload + Nano-Reef erneut wählen
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    await expect(page.locator('#invertebrateStockForm')).toContainText(invertName, { timeout: 10_000 });
+
+    // 6. Eintrag erneut öffnen (Edit)
+    const invertRow = page.locator('tr').filter({ hasText: invertName }).first();
+    await invertRow.locator('button').filter({ has: page.locator('.pi-pencil') }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/invertebrateStockEntryPage/, { timeout: 10_000 });
+
+    // 7. KERN-ASSERTION: Die zuvor gesetzte Checkbox muss noch aktiv (ui-state-active) sein
+    await expect(page.locator('[id*="waterSensitivity"] .ui-chkbox-box').first()).toBeVisible({ timeout: 8_000 });
+
+    const isChecked = await page.evaluate((unitId) => {
+      const inputs = document.querySelectorAll<HTMLInputElement>('[id*="waterSensitivity"] input[type="checkbox"]');
+      for (const input of inputs) {
+        if (input.value === unitId) {
+          const box = input.closest('.ui-chkbox')?.querySelector('.ui-chkbox-box');
+          return box?.classList.contains('ui-state-active') ?? false;
+        }
+      }
+      return false;
+    }, firstUnitId);
+
+    expect(isChecked).toBe(true);
+
+    // ── Cleanup ──
+    await page.goto('/secured/invertebrateStockView.xhtml', { waitUntil: 'networkidle' });
+    await selectNanoReef(page);
+    const cleanupRow = page.locator('tr').filter({ hasText: invertName }).first();
+    if (await cleanupRow.isVisible()) {
+      await cleanupRow.locator('button').filter({ has: page.locator('.pi-trash') }).click();
+      await page.waitForLoadState('networkidle');
+    }
+  });
+
   test('Foto-Upload: zweiter Upload überschreibt erstes Foto (kein Duplicate-Key-Fehler)', async ({ page }) => {
     const invertName = `E2E-FotoReplace-${Date.now()}`;
     const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');
