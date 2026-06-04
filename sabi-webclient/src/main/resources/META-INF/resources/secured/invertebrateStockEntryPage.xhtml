@@ -138,32 +138,38 @@
                         <p:message for="mobility"/>
                     </div>
 
-                    <!-- Ecological roles (multi-select checkboxes) -->
-                    <p:outputLabel for="ecologicalRoles" value="#{msg['invertebratestock.form.ecologicalrole.label']}"/>
-                    <div>
-                        <p:selectManyCheckbox id="ecologicalRoles"
-                                              value="#{invertebrateStockEntryView.currentEntry.ecologicalRoles}"
-                                              layout="pageDirection"
-                                              converter="invertebrateEcologicalRoleConverter">
-                            <f:selectItems value="#{invertebrateStockEntryView.ecologicalRoles}" var="er"
-                                           itemLabel="#{msg['invertebratestock.ecologicalrole.'.concat(er.name())]}"
-                                           itemDescription="#{msg['invertebratestock.ecologicalrole.desc.'.concat(er.name())]}"
-                                           itemValue="#{er}"/>
-                        </p:selectManyCheckbox>
-                        <p:message for="ecologicalRoles"/>
-                    </div>
-
-                    <!-- Water sensitivity (multi-select checkboxes) -->
-                    <p:outputLabel for="waterSensitivity" value="#{msg['invertebratestock.form.watersensitivity.label']}"/>
-                    <div>
-                        <p:selectManyCheckbox id="waterSensitivity"
-                                              value="#{invertebrateStockEntryView.currentEntry.waterSensitivityUnitIds}"
-                                              layout="pageDirection">
-                            <f:selectItems value="#{invertebrateStockEntryView.availableWaterUnits}" var="unit"
-                                           itemLabel="#{unit.unitSign} - #{unit.description}"
-                                           itemValue="#{unit.id}"/>
-                        </p:selectManyCheckbox>
-                        <p:message for="waterSensitivity"/>
+                    <!-- Ecological roles + Water sensitivity: 2-column section with labels above -->
+                    <div style="grid-column: 1 / -1;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                            <div>
+                                <p:outputLabel for="ecologicalRoles"
+                                               value="#{msg['invertebratestock.form.ecologicalrole.label']}"
+                                               style="display:block; font-weight:600; margin-bottom:0.4rem;"/>
+                                <p:selectManyCheckbox id="ecologicalRoles"
+                                                      value="#{invertebrateStockEntryView.currentEntry.ecologicalRoles}"
+                                                      layout="pageDirection"
+                                                      converter="invertebrateEcologicalRoleConverter">
+                                    <f:selectItems value="#{invertebrateStockEntryView.ecologicalRoles}" var="er"
+                                                   itemLabel="#{msg['invertebratestock.ecologicalrole.'.concat(er.name())]}"
+                                                   itemDescription="#{msg['invertebratestock.ecologicalrole.desc.'.concat(er.name())]}"
+                                                   itemValue="#{er}"/>
+                                </p:selectManyCheckbox>
+                                <p:message for="ecologicalRoles"/>
+                            </div>
+                            <div>
+                                <p:outputLabel for="waterSensitivity"
+                                               value="#{msg['invertebratestock.form.watersensitivity.label']}"
+                                               style="display:block; font-weight:600; margin-bottom:0.4rem;"/>
+                                <p:selectManyCheckbox id="waterSensitivity"
+                                                      value="#{invertebrateStockEntryView.currentEntry.waterSensitivityUnitIds}"
+                                                      layout="pageDirection">
+                                    <f:selectItems value="#{invertebrateStockEntryView.availableWaterUnits}" var="unit"
+                                                   itemLabel="#{unit.unitSign}"
+                                                   itemValue="#{unit.id}"/>
+                                </p:selectManyCheckbox>
+                                <p:message for="waterSensitivity"/>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Activity pattern -->

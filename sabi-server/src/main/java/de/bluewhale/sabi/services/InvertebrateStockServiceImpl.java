@@ -40,9 +40,6 @@ public class InvertebrateStockServiceImpl implements InvertebrateStockService {
     private TankInvertebrateStockRepository invertebrateStockRepository;
 
     @Autowired
-    private InvertebrateWaterSensitivityRepository waterSensitivityRepository;
-
-    @Autowired
     private InvertebratePhotoRepository photoRepository;
 
     @Autowired
@@ -314,12 +311,19 @@ public class InvertebrateStockServiceImpl implements InvertebrateStockService {
     // -------------------------------------------------------------------------
 
     private void persistWaterSensitivities(Long invertebrateStockId, List<Integer> unitIds) {
-        waterSensitivityRepository.deleteAllByInvertebrateStockId(invertebrateStockId);
-        waterSensitivityRepository.flush();
+        TankInvertebrateStockEntity parent = invertebrateStockRepository.findById(invertebrateStockId)
+                .orElseThrow(() -> new IllegalStateException("Invertebrate not found: " + invertebrateStockId));
+        parent.getWaterSensitivities().clear();
         if (unitIds != null && !unitIds.isEmpty()) {
-            List<InvertebrateWaterSensitivityEntity> entities = mapper.toWaterSensitivityEntities(invertebrateStockId, unitIds);
-            waterSensitivityRepository.saveAll(entities);
+            for (Integer unitId : unitIds) {
+                InvertebrateWaterSensitivityEntity e = new InvertebrateWaterSensitivityEntity();
+                e.setInvertebrateStockId(invertebrateStockId);
+                e.setUnitId(unitId);
+                e.setInvertebrateStock(parent);
+                parent.getWaterSensitivities().add(e);
+            }
         }
+        invertebrateStockRepository.saveAndFlush(parent);
     }
 
     // -------------------------------------------------------------------------
