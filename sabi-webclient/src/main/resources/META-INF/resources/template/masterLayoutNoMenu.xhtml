@@ -34,7 +34,10 @@
     <link rel="stylesheet"
           href="#{request.contextPath}/jakarta.faces.resource/theme.css.xhtml?ln=primefaces-#{userSession.primeFacesThemeName}"/>
     <link rel="canonical" href="https://sabi-project.net/index.xhtml" />
-    <h:outputStylesheet library="css" name="sabistyle.css"/>
+
+    <link rel="stylesheet"
+          href="#{request.contextPath}/jakarta.faces.resource/sabistyle.css.xhtml?ln=css&amp;v=#{applicationInfo.version}"/>
+
 </h:head>
 
 <h:body styleClass="#{userSession.bodyStyleClass}">
