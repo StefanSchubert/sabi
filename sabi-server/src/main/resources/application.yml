@@ -106,9 +106,14 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     # Hikari Connection Pool
     hikari:
-      connection-timeout: 3000
+      # 12 Secs
+      connection-timeout: 12000
       maximum-pool-size: 50
       minimum-idle: 5
+      # 20min
+      max-lifetime: 1200000
+      # 10 min
+      idle-timeout: 600000
     password: ${SABI_DB_PASSWORD:sabi123}
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mariadb://localhost:3306/sabi
