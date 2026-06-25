@@ -16,7 +16,7 @@ import jakarta.faces.convert.FacesConverter;
  * Enables PrimeFaces p:autoComplete to round-trip complex objects via JSON.
  * Part of 006-invertebrate-tracking.
  */
-@FacesConverter(value = "invertebrateCatalogueSearchResultConverter", managed = true)
+@FacesConverter(value = "invertebrateCatalogueSearchResultConverter")
 public class InvertebrateCatalogueSearchResultConverter implements Converter<InvertebrateCatalogueSearchResultTo> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

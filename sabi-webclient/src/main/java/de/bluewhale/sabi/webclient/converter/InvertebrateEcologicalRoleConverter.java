@@ -16,7 +16,7 @@ import jakarta.faces.convert.FacesConverter;
  * so that JSF can convert each string value back to the enum constant.
  * Part of 006-invertebrate-tracking.
  */
-@FacesConverter(value = "invertebrateEcologicalRoleConverter", managed = true)
+@FacesConverter(value = "invertebrateEcologicalRoleConverter")
 public class InvertebrateEcologicalRoleConverter implements Converter<InvertebrateEcologicalRole> {
 
     @Override
