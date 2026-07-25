@@ -5,7 +5,7 @@
 
 package de.bluewhale.sabi.exception;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.Serializable;
 

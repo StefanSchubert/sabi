@@ -47,13 +47,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>3.0.3</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.17.0</micrometer.prometheus.version>
         <lombok.version>1.18.46</lombok.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <!--
           see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
         <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
-        <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
+        <cyclonedx.maven.plugin.version>2.9.2</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>12.2.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
@@ -104,17 +103,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Micrometer core dependency  -->
+        <!-- Micrometer core dependency  / Version is managed by springboot4 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <version>${micrometer.prometheus.version}</version>
         </dependency>
-        <!-- Micrometer Prometheus registry  -->
+        <!-- Micrometer Prometheus registry / Version is managed by springboot4 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer.prometheus.version}</version>
         </dependency>
 
         <dependency>

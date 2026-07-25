@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.3.7</version>
+    <version>1.3.8</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -56,9 +56,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>25</java.version>
         <log4j2.version>2.20.0</log4j2.version>
-        <micrometer.prometheus.version>1.17.0</micrometer.prometheus.version>
         <joinfaces.version>6.1.0</joinfaces.version>
-        <sabi.boundary.version>1.2.14</sabi.boundary.version>
+        <sabi.boundary.version>1.2.15</sabi.boundary.version>
         <passay.version>2.0.0</passay.version>
         <cyclonedx.maven.plugin.version>2.9.2</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>12.1.3</owasp.plugin.version>
@@ -124,17 +123,15 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
-        <!-- Micrometer core dependency  -->
+        <!-- Micrometer core dependency / Version is managed by springboot4 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <version>${micrometer.prometheus.version}</version>
         </dependency>
-        <!-- Micrometer Prometheus registry  -->
+        <!-- Micrometer Prometheus registry  / Version is managed by springboot4 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer.prometheus.version}</version>
         </dependency>
 
         <!-- Required to enable of page redirects, as we no longer have the web.xml
