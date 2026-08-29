@@ -85,6 +85,13 @@ public class AquariumEventServiceImpl implements AquariumEventService {
         String dosingInterval = trimToNull(eventTo.getDosingInterval());
         String category = trimToNull(eventTo.getCategory());
 
+        if (productName == null
+                || amountUnit == null
+                || eventTo.getAmount() == null
+                || (eventType == AquariumEventType.AUTOMATED_DOSING && dosingInterval == null)) {
+            return trimToNull(eventTo.getDescription());
+        }
+
         StringBuilder summary = new StringBuilder();
         summary.append(productName).append(" - ");
         summary.append(formatDecimal(eventTo.getAmount())).append(" ").append(amountUnit);
