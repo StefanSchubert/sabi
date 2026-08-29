@@ -517,6 +517,8 @@
                                             <h:outputText value="#{ev.eventDate}">
                                                 <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
                                             </h:outputText>
+                                            <h:outputText value=" #{ev.eventTime}"
+                                                          rendered="#{not empty ev.eventTime}"/>
                                         </span>
                                         <h:panelGroup rendered="#{ev.durationHours != null}">
                                             <span class="event-duration">
@@ -524,7 +526,28 @@
                                             </span>
                                         </h:panelGroup>
                                     </div>
-                                    <p class="event-desc">#{ev.description}</p>
+                                    <p class="event-desc">
+                                        #{ev.description}
+                                        <ui:fragment rendered="#{not empty ev.dosingMethod}">
+                                            <br/>
+                                            #{msg['aquariumevent.field.method.l']}: #{ev.dosingMethod}
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{not empty ev.solutionDescription}">
+                                            <br/>
+                                            #{msg['aquariumevent.field.solution.l']}: #{ev.solutionDescription}
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{ev.dosingEndOn != null}">
+                                            <br/>
+                                            #{msg['aquariumevent.field.end.l']}:
+                                            <h:outputText value="#{ev.dosingEndOn}">
+                                                <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
+                                            </h:outputText>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{not empty ev.note}">
+                                            <br/>
+                                            #{msg['aquariumevent.field.note.l']}: #{ev.note}
+                                        </ui:fragment>
+                                    </p>
                                 </div>
                             </ui:repeat>
                         </h:panelGroup>

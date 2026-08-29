@@ -148,7 +148,7 @@ public class PublicReportServiceTest {
         // outsideWindow (-13 months) is before the 365-day cutoff, so only recentEvent is returned
         LocalDate expectedCutoff = LocalDate.now().minusDays(365);
 
-        given(aquariumEventRepository.findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDesc(
+        given(aquariumEventRepository.findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDescEventTimeDesc(
                 eq(aquariumId), any(LocalDate.class)))
                 .willReturn(List.of(recentEvent));
 
@@ -211,7 +211,7 @@ public class PublicReportServiceTest {
         // Then
         assertNull(report.getRecentEvents(), "recentEvents must be null when includeEvents=false");
         // Verify event repository was never queried
-        verify(aquariumEventRepository, never()).findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDesc(
+        verify(aquariumEventRepository, never()).findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDescEventTimeDesc(
                 any(), any());
     }
 
@@ -247,4 +247,3 @@ public class PublicReportServiceTest {
         verify(publicReportLinkRepository, never()).save(any());
     }
 }
-
