@@ -25,6 +25,9 @@ public enum AquariumEventType implements Serializable {
 
     @JsonCreator
     public static AquariumEventType fromValue(String value) {
+        if (value == null || value.isBlank()) {
+            return GENERIC;
+        }
         return valueOf(value.toUpperCase());
     }
 }
