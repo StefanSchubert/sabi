@@ -46,13 +46,13 @@
         <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>3.0.3</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>3.1.0</springdoc.openapiv2.version>
         <lombok.version>1.18.46</lombok.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <!--
           see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
         <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
-        <cyclonedx.maven.plugin.version>2.9.2</cyclonedx.maven.plugin.version>
+        <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>12.2.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
