@@ -5,9 +5,9 @@
 
 package de.bluewhale.sabi.exception;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public class MessageCodeDeserializer extends StdDeserializer<MessageCode> {
     }
 
     @Override
-    public MessageCode deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public MessageCode deserialize(JsonParser p, DeserializationContext ctxt) {
         String value = p.getValueAsString();
         if (value == null || value.isBlank()) {
             return null;

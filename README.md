@@ -73,6 +73,12 @@ Solution for:
 
 Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/milestones?direction=asc&sort=due_date&state=open) from the Issue Board
 
+## For Developers
+
+Please have a look at:
+* [CONTRIBUTING.md](CONTRIBUTING.md)
+* [DEVELOPERS_MANUAL.md](DEVELOPERS_MANUAL.md)
+
 ## Project history
 | Date          | News                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -90,8 +96,3 @@ Just have a look at the [Milestones](https://github.com/StefanSchubert/sabi/mile
 | 27th Mai 2021 | I managed to replace the self-signed TLS cert with a let's encrypt based one. This gets us rid of the browsers insecure warning.                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 16th Mai 2021 | **Sneak Preview** available on https://sabi-project.net (Notice: Only available if you have an **IPV6 Internet-Connection** (your mobile with wlan switched off should do it, if your home has only the half internet available). As of the zero budget start we have a self signed TLS resulting in a browsers insecure warning. Still some bugs of course (see issue list), and features left till release 1.0 but it's already usable. In case you decide to create an account...it's already the production environment ;-) i.e. your data will be kept. |
 
-## For Developers
-
-Please have a look at:
-* [CONTRIBUTING.md](CONTRIBUTING.md)
-* [DEVELOPERS_MANUAL.md](DEVELOPERS_MANUAL.md)
