@@ -46,7 +46,7 @@
         <jackson.annotations.version>2.22</jackson.annotations.version>
         <jackson.databind.version>3.2.2</jackson.databind.version>
         <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
-        <owasp.plugin.version>12.1.3</owasp.plugin.version>
+        <owasp.plugin.version>13.0.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>

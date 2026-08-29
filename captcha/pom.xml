@@ -53,7 +53,7 @@
           see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
         <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
         <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
-        <owasp.plugin.version>12.2.0</owasp.plugin.version>
+        <owasp.plugin.version>13.0.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>

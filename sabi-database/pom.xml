@@ -24,7 +24,7 @@
         <mariadb.client.version>3.5.9</mariadb.client.version>
         <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
-        <owasp.plugin.version>12.2.0</owasp.plugin.version>
+        <owasp.plugin.version>13.0.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
