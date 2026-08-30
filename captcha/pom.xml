@@ -43,7 +43,6 @@
     <properties>
         <spring-boot.version>4.1.1</spring-boot.version>
         <java.version>25</java.version>
-        <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <springdoc.openapiv2.version>3.1.0</springdoc.openapiv2.version>
@@ -59,6 +58,9 @@
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
+        <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
+             revise this entry after upgrading spring boots patchlevel -->
+        <tomcat.version>11.0.25</tomcat.version>
     </properties>
 
     <dependencies>

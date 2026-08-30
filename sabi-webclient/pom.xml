@@ -55,7 +55,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>25</java.version>
-        <log4j2.version>2.20.0</log4j2.version>
         <joinfaces.version>6.1.0</joinfaces.version>
         <sabi.boundary.version>1.2.15</sabi.boundary.version>
         <passay.version>2.0.0</passay.version>
@@ -67,6 +66,9 @@
         <lombok.version>1.18.46</lombok.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
         <chart.js.javamodel.version>1.1.2</chart.js.javamodel.version>
+        <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
+     revise this entry after upgrading spring boots patchlevel -->
+        <tomcat.version>11.0.25</tomcat.version>
     </properties>
 
     <dependencyManagement>
