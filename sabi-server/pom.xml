@@ -499,6 +499,10 @@
                         <artifactId>dependency-check-maven</artifactId>
                         <version>${owasp.plugin.version}</version>
                         <configuration>
+                            <!-- This directory is used to CACHE the NCD-Downloads.
+Lokal: in ~/.zshrc exportieren (DEPENDENCY_CHECK_DATA_DIRECTORY point it to a local dev directory)
+     CI: GitHub Actions add in env section: DEPENDENCY_CHECK_DATA_DIRECTORY: ${{ github.workspace }}/.dependency-check -->
+                            <dataDirectory>${env.DEPENDENCY_CHECK_DATA_DIRECTORY}</dataDirectory>
                             <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
                                  Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
                             <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>

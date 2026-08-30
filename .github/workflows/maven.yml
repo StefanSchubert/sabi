@@ -18,6 +18,7 @@ jobs:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       # OSS Index deaktiviert: Migration zu Sonatype Guide am 28.04.2026 noch ausstehend,
       # OWASP Plugin unterstützt neuen Endpunkt noch nicht. NVD ist primäre CVE-Quelle.
+      DEPENDENCY_CHECK_DATA_DIRECTORY: ${{ github.workspace }}/.dependency-check
 
     steps:
     - uses: actions/checkout@v6
@@ -32,7 +33,12 @@ jobs:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-        
+          ${{ runner.os }}-maven-
+    # OWASP Dependency Check / NVD cache
+    - uses: actions/cache@v6
+      with:
+        path: .dependency-check
+        key: ${{ runner.os }}-owasp-nvd
     - name: CAPTCHA App
       run: cd captcha; mvn -B compile --file pom.xml
     - name: CAPTCHA OWASP Dependency Check
@@ -61,6 +67,7 @@ jobs:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       # OSS Index deaktiviert: Migration zu Sonatype Guide am 28.04.2026 noch ausstehend,
       # OWASP Plugin unterstützt neuen Endpunkt noch nicht. NVD ist primäre CVE-Quelle.
+      DEPENDENCY_CHECK_DATA_DIRECTORY: ${{ github.workspace }}/.dependency-check
 
     steps:
       - uses: actions/checkout@v6
@@ -75,7 +82,12 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-           
+            ${{ runner.os }}-maven-
+      # OWASP Dependency Check / NVD cache
+      - uses: actions/cache@v6
+        with:
+          path: .dependency-check
+          key: ${{ runner.os }}-owasp-nvd
       - name: CAPTCHA App
         run: cd captcha; mvn -B test --file pom.xml
       - name: SABI-Boundary install locally for dependend builds
