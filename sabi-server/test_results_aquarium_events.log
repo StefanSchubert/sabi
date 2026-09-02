@@ -1,0 +1,443 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< de.bluewhale:sabi-server >----------------------
+[INFO] Building sabi-server 1.4.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ sabi-server ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] Copying 12 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ sabi-server ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 202 source files with javac [debug parameters release 17] to target/classes
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/persistence/model/UserEntity.java:[22,43] This field does not exist, or would have been excluded anyway.
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/mapper/FishCatalogueMapper.java:[34,30] Unmapped target properties: "description, meerwasserwikiUrl".
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/mapper/FishCatalogueMapper.java:[41,29] Unmapped target properties: "catalogueId, catalogueEntry".
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/mapper/FishStockMapper.java:[40,22] Unmapped target property: "sizeHistory".
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/mapper/UserMapper.java:[42,16] Unmapped target properties: "oidcProviderLinks, oidcManaged, darkMode".
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/configs/RESTConfiguration.java:[24,9] org.springframework.web.servlet.view.json.MappingJackson2JsonView in org.springframework.web.servlet.view.json has been deprecated and marked for removal
+[WARNING] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/configs/RESTConfiguration.java:[24,44] org.springframework.web.servlet.view.json.MappingJackson2JsonView in org.springframework.web.servlet.view.json has been deprecated and marked for removal
+[INFO] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/services/TankService.java: Some input files use or override a deprecated API.
+[INFO] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/services/TankService.java: Recompile with -Xlint:deprecation for details.
+[INFO] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/services/CaptchaAdapterImpl.java: /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/services/CaptchaAdapterImpl.java uses unchecked or unsafe operations.
+[INFO] /home/runner/work/sabi/sabi/sabi-server/src/main/java/de/bluewhale/sabi/services/CaptchaAdapterImpl.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- versions:2.21.0:display-property-updates (default) @ sabi-server ---
+[INFO] 
+[INFO] The following version properties are referencing the newest available version:
+[INFO]   ${archunit.version} ........................................... 1.5.0
+[INFO]   ${auth0.jwt.version} .......................................... 4.6.0
+[INFO]   ${cyclonedx.maven.plugin.version} ............................. 2.9.3
+[INFO]   ${dumbster.version} ............................................. 1.6
+[INFO]   ${eclipselink.version} ........................................ 5.0.1
+[INFO]   ${flyway.version} ............................................ 13.4.0
+[INFO]   ${javax.annotation-api.version} ............................... 1.3.2
+[INFO]   ${jetbrains.annotation.version} .............................. 26.1.0
+[INFO]   ${mariadb.java.client.version} ............................... 3.5.10
+[INFO]   ${passay.version} ............................................. 2.0.0
+[INFO]   ${sabi.boundary.version} ..................................... 1.2.15
+[INFO]   ${springdoc.openapiv2.version} ................................ 3.1.0
+[INFO]   ${versions.maven.plugin.version} ............................. 2.21.0
+[INFO] The following version property updates are available:
+[INFO]   ${assertj-core.version} .......................... 3.27.7 -> 4.0.0-M1
+[INFO]   ${lombok.version} ................................ 1.18.46 -> 1.18.48
+[INFO]   ${mapstruct.version} ........................... 1.6.3 -> 1.7.0.Beta2
+[INFO]   ${maven-surefire-plugin.version} .................. 3.5.6 -> 3.6.0-M1
+[INFO] 
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ sabi-server ---
+[INFO] Copying 2 resources from src/test/resources to target/test-classes
+[INFO] Copying 65 resources from ../sabi-database/src/main/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ sabi-server ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 48 source files with javac [debug parameters release 17] to target/test-classes
+[INFO] /home/runner/work/sabi/sabi/sabi-server/src/test/java/de/bluewhale/sabi/persistence/FishCatalogueRepositoryTest.java: Some input files use or override a deprecated API.
+[INFO] /home/runner/work/sabi/sabi/sabi-server/src/test/java/de/bluewhale/sabi/persistence/FishCatalogueRepositoryTest.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ sabi-server ---
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.6/surefire-junit-platform-3.5.6.pom
+Progress (1): 833 BProgress (1): 3.9 kBProgress (1): 5.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.6/surefire-junit-platform-3.5.6.pom (5.2 kB at 18 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-providers/3.5.6/surefire-providers-3.5.6.pom
+Progress (1): 844 BProgress (1): 2.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-providers/3.5.6/surefire-providers-3.5.6.pom (2.5 kB at 56 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.6/common-java5-3.5.6.pom
+Progress (1): 844 BProgress (1): 2.8 kBProgress (1): 3.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.6/common-java5-3.5.6.pom (3.1 kB at 59 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.5.6/surefire-shared-utils-3.5.6.pom
+Progress (1): 1.1 kBProgress (1): 4.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.5.6/surefire-shared-utils-3.5.6.pom (4.0 kB at 84 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.5.6/surefire-api-3.5.6.pom
+Progress (1): 833 BProgress (1): 2.9 kBProgress (1): 3.7 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.5.6/surefire-api-3.5.6.pom (3.7 kB at 82 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.5.6/surefire-logger-api-3.5.6.pom
+Progress (1): 826 BProgress (1): 2.5 kBProgress (1): 3.5 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.5.6/surefire-logger-api-3.5.6.pom (3.5 kB at 73 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.pom
+Progress (1): 957 BProgress (1): 3.2 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.pom (3.2 kB at 60 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.pom
+Progress (1): 966 BProgress (1): 2.8 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.pom (2.8 kB at 66 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.pom
+Progress (1): 967 BProgress (1): 3.0 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.pom (3.0 kB at 66 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.5.6/surefire-extensions-api-3.5.6.pom
+Progress (1): 833 BProgress (1): 3.1 kBProgress (1): 3.6 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.5.6/surefire-extensions-api-3.5.6.pom (3.6 kB at 81 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.5.6/maven-surefire-common-3.5.6.pom
+Progress (1): 823 BProgress (1): 4.1 kBProgress (1): 7.2 kBProgress (1): 7.3 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.5.6/maven-surefire-common-3.5.6.pom (7.3 kB at 182 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.5.6/surefire-booter-3.5.6.pom
+Progress (1): 827 BProgress (1): 3.6 kBProgress (1): 5.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.5.6/surefire-booter-3.5.6.pom (5.1 kB at 116 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.5.6/surefire-extensions-spi-3.5.6.pom
+Progress (1): 872 BProgress (1): 1.7 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.5.6/surefire-extensions-spi-3.5.6.pom (1.7 kB at 39 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.6/surefire-junit-platform-3.5.6.jar
+Progress (1): 16/35 kBProgress (1): 33/35 kBProgress (1): 35 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.6/surefire-junit-platform-3.5.6.jar (35 kB at 865 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.6/common-java5-3.5.6.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.5.6/surefire-shared-utils-3.5.6.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.jar
+Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar
+Progress (1): 0/3.0 MBProgress (1): 0/3.0 MBProgress (1): 0/3.0 MBProgress (1): 0.1/3.0 MBProgress (1): 0.1/3.0 MBProgress (1): 0.1/3.0 MBProgress (1): 0.1/3.0 MBProgress (1): 0.1/3.0 MBProgress (1): 0.1/3.0 MBProgress (1): 0.2/3.0 MBProgress (1): 0.2/3.0 MBProgress (1): 0.2/3.0 MBProgress (1): 0.2/3.0 MBProgress (1): 0.2/3.0 MBProgress (1): 0.2/3.0 MBProgress (1): 0.3/3.0 MBProgress (1): 0.3/3.0 MBProgress (1): 0.3/3.0 MBProgress (1): 0.3/3.0 MBProgress (1): 0.3/3.0 MBProgress (1): 0.3/3.0 MBProgress (1): 0.4/3.0 MBProgress (2): 0.4/3.0 MB | 16/152 kBProgress (2): 0.4/3.0 MB | 33/152 kBProgress (2): 0.4/3.0 MB | 33/152 kBProgress (3): 0.4/3.0 MB | 33/152 kB | 16/208 kBProgress (3): 0.4/3.0 MB | 49/152 kB | 16/208 kBProgress (3): 0.4/3.0 MB | 49/152 kB | 16/208 kBProgress (3): 0.4/3.0 MB | 49/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 66/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 66/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 66/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 82/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 82/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 98/152 kB | 33/208 kBProgress (3): 0.4/3.0 MB | 98/152 kB | 49/208 kBProgress (3): 0.5/3.0 MB | 98/152 kB | 49/208 kBProgress (3): 0.5/3.0 MB | 98/152 kB | 66/208 kBProgress (3): 0.5/3.0 MB | 115/152 kB | 66/208 kBProgress (3): 0.5/3.0 MB | 131/152 kB | 66/208 kBProgress (4): 0.5/3.0 MB | 131/152 kB | 66/208 kB | 16/18 kBProgress (4): 0.5/3.0 MB | 131/152 kB | 66/208 kB | 18 kB   Progress (4): 0.5/3.0 MB | 131/152 kB | 66/208 kB | 18 kBProgress (4): 0.5/3.0 MB | 131/152 kB | 66/208 kB | 18 kBProgress (4): 0.5/3.0 MB | 147/152 kB | 66/208 kB | 18 kBProgress (4): 0.5/3.0 MB | 152 kB | 66/208 kB | 18 kB    Progress (5): 0.5/3.0 MB | 152 kB | 66/208 kB | 18 kB | 16/256 kB                                                                 Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar (152 kB at 1.5 MB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.5.6/surefire-api-3.5.6.jar
+Progress (4): 0.5/3.0 MB | 66/208 kB | 18 kB | 33/256 kBProgress (4): 0.5/3.0 MB | 82/208 kB | 18 kB | 33/256 kBProgress (4): 0.5/3.0 MB | 98/208 kB | 18 kB | 33/256 kBProgress (4): 0.5/3.0 MB | 98/208 kB | 18 kB | 49/256 kB                                                        Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.6/common-java5-3.5.6.jar (18 kB at 155 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.5.6/surefire-logger-api-3.5.6.jar
+Progress (3): 0.5/3.0 MB | 98/208 kB | 49/256 kBProgress (3): 0.5/3.0 MB | 98/208 kB | 49/256 kBProgress (3): 0.5/3.0 MB | 98/208 kB | 49/256 kBProgress (3): 0.5/3.0 MB | 98/208 kB | 66/256 kBProgress (3): 0.5/3.0 MB | 115/208 kB | 66/256 kBProgress (3): 0.5/3.0 MB | 115/208 kB | 82/256 kBProgress (3): 0.5/3.0 MB | 115/208 kB | 98/256 kBProgress (3): 0.5/3.0 MB | 131/208 kB | 98/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 98/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 115/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 115/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 131/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 131/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 131/256 kBProgress (3): 0.6/3.0 MB | 131/208 kB | 131/256 kBProgress (3): 0.6/3.0 MB | 147/208 kB | 131/256 kBProgress (3): 0.6/3.0 MB | 147/208 kB | 147/256 kBProgress (3): 0.6/3.0 MB | 147/208 kB | 147/256 kBProgress (3): 0.6/3.0 MB | 164/208 kB | 147/256 kBProgress (3): 0.6/3.0 MB | 164/208 kB | 164/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 164/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 164/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 164/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 164/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 164/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 180/256 kBProgress (3): 0.7/3.0 MB | 164/208 kB | 180/256 kBProgress (3): 0.7/3.0 MB | 180/208 kB | 180/256 kBProgress (3): 0.7/3.0 MB | 180/208 kB | 180/256 kBProgress (3): 0.7/3.0 MB | 197/208 kB | 180/256 kBProgress (3): 0.7/3.0 MB | 197/208 kB | 197/256 kBProgress (3): 0.7/3.0 MB | 208 kB | 197/256 kB    Progress (3): 0.8/3.0 MB | 208 kB | 197/256 kBProgress (3): 0.8/3.0 MB | 208 kB | 213/256 kBProgress (3): 0.8/3.0 MB | 208 kB | 213/256 kB                                              Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.jar (208 kB at 1.6 MB/s)
+Progress (2): 0.8/3.0 MB | 229/256 kB                                     Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.5.6/surefire-extensions-api-3.5.6.jar
+Progress (2): 0.8/3.0 MB | 229/256 kBProgress (2): 0.8/3.0 MB | 229/256 kBProgress (2): 0.8/3.0 MB | 246/256 kBProgress (2): 0.8/3.0 MB | 246/256 kBProgress (2): 0.8/3.0 MB | 256 kB    Progress (2): 0.8/3.0 MB | 256 kBProgress (2): 0.9/3.0 MB | 256 kB                                 Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar (256 kB at 1.8 MB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.5.6/maven-surefire-common-3.5.6.jar
+Progress (1): 0.9/3.0 MBProgress (1): 0.9/3.0 MBProgress (1): 0.9/3.0 MBProgress (1): 0.9/3.0 MBProgress (2): 0.9/3.0 MB | 7.3/174 kBProgress (2): 0.9/3.0 MB | 7.3/174 kBProgress (2): 1.0/3.0 MB | 7.3/174 kBProgress (2): 1.0/3.0 MB | 24/174 kB Progress (2): 1.0/3.0 MB | 24/174 kBProgress (2): 1.0/3.0 MB | 24/174 kBProgress (2): 1.0/3.0 MB | 40/174 kBProgress (3): 1.0/3.0 MB | 40/174 kB | 14 kBProgress (3): 1.0/3.0 MB | 40/174 kB | 14 kBProgress (3): 1.0/3.0 MB | 40/174 kB | 14 kBProgress (3): 1.0/3.0 MB | 40/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 40/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 56/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 56/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 73/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 73/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 73/174 kB | 14 kBProgress (3): 1.1/3.0 MB | 73/174 kB | 14 kB                                            Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-logger-api/3.5.6/surefire-logger-api-3.5.6.jar (14 kB at 89 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.5.6/surefire-booter-3.5.6.jar
+Progress (2): 1.1/3.0 MB | 89/174 kBProgress (2): 1.1/3.0 MB | 106/174 kBProgress (2): 1.1/3.0 MB | 106/174 kBProgress (2): 1.1/3.0 MB | 122/174 kBProgress (2): 1.2/3.0 MB | 122/174 kBProgress (2): 1.2/3.0 MB | 122/174 kBProgress (2): 1.2/3.0 MB | 122/174 kBProgress (2): 1.2/3.0 MB | 138/174 kBProgress (2): 1.2/3.0 MB | 138/174 kBProgress (2): 1.2/3.0 MB | 155/174 kBProgress (2): 1.2/3.0 MB | 171/174 kBProgress (2): 1.2/3.0 MB | 171/174 kBProgress (2): 1.2/3.0 MB | 174 kB    Progress (2): 1.2/3.0 MB | 174 kB                                 Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-api/3.5.6/surefire-api-3.5.6.jar (174 kB at 1.1 MB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.5.6/surefire-extensions-spi-3.5.6.jar
+Progress (1): 1.3/3.0 MBProgress (1): 1.3/3.0 MBProgress (1): 1.3/3.0 MBProgress (1): 1.3/3.0 MBProgress (1): 1.3/3.0 MBProgress (1): 1.3/3.0 MBProgress (1): 1.4/3.0 MBProgress (1): 1.4/3.0 MBProgress (1): 1.4/3.0 MBProgress (1): 1.4/3.0 MBProgress (2): 1.4/3.0 MB | 16/26 kBProgress (2): 1.4/3.0 MB | 26 kB   Progress (2): 1.4/3.0 MB | 26 kBProgress (2): 1.4/3.0 MB | 26 kBProgress (2): 1.4/3.0 MB | 26 kBProgress (2): 1.5/3.0 MB | 26 kBProgress (2): 1.5/3.0 MB | 26 kB                                Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-api/3.5.6/surefire-extensions-api-3.5.6.jar (26 kB at 150 kB/s)
+Progress (1): 1.5/3.0 MBProgress (1): 1.5/3.0 MBProgress (1): 1.5/3.0 MBProgress (1): 1.5/3.0 MBProgress (1): 1.6/3.0 MBProgress (1): 1.6/3.0 MBProgress (1): 1.6/3.0 MBProgress (1): 1.6/3.0 MBProgress (1): 1.6/3.0 MBProgress (1): 1.6/3.0 MBProgress (1): 1.7/3.0 MBProgress (1): 1.7/3.0 MBProgress (1): 1.7/3.0 MBProgress (2): 1.7/3.0 MB | 16/317 kBProgress (2): 1.7/3.0 MB | 16/317 kBProgress (2): 1.7/3.0 MB | 33/317 kBProgress (2): 1.7/3.0 MB | 33/317 kBProgress (2): 1.7/3.0 MB | 49/317 kBProgress (2): 1.7/3.0 MB | 49/317 kBProgress (2): 1.7/3.0 MB | 66/317 kBProgress (2): 1.7/3.0 MB | 82/317 kBProgress (2): 1.8/3.0 MB | 82/317 kBProgress (2): 1.8/3.0 MB | 98/317 kBProgress (2): 1.8/3.0 MB | 115/317 kBProgress (2): 1.8/3.0 MB | 115/317 kBProgress (2): 1.8/3.0 MB | 131/317 kBProgress (2): 1.8/3.0 MB | 131/317 kBProgress (2): 1.8/3.0 MB | 131/317 kBProgress (2): 1.8/3.0 MB | 131/317 kBProgress (3): 1.8/3.0 MB | 131/317 kB | 16/123 kBProgress (3): 1.8/3.0 MB | 131/317 kB | 33/123 kBProgress (3): 1.8/3.0 MB | 131/317 kB | 33/123 kBProgress (3): 1.9/3.0 MB | 131/317 kB | 33/123 kBProgress (3): 1.9/3.0 MB | 131/317 kB | 49/123 kBProgress (3): 1.9/3.0 MB | 131/317 kB | 49/123 kBProgress (3): 1.9/3.0 MB | 131/317 kB | 66/123 kBProgress (3): 1.9/3.0 MB | 131/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 131/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 147/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 164/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 164/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 180/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 197/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 197/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 213/317 kB | 82/123 kBProgress (3): 1.9/3.0 MB | 213/317 kB | 82/123 kBProgress (3): 2.0/3.0 MB | 213/317 kB | 82/123 kBProgress (3): 2.0/3.0 MB | 213/317 kB | 98/123 kBProgress (3): 2.0/3.0 MB | 213/317 kB | 98/123 kBProgress (3): 2.0/3.0 MB | 213/317 kB | 115/123 kBProgress (3): 2.0/3.0 MB | 213/317 kB | 123 kB    Progress (3): 2.0/3.0 MB | 229/317 kB | 123 kBProgress (3): 2.0/3.0 MB | 229/317 kB | 123 kBProgress (3): 2.0/3.0 MB | 246/317 kB | 123 kBProgress (3): 2.0/3.0 MB | 246/317 kB | 123 kBProgress (3): 2.0/3.0 MB | 262/317 kB | 123 kBProgress (3): 2.0/3.0 MB | 262/317 kB | 123 kBProgress (3): 2.0/3.0 MB | 279/317 kB | 123 kBProgress (4): 2.0/3.0 MB | 279/317 kB | 123 kB | 8.2 kBProgress (4): 2.0/3.0 MB | 279/317 kB | 123 kB | 8.2 kB                                                       Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-booter/3.5.6/surefire-booter-3.5.6.jar (123 kB at 622 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-extensions-spi/3.5.6/surefire-extensions-spi-3.5.6.jar (8.2 kB at 41 kB/s)
+Progress (2): 2.1/3.0 MB | 279/317 kBProgress (2): 2.1/3.0 MB | 295/317 kBProgress (2): 2.1/3.0 MB | 295/317 kBProgress (2): 2.1/3.0 MB | 295/317 kBProgress (2): 2.1/3.0 MB | 311/317 kBProgress (2): 2.1/3.0 MB | 311/317 kBProgress (2): 2.1/3.0 MB | 317 kB                                     Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/maven-surefire-common/3.5.6/maven-surefire-common-3.5.6.jar (317 kB at 1.6 MB/s)
+Progress (1): 2.1/3.0 MBProgress (1): 2.1/3.0 MBProgress (1): 2.2/3.0 MBProgress (1): 2.2/3.0 MBProgress (1): 2.2/3.0 MBProgress (1): 2.2/3.0 MBProgress (1): 2.2/3.0 MBProgress (1): 2.2/3.0 MBProgress (1): 2.3/3.0 MBProgress (1): 2.3/3.0 MBProgress (1): 2.3/3.0 MBProgress (1): 2.3/3.0 MBProgress (1): 2.3/3.0 MBProgress (1): 2.3/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.4/3.0 MBProgress (1): 2.5/3.0 MBProgress (1): 2.5/3.0 MBProgress (1): 2.5/3.0 MBProgress (1): 2.5/3.0 MBProgress (1): 2.5/3.0 MBProgress (1): 2.5/3.0 MBProgress (1): 2.6/3.0 MBProgress (1): 2.6/3.0 MBProgress (1): 2.6/3.0 MBProgress (1): 2.6/3.0 MBProgress (1): 2.6/3.0 MBProgress (1): 2.6/3.0 MBProgress (1): 2.7/3.0 MBProgress (1): 2.7/3.0 MBProgress (1): 2.7/3.0 MBProgress (1): 2.7/3.0 MBProgress (1): 2.7/3.0 MBProgress (1): 2.7/3.0 MBProgress (1): 2.8/3.0 MBProgress (1): 2.8/3.0 MBProgress (1): 2.8/3.0 MBProgress (1): 2.8/3.0 MBProgress (1): 2.8/3.0 MBProgress (1): 2.8/3.0 MBProgress (1): 2.9/3.0 MBProgress (1): 2.9/3.0 MBProgress (1): 2.9/3.0 MBProgress (1): 2.9/3.0 MBProgress (1): 2.9/3.0 MBProgress (1): 2.9/3.0 MBProgress (1): 3.0/3.0 MBProgress (1): 3.0/3.0 MBProgress (1): 3.0/3.0 MBProgress (1): 3.0 MB                        Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-shared-utils/3.5.6/surefire-shared-utils-3.5.6.jar (3.0 MB at 13 MB/s)
+[INFO] Using configured provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running de.bluewhale.sabi.services.PublicReportServiceTest
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.874 s -- in de.bluewhale.sabi.services.PublicReportServiceTest
+[INFO] Running de.bluewhale.sabi.services.AquariumEventServiceTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in de.bluewhale.sabi.services.AquariumEventServiceTest
+[INFO] Running de.bluewhale.sabi.rest.controller.AquariumEventControllerIT
+ ____        _     _   _____         _   _
+/ ___|  __ _| |__ (_) |_   _|__  ___| |_(_)_ __   __ _
+\___ \ / _` | '_ \| |   | |/ _ \/ __| __| | '_ \ / _` |
+ ___) | (_| | |_) | |   | |  __/\__ \ |_| | | | | (_| |_ _ _
+|____/ \__,_|_.__/|_|   |_|\___||___/\__|_|_| |_|\__, (_|_|_)
+                                                 |___/
+using Spring-Boot:  (v4.1.1) 🐋
+
+
+2026-09-02T19:48:07,293 INFO  [main] o.s.b.StartupInfoLogger: Starting AquariumEventControllerIT using Java 17.0.20.1 with PID 7311 (started by runner in /home/runner/work/sabi/sabi/sabi-server)
+2026-09-02T19:48:07,306 INFO  [main] o.s.b.SpringApplication: No active profile set, falling back to 1 default profile: "default"
+2026-09-02T19:48:07,683 INFO  [background-preinit] o.h.v.i.u.Version: HV000001: Hibernate Validator 9.1.3.Final
+2026-09-02T19:48:08,198 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate: Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-02T19:48:08,328 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate: Finished Spring Data repository scanning in 117 ms. Found 38 JPA repository interfaces.
+2026-09-02T19:48:09,119 WARN  [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: Bean 'org.springframework.boot.jdbc.autoconfigure.DataSourceConfiguration$Hikari' of type [org.springframework.boot.jdbc.autoconfigure.DataSourceConfiguration$Hikari] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [exceptionTranslation]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-09-02T19:48:09,130 WARN  [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: Bean 'stringOrNumberMigrationVersionConverter' of type [org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration$StringOrNumberToMigrationVersionConverter] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [exceptionTranslation]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-09-02T19:48:09,137 WARN  [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: Bean 'spring.datasource-org.springframework.boot.jdbc.autoconfigure.DataSourceProperties' of type [org.springframework.boot.jdbc.autoconfigure.DataSourceProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [exceptionTranslation]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-09-02T19:48:09,138 WARN  [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: Bean 'jdbcContainerConnectionDetailsForTest' of type [org.springframework.boot.jdbc.testcontainers.JdbcContainerConnectionDetailsFactory$JdbcContainerConnectionDetails] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [exceptionTranslation]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-09-02T19:48:09,167 WARN  [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: Bean 'dataSource' of type [com.zaxxer.hikari.HikariDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [exceptionTranslation]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-09-02T19:48:09,168 WARN  [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker: Bean 'JPAConfig' of type [de.bluewhale.sabi.configs.JPAConfig$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [exceptionTranslation] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-09-02T19:48:09,667 INFO  [main] o.s.b.t.TomcatWebServer: Tomcat initialized with port 0 (http)
+2026-09-02T19:48:09,726 INFO  [main] o.a.j.l.DirectJDKLog: Initializing ProtocolHandler ["http-nio-auto-1"]
+2026-09-02T19:48:09,728 INFO  [main] o.a.j.l.DirectJDKLog: Starting service [Tomcat]
+2026-09-02T19:48:09,728 INFO  [main] o.a.j.l.DirectJDKLog: Starting Servlet engine: [Apache Tomcat/11.0.25]
+2026-09-02T19:48:09,785 INFO  [main] o.s.b.w.c.s.WebApplicationContextInitializer: Root WebApplicationContext: initialization completed in 2459 ms
+2026-09-02T19:48:10,208 INFO  [main] o.f.c.i.l.s.Slf4jLog: Database: ******** (MariaDB 11.3)
+2026-09-02T19:48:10,306 INFO  [main] o.f.c.i.l.s.Slf4jLog: Schema history table `test`.`flyway_schema_history` does not exist yet
+2026-09-02T19:48:10,312 INFO  [main] o.f.c.i.l.s.Slf4jLog: Successfully validated 63 migrations (execution time 00:00.045s)
+2026-09-02T19:48:10,322 INFO  [main] o.f.c.i.l.s.Slf4jLog: Creating Schema History table `test`.`flyway_schema_history` ...
+2026-09-02T19:48:10,383 INFO  [main] o.f.c.i.l.s.Slf4jLog: Current version of schema `test`: << Empty Schema >>
+2026-09-02T19:48:10,410 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.1 - model"
+2026-09-02T19:48:10,474 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.2 - basicData"
+2026-09-02T19:48:10,495 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.3 - addUsername"
+2026-09-02T19:48:10,525 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.4 - addUserReferences"
+2026-09-02T19:48:10,582 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.5 - addOptimisticLocking"
+2026-09-02T19:48:10,635 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.6 - addMOTD"
+2026-09-02T19:48:10,664 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.7 - alterAquarium"
+2026-09-02T19:48:10,684 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.8 - modifyUnits"
+2026-09-02T19:48:10,702 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.9 - modifyUnits"
+2026-09-02T19:48:10,718 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.10 - modifyUnits"
+2026-09-02T19:48:10,733 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.11 - addParameter"
+2026-09-02T19:48:10,747 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.12 - alterParameter"
+2026-09-02T19:48:10,770 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.13 - addParameter"
+2026-09-02T19:48:10,781 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.14 - addParameter"
+2026-09-02T19:48:10,792 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.15 - modifyCaUnit"
+2026-09-02T19:48:10,812 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.16 - addPlagueModel"
+2026-09-02T19:48:10,863 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.17 - someMoreTestData"
+2026-09-02T19:48:10,900 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.18 - alterAquarium"
+2026-09-02T19:48:10,913 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.0.0.19 - addSalenityMeasurement"
+2026-09-02T19:48:10,923 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.1.0.1 - addMorePlagueTypes"
+2026-09-02T19:48:10,936 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.2.0.1 - addMeasurementReminderTable"
+2026-09-02T19:48:10,952 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.2.2.1 - addMorePlagueTypes"
+2026-09-02T19:48:10,965 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.3.0.1 - addedWaterType"
+2026-09-02T19:48:10,981 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.3.0.2 - i18nPlague"
+2026-09-02T19:48:11,007 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.3.0.3 - i18nParameter"
+2026-09-02T19:48:11,038 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.3.0.4 - i18nUnit"
+2026-09-02T19:48:11,070 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.4.0.1 - addOidcProviderLinkTable"
+2026-09-02T19:48:11,088 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.4.0.2 - addOidcManagedFlagToUsers"
+2026-09-02T19:48:11,100 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.4.0.3 - addDarkModeFlag"
+2026-09-02T19:48:11,111 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.4.0.4 - addEcosystemType"
+2026-09-02T19:48:11,128 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.1 - extendFishTableForStockManagement"
+2026-09-02T19:48:11,150 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.2 - extendFishCatalogueForUGC"
+2026-09-02T19:48:11,185 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.3 - addFishCatalogueI18nTable"
+2026-09-02T19:48:11,226 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.4 - addFishPhotoTable"
+2026-09-02T19:48:11,239 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.5 - migrateExistingFishCatalogueToI18n"
+2026-09-02T19:48:11,250 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.6 - addDepartureNote"
+2026-09-02T19:48:11,268 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.7 - addFishRoleTable"
+2026-09-02T19:48:11,290 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.8 - addFishSizeHistory"
+2026-09-02T19:48:11,302 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.9 - addAquariumPhotoTable"
+2026-09-02T19:48:11,315 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.10 - addNetVolumeToAquarium"
+2026-09-02T19:48:11,326 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.5.0.11 - addPublicReportLink"
+2026-09-02T19:48:11,340 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.6.0.1 - addAquariumEventTable"
+2026-09-02T19:48:11,353 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.6.0.2 - addIncludeEventsToPublicReportLink"
+2026-09-02T19:48:11,366 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.1 - addCoralCatalogueTable"
+2026-09-02T19:48:11,403 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.2 - addCoralCatalogueI18nTable"
+2026-09-02T19:48:11,428 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.3 - addCoralStockTable"
+2026-09-02T19:48:11,444 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.4 - addCoralGrowthHistoryTable"
+2026-09-02T19:48:11,457 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.5 - addCoralPolypConditionTable"
+2026-09-02T19:48:11,471 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.6 - addCoralPhotoTable"
+2026-09-02T19:48:11,484 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.7 - addIncludeCoralsToPublicReportLink"
+2026-09-02T19:48:11,496 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.8 - extendCoralClassificationColumn"
+2026-09-02T19:48:11,510 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.7.0.9 - renamePolypConditionColumn"
+2026-09-02T19:48:11,521 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.1 - addInvertebrateCatalogueTable"
+2026-09-02T19:48:11,534 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.2 - addInvertebrateCatalogueI18nTable"
+2026-09-02T19:48:11,547 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.3 - addInvertebrateStockTable"
+2026-09-02T19:48:11,560 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.4 - addInvertebrateWaterSensitivityTable"
+2026-09-02T19:48:11,574 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.5 - addInvertebratePhotoTable"
+2026-09-02T19:48:11,587 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.6 - addIncludeInvertebratesToPublicReportLink"
+2026-09-02T19:48:11,597 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.7 - makeInvertebrateCatalogueColumnsNullable"
+2026-09-02T19:48:11,612 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.8 - addIncludeFishToPublicReportLink"
+2026-09-02T19:48:11,625 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.9 - addAiptasiaPlagueType"
+2026-09-02T19:48:11,637 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.10 - refactorInvertebrateEcologicalRolesToMultiValue"
+2026-09-02T19:48:11,652 INFO  [main] o.f.c.i.l.s.Slf4jLog: Migrating schema `test` to version "1.8.0.11 - extendAquariumEventForDosing"
+2026-09-02T19:48:11,669 INFO  [main] o.f.c.i.l.s.Slf4jLog: Successfully applied 63 migrations to schema `test`, now at version v1.8.0.11 (execution time 00:00.601s)
+2026-09-02T19:48:12,239 INFO  [main] o.s.o.j.AbstractEntityManagerFactoryBean: Initialized JPA EntityManagerFactory for persistence unit 'sabi'
+[EL Info]: 2026.09.02 19:48:12.339--ServerSession(2026350390)--EclipseLink, version: Eclipse Persistence Services - 5.0.1.v202606291238-b81f6203960431f4ef8a54433b094b5acea71bdd
+2026-09-02T19:48:12,345 INFO  [main] c.z.h.HikariDataSource: HikariPool-1 - Starting...
+2026-09-02T19:48:12,365 INFO  [main] c.z.h.p.HikariPool: HikariPool-1 - Added connection org.mariadb.jdbc.Connection@6cd79426
+2026-09-02T19:48:12,366 INFO  [main] c.z.h.HikariDataSource: HikariPool-1 - Start completed.
+[EL Warning]: metadata: 2026.09.02 19:48:12.393--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.CoralEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.394--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [invertebrateStock] for the entity class [class de.bluewhale.sabi.persistence.model.InvertebrateWaterSensitivityEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.394--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [invertebrateStock] for the entity class [class de.bluewhale.sabi.persistence.model.InvertebratePhotoEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.395--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [catalogueEntry] for the entity class [class de.bluewhale.sabi.persistence.model.TankInvertebrateStockEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.395--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.TankInvertebrateStockEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.395--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [proposer] for the entity class [class de.bluewhale.sabi.persistence.model.FishCatalogueEntryEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.396--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [catalogue] for the entity class [class de.bluewhale.sabi.persistence.model.InvertebrateCatalogueI18nEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.397--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.TreatmentEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.397--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [proposer] for the entity class [class de.bluewhale.sabi.persistence.model.CoralCatalogueEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.398--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [catalogueEntry] for the entity class [class de.bluewhale.sabi.persistence.model.TankCoralStockEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.398--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.TankCoralStockEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.399--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.FishEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.399--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [proposer] for the entity class [class de.bluewhale.sabi.persistence.model.InvertebrateCatalogueEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.400--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.TankFishStockEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.400--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [coralStock] for the entity class [class de.bluewhale.sabi.persistence.model.CoralGrowthHistoryEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.401--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [catalogueEntry] for the entity class [class de.bluewhale.sabi.persistence.model.FishCatalogueI18nEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.401--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.MeasurementEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.401--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [aquarium] for the entity class [class de.bluewhale.sabi.persistence.model.MeasurementEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.402--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [aquarium] for the entity class [class de.bluewhale.sabi.persistence.model.AquariumPhotoEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.402--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.OidcProviderLinkEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.403--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.AquariumEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.404--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.UserMeasurementReminderEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.404--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [fishEntry] for the entity class [class de.bluewhale.sabi.persistence.model.FishPhotoEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.405--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [coralStock] for the entity class [class de.bluewhale.sabi.persistence.model.CoralPolypConditionEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.405--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [coralStock] for the entity class [class de.bluewhale.sabi.persistence.model.CoralPhotoEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.405--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [user] for the entity class [class de.bluewhale.sabi.persistence.model.PlagueRecordEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.406--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [aquarium] for the entity class [class de.bluewhale.sabi.persistence.model.PlagueRecordEntity] since weaving was not enabled or did not occur.
+[EL Warning]: metadata: 2026.09.02 19:48:12.406--ServerSession(2026350390)--Reverting the lazy setting on the OneToOne or ManyToOne attribute [catalogue] for the entity class [class de.bluewhale.sabi.persistence.model.CoralCatalogueI18nEntity] since weaving was not enabled or did not occur.
+2026-09-02T19:48:12,582 INFO  [main] o.s.d.j.r.q.QueryEnhancerFactories: EclipseLink is in classpath; If applicable, EQL parser will be used.
+2026-09-02T19:48:12,583 INFO  [main] o.s.d.j.r.q.QueryEnhancerFactories: Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-02T19:48:15,128 WARN  [main] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration: spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-09-02T19:48:15,186 INFO  [main] o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer: Global AuthenticationManager configured with AuthenticationProvider bean with name sabiDoorKeeper
+2026-09-02T19:48:15,375 DEBUG [main] o.s.s.w.DefaultSecurityFilterChain: Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JWTLoginFilter, JWTAuthorizationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-09-02T19:48:15,405 INFO  [main] o.s.b.w.a.WelcomePageHandlerMapping: Adding welcome page: class path resource [static/index.html]
+2026-09-02T19:48:16,052 INFO  [main] o.s.b.a.e.w.EndpointLinksResolver: Exposing 4 endpoints beneath base path '/actuator'
+2026-09-02T19:48:16,180 INFO  [main] o.a.j.l.DirectJDKLog: Starting ProtocolHandler ["http-nio-auto-1"]
+2026-09-02T19:48:16,210 INFO  [main] o.s.b.t.TomcatWebServer: Tomcat started on port 42777 (http) with context path '/sabi'
+2026-09-02T19:48:16,231 INFO  [main] o.s.b.StartupInfoLogger: Started AquariumEventControllerIT in 9.425 seconds (process running for 25.137)
+2026-09-02T19:48:16,390 WARN  [main] o.s.c.e.SpringDocAppInitializer: SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-09-02T19:48:16,391 WARN  [main] o.s.c.e.SpringDocAppInitializer: SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-09-02T19:48:16,717 INFO  [http-nio-auto-1-exec-1] o.a.j.l.DirectJDKLog: Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-02T19:48:16,718 INFO  [http-nio-auto-1-exec-1] o.s.w.s.FrameworkServlet: Initializing Servlet 'dispatcherServlet'
+2026-09-02T19:48:16,720 INFO  [http-nio-auto-1-exec-1] o.s.w.s.FrameworkServlet: Completed initialization in 2 ms
+2026-09-02T19:48:16,734 DEBUG [http-nio-auto-1-exec-1] o.s.s.w.FilterChainProxy: Securing POST /api/tank/10/events
+2026-09-02T19:48:16,785 DEBUG [http-nio-auto-1-exec-1] o.s.s.w.FilterChainProxy: Secured POST /api/tank/10/events
+2026-09-02T19:48:16,915 TRACE [http-nio-auto-1-exec-1] o.s.t.i.TransactionAspectSupport: Getting transaction for [de.bluewhale.sabi.services.AquariumEventServiceImpl.createEvent]
+2026-09-02T19:48:16,915 WARN  [http-nio-auto-1-exec-1] d.b.s.s.AquariumEventServiceImpl: createEvent: ownership check failed for aquarium_id=10
+2026-09-02T19:48:16,916 TRACE [http-nio-auto-1-exec-1] o.s.t.i.TransactionAspectSupport: Completing transaction for [de.bluewhale.sabi.services.AquariumEventServiceImpl.createEvent]
+2026-09-02T19:48:16,917 WARN  [http-nio-auto-1-exec-1] d.b.s.r.c.AquariumEventController: createEvent rejected for aquarium_id=10
+2026-09-02T19:48:16,978 DEBUG [http-nio-auto-1-exec-2] o.s.s.w.FilterChainProxy: Securing POST /api/tank/10/events
+2026-09-02T19:48:16,982 DEBUG [http-nio-auto-1-exec-2] o.s.s.w.FilterChainProxy: Secured POST /api/tank/10/events
+2026-09-02T19:48:17,018 DEBUG [http-nio-auto-1-exec-3] o.s.s.w.FilterChainProxy: Securing PUT /api/tank/10/events/42
+2026-09-02T19:48:17,023 DEBUG [http-nio-auto-1-exec-3] o.s.s.w.FilterChainProxy: Secured PUT /api/tank/10/events/42
+2026-09-02T19:48:17,027 TRACE [http-nio-auto-1-exec-3] o.s.t.i.TransactionAspectSupport: Getting transaction for [de.bluewhale.sabi.services.AquariumEventServiceImpl.updateEvent]
+2026-09-02T19:48:17,029 TRACE [http-nio-auto-1-exec-3] o.s.t.i.TransactionAspectSupport: Completing transaction for [de.bluewhale.sabi.services.AquariumEventServiceImpl.updateEvent] after exception: org.springframework.orm.ObjectOptimisticLockingFailureException: Object of class [de.bluewhale.sabi.persistence.model.AquariumEventEntity] with identifier [42]: optimistic locking failed
+2026-09-02T19:48:17,029 TRACE [http-nio-auto-1-exec-3] o.s.t.i.TransactionInterceptor$1: MethodRollbackEvent: de.bluewhale.sabi.services.AquariumEventServiceImpl.updateEvent [org.springframework.orm.ObjectOptimisticLockingFailureException: Object of class [de.bluewhale.sabi.persistence.model.AquariumEventEntity] with identifier [42]: optimistic locking failed]
+org.springframework.orm.ObjectOptimisticLockingFailureException: Object of class [de.bluewhale.sabi.persistence.model.AquariumEventEntity] with identifier [42]: optimistic locking failed
+	at de.bluewhale.sabi.services.AquariumEventServiceImpl.updateEvent(AquariumEventServiceImpl.java:155)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:133)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:371)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:130)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at de.bluewhale.sabi.services.AquariumEventServiceImpl$$SpringCGLIB$$0.updateEvent(<generated>)
+	at de.bluewhale.sabi.rest.controller.AquariumEventController.updateEvent(AquariumEventController.java:111)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPut(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:650)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:132)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:59)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$2(FilterChainProxy.java:235)
+	at org.springframework.security.web.ObservationFilterChainDecorator$FilterObservation$SimpleFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:491)
+	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:353)
+	at org.springframework.security.web.ObservationFilterChainDecorator.lambda$wrapSecured$0(ObservationFilterChainDecorator.java:84)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:131)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:132)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:86)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at de.bluewhale.sabi.security.JWTAuthorizationFilter.doFilterInternal(JWTAuthorizationFilter.java:78)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:245)
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:239)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:336)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:535)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:86)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:71)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:347)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:408)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:71)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1307)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:2201)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:74)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:949)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:483)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-09-02T19:48:17,034 WARN  [http-nio-auto-1-exec-3] d.b.s.r.c.AquariumEventController: Optimistic lock conflict updating event_id=42 in aquarium_id=10
+2026-09-02T19:48:17,061 DEBUG [http-nio-auto-1-exec-4] o.s.s.w.FilterChainProxy: Securing POST /api/tank/10/events
+2026-09-02T19:48:17,065 DEBUG [http-nio-auto-1-exec-4] o.s.s.w.FilterChainProxy: Secured POST /api/tank/10/events
+2026-09-02T19:48:17,069 TRACE [http-nio-auto-1-exec-4] o.s.t.i.TransactionAspectSupport: Getting transaction for [de.bluewhale.sabi.services.AquariumEventServiceImpl.createEvent]
+2026-09-02T19:48:17,069 TRACE [http-nio-auto-1-exec-4] o.s.t.i.TransactionAspectSupport: Completing transaction for [de.bluewhale.sabi.services.AquariumEventServiceImpl.createEvent]
+2026-09-02T19:48:17,087 INFO  [main] o.s.b.t.GracefulShutdown: Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-02T19:48:17,089 INFO  [tomcat-shutdown] o.a.j.l.DirectJDKLog: Pausing ProtocolHandler ["http-nio-auto-1-42777"]
+2026-09-02T19:48:17,093 INFO  [tomcat-shutdown] o.s.b.t.GracefulShutdown: Graceful shutdown complete
+2026-09-02T19:48:17,094 INFO  [main] o.a.j.l.DirectJDKLog: Stopping ProtocolHandler ["http-nio-auto-1"]
+2026-09-02T19:48:17,116 INFO  [main] o.s.o.j.AbstractEntityManagerFactoryBean: Closing JPA EntityManagerFactory for persistence unit 'sabi'
+2026-09-02T19:48:17,117 INFO  [main] c.z.h.HikariDataSource: HikariPool-1 - Shutdown initiated...
+2026-09-02T19:48:17,120 INFO  [main] c.z.h.HikariDataSource: HikariPool-1 - Shutdown completed.
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.20 s -- in de.bluewhale.sabi.rest.controller.AquariumEventControllerIT
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  39.247 s
+[INFO] Finished at: 2026-09-02T19:48:17Z
+[INFO] ------------------------------------------------------------------------
