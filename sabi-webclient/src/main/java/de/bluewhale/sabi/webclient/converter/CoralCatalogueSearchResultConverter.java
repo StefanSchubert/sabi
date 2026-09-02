@@ -15,7 +15,7 @@ import jakarta.faces.convert.FacesConverter;
  * Enables PrimeFaces p:autoComplete to round-trip complex objects via JSON.
  * Part of 005-coral-stock.
  */
-@FacesConverter(value = "coralCatalogueSearchResultConverter", managed = true)
+@FacesConverter(value = "coralCatalogueSearchResultConverter")
 public class CoralCatalogueSearchResultConverter implements Converter<CoralCatalogueSearchResultTo> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

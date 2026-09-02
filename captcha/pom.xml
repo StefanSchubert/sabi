@@ -11,7 +11,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -41,25 +41,26 @@
 
 
     <properties>
-        <spring-boot.version>4.1.0</spring-boot.version>
+        <spring-boot.version>4.1.1</spring-boot.version>
         <java.version>25</java.version>
-        <log4j2.version>2.20.0</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>3.0.3</springdoc.openapiv2.version>
-        <micrometer.prometheus.version>1.17.0</micrometer.prometheus.version>
+        <springdoc.openapiv2.version>3.1.0</springdoc.openapiv2.version>
         <lombok.version>1.18.46</lombok.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <!--
           see https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/html/ -->
         <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
-        <cyclonedx.maven.plugin.version>2.9.1</cyclonedx.maven.plugin.version>
-        <owasp.plugin.version>12.2.0</owasp.plugin.version>
+        <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
+        <owasp.plugin.version>13.0.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
+        <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
+             revise this entry after upgrading spring boots patchlevel -->
+        <tomcat.version>11.0.25</tomcat.version>
     </properties>
 
     <dependencies>
@@ -104,17 +105,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Micrometer core dependency  -->
+        <!-- Micrometer core dependency  / Version is managed by springboot4 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <version>${micrometer.prometheus.version}</version>
         </dependency>
-        <!-- Micrometer Prometheus registry  -->
+        <!-- Micrometer Prometheus registry / Version is managed by springboot4 -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer.prometheus.version}</version>
         </dependency>
 
         <dependency>
@@ -244,6 +243,10 @@
                         <artifactId>dependency-check-maven</artifactId>
                         <version>${owasp.plugin.version}</version>
                         <configuration>
+                            <!-- This directory is used to CACHE the NCD-Downloads.
+Lokal: in ~/.zshrc exportieren (DEPENDENCY_CHECK_DATA_DIRECTORY point it to a local dev directory)
+     CI: GitHub Actions add in env section: DEPENDENCY_CHECK_DATA_DIRECTORY: ${{ github.workspace }}/.dependency-check -->
+                            <dataDirectory>${env.DEPENDENCY_CHECK_DATA_DIRECTORY}</dataDirectory>
                             <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
                                  Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
                             <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>

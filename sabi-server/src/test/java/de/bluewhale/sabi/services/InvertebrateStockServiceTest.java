@@ -140,6 +140,7 @@ public class InvertebrateStockServiceTest {
         given(aquariumRepository.findById(1L)).willReturn(Optional.of(aquarium));
         given(invertebrateStockMapper.toEntity(any())).willReturn(savedEntity);
         given(invertebrateStockRepository.saveAndFlush(any())).willReturn(savedEntity);
+        given(invertebrateStockRepository.findById(anyLong())).willReturn(Optional.of(savedEntity));
         given(invertebrateStockMapper.toTo(any())).willReturn(testEntryTo());
         given(waterSensitivityRepository.saveAll(any())).willReturn(Collections.emptyList());
         given(invertebratePhotoRepository.findByInvertebrateStockId(anyLong())).willReturn(Optional.empty());
@@ -273,6 +274,7 @@ public class InvertebrateStockServiceTest {
         given(aquariumRepository.findById(1L)).willReturn(Optional.of(aquarium));
         given(invertebrateStockMapper.toEntity(any())).willReturn(savedEntity);
         given(invertebrateStockRepository.saveAndFlush(any())).willReturn(savedEntity);
+        given(invertebrateStockRepository.findById(anyLong())).willReturn(Optional.of(savedEntity));
         given(invertebrateStockMapper.toTo(any())).willReturn(resultTo);
         given(waterSensitivityRepository.saveAll(any())).willReturn(Collections.emptyList());
         given(invertebratePhotoRepository.findByInvertebrateStockId(anyLong())).willReturn(Optional.empty());

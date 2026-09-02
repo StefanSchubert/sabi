@@ -29,6 +29,7 @@ jobs:
       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       # OSS Index deaktiviert: Migration zu Sonatype Guide am 28.04.2026 noch ausstehend,
       # OWASP Plugin unterstützt neuen Endpunkt noch nicht. NVD ist primäre CVE-Quelle.
+      DEPENDENCY_CHECK_DATA_DIRECTORY: ${{ github.workspace }}/.dependency-check
 
     strategy:
       fail-fast: false
@@ -40,19 +41,24 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Set up JDK 25
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v6
       with:
         java-version: '25'
         distribution: 'corretto'
     # maven repo cache save and restore
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-         
+          ${{ runner.os }}-maven-
+      # OWASP Dependency Check / NVD cache
+    - uses: actions/cache@v6
+      with:
+        path: .dependency-check
+        key: ${{ runner.os }}-owasp-nvd
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
@@ -66,7 +72,7 @@ jobs:
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     # - name: Autobuild
-    #   uses: github/codeql-action/autobuild@v1
+    #   uses: github/codeql-action/autobuild@v4
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl

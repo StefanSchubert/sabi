@@ -15,7 +15,7 @@ import jakarta.faces.convert.FacesConverter;
  * JSF Converter for FishCatalogueSearchResultTo.
  * Enables PrimeFaces p:autoComplete to round-trip complex objects via JSON.
  */
-@FacesConverter(value = "fishCatalogueSearchResultConverter", managed = true)
+@FacesConverter(value = "fishCatalogueSearchResultConverter")
 public class FishCatalogueSearchResultConverter implements Converter<FishCatalogueSearchResultTo> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

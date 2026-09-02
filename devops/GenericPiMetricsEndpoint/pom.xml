@@ -14,7 +14,7 @@
         <!-- Taking care to have all spring dependencies right. -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -50,6 +50,9 @@
         <micrometer.prometheus.version>1.17.0</micrometer.prometheus.version>
         <pimetric.version>1.0</pimetric.version>
         <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
+        <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
+     revise this entry after upgrading spring boots patchlevel -->
+        <tomcat.version>11.0.25</tomcat.version>
     </properties>
 
     <dependencies>
