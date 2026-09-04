@@ -17,6 +17,7 @@ public enum PageRegister {
     TANK_EDITOR_PAGE("tankEditor"),
     TANK_VIEW_PAGE("tankView"),
     MEASUREMENT_VIEW_PAGE("measureView"),
+    DOSING_VIEW_PAGE("dosingView"),
     USER_PROFILE_VIEW_PAGE("userProfile"),
     PASSWORD_FORGOTTEN_PAGE ("pwreset"),
     HOUSE_REEF_REPORT_PAGE("houseReefReport");

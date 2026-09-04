@@ -1,5 +1,17 @@
 # History of changes (since 5/2022)
 
+## Release 1.3.7 to Release 1.3.9
+
+### Feature
+
+* Ability to track Dosings
+
+### Technical Maintenance
+
+* SpringBoot 4.1.1
+* Common Upgrades due to OWASP CPEs
+* FixedmGitHub Workflow Actions
+
 ## Release 1.3.6
 
 ### Feature
@@ -9,7 +21,7 @@
 
 ### Technical Maintenance
 
-* Common Patch-Management (JSpringBoot 4.0.6 / Java 25 / Primefaces 15 / Dependencies)
+* Common Patch-Management (SpringBoot 4.0.6 / Java 25 / Primefaces 15 / Dependencies)
 * Agentic coding support through elaborated instructions for the AI agent, which allows to generate code snippets for the SABI project. This is a major improvement in terms of development speed and efficiency, as it allows developers to quickly generate code snippets for common tasks and functionalities, without having to write them from scratch.
 * Introduced Ansible-Vaults to safley commit productive credentials to the repository, which is a major improvement in terms of security and best practices, as it allows to securely store and manage sensitive information such as API keys, database credentials, etc. without exposing them in the codebase.
 * Ansible playbook enhancements for SABI project, which allows to automate the deployment and management of the SABI application, including tasks such as provisioning infrastructure, configuring servers, deploying code, etc. This is a major improvement in terms of efficiency and scalability, as it allows to quickly and easily deploy and manage the SABI application in a consistent and repeatable manner.

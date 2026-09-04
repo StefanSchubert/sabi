@@ -8,10 +8,7 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.AquariumEventMapper;
 import de.bluewhale.sabi.model.AquariumEventTo;
-import de.bluewhale.sabi.model.AquariumEventType;
 import de.bluewhale.sabi.model.ResultTo;
-import de.bluewhale.sabi.persistence.model.AquariumEntity;
-import de.bluewhale.sabi.persistence.model.AquariumEventEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumEventRepository;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
@@ -21,10 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -89,56 +84,5 @@ public class AquariumEventServiceTest {
 
         // Verify that save was never called
         verify(aquariumEventRepository, never()).save(any());
-    }
-
-    @Test
-    public void testCreateEvent_manualAddition_buildsStructuredSummary() {
-        Long aquariumId = 99L;
-        UserEntity user = new UserEntity();
-        user.setId(7L);
-        user.setEmail(USER_EMAIL);
-
-        AquariumEntity aquarium = new AquariumEntity();
-        aquarium.setId(aquariumId);
-
-        AquariumEventEntity mappedEntity = new AquariumEventEntity();
-        AquariumEventEntity savedEntity = new AquariumEventEntity();
-        savedEntity.setId(15L);
-        savedEntity.setAquariumId(aquariumId);
-        savedEntity.setEventType(AquariumEventType.MANUAL_ADDITION);
-        savedEntity.setDescription("Phos-Ex - 5 ml (Nutrient)");
-
-        AquariumEventTo savedTo = new AquariumEventTo();
-        savedTo.setId(15L);
-        savedTo.setAquariumId(aquariumId);
-        savedTo.setEventType(AquariumEventType.MANUAL_ADDITION);
-        savedTo.setDescription("Phos-Ex - 5 ml (Nutrient)");
-
-        given(userRepository.getByEmail(USER_EMAIL)).willReturn(user);
-        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(aquariumId, user.getId())).willReturn(aquarium);
-        given(aquariumEventMapper.mapToToEntity(any())).willReturn(mappedEntity);
-        given(aquariumEventRepository.save(any())).willReturn(savedEntity);
-        given(aquariumEventMapper.mapEntityToTo(savedEntity)).willReturn(savedTo);
-
-        AquariumEventTo eventTo = new AquariumEventTo();
-        eventTo.setAquariumId(aquariumId);
-        eventTo.setEventDate(LocalDate.now());
-        eventTo.setEventTime("10:30");
-        eventTo.setEventType(AquariumEventType.MANUAL_ADDITION);
-        eventTo.setProductName("Phos-Ex");
-        eventTo.setAmount(new BigDecimal("5.000"));
-        eventTo.setAmountUnit("ml");
-        eventTo.setCategory("Nutrient");
-
-        ResultTo<AquariumEventTo> result = aquariumEventService.createEvent(aquariumId, eventTo, USER_EMAIL);
-
-        ArgumentCaptor<AquariumEventEntity> entityCaptor = ArgumentCaptor.forClass(AquariumEventEntity.class);
-        verify(aquariumEventRepository).save(entityCaptor.capture());
-        AquariumEventEntity persisted = entityCaptor.getValue();
-
-        assertEquals(AquariumEventType.MANUAL_ADDITION, persisted.getEventType());
-        assertEquals("Phos-Ex - 5 ml (Nutrient)", persisted.getDescription());
-        assertEquals(Message.CATEGORY.INFO, result.getMessage().getType());
-        assertEquals(15L, result.getValue().getId());
     }
 }

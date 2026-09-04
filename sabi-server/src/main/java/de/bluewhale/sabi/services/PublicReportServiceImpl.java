@@ -317,7 +317,7 @@ public class PublicReportServiceImpl implements PublicReportService {
         if (link.isIncludeEvents()) {
             LocalDate cutoff = LocalDate.now().minusDays(365);
             List<AquariumEventEntity> eventEntities =
-                aquariumEventRepository.findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDescEventTimeDesc(
+                aquariumEventRepository.findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDesc(
                     link.getAquariumId(), cutoff);
             report.setRecentEvents(aquariumEventMapper.mapEntitiesToTos(eventEntities));
         }

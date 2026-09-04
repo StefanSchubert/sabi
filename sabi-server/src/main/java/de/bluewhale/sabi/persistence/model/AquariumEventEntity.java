@@ -5,14 +5,12 @@
 
 package de.bluewhale.sabi.persistence.model;
 
-import de.bluewhale.sabi.model.AquariumEventType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * JPA entity for the aquarium_event table.
@@ -42,54 +40,10 @@ public class AquariumEventEntity extends Auditable {
     @Basic
     private LocalDate eventDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "event_type", nullable = false, length = 32)
-    private AquariumEventType eventType = AquariumEventType.GENERIC;
-
-    @Column(name = "event_time", nullable = true, length = 5)
-    @Basic
-    private String eventTime;
-
     /** Optional; positive decimal. Validated at controller level before persist. */
     @Column(name = "duration_hours", nullable = true, precision = 6, scale = 2)
     @Basic
     private BigDecimal durationHours;
-
-    @Column(name = "amount", nullable = true, precision = 10, scale = 3)
-    @Basic
-    private BigDecimal amount;
-
-    @Column(name = "amount_unit", nullable = true, length = 30)
-    @Basic
-    private String amountUnit;
-
-    @Column(name = "product_name", nullable = true, length = 255)
-    @Basic
-    private String productName;
-
-    @Column(name = "category", nullable = true, length = 80)
-    @Basic
-    private String category;
-
-    @Column(name = "dosing_interval", nullable = true, length = 40)
-    @Basic
-    private String dosingInterval;
-
-    @Column(name = "dosing_method", nullable = true, length = 80)
-    @Basic
-    private String dosingMethod;
-
-    @Column(name = "solution_description", nullable = true, columnDefinition = "TEXT")
-    @Basic
-    private String solutionDescription;
-
-    @Column(name = "note", nullable = true, columnDefinition = "TEXT")
-    @Basic
-    private String note;
-
-    @Column(name = "dosing_end_on", nullable = true)
-    @Basic
-    private LocalDateTime dosingEndOn;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     @Basic

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>SABI - #{msg['dosing.page.title']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/userportal" styleClass="sabi-back-link">
+                    &#8592; #{msg['menu.home.l']}
+                </h:link>
+            </div>
+            <h2>#{msg['dosing.page.title']}</h2>
+            <h:form id="dosingForm">
+                <p:messages id="dosingMessages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+                <h:inputHidden id="dosingId" value="#{dosingView.dosing.id}"/>
+                <h:inputHidden id="dosingOptlock" value="#{dosingView.dosing.optlock}"/>
+
+                <div class="sabi-form-grid">
+                    <p:outputLabel for="aquarium" value="#{msg['common.tankchoice.l']}"/>
+                    <p:selectOneMenu id="aquarium" value="#{dosingView.selectedAquariumId}" required="true">
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{dosingView.tanks}" var="tank"
+                                       itemValue="#{tank.id}" itemLabel="#{tank.description}"/>
+                        <p:ajax listener="#{dosingView.onAquariumChange}" update="@form"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="recordedOn" value="#{msg['dosing.field.recorded_on.l']}"/>
+                    <p:datePicker id="recordedOn" value="#{dosingView.dosing.recordedOn}"
+                                  pattern="dd.MM.yyyy HH:mm" showTime="true" hourFormat="24"
+                                  locale="#{userSession.locale}" required="true" readonlyInput="true"/>
+
+                    <p:outputLabel for="dosingType" value="#{msg['dosing.field.type.l']}"/>
+                    <p:selectOneMenu id="dosingType" value="#{dosingView.dosing.dosingType}" required="true">
+                        <f:selectItems value="#{dosingView.dosingTypes}" var="type" itemValue="#{type}"
+                                       itemLabel="#{dosingView.getDosingTypeLabel(type)}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="productName" value="#{msg['dosing.field.product.l']}"/>
+                    <p:inputText id="productName" value="#{dosingView.dosing.productName}" required="true"/>
+
+                    <p:outputLabel for="amount" value="#{msg['dosing.field.amount.l']}"/>
+                    <p:inputText id="amount" value="#{dosingView.dosing.amount}" required="true">
+                        <f:convertNumber locale="#{userSession.locale}" maxFractionDigits="3"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="amountUnit" value="#{msg['dosing.field.unit.l']}"/>
+                    <p:inputText id="amountUnit" value="#{dosingView.dosing.amountUnit}" required="true"
+                                 placeholder="#{msg['dosing.field.unit.placeholder.t']}"/>
+
+                    <p:outputLabel for="category" value="#{msg['dosing.field.category.l']}"/>
+                    <p:inputText id="category" value="#{dosingView.dosing.category}"/>
+
+                    <p:outputLabel for="dosingMethod" value="#{msg['dosing.field.method.l']}"/>
+                    <p:inputText id="dosingMethod" value="#{dosingView.dosing.dosingMethod}"/>
+
+                    <p:outputLabel for="dosingInterval" value="#{msg['dosing.field.interval.l']}"/>
+                    <p:inputText id="dosingInterval" value="#{dosingView.dosing.dosingInterval}"
+                                 placeholder="#{msg['dosing.field.interval.placeholder.t']}"/>
+
+                    <p:outputLabel for="dosingEndOn" value="#{msg['dosing.field.end.l']}"/>
+                    <p:datePicker id="dosingEndOn" value="#{dosingView.dosing.dosingEndOn}"
+                                  pattern="dd.MM.yyyy HH:mm" showTime="true" hourFormat="24"
+                                  locale="#{userSession.locale}" readonlyInput="true"/>
+
+                    <p:outputLabel for="solutionDescription" value="#{msg['dosing.field.solution.l']}"/>
+                    <p:inputTextarea id="solutionDescription" value="#{dosingView.dosing.solutionDescription}"
+                                     rows="3" autoResize="true"/>
+
+                    <p:outputLabel for="note" value="#{msg['dosing.field.note.l']}"/>
+                    <p:inputTextarea id="note" value="#{dosingView.dosing.note}" rows="3" autoResize="true"/>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+                    <p:commandButton value="#{msg['common.save.b']}" icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{dosingView.save}" update="@form"/>
+                    <p:commandButton value="#{msg['common.new_record.b']}" icon="pi pi-refresh"
+                                     action="#{dosingView.resetForm}" update="@form" immediate="true"/>
+                    <p:commandButton value="#{msg['common.cancel.b']}" icon="pi pi-times"
+                                     styleClass="ui-button-secondary" type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/userportal.xhtml';"/>
+                </div>
+
+                <p:dataTable id="dosingTable" value="#{dosingView.dosings}" var="dosing"
+                             emptyMessage="#{msg['dosing.list.empty.t']}" style="margin-top:1.5rem;">
+                    <p:column headerText="#{msg['dosing.field.recorded_on.l']}">
+                        <h:outputText value="#{dosing.recordedOn}">
+                            <f:convertDateTime type="localDateTime" pattern="dd.MM.yyyy HH:mm"
+                                               locale="#{userSession.locale}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="#{msg['dosing.field.product.l']}">
+                        <h:outputText value="#{dosing.productName}"/>
+                    </p:column>
+                    <p:column headerText="#{msg['dosing.field.amount.l']}">
+                        <h:outputText value="#{dosing.amount}">
+                            <f:convertNumber locale="#{userSession.locale}" maxFractionDigits="3"/>
+                        </h:outputText>
+                        <h:outputText value=" #{dosing.amountUnit}"/>
+                    </p:column>
+                    <p:column headerText="#{msg['dosing.field.type.l']}">
+                        <h:outputText value="#{dosingView.getDosingTypeLabel(dosing.dosingType)}"/>
+                    </p:column>
+                    <p:column style="width:3rem; text-align:center;">
+                        <p:commandButton icon="pi pi-pencil" title="#{msg['common.edit.b']}"
+                                         action="#{dosingView.edit(dosing)}" process="@this" update="@form"/>
+                    </p:column>
+                    <p:column style="width:3rem; text-align:center;">
+                        <p:commandButton icon="pi pi-trash" title="#{msg['common.delete.b']}"
+                                         styleClass="ui-button-danger" action="#{dosingView.delete(dosing)}"
+                                         process="@this" update="@form"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
