@@ -401,12 +401,23 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
 
     private List<EventExportTo> buildEventExports(Long aquariumId) {
         List<AquariumEventEntity> entities =
-                aquariumEventRepository.findByAquariumIdOrderByEventDateDesc(aquariumId);
+                aquariumEventRepository.findByAquariumIdOrderByEventDateDescEventTimeDesc(aquariumId);
         List<EventExportTo> result = new ArrayList<>();
         for (AquariumEventEntity e : entities) {
             EventExportTo eto = new EventExportTo();
             eto.setEventDate(e.getEventDate() != null ? e.getEventDate().toString() : null);
+            eto.setEventTime(e.getEventTime());
+            eto.setEventType(e.getEventType());
             eto.setDurationHours(e.getDurationHours());
+            eto.setAmount(e.getAmount());
+            eto.setAmountUnit(e.getAmountUnit());
+            eto.setProductName(e.getProductName());
+            eto.setCategory(e.getCategory());
+            eto.setDosingInterval(e.getDosingInterval());
+            eto.setDosingMethod(e.getDosingMethod());
+            eto.setSolutionDescription(e.getSolutionDescription());
+            eto.setNote(e.getNote());
+            eto.setDosingEndOn(e.getDosingEndOn());
             eto.setDescription(e.getDescription());
             result.add(eto);
         }

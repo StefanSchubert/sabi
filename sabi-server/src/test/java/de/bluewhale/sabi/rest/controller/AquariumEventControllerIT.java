@@ -10,6 +10,7 @@ import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.mapper.AquariumEventMapper;
 import de.bluewhale.sabi.mapper.UserMapper;
 import de.bluewhale.sabi.model.AquariumEventTo;
+import de.bluewhale.sabi.model.AquariumEventType;
 import de.bluewhale.sabi.model.UserTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
 import de.bluewhale.sabi.persistence.model.AquariumEventEntity;
@@ -31,6 +32,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -221,6 +223,43 @@ public class AquariumEventControllerIT extends CommonTestController {
             assertEquals(409, e.getStatusCode().value(), "Expected HTTP 409 for stale optlock");
         }
     }
-}
 
+    @Test
+    public void testCreateAutomatedDosing_withoutInterval_returns400() throws Exception {
+        Long aquariumId = 10L;
+        UserEntity userA = buildUserEntity(USER_A_EMAIL, 1L);
+
+        String authToken = TokenAuthenticationService.createAuthorizationTokenFor(USER_A_EMAIL);
+        HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(authToken);
+
+        AquariumEventTo eventTo = new AquariumEventTo();
+        eventTo.setAquariumId(aquariumId);
+        eventTo.setEventDate(LocalDate.now());
+        eventTo.setEventTime("07:30");
+        eventTo.setEventType(AquariumEventType.AUTOMATED_DOSING);
+        eventTo.setProductName("KH solution");
+        eventTo.setAmount(new java.math.BigDecimal("18"));
+        eventTo.setAmountUnit("ml");
+        eventTo.setDosingMethod("dosing pump");
+        eventTo.setDosingEndOn(LocalDateTime.now().plusDays(2));
+        String requestBody = objectMapper.writeValueAsString(eventTo);
+
+        given(userRepository.getByEmail(USER_A_EMAIL)).willReturn(userA);
+
+        try {
+            restClient.post()
+                    .uri(Endpoint.TANKS.getPath() + "/" + aquariumId + "/events")
+                    .headers(h -> h.addAll(headers))
+                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .toEntity(String.class);
+            fail("Expected HttpClientErrorException for 400");
+        } catch (HttpClientErrorException e) {
+            assertEquals(400, e.getStatusCode().value(), "Expected HTTP 400 for invalid dosing payload");
+        }
+
+        verify(aquariumEventRepository, never()).save(any());
+    }
+}
 

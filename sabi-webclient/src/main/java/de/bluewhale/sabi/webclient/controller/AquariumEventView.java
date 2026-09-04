@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumEventTo;
+import de.bluewhale.sabi.model.AquariumEventType;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.AquariumEventService;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,8 +153,9 @@ public class AquariumEventView implements Serializable {
     public List<AquariumEventTo> getAllEvents() {
         return eventsByTank.values().stream()
             .flatMap(Collection::stream)
-            .sorted(Comparator.comparing(AquariumEventTo::getEventDate,
-                        Comparator.nullsLast(Comparator.reverseOrder())))
+            .sorted(Comparator
+                    .comparing(AquariumEventTo::getEventDate, Comparator.nullsLast(Comparator.reverseOrder()))
+                    .thenComparing(AquariumEventTo::getEventTime, Comparator.nullsLast(Comparator.reverseOrder())))
             .collect(Collectors.toList());
     }
 
@@ -224,7 +227,18 @@ public class AquariumEventView implements Serializable {
         copy.setId(event.getId());
         copy.setAquariumId(event.getAquariumId());
         copy.setEventDate(event.getEventDate());
+        copy.setEventTime(event.getEventTime());
+        copy.setEventType(event.getEventType());
         copy.setDurationHours(event.getDurationHours());
+        copy.setAmount(event.getAmount());
+        copy.setAmountUnit(event.getAmountUnit());
+        copy.setProductName(event.getProductName());
+        copy.setCategory(event.getCategory());
+        copy.setDosingInterval(event.getDosingInterval());
+        copy.setDosingMethod(event.getDosingMethod());
+        copy.setSolutionDescription(event.getSolutionDescription());
+        copy.setNote(event.getNote());
+        copy.setDosingEndOn(event.getDosingEndOn());
         copy.setDescription(event.getDescription());
         copy.setOptlock(event.getOptlock());
         editFormByTank.put(selectedAquariumId, copy);
@@ -266,5 +280,54 @@ public class AquariumEventView implements Serializable {
     /** @deprecated Use getSelectedEditForm() instead. */
     public AquariumEventTo getEditFormForTank(Long aquariumId) {
         return editFormByTank.computeIfAbsent(aquariumId, id -> new AquariumEventTo());
+    }
+
+    public boolean isGenericEventSelected() {
+        return getSelectedEditForm().getResolvedEventType() == AquariumEventType.GENERIC;
+    }
+
+    public boolean isAdditionSelected() {
+        return getSelectedEditForm().getResolvedEventType() != AquariumEventType.GENERIC;
+    }
+
+    public boolean isAutomatedDosingSelected() {
+        return getSelectedEditForm().getResolvedEventType() == AquariumEventType.AUTOMATED_DOSING;
+    }
+
+    public String getEventTypeLabel(AquariumEventType eventType) {
+        if (eventType == null) {
+            eventType = AquariumEventType.GENERIC;
+        }
+        return switch (eventType) {
+            case MANUAL_ADDITION -> MessageUtil.getFromMessageProperties("aquariumevent.type.manual_addition.l", userSession.getLocale());
+            case AUTOMATED_DOSING -> MessageUtil.getFromMessageProperties("aquariumevent.type.automated_dosing.l", userSession.getLocale());
+            default -> MessageUtil.getFromMessageProperties("aquariumevent.type.generic.l", userSession.getLocale());
+        };
+    }
+
+    public String formatAmount(AquariumEventTo event) {
+        BigDecimal amount = event != null ? event.getAmount() : null;
+        if (amount == null) return null;
+        return amount.stripTrailingZeros().toPlainString();
+    }
+
+    public boolean hasEventTime(AquariumEventTo event) {
+        return event != null && event.getEventTime() != null && !event.getEventTime().isBlank();
+    }
+
+    public boolean hasDosingEndOn(AquariumEventTo event) {
+        return event != null && event.getDosingEndOn() != null;
+    }
+
+    public boolean hasSolutionDescription(AquariumEventTo event) {
+        return event != null && event.getSolutionDescription() != null && !event.getSolutionDescription().isBlank();
+    }
+
+    public boolean hasNote(AquariumEventTo event) {
+        return event != null && event.getNote() != null && !event.getNote().isBlank();
+    }
+
+    public boolean hasDosingMethod(AquariumEventTo event) {
+        return event != null && event.getDosingMethod() != null && !event.getDosingMethod().isBlank();
     }
 }

@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.webclient.model;
 
+import de.bluewhale.sabi.model.AquariumEventType;
 import de.bluewhale.sabi.model.EcosystemType;
 import de.bluewhale.sabi.model.SizeUnit;
 import de.bluewhale.sabi.model.WaterType;
@@ -24,8 +25,11 @@ public class Units {
         return SizeUnit.values();
     }
 
+    public AquariumEventType[] getAquariumEventTypes() {
+        return AquariumEventType.values();
+    }
+
     public WaterType[] getWaterTypes() { return WaterType.values(); }
 
     public EcosystemType[] getEcosystemTypes() { return EcosystemType.values(); }
-
 }
