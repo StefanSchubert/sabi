@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import de.bluewhale.sabi.model.AquariumExportTo;
+import de.bluewhale.sabi.model.DosingExportTo;
 import de.bluewhale.sabi.model.MeasurementExportTo;
 import de.bluewhale.sabi.model.ReefDataExportTo;
 import de.bluewhale.sabi.persistence.model.*;
@@ -30,11 +31,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.nio.charset.StandardCharsets;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HexFormat;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
 import static de.bluewhale.sabi.util.TestDataFactory.TESTUSER_EMAIL1;
@@ -86,6 +89,8 @@ public class ReefDataExportServiceTest {
     private CoralCatalogueRepository coralCatalogueRepository;
     @MockitoBean
     private RemedyRepository remedyRepository;
+    @MockitoBean
+    private DosingRepository dosingRepository;
 
     private static final TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
@@ -268,5 +273,30 @@ public class ReefDataExportServiceTest {
         assertFalse(unresolvable.getUnitNameResolved(), "unitNameResolved must be false for unresolvable unit");
         assertNull(unresolvable.getUnitName(), "unitName must be null for unresolvable unit");
         assertEquals(99, unresolvable.getUnitId(), "raw unitId must be preserved as fallback");
+    }
+
+    @Test
+    public void testDosingRecordsAreIncludedInExport() {
+        UserEntity user = buildTestUser();
+        AquariumEntity aquarium = buildTestAquarium();
+        DosingEntity dosing = new DosingEntity();
+        dosing.setRecordedOn(LocalDateTime.of(2026, 9, 4, 10, 30));
+        dosing.setDosingType(de.bluewhale.sabi.model.DosingType.MANUAL_ADDITION);
+        dosing.setProductName("Calcium");
+        dosing.setAmount(new BigDecimal("5.5"));
+        dosing.setAmountUnit("ml");
+
+        given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
+        given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
+        given(dosingRepository.findByAquariumIdOrderByRecordedOnDesc(aquarium.getId())).willReturn(List.of(dosing));
+
+        ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
+
+        DosingExportTo exportedDosing = result.getAquariums().getFirst().getDosings().getFirst();
+        assertEquals("2026-09-04T10:30", exportedDosing.getRecordedOn());
+        assertEquals("MANUAL_ADDITION", exportedDosing.getDosingType());
+        assertEquals("Calcium", exportedDosing.getProductName());
+        assertEquals(new BigDecimal("5.5"), exportedDosing.getAmount());
+        assertEquals("ml", exportedDosing.getAmountUnit());
     }
 }

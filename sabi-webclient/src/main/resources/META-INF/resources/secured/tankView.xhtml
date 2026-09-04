@@ -153,16 +153,6 @@
                          Uses .sabi-form-grid (sabistyle.css) – the canonical form layout class. -->
                     <div class="sabi-form-grid">
 
-                       <p:outputLabel for="eventType"
-                                      value="#{msg['aquariumevent.field.type.l']}"/>
-                       <p:selectOneMenu id="eventType"
-                                        value="#{aquariumEventView.selectedEditForm.eventType}">
-                           <f:selectItems value="#{units.aquariumEventTypes}" var="eventType"
-                                          itemValue="#{eventType}"
-                                          itemLabel="#{aquariumEventView.getEventTypeLabel(eventType)}"/>
-                           <p:ajax update="@form"/>
-                       </p:selectOneMenu>
-
                        <p:outputLabel for="aquariumSelector"
                                       value="#{msg['aquariumevent.field.aquarium.l']}"/>
                        <p:selectOneMenu id="aquariumSelector"
@@ -182,118 +172,21 @@
                                       readonlyInput="true" required="true"
                                       requiredMessage="#{msg['aquariumevent.validation.date.required.t']}"/>
 
-                       <p:outputLabel for="eventTime"
-                                      value="#{msg['aquariumevent.field.time.l']}"/>
-                       <p:inputMask id="eventTime"
-                                    mask="99:99"
-                                    value="#{aquariumEventView.selectedEditForm.eventTime}"
-                                    placeholder="#{msg['aquariumevent.field.time.placeholder.t']}"/>
-
                        <p:outputLabel for="eventDuration"
-                                      value="#{msg['aquariumevent.field.duration.l']}"
-                                      rendered="#{aquariumEventView.genericEventSelected}"/>
+                                      value="#{msg['aquariumevent.field.duration.l']}"/>
                        <p:inputText id="eventDuration"
-                                    rendered="#{aquariumEventView.genericEventSelected}"
                                     value="#{aquariumEventView.selectedEditForm.durationHours}"
                                     placeholder="#{msg['aquariumevent.field.duration.placeholder.t']}">
                            <f:convertNumber minFractionDigits="0" locale="#{userSession.locale}"/>
                        </p:inputText>
 
-                       <p:outputLabel for="productName"
-                                      value="#{msg['aquariumevent.field.product.l']}"
-                                      rendered="#{aquariumEventView.additionSelected}"/>
-                       <p:inputText id="productName"
-                                    rendered="#{aquariumEventView.additionSelected}"
-                                    value="#{aquariumEventView.selectedEditForm.productName}"
-                                    required="#{aquariumEventView.additionSelected}"
-                                    requiredMessage="#{msg['aquariumevent.validation.product.required.t']}"/>
-
-                       <p:outputLabel for="eventAmount"
-                                      value="#{msg['aquariumevent.field.amount.l']}"
-                                      rendered="#{aquariumEventView.additionSelected}"/>
-                       <p:inputText id="eventAmount"
-                                    rendered="#{aquariumEventView.additionSelected}"
-                                    value="#{aquariumEventView.selectedEditForm.amount}"
-                                    required="#{aquariumEventView.additionSelected}"
-                                    requiredMessage="#{msg['aquariumevent.validation.amount.required.t']}">
-                           <f:convertNumber minFractionDigits="0" maxFractionDigits="3" locale="#{userSession.locale}"/>
-                       </p:inputText>
-
-                       <p:outputLabel for="amountUnit"
-                                      value="#{msg['aquariumevent.field.unit.l']}"
-                                      rendered="#{aquariumEventView.additionSelected}"/>
-                       <p:inputText id="amountUnit"
-                                    rendered="#{aquariumEventView.additionSelected}"
-                                    value="#{aquariumEventView.selectedEditForm.amountUnit}"
-                                    required="#{aquariumEventView.additionSelected}"
-                                    requiredMessage="#{msg['aquariumevent.validation.unit.required.t']}"
-                                    placeholder="#{msg['aquariumevent.field.unit.placeholder.t']}"/>
-
-                       <p:outputLabel for="dosingInterval"
-                                      value="#{msg['aquariumevent.field.interval.l']}"
-                                      rendered="#{aquariumEventView.automatedDosingSelected}"/>
-                       <p:inputText id="dosingInterval"
-                                    rendered="#{aquariumEventView.automatedDosingSelected}"
-                                    value="#{aquariumEventView.selectedEditForm.dosingInterval}"
-                                    required="#{aquariumEventView.automatedDosingSelected}"
-                                    requiredMessage="#{msg['aquariumevent.validation.interval.required.t']}"
-                                    placeholder="#{msg['aquariumevent.field.interval.placeholder.t']}"/>
-
-                       <p:outputLabel for="dosingMethod"
-                                      value="#{msg['aquariumevent.field.method.l']}"
-                                      rendered="#{aquariumEventView.automatedDosingSelected}"/>
-                       <p:inputText id="dosingMethod"
-                                    rendered="#{aquariumEventView.automatedDosingSelected}"
-                                    value="#{aquariumEventView.selectedEditForm.dosingMethod}"
-                                    placeholder="#{msg['aquariumevent.field.method.placeholder.t']}"/>
-
-                       <p:outputLabel for="dosingEndOn"
-                                      value="#{msg['aquariumevent.field.end.l']}"
-                                      rendered="#{aquariumEventView.automatedDosingSelected}"/>
-                       <p:datePicker id="dosingEndOn"
-                                     rendered="#{aquariumEventView.automatedDosingSelected}"
-                                     value="#{aquariumEventView.selectedEditForm.dosingEndOn}"
-                                     pattern="dd.MM.yyyy HH:mm"
-                                     showTime="true"
-                                     locale="#{userSession.locale}"
-                                     showOtherMonths="true" yearNavigator="true"
-                                     hourFormat="24"/>
-
-                       <p:outputLabel for="eventCategory"
-                                      value="#{msg['aquariumevent.field.category.l']}"
-                                      rendered="#{aquariumEventView.additionSelected}"/>
-                       <p:inputText id="eventCategory"
-                                    rendered="#{aquariumEventView.additionSelected}"
-                                    value="#{aquariumEventView.selectedEditForm.category}"
-                                    placeholder="#{msg['aquariumevent.field.category.placeholder.t']}"/>
-
-                       <p:outputLabel for="solutionDescription"
-                                      value="#{msg['aquariumevent.field.solution.l']}"
-                                      rendered="#{aquariumEventView.automatedDosingSelected}"/>
-                       <p:inputTextarea id="solutionDescription"
-                                        rendered="#{aquariumEventView.automatedDosingSelected}"
-                                        value="#{aquariumEventView.selectedEditForm.solutionDescription}"
-                                        rows="3" autoResize="true"
-                                        placeholder="#{msg['aquariumevent.field.solution.placeholder.t']}"/>
-
                        <p:outputLabel for="eventDesc"
-                                      value="#{msg['aquariumevent.field.description.l']}"
-                                      rendered="#{aquariumEventView.genericEventSelected}"/>
+                                      value="#{msg['aquariumevent.field.description.l']}"/>
                        <p:inputTextarea id="eventDesc"
-                                        rendered="#{aquariumEventView.genericEventSelected}"
                                          value="#{aquariumEventView.selectedEditForm.description}"
                                          rows="4" autoResize="true" required="true"
                                          requiredMessage="#{msg['aquariumevent.validation.description.required.t']}"
                                          placeholder="#{msg['aquariumevent.field.description.placeholder.t']}"/>
-
-                       <p:outputLabel for="eventNote"
-                                      value="#{msg['aquariumevent.field.note.l']}"
-                                      rendered="#{aquariumEventView.additionSelected}"/>
-                       <p:inputTextarea id="eventNote"
-                                        rendered="#{aquariumEventView.additionSelected}"
-                                        value="#{aquariumEventView.selectedEditForm.note}"
-                                        rows="3" autoResize="true"
-                                        placeholder="#{msg['aquariumevent.field.note.placeholder.t']}"/>
 
                     </div>
 
@@ -336,12 +229,6 @@
                             <h:outputText value="#{event.eventDate}">
                                 <f:convertDateTime locale="#{userSession.locale}" type="localDate"/>
                             </h:outputText>
-                            <h:outputText value=" #{event.eventTime}"
-                                          rendered="#{aquariumEventView.hasEventTime(event)}"/>
-                        </p:column>
-
-                        <p:column headerText="#{msg['aquariumevent.column.type.h']}" style="width:140px;">
-                            <h:outputText value="#{aquariumEventView.getEventTypeLabel(event.eventType)}"/>
                         </p:column>
 
                         <p:column headerText="#{msg['aquariumevent.column.duration.h']}" style="width:80px;">
@@ -350,28 +237,8 @@
                         </p:column>
 
                         <p:column headerText="#{msg['aquariumevent.column.description.h']}">
-                            <div style="white-space:pre-wrap; word-break:break-word;">
-                                <h:outputText value="#{event.description}"/>
-                                <ui:fragment rendered="#{aquariumEventView.hasDosingMethod(event)}">
-                                    <br/>
-                                    <h:outputText value="#{msg['aquariumevent.field.method.l']}: #{event.dosingMethod}"/>
-                                </ui:fragment>
-                                <ui:fragment rendered="#{aquariumEventView.hasSolutionDescription(event)}">
-                                    <br/>
-                                    <h:outputText value="#{msg['aquariumevent.field.solution.l']}: #{event.solutionDescription}"/>
-                                </ui:fragment>
-                                <ui:fragment rendered="#{aquariumEventView.hasDosingEndOn(event)}">
-                                    <br/>
-                                    <h:outputText value="#{msg['aquariumevent.field.end.l']}: "/>
-                                    <h:outputText value="#{event.dosingEndOn}">
-                                        <f:convertDateTime locale="#{userSession.locale}" type="localDateTime"/>
-                                    </h:outputText>
-                                </ui:fragment>
-                                <ui:fragment rendered="#{aquariumEventView.hasNote(event)}">
-                                    <br/>
-                                    <h:outputText value="#{msg['aquariumevent.field.note.l']}: #{event.note}"/>
-                                </ui:fragment>
-                            </div>
+                            <h:outputText value="#{event.description}"
+                                          style="white-space:pre-wrap; word-break:break-word;"/>
                         </p:column>
 
                         <!-- Edit button: process="@this" → only submits itself, skips required

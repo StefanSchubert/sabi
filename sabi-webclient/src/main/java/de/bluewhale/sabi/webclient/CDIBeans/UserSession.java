@@ -82,9 +82,9 @@ public class UserSession implements Serializable {
             Locale supportedLocale = i18nUtil.getEnsuredSupportedLocale(browsersLocale.getLanguage());
             locale = supportedLocale;
 
-            log.debug("Session locale wasn't set. Determined «{}» as locale",locale);
+            log.trace("Session locale wasn't set. Determined «{}» as locale",locale);
         } else {
-            log.debug("View requests locale from SessionBean and got «{}» ",locale);
+            log.trace("View requests locale from SessionBean and got «{}» ",locale);
         }
 
         return locale;
@@ -115,7 +115,7 @@ public class UserSession implements Serializable {
      * @param sabiBackendToken
      */
     public void setSabiBackendToken(String sabiBackendToken) {
-        log.debug("setSabiBackendToken: prefix='{}', length={}",
+        log.trace("setSabiBackendToken: prefix='{}', length={}",
                 sabiBackendToken != null && sabiBackendToken.length() > 10
                         ? sabiBackendToken.substring(0, 10) + "..."
                         : sabiBackendToken,

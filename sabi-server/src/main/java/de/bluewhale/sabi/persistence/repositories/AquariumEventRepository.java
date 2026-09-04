@@ -26,14 +26,14 @@ public interface AquariumEventRepository extends JpaRepository<AquariumEventEnti
      * Used by the authenticated logbook view (no date filter).
      */
     @NotNull
-    List<AquariumEventEntity> findByAquariumIdOrderByEventDateDescEventTimeDesc(@NotNull Long aquariumId);
+    List<AquariumEventEntity> findByAquariumIdOrderByEventDateDesc(@NotNull Long aquariumId);
 
     /**
      * Returns events for a tank on or after the given cutoff date, newest first.
      * Used by the public report assembly (rolling 365-day window, FR-014).
      */
     @NotNull
-    List<AquariumEventEntity> findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDescEventTimeDesc(
+    List<AquariumEventEntity> findByAquariumIdAndEventDateGreaterThanEqualOrderByEventDateDesc(
             @NotNull Long aquariumId, @NotNull LocalDate cutoff);
 
     /**

@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
- * Distinguishes generic aquarium logbook events from structured dosing/addition records.
+ * Specifies whether a dosing record describes a one-time manual addition or an automated schedule.
  */
-public enum AquariumEventType implements Serializable {
-    GENERIC,
+public enum DosingType implements Serializable {
     MANUAL_ADDITION,
     AUTOMATED_DOSING;
 
@@ -24,10 +24,10 @@ public enum AquariumEventType implements Serializable {
     }
 
     @JsonCreator
-    public static AquariumEventType fromValue(String value) {
+    public static DosingType fromValue(String value) {
         if (value == null || value.isBlank()) {
-            return GENERIC;
+            return null;
         }
-        return valueOf(value.toUpperCase());
+        return valueOf(value.trim().toUpperCase(Locale.ROOT));
     }
 }

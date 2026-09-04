@@ -90,6 +90,9 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     @Autowired
     private AquariumEventRepository aquariumEventRepository;
 
+    @Autowired
+    private DosingRepository dosingRepository;
+
     // -------------------------------------------------------------------------
     // Public API
     // -------------------------------------------------------------------------
@@ -167,6 +170,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         ato.setInvertebrates(buildInvertebrateExports(aquarium.getId()));
         ato.setTreatments(buildTreatmentExports(aquarium.getId()));
         ato.setEvents(buildEventExports(aquarium.getId()));
+        ato.setDosings(buildDosingExports(aquarium.getId()));
 
         return ato;
     }
@@ -401,25 +405,34 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
 
     private List<EventExportTo> buildEventExports(Long aquariumId) {
         List<AquariumEventEntity> entities =
-                aquariumEventRepository.findByAquariumIdOrderByEventDateDescEventTimeDesc(aquariumId);
+                aquariumEventRepository.findByAquariumIdOrderByEventDateDesc(aquariumId);
         List<EventExportTo> result = new ArrayList<>();
         for (AquariumEventEntity e : entities) {
             EventExportTo eto = new EventExportTo();
             eto.setEventDate(e.getEventDate() != null ? e.getEventDate().toString() : null);
-            eto.setEventTime(e.getEventTime());
-            eto.setEventType(e.getEventType());
             eto.setDurationHours(e.getDurationHours());
-            eto.setAmount(e.getAmount());
-            eto.setAmountUnit(e.getAmountUnit());
-            eto.setProductName(e.getProductName());
-            eto.setCategory(e.getCategory());
-            eto.setDosingInterval(e.getDosingInterval());
-            eto.setDosingMethod(e.getDosingMethod());
-            eto.setSolutionDescription(e.getSolutionDescription());
-            eto.setNote(e.getNote());
-            eto.setDosingEndOn(e.getDosingEndOn());
             eto.setDescription(e.getDescription());
             result.add(eto);
+        }
+        return result;
+    }
+
+    private List<DosingExportTo> buildDosingExports(Long aquariumId) {
+        List<DosingExportTo> result = new ArrayList<>();
+        for (DosingEntity dosing : dosingRepository.findByAquariumIdOrderByRecordedOnDesc(aquariumId)) {
+            DosingExportTo export = new DosingExportTo();
+            export.setRecordedOn(dosing.getRecordedOn() != null ? dosing.getRecordedOn().toString() : null);
+            export.setDosingType(dosing.getDosingType() != null ? dosing.getDosingType().name() : null);
+            export.setProductName(dosing.getProductName());
+            export.setAmount(dosing.getAmount());
+            export.setAmountUnit(dosing.getAmountUnit());
+            export.setCategory(dosing.getCategory());
+            export.setDosingInterval(dosing.getDosingInterval());
+            export.setDosingMethod(dosing.getDosingMethod());
+            export.setSolutionDescription(dosing.getSolutionDescription());
+            export.setNote(dosing.getNote());
+            export.setDosingEndOn(dosing.getDosingEndOn() != null ? dosing.getDosingEndOn().toString() : null);
+            result.add(export);
         }
         return result;
     }
