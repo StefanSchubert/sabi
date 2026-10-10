@@ -64,7 +64,7 @@
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <lombok.version>1.18.48</lombok.version>
-        <versions.maven.plugin.version>2.21.0</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.22.0</versions.maven.plugin.version>
         <chart.js.javamodel.version>1.1.2</chart.js.javamodel.version>
         <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
      revise this entry after upgrading spring boots patchlevel -->
