@@ -50,7 +50,7 @@
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
-        <maven.versions.plugin.version>2.21.0</maven.versions.plugin.version>
+        <maven.versions.plugin.version>2.22.0</maven.versions.plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <buildhelper.maven.plugin.version>3.6.1</buildhelper.maven.plugin.version>
     </properties>
