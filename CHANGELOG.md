@@ -5,6 +5,7 @@
 ### Feature
 
 * Ability to track Dosings
+* Measurement Unit I (Iodine/Iodide) added
 
 ### Technical Maintenance
 
