@@ -78,6 +78,11 @@ sabi:
       max-size-bytes: 5242880
   admin:
     users: ${SABI_ADMIN_USERS:admin@sabi-project.net}
+  reminder:
+    scheduler-cron: "0 0 9 * * *"
+  email:
+    no-reply-address: ${SABI_EMAIL_NO_REPLY_ADDRESS:no-reply@sabi-project.net}
+    base-url: ${SABI_EMAIL_BASE_URL:https://sabi-project.net}
 server:
   port: 8080
   servlet:

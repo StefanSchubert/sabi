@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_12_2_2;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -46,7 +46,7 @@ public class FishCatalogueRepositoryTest {
 
     @Container
     @ServiceConnection
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_12_2_2);
 
     @Autowired
     private FishCatalogueEntryRepository fishCatalogueEntryRepository;

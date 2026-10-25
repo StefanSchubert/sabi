@@ -31,6 +31,12 @@ public class UserProfileTo implements Serializable {
     @Schema(description = "Flag to activate the dark mode in the UI.", required = false)
     private boolean darkModeEnabled = false;
 
+    @Schema(description = "Opt-in flag for email measurement reminders. When true, emailReminderIntervalDays must be between 1 and 30.", required = false)
+    private boolean emailReminderEnabled = false;
+
+    @Schema(description = "Email reminder cadence in days (1-30). Null means unchanged/absent for clients that do not support email reminders.", required = false)
+    private Integer emailReminderIntervalDays;
+
     public UserProfileTo(String pLanguage, String pCountry) {
         this.language = pLanguage;
         this.country = pCountry;

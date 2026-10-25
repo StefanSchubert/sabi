@@ -45,7 +45,7 @@ public class OidcProviderLinkRepositoryTest implements TestContainerVersions {
 
     @Container
     @ServiceConnection
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_12_2_2);
 
     @Autowired
     OidcProviderLinkRepository oidcProviderLinkRepository;

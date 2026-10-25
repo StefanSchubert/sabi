@@ -47,6 +47,11 @@
                     <h:outputText value="#{msg['gdpr.google.data_retention.t']}" escape="false"/>
                 </h:panelGroup>
             </p:panel>
+
+            <!-- sabi-69 FR-012: disclosure for the email measurement reminders -->
+            <p:panel header="#{msg['gdpr.emailreminder.h']}" styleClass="mt-3">
+                <h:outputText value="#{msg['gdpr.emailreminder.t']}" escape="false"/>
+            </p:panel>
         </ui:define>
     </ui:composition>
 

@@ -14,7 +14,8 @@ import org.junit.platform.suite.api.Suite;
 		"de.bluewhale.sabi.persistence",
 		"de.bluewhale.sabi.rest.controller",
 		"de.bluewhale.sabi.services",
-		"de.bluewhale.sabi.security"})
+		"de.bluewhale.sabi.security",
+		"de.bluewhale.sabi.scheduler"})
 @IncludeTags("DeveloperTest")
 public class DeveloperTestSuite {
 	// Diese Klasse bleibt leer. Sie dient nur als Halter für die obigen Annotationen

@@ -8,6 +8,8 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.model.UserTo;
 import jakarta.mail.MessagingException;
 
+import java.util.Locale;
+
 /**
  * Provides services around user notifications.
  */
@@ -28,4 +30,13 @@ public interface NotificationService {
      * @param scientificName the scientific name of the proposed entry
      */
     void sendCatalogueProposalNotification(String catalogueType, String scientificName) throws MessagingException;
+
+    /**
+     * Sends the localized measurement reminder email (sabi-69) as multipart/alternative
+     * (HTML + plain text) from the no-reply address to the user's verified email.
+     *
+     * @param payload the transient email payload built by {@link EmailReminderService}
+     * @param locale  the user's locale for bundle selection and date/value formatting
+     */
+    void sendMeasurementReminderEmail(MeasurementReminderEmail payload, Locale locale) throws MessagingException;
 }
