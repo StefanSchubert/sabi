@@ -35,7 +35,7 @@ h2:
 spring:
   # JPA Database configuration
   datasource:
-    url: jdbc:mariadb://esmeralda:3306/sabi
+    url: jdbc:mariadb://esmeralda:3306/sabi?sslMode=disable
 
 # No API doc in production
 springdoc:
