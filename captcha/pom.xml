@@ -45,7 +45,7 @@
         <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <springdoc.openapiv2.version>3.1.1</springdoc.openapiv2.version>
+        <springdoc.openapiv2.version>3.2.0</springdoc.openapiv2.version>
         <lombok.version>1.18.48</lombok.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <!--
@@ -57,7 +57,7 @@
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
-        <versions.maven.plugin.version>2.22.0</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.23.0</versions.maven.plugin.version>
         <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
              revise this entry after upgrading spring boots patchlevel -->
         <tomcat.version>11.0.25</tomcat.version>

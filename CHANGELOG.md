@@ -1,5 +1,16 @@
 # History of changes (since 5/2022)
 
+## Release 1.4.0
+
+### Feature
+
+* Ability to send measurement reminders via email
+
+### Technical Maintenance
+
+* Standard Patchmanagement
+* MariaDB Testcontainer version now equal to the one used in docker sdk 
+
 ## Release 1.3.7 to Release 1.3.9
 
 ### Feature
