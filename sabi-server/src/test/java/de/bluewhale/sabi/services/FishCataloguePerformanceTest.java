@@ -30,7 +30,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_12_2_2;
 import static de.bluewhale.sabi.util.TestDataFactory.TESTUSER_EMAIL1;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -48,7 +48,7 @@ public class FishCataloguePerformanceTest {
 
     @Container
     @ServiceConnection
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_12_2_2);
 
     static TestDataFactory testDataFactory = TestDataFactory.getInstance();
 

@@ -1,0 +1,19 @@
+{
+  "version": "1.2.4.dev0",
+  "integration_state_schema": 1,
+  "installed_integrations": [
+    "generic"
+  ],
+  "integration_settings": {
+    "generic": {
+      "script": "sh",
+      "raw_options": "--commands-dir .ai/commands/",
+      "parsed_options": {
+        "commands_dir": ".ai/commands/"
+      },
+      "invoke_separator": "."
+    }
+  },
+  "integration": "generic",
+  "default_integration": "generic"
+}

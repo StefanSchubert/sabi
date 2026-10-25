@@ -27,7 +27,7 @@ import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_11_3_2;
+import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_12_2_2;
 import static de.bluewhale.sabi.util.TestDataFactory.TESTUSER_EMAIL1;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,7 +60,7 @@ public class UserServiceTest {
 	@Container
 	@ServiceConnection
 	// This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-	static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+	static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_12_2_2);
 	
 // ------------------------------ FIELDS ------------------------------
 

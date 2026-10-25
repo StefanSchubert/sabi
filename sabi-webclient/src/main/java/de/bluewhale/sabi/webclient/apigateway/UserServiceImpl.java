@@ -161,6 +161,11 @@ public class UserServiceImpl extends APIServiceImpl implements UserService {
     }
 
     @Override
+    public UserProfileTo getUserProfile(@NotNull String pJWTBackendAuthtoken) {
+        return requestUserProfile(pJWTBackendAuthtoken);
+    }
+
+    @Override
     public void requestPasswordReset(RequestNewPasswordTo requestData) throws BusinessException {
         throw new UnsupportedOperationException("void requestPasswordReset([requestData])");
     }

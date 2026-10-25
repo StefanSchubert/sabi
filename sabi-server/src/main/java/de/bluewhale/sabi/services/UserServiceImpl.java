@@ -62,6 +62,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private EmailReminderService emailReminderService;
+
     public ResultTo<UserTo> registerNewUser(@NotNull NewRegistrationTO pRegistrationUserTo) {
 
         // mapping incoming reqTo to internal UserTo to suite service contract
@@ -125,6 +128,8 @@ public class UserServiceImpl implements UserService {
         Message info = Message.info(CommonMessageCodes.OK);
         userProfileTo = new UserProfileTo(userEntity.getLanguage(),userEntity.getCountry());
         userProfileTo.setDarkModeEnabled(userEntity.isDarkMode());
+        userProfileTo.setEmailReminderEnabled(userEntity.isEmailReminderEnabled());
+        userProfileTo.setEmailReminderIntervalDays(userEntity.getEmailReminderIntervalDays());
         final ResultTo<UserProfileTo> userProfileResultTo = new ResultTo<>(userProfileTo, info);
         return userProfileResultTo;
     }
@@ -148,6 +153,11 @@ public class UserServiceImpl implements UserService {
             existingUser.setLanguage(userProfileTo.getLanguage());
             existingUser.setCountry(userProfileTo.getCountry());
             existingUser.setDarkMode(userProfileTo.isDarkModeEnabled());
+
+            // Email reminder state machine (sabi-69): throws BusinessException (→ HTTP 409)
+            // when enabled with an interval outside 1-30, rejecting the whole update (FR-002).
+            emailReminderService.applyProfileChange(existingUser,
+                    userProfileTo.isEmailReminderEnabled(), userProfileTo.getEmailReminderIntervalDays());
 
             List<UserMeasurementReminderEntity> userMeasurementReminders = existingUser.getUserMeasurementReminders();
             List<MeasurementReminderTo> updateReminderToList = userProfileTo.getMeasurementReminderTos();

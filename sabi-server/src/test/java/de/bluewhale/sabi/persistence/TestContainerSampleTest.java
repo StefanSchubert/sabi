@@ -65,7 +65,7 @@ public class TestContainerSampleTest implements TestContainerVersions {
 
     @Container
     @ServiceConnection // This does the trick. Spring Autoconfigures itself to connect against this container data requests-
-    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_11_3_2);
+    static MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(MARIADB_12_2_2);
 
     @Autowired
     UserRepository userRepository;
