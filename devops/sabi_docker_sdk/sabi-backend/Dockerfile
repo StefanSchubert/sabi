@@ -5,13 +5,12 @@ FROM amazoncorretto:25-alpine
 # copyjars.sh will do it for you
 COPY assets/ /
 
-# Fix the timezone
-# RUN apt-get update ;\
-#    apt-get install -y tzdata ;\
-#    ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime ;\
-#    dpkg-reconfigure -f noninteractive tzdata;\
-
-RUN chmod 600 /opt/config/application.properties
+# Note: externalized /opt/config/application.properties was removed in 1.4.0
+# (Config Mmgmt). Configuration now comes from the application.yml inside the
+# JAR plus environment variables (see docker-compose.yml).
+# Notice: docker-compose.yml sets LOCAL as application profile,
+# thus you might add a application-local.yml if needed, which must not be checked
+# in and has been listed in the .gitignore
 
 # http port
 EXPOSE 8080
