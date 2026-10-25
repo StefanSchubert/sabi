@@ -158,6 +158,50 @@
                     <p:divider align="center"/>
                     <p:spacer width="10px"/>
 
+                    <!-- sabi-69: Email measurement reminders (US2) -->
+                    <p:panel header="#{msg['userprofile.emailreminder.header.h']}">
+
+                        <p:outputLabel escape="false" value="#{msg['userprofile.emailreminder.description.t']}"/>
+
+                        <h:form id="emailReminderForm">
+                            <p:panelGrid columns="3" layout="grid" style="border:0;">
+
+                                <p:outputLabel for="emailReminderToggle"
+                                               value="#{msg['userprofile.emailreminder.toggle.l']}"/>
+                                <p:selectBooleanCheckbox id="emailReminderToggle"
+                                                         value="#{userProfileView.emailReminderEnabled}"/>
+                                <p:spacer/>
+
+                                <p:outputLabel for="emailReminderInterval"
+                                               value="#{msg['userprofile.emailreminder.interval.l']}"/>
+                                <p:inputNumber id="emailReminderInterval"
+                                               value="#{userProfileView.emailReminderIntervalDays}"
+                                               min="1" max="30" size="4"
+                                               disabled="#{!userProfileView.emailReminderEnabled}"/>
+                                <p:commandButton id="weeklyPreset"
+                                                 value="#{msg['userprofile.emailreminder.weekly.preset']}"
+                                                 action="#{userProfileView.applyWeeklyPreset}"
+                                                 update=":emailReminderForm:emailReminderInterval"
+                                                 disabled="#{!userProfileView.emailReminderEnabled}"/>
+
+                            </p:panelGrid>
+
+                            <p:commandButton value="#{msg['common.save.b']}"
+                                             action="#{userProfileView.save}"
+                                             ajax="false"
+                                             style="background:#065f46; color:#ffffff;"/>
+
+                            <p:messages id="emailReminderMsg" for="profileupdate" showDetail="true" closable="true">
+                                <p:autoUpdate/>
+                            </p:messages>
+
+                        </h:form>
+
+                    </p:panel>
+
+                    <p:divider align="center"/>
+                    <p:spacer width="10px"/>
+
                     <!-- 001-ai-data-export: AI Export Panel (US2 / T027) -->
                     <p:panel header="#{msg['userprofile.aiexport.header.h']}">
 

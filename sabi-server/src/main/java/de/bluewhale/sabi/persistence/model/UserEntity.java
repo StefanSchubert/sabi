@@ -8,7 +8,9 @@ package de.bluewhale.sabi.persistence.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +21,13 @@ import java.util.List;
 @Table(name = "users", schema = "sabi")
 @Entity
 @Data
-@EqualsAndHashCode(exclude = {"aquariums","corals","fishes","measurements","treatments","oidcProviderLinks"},callSuper = false)
+@EqualsAndHashCode(exclude = {"aquariums","corals","fishes","measurements","treatments","oidcProviderLinks","reminderDeliveryRecords"},callSuper = false)
+// toString must exclude the bidirectional collections: child entities (Lombok @Data) print
+// their "user" back-reference, so printing the collections would recurse until StackOverflowError.
+@ToString(exclude = {"aquariums","corals","fishes","measurements","treatments","oidcProviderLinks","reminderDeliveryRecords","userMeasurementReminders"})
 public class UserEntity extends Auditable {
 // ------------------------------ FIELDS ------------------------------
 
-    // TODO StS 22.09.15: use UUID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, insertable = true, updatable = true, length = 20, precision = 0)
@@ -50,6 +54,10 @@ public class UserEntity extends Auditable {
     /** OIDC provider links – cascade REMOVE ensures JPA clears the link when the user is deleted (GDPR). */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<OidcProviderLinkEntity> oidcProviderLinks = new ArrayList<>();
+
+    /** Email reminder delivery records – cascade REMOVE ensures JPA clears the records when the user is deleted (GDPR). */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReminderDeliveryRecordEntity> reminderDeliveryRecords = new ArrayList<>();
 
     @Basic
     @Column(name = "email", nullable = false, insertable = true, updatable = true, length = 255, precision = 0)
@@ -95,5 +103,26 @@ public class UserEntity extends Auditable {
     @Basic
     @Column(name = "dark_mode", nullable = false)
     private boolean darkMode = false;
+
+    /**
+     * Opt-in flag for email measurement reminders (FR-001).
+     */
+    @Basic
+    @Column(name = "email_reminder_enabled", nullable = false)
+    private boolean emailReminderEnabled = false;
+
+    /**
+     * Email reminder cadence in days (1-30, default 7 = weekly preset).
+     */
+    @Basic
+    @Column(name = "email_reminder_interval_days", nullable = false)
+    private Integer emailReminderIntervalDays = 7;
+
+    /**
+     * Next scheduled reminder send date. NULL while the reminders are disabled (FR-010).
+     */
+    @Basic
+    @Column(name = "email_reminder_next_send_date", nullable = true)
+    private LocalDate emailReminderNextSendDate;
 
 }

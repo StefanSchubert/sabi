@@ -12,7 +12,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-boundary</artifactId>
-    <version>1.2.15</version>
+    <version>1.2.16</version>
     <packaging>jar</packaging>
     <description>
         Contains the DTOs and Utility classes which will be used by the server and client module.
@@ -44,13 +44,13 @@
         <swagger.annotations.version>2.2.55</swagger.annotations.version>
         <jakarta.validation.version>3.1.1</jakarta.validation.version>
         <jackson.annotations.version>2.22</jackson.annotations.version>
-        <jackson.databind.version>3.2.3</jackson.databind.version>
+        <jackson.databind.version>3.2.4</jackson.databind.version>
         <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>13.0.0</owasp.plugin.version>
         <!-- NVD API Key: lokal und in CI via Umgebungsvariable NVD_API_KEY.
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
-        <maven.versions.plugin.version>2.22.0</maven.versions.plugin.version>
+        <maven.versions.plugin.version>2.23.0</maven.versions.plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <buildhelper.maven.plugin.version>3.6.1</buildhelper.maven.plugin.version>
     </properties>

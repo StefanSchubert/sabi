@@ -77,6 +77,12 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
     private boolean hasTanks;
     private boolean darkModeActive;
 
+    /** sabi-69: email measurement reminder opt-in (FR-001). */
+    private boolean emailReminderEnabled = false;
+
+    /** sabi-69: interval in days for the email reminder, 1..30 (FR-002). */
+    private Integer emailReminderIntervalDays = DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS;
+
     /** Active tanks for which the user may generate public report links. */
     private List<AquariumTo> activeTanks = new ArrayList<>();
 
@@ -136,6 +142,16 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             MessageUtil.warn("profileupdate", "common.error.internal_server_problem.t", userSession.getLocale());
         }
 
+        // sabi-69: load the email reminder settings from the stored profile
+        // (getUserProfile never throws — it returns null on any backend problem)
+        UserProfileTo profile = userService.getUserProfile(userSession.getSabiBackendToken());
+        if (profile != null) {
+            emailReminderEnabled = profile.isEmailReminderEnabled();
+            // null means "never set" — show the default so the input is never empty
+            emailReminderIntervalDays = profile.getEmailReminderIntervalDays() != null
+                    ? profile.getEmailReminderIntervalDays() : DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS;
+        }
+
         try {
             activeTanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             hasTanks = !activeTanks.isEmpty();
@@ -189,9 +205,19 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
         if (selectedLocale != null) {
             // Already stored
             try {
+                // sabi-69: client-side range check, mirrors the server rule (Constitution IV)
+                if (emailReminderEnabled && (emailReminderIntervalDays == null
+                        || emailReminderIntervalDays < 1 || emailReminderIntervalDays > 30)) {
+                    MessageUtil.warn("profileupdate", "userprofile.emailreminder.interval.error.range", userSession.getLocale());
+                    return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+                }
+
                 UserProfileTo userProfileTo = new UserProfileTo(selectedLocale.getLanguage(), selectedLocale.getCountry());
                 userProfileTo.setMeasurementReminderTos(measurementReminderTos);
                 userProfileTo.setDarkModeEnabled(darkModeActive);
+                // sabi-69: email reminder opt-in + interval (null = unchanged while disabled)
+                userProfileTo.setEmailReminderEnabled(emailReminderEnabled);
+                userProfileTo.setEmailReminderIntervalDays(emailReminderEnabled ? emailReminderIntervalDays : null);
                 userService.updateUsersProfile(userProfileTo, userSession.getSabiBackendToken());
                 userSession.setLocale(selectedLocale);
                 userSession.setLanguage(selectedLocale.getLanguage());
@@ -204,6 +230,15 @@ public class UserProfileView extends AbstractControllerTools implements Serializ
             }
         }
         return USER_PROFILE_VIEW_PAGE.getNavigationableAddress();
+    }
+
+    /**
+     * sabi-69: "Weekly" preset (FR-002) — sets the email reminder interval to 7 days.
+     * AJAX-only, no navigation; the value is persisted by the regular save().
+     */
+    public String applyWeeklyPreset() {
+        emailReminderIntervalDays = DEFAULT_MEASUREMENT_INTERVAL_IN_DAYS;
+        return null;
     }
 
     public String addReminderForMeasurementUnit() {

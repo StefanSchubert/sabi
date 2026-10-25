@@ -75,6 +75,13 @@ public interface UserService extends Serializable {
     void updateUsersProfile(@NotNull UserProfileTo pUserProfile, @NotNull String pJWTBackendAuthtoken) throws BusinessException;
 
     /**
+     * Fetches the current user profile from the backend (GET /api/userprofile).
+     * @param pJWTBackendAuthtoken Bearer Auth string, which identifies the user against the backend.
+     * @return the current profile, or null if it could not be retrieved
+     */
+    UserProfileTo getUserProfile(@NotNull String pJWTBackendAuthtoken);
+
+    /**
      * Downloads the full reef data export for the currently authenticated user from the backend.
      * The returned byte array is a UTF-8 encoded JSON file ready for download.
      *

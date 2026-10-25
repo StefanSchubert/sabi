@@ -55,8 +55,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>25</java.version>
-        <joinfaces.version>6.1.1</joinfaces.version>
-        <sabi.boundary.version>1.2.15</sabi.boundary.version>
+        <joinfaces.version>6.1.2</joinfaces.version>
+        <sabi.boundary.version>1.2.16</sabi.boundary.version>
         <passay.version>2.0.0</passay.version>
         <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>13.0.0</owasp.plugin.version>
@@ -64,11 +64,11 @@
              Lokal: in ~/.zshrc exportieren  |  CI: GitHub Actions secret → env var NVD_API_KEY -->
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <lombok.version>1.18.48</lombok.version>
-        <versions.maven.plugin.version>2.22.0</versions.maven.plugin.version>
         <chart.js.javamodel.version>1.1.2</chart.js.javamodel.version>
         <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version
      revise this entry after upgrading spring boots patchlevel -->
         <tomcat.version>11.0.25</tomcat.version>
+        <versions.maven.plugin.version>2.23.0</versions.maven.plugin.version>
     </properties>
 
     <dependencyManagement>

@@ -6,5 +6,6 @@
 package de.bluewhale.sabi.util;
 
 public interface TestContainerVersions {
-    String MARIADB_11_3_2 = "mariadb:11.3.2";
+    // Kept in sync with the local dev stack (devops/sabi_docker_sdk/docker-compose.yml: mariadb:12.2.2).
+    String MARIADB_12_2_2 = "mariadb:12.2.2";
 }
