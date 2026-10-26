@@ -1,6 +1,6 @@
 # Quickstart: Validate Email Measurement Reminders (sabi-69)
 
-**Feature**: `.specify/features/sabi-69-email-measurement-reminders/spec.md`
+**Feature**: `specs/sabi-69-email-measurement-reminders/spec.md`
 **Date**: 2026-10-24
 
 Runnable validation scenarios that prove the feature works end-to-end. Implementation details

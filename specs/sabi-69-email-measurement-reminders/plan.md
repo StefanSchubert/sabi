@@ -1,7 +1,7 @@
 # Implementation Plan: Email Measurement Reminders
 
 **Branch**: `feature/sabi-69-email-measurement-reminders` | **Date**: 2026-10-24 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `.specify/features/sabi-69-email-measurement-reminders/spec.md`
+**Input**: Feature specification from `specs/sabi-69-email-measurement-reminders/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
 
@@ -9,7 +9,7 @@
 > (`feature/sabi-69-email-measurement-reminders`) does not match the spec-kit convention
 > (`NNN-feature-name`). Path resolution was performed manually against the feature directory
 > declared in the spec header. All artifacts live next to `spec.md` under
-> `.specify/features/sabi-69-email-measurement-reminders/`.
+> `specs/sabi-69-email-measurement-reminders/`.
 
 ## Summary
 
@@ -69,7 +69,7 @@ server-side i18n bundle `i18n/ReminderEmailMessages` (6 files) mirroring the exi
 ### Documentation (this feature)
 
 ```text
-.specify/features/sabi-69-email-measurement-reminders/
+specs/sabi-69-email-measurement-reminders/
 ├── spec.md              # Feature specification (input)
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)

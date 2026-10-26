@@ -1,7 +1,7 @@
 # Implementation Plan: OpenID Connect Login via Google (sabi-150)
 
 **Branch**: `feature/sabi-150` | **Date**: 2026-03-26 | **Spec**: [spec.md](spec.md)  
-**Input**: Feature specification from `.specify/features/sabi-150/spec.md`
+**Input**: Feature specification from `specs/sabi-150/spec.md`
 
 ---
 
@@ -73,7 +73,7 @@
 ### Documentation (this feature)
 
 ```text
-.specify/features/sabi-150/
+specs/sabi-150/
 ├── plan.md              ← dieses Dokument
 ├── research.md          ← Phase 0 Output
 ├── data-model.md        ← Phase 1 Output
