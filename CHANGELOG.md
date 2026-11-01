@@ -1,5 +1,18 @@
 # History of changes (since 5/2022)
 
+## Next Release (unreleased — maintainer assigns the release number)
+
+### Feature
+
+* Per-aquarium Maintenance page: record water changes (date, volume percentage, note) and configure a regular water exchange interval
+* Activated carbon filtration setting per tank (continuous mode or replacement interval), with deterministic clearing on disable
+* Supplements cross-link from the Maintenance page to the Dosing feature with the tank pre-selected
+* `maintenance` block in the AI-JSON export (`sabiSchemaVersion` 1.0 → 1.1, additive extension)
+
+### Technical Maintenance
+
+* Flyway migration V1_8_0_15 (tank_maintenance_profile + water_change tables)
+
 ## Release 1.4.0
 
 ### Feature

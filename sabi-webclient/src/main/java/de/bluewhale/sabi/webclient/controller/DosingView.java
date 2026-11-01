@@ -64,6 +64,10 @@ public class DosingView extends AbstractControllerTools implements Serializable 
                     .get(SELECTED_AQUARIUM_VIEW_KEY);
             if (selectedAquariumId == null && tanks.size() == 1) {
                 setSelectedAquariumId(tanks.get(0).getId());
+            } else if (selectedAquariumId == null) {
+                // Cross-link from other views (e.g. the Maintenance page): accept a validated
+                // aquariumId request parameter, but only for tanks that belong to this user.
+                selectedAquariumId = resolveOwnedTankFromRequestParameter();
             }
             if (selectedAquariumId != null) {
                 loadDosings();
@@ -72,6 +76,25 @@ public class DosingView extends AbstractControllerTools implements Serializable 
             log.error("Could not load tanks for dosing page", e);
             MessageUtil.error("dosingMessages", "common.token.expired.t", userSession.getLocale());
         }
+    }
+
+    private Long resolveOwnedTankFromRequestParameter() {
+        String parameter = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+                .get("aquariumId");
+        if (parameter == null || parameter.isBlank()) {
+            return null;
+        }
+        try {
+            Long parameterId = Long.parseLong(parameter);
+            for (AquariumTo tank : tanks) {
+                if (tank.getId().equals(parameterId)) {
+                    return parameterId;
+                }
+            }
+        } catch (NumberFormatException e) {
+            log.warn("Ignored malformed aquariumId request parameter on dosing page");
+        }
+        return null;
     }
 
     public void onAquariumChange() {

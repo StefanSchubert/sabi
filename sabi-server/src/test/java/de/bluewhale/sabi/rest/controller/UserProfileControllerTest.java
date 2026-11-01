@@ -328,8 +328,8 @@ public class UserProfileControllerTest extends CommonTestController {
         tools.jackson.databind.JsonNode meta = root.get("_meta");
         assertNotNull(meta, "_meta must be present");
 
-        // sabiSchemaVersion must equal "1.0"
-        assertEquals("1.0", meta.get("sabiSchemaVersion").asText(), "sabiSchemaVersion must be 1.0");
+        // sabiSchemaVersion must equal "1.1" (additive maintenance block, FR-015)
+        assertEquals("1.1", meta.get("sabiSchemaVersion").asText(), "sabiSchemaVersion must be 1.1");
 
         // exportedAt must match ISO-8601 UTC pattern
         String exportedAt = meta.get("exportedAt").asText();
@@ -373,6 +373,7 @@ public class UserProfileControllerTest extends CommonTestController {
         assertNotNull(firstAquarium.get("fish"), "fish key must be present (SC-002)");
         assertNotNull(firstAquarium.get("corals"), "corals key must be present (SC-002)");
         assertNotNull(firstAquarium.get("treatments"), "treatments key must be present (SC-002)");
+        assertNotNull(firstAquarium.get("maintenance"), "maintenance key must be present (SC-002, FR-016)");
     }
 
     // -----------------------------------------------------------------------

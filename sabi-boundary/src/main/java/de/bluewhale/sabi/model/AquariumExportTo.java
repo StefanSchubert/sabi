@@ -39,4 +39,6 @@ public class AquariumExportTo implements Serializable {
     private List<EventExportTo> events = new ArrayList<>();
     /** Standalone manual and automated dosing records for this aquarium. */
     private List<DosingExportTo> dosings = new ArrayList<>();
+    /** Per-aquarium maintenance block (007-water-maintenance-tracking): always present. */
+    private MaintenanceExportTo maintenance = new MaintenanceExportTo();
 }

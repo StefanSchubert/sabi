@@ -22,7 +22,7 @@ import java.util.List;
 public class ReefDataExportTo implements Serializable {
 
     /** Current schema version — increment manually on breaking export schema changes (C-3). */
-    public static final String SCHEMA_VERSION = "1.0";
+    public static final String SCHEMA_VERSION = "1.1";
 
     /**
      * Metadata block.

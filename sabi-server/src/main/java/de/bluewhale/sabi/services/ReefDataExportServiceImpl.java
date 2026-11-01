@@ -93,6 +93,13 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     @Autowired
     private DosingRepository dosingRepository;
 
+    // 007-water-maintenance-tracking: maintenance export block
+    @Autowired
+    private TankMaintenanceProfileRepository tankMaintenanceProfileRepository;
+
+    @Autowired
+    private WaterChangeRepository waterChangeRepository;
+
     // -------------------------------------------------------------------------
     // Public API
     // -------------------------------------------------------------------------
@@ -171,6 +178,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
         ato.setTreatments(buildTreatmentExports(aquarium.getId()));
         ato.setEvents(buildEventExports(aquarium.getId()));
         ato.setDosings(buildDosingExports(aquarium.getId()));
+        ato.setMaintenance(buildMaintenanceExport(aquarium.getId()));
 
         return ato;
     }
@@ -435,5 +443,47 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
             result.add(export);
         }
         return result;
+    }
+
+    /**
+     * Builds the per-aquarium maintenance export block (007, FR-013/FR-016).
+     * The block is always returned: without data it carries a null regular interval,
+     * an empty records list and disabled activated carbon.
+     */
+    private MaintenanceExportTo buildMaintenanceExport(Long aquariumId) {
+        MaintenanceExportTo maintenance = new MaintenanceExportTo();
+
+        // Profile row (at most one per aquarium): regular interval + activated carbon
+        TankMaintenanceProfileEntity profile =
+                tankMaintenanceProfileRepository.findByAquariumId(aquariumId).orElse(null);
+        if (profile != null) {
+            if (profile.getRegularIntervalDays() != null && profile.getRegularPercentage() != null) {
+                RegularIntervalExportTo interval = new RegularIntervalExportTo();
+                interval.setIntervalDays(profile.getRegularIntervalDays());
+                interval.setPercentage(profile.getRegularPercentage());
+                maintenance.getWaterChanges().setRegularInterval(interval);
+            }
+            if (Boolean.TRUE.equals(profile.getCarbonEnabled())) {
+                ActivatedCarbonExportTo carbon = maintenance.getActivatedCarbon();
+                carbon.setEnabled(true);
+                // FR-013: mode and replacementIntervalDays are null in continuous mode;
+                // only INTERVAL mode carries a mode value
+                if (profile.getCarbonMode() == CarbonMode.INTERVAL) {
+                    carbon.setMode(CarbonMode.INTERVAL.name());
+                    carbon.setReplacementIntervalDays(profile.getCarbonReplacementIntervalDays());
+                }
+            }
+        }
+
+        // Water change records, newest first (repository query)
+        for (WaterChangeEntity record : waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(aquariumId)) {
+            WaterChangeRecordExportTo rec = new WaterChangeRecordExportTo();
+            rec.setDate(record.getChangedOn() != null ? record.getChangedOn().toString() : null);
+            rec.setPercentage(record.getPercentage());
+            rec.setNote(record.getNote());
+            maintenance.getWaterChanges().getRecords().add(rec);
+        }
+
+        return maintenance;
     }
 }
