@@ -39,7 +39,7 @@ test.describe('Fish Catalogue: Vorschlag → Freigabe → Fisch anlegen', () => 
   test.use({ viewport: { width: 1280, height: 1024 } });
   test.setTimeout(90_000);
 
-  test('Katalogvorschlag erstellen, freigeben und im Fisch-Dialog nutzen', async ({ page }) => {
+  test('Katalogvorschlag erstellen, freigeben und im Fisch-Eintrag nutzen', async ({ page }) => {
 
     // ─── 1. Login ───────────────────────────────────────────────
     await login(page);
@@ -118,9 +118,16 @@ test.describe('Fish Catalogue: Vorschlag → Freigabe → Fisch anlegen', () => 
     // Dialog sollte sich schließen
     await expect(detailDialog).not.toBeVisible({ timeout: 8_000 });
 
-    // Eintrag sollte aus der PENDING-Liste verschwunden sein (vollständiger Name = eindeutig)
-    await expect(page.locator('tr').filter({ hasText: SCIENTIFIC_NAME }).first())
+    // Eintrag sollte aus der PENDING-Liste verschwunden sein (vollständiger Name = eindeutig).
+    // WICHTIG: auf pendingTable scopen — der freigegebene Eintrag erscheint danach in
+    // catalogueTable (Katalog-Browser, gleiche Seite), ein globaler tr-Locator würde ihn dort finden.
+    await expect(page.locator('#adminForm\\:pendingTable tr').filter({ hasText: SCIENTIFIC_NAME }).first())
         .not.toBeVisible({ timeout: 8_000 });
+
+    // Und er muss im Katalog-Browser mit Status "Öffentlich"/"Public" gelistet sein
+    const catalogueRow = page.locator('#adminForm\\:catalogueTable tr').filter({ hasText: SCIENTIFIC_NAME }).first();
+    await expect(catalogueRow).toBeVisible({ timeout: 8_000 });
+    await expect(catalogueRow).toContainText(/Öffentlich|Public/i);
 
     await page.screenshot({ path: '/tmp/catalogue_admin_approved.png' });
 
@@ -142,16 +149,18 @@ test.describe('Fish Catalogue: Vorschlag → Freigabe → Fisch anlegen', () => 
     await ajaxDone;
     await page.waitForLoadState('networkidle');
 
-    // "Fisch hinzufügen"-Button (wird enabled nachdem Aquarium geladen)
+    // "Fisch hinzufügen"-Button (wird enabled nachdem Aquarium geladen) → Entry-Page
     const addButton = page.locator('#fishStockForm button').filter({ hasText: /hinzuf|add/i }).first();
     await expect(addButton).toBeEnabled({ timeout: 20_000 });
-    await addButton.click();
-
-    const dialog = page.locator('.ui-dialog').filter({ hasText: /hinzuf|add fish/i }).first();
-    await expect(dialog).toBeVisible({ timeout: 10_000 });
+    await Promise.all([
+      page.waitForURL(/fishStockEntryPage/),
+      addButton.click(),
+    ]);
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('#fishEntryForm')).toBeAttached({ timeout: 10_000 });
 
     // ─── 12. Katalog-AutoComplete: freigegebenen Eintrag suchen ──
-    const catalogueSearch = dialog.locator('.ui-autocomplete input[type="text"]').first();
+    const catalogueSearch = page.locator('#fishEntryForm [id$="catalogueSearch_input"]').first();
     await expect(catalogueSearch).toBeVisible({ timeout: 5_000 });
 
     // PrimeFaces AutoComplete benötigt echte Keyboard-Events (fill allein reicht nicht)
@@ -176,7 +185,7 @@ test.describe('Fish Catalogue: Vorschlag → Freigabe → Fisch anlegen', () => 
     await page.waitForTimeout(500);
 
     // Wissenschaftlicher Name wurde übernommen (nach AJAX-Update)
-    const scientificField = dialog.locator('[id$="scientificName"], input[id*="scientificName"]').first();
+    const scientificField = page.locator('#fishEntryForm [id$="scientificName"]').first();
     await expect(scientificField).toHaveValue(new RegExp(SCIENTIFIC_NAME.substring(0, 15)), { timeout: 10_000 });
 
     await page.screenshot({ path: '/tmp/catalogue_fish_entry_filled.png' });

@@ -7,11 +7,19 @@
  */
 
 /**
- * E2E-Tests: Fish Stock View (fishStockView.xhtml)
+ * E2E-Tests: Fish Stock View (fishStockView.xhtml) + Entry Page (fishStockEntryPage.xhtml)
  *
  * Testuser: sabi@bluewhale.de / clibanarius  (Passwort: 'clibanarius')
  * Hat 2 Aquarien: "Nano-Reef" (id=1) und "Freshwater" (id=2)
  * App läuft auf http://localhost:8088
+ *
+ * UI-Flow (Stand 2026): Fisch anlegen/bearbeiten/duplizieren ist KEIN Dialog mehr,
+ * sondern eine Standalone-Seite (fishStockEntryPage.xhtml):
+ *  - "Fisch hinzufügen" / Pencil / Copy-Button: ajax="false" → volle Navigation
+ *  - Speichern: AJAX POST auf fishStockEntryPage.xhtml, danach Client-Redirect
+ *    zurück zu fishStockView.xhtml (oncomplete="sabiUploadPhotoAndRedirect()")
+ *  - Foto (falls gewählt) wird zusätzlich per fetch POST /secured/fishPhoto?fishId=X hochgeladen
+ *  - Departure bleibt ein Dialog (#fishDepartureDialog) — siehe fishDepartureFlow.spec.ts
  *
  * Hinweis: PrimeFaces selectOneMenu rendert IDs als JSF-Composite-IDs (z.B.
  * "tankSelectorForm:tankSelector") — die sich bei jeder Code-Änderung ändern können.
@@ -56,19 +64,114 @@ async function waitForFishStockAjax(page: Page) {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Helper: Aquarium auswählen und "Fisch hinzufügen" Dialog öffnen
+// Helper: Entry-Page (fishStockEntryPage.xhtml) — Page-Flow statt Dialog
 // ──────────────────────────────────────────────────────────────
-async function openAddFishDialog(page: Page) {
+
+/** Heutiges Datum im dd.MM.yyyy-Format (Pattern des p:datePicker addedOn). */
+function todayStr(): string {
+  const t = new Date();
+  return String(t.getDate()).padStart(2, '0') + '.'
+       + String(t.getMonth() + 1).padStart(2, '0') + '.'
+       + t.getFullYear();
+}
+
+/** Aquarium im Tank-Selector wählen (AJAX-Update des fishStockForm). */
+async function selectTank(page: Page, tankName: string) {
   await Promise.all([
     waitForFishStockAjax(page),
-    selectPrimeFacesOption(page, 'Nano-Reef'),
+    selectPrimeFacesOption(page, tankName),
   ]);
+}
+
+/**
+ * "Fisch hinzufügen" klicken → volle Navigation zur Entry-Page (ajax="false").
+ * Setzt voraus, dass vorher ein Tank gewählt wurde.
+ */
+async function openAddFishPage(page: Page) {
+  await selectTank(page, 'Nano-Reef');
   const addButton = page.locator('#fishStockForm button').filter({ hasText: /hinzuf|add/i }).first();
   await expect(addButton).toBeEnabled({ timeout: 10_000 });
-  await addButton.click();
-  const dialog = page.locator('.ui-dialog').filter({ hasText: /hinzuf|add fish/i }).first();
-  await expect(dialog).toBeVisible({ timeout: 10_000 });
-  return dialog;
+  await Promise.all([
+    page.waitForURL(/fishStockEntryPage/),
+    addButton.click(),
+  ]);
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('#fishEntryForm')).toBeAttached({ timeout: 10_000 });
+}
+
+/** Pflichtfelder der Entry-Page ausfüllen (commonName + addedOn). */
+async function fillRequiredEntryFields(page: Page, commonName: string, dateStr: string) {
+  const commonNameInput = page.locator('#fishEntryForm [id$="commonName"]');
+  await expect(commonNameInput).toBeVisible({ timeout: 5_000 });
+  await commonNameInput.fill(commonName);
+
+  const dateInput = page.locator('#fishEntryForm [id$="addedOn_input"]');
+  await expect(dateInput).toBeVisible({ timeout: 5_000 });
+  await dateInput.fill(dateStr);
+  // Klick auf das Name-Feld schließt ein evtl. geöffnetes DatePicker-Overlay + blur
+  await commonNameInput.click();
+}
+
+/**
+ * Speichern auf der Entry-Page: AJAX POST auf fishStockEntryPage.xhtml,
+ * danach Client-Redirect zurück zu fishStockView.xhtml.
+ */
+async function saveEntryPage(page: Page) {
+  const saveButton = page.locator('#fishEntryForm button').filter({ hasText: /speicher|save/i }).first();
+  await expect(saveButton).toBeVisible({ timeout: 5_000 });
+  await saveButton.scrollIntoViewIfNeeded();
+  await Promise.all([
+    page.waitForResponse(resp =>
+        resp.url().includes('fishStockEntryPage') && resp.status() === 200
+        && resp.request().method() === 'POST',
+      { timeout: 15_000 }),
+    saveButton.click(),
+  ]);
+  // oncomplete → (ggf. Foto-Upload per fetch) → window.location.href = fishStockView.xhtml
+  await page.waitForURL(/fishStockView\.xhtml/, { timeout: 30_000 });
+  await page.waitForLoadState('networkidle');
+}
+
+/** Abbruch-Button (type="button", onclick-Redirect) → zurück zu fishStockView.xhtml. */
+async function cancelEntryPage(page: Page) {
+  const cancelButton = page.locator('#fishEntryForm button').filter({ hasText: /abbruch|cancel/i }).first();
+  await expect(cancelButton).toBeVisible({ timeout: 5_000 });
+  await Promise.all([
+    page.waitForURL(/fishStockView\.xhtml/),
+    cancelButton.click(),
+  ]);
+  await page.waitForLoadState('networkidle');
+}
+
+/** Edit-Button (Pencil) in der Fisch-Zeile → Entry-Page im Edit-Modus. */
+async function openEditFishPage(page: Page, fishName: string) {
+  const fishRow = page.locator('#fishStockForm tr').filter({ hasText: fishName }).first();
+  await expect(fishRow).toBeVisible({ timeout: 8_000 });
+  const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
+  await expect(editButton).toBeVisible();
+  await Promise.all([
+    page.waitForURL(/fishStockEntryPage/),
+    editButton.click(),
+  ]);
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('#fishEntryForm')).toBeAttached({ timeout: 10_000 });
+}
+
+/** Fisch über den Trash-Button löschen (AJAX-Update des fishStockForm). */
+async function deleteFish(page: Page, fishName: string) {
+  const fishRow = page.locator('#fishStockForm tr').filter({ hasText: fishName }).first();
+  if (!(await fishRow.isVisible())) return;
+  const trashButton = fishRow.locator('button').filter({ has: page.locator('.pi-trash') });
+  await expect(trashButton).toBeVisible();
+  await Promise.all([
+    page.waitForResponse(resp =>
+        resp.url().includes('fishStockView') && resp.status() === 200
+        && resp.request().method() === 'POST',
+      { timeout: 15_000 }),
+    trashButton.click(),
+  ]);
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -76,9 +179,9 @@ async function openAddFishDialog(page: Page) {
 // ──────────────────────────────────────────────────────────────
 test.describe('Fish Stock View', () => {
 
-  // PrimeFaces-Dialoge mit vielen Feldern übersteigen das Standard-Viewport.
-  // → Viewport auf 1280x1024 vergrößern.
+  // Entry-Page mit vielen Feldern + mehrere Navigationen pro Test → großzügiges Timeout.
   test.use({ viewport: { width: 1280, height: 1024 } });
+  test.setTimeout(120_000);
 
   test.beforeEach(async ({ page }) => {
     await login(page);
@@ -142,37 +245,41 @@ test.describe('Fish Stock View', () => {
     await expect(fishMenuItem).toBeVisible({ timeout: 5_000 });
   });
 
-  // ── Fisch-Hinzufügen-Dialog ────────────────────────────────
+  // ── Fisch-Hinzufügen-Seite (früher Dialog, jetzt Standalone-Page) ──
 
-  test('Fisch-hinzufügen-Dialog öffnet sich mit allen Formularfeldern', async ({ page }) => {
-    const dialog = await openAddFishDialog(page);
+  test('Fisch-hinzufügen-Seite öffnet sich mit allen Formularfeldern', async ({ page }) => {
+    await openAddFishPage(page);
+
+    // Seiten-Header: "Fisch hinzufügen" (de) / "Add Fish" (en) — nicht "Bearbeiten"
+    const heading = page.locator('h2').first();
+    await expect(heading).toContainText(/Fisch hinzufügen|Add Fish/i);
 
     // Pflichtfelder
-    await expect(dialog.locator('[id$="commonName"]')).toBeVisible();
-    await expect(dialog.locator('[id$="addedOn_input"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="commonName"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="addedOn_input"]')).toBeVisible();
 
     // Optionale Felder
-    await expect(dialog.locator('[id$="nickname"]')).toBeVisible();
-    await expect(dialog.locator('[id$="scientificName"]')).toBeVisible();
-    await expect(dialog.locator('[id$="externalRefUrl"]')).toBeVisible();
-    await expect(dialog.locator('[id$="observedBehavior"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="nickname"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="scientificName"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="externalRefUrl"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="observedBehavior"]')).toBeVisible();
 
-    // Foto-Upload-Feld (mode="simple" → rendert als input[type=file])
-    await expect(dialog.locator('input[type="file"]')).toBeAttached();
+    // Foto-Upload-Feld (plain HTML input, kein PrimeFaces)
+    const fileInput = page.locator('#photoFileInput');
+    await expect(fileInput).toBeAttached();
 
     // Katalog-Suche (AutoComplete-Input)
-    await expect(dialog.locator('[id$="catalogueSearch_input"]')).toBeVisible();
+    await expect(page.locator('#fishEntryForm [id$="catalogueSearch_input"]')).toBeVisible();
 
     // Katalog-Vorschlags-Link
-    await expect(dialog.locator('a').filter({ hasText: /vorschlagen|propose/i })).toBeVisible();
+    await expect(page.locator('#fishEntryForm a').filter({ hasText: /vorschlagen|propose/i })).toBeVisible();
 
     // Buttons: Speichern + Abbruch
-    await expect(dialog.locator('button').filter({ hasText: /speicher|save/i })).toBeVisible();
-    await expect(dialog.locator('button').filter({ hasText: /abbruch|cancel/i })).toBeAttached();
+    await expect(page.locator('#fishEntryForm button').filter({ hasText: /speicher|save/i })).toBeVisible();
+    await expect(page.locator('#fishEntryForm button').filter({ hasText: /abbruch|cancel/i })).toBeAttached();
 
-    // Dialog per Escape schließen (closeOnEscape="true")
-    await page.keyboard.press('Escape');
-    await expect(dialog).not.toBeVisible({ timeout: 5_000 });
+    // Zurück per Abbruch-Button (type="button" → Client-Redirect)
+    await cancelEntryPage(page);
   });
 
   // ── Fisch anlegen und verifizieren ──────────────────────────
@@ -180,87 +287,36 @@ test.describe('Fish Stock View', () => {
   test('Fisch anlegen — Pflichtfelder ausfüllen, speichern, in Tabelle sichtbar', async ({ page }) => {
     const fishName = `E2E-Testfisch-${Date.now()}`;
 
-    // 1. Dialog öffnen (inkl. Aquarium-Auswahl)
-    const dialog = await openAddFishDialog(page);
+    // 1. Entry-Page öffnen (inkl. Aquarium-Auswahl)
+    await openAddFishPage(page);
 
-    // 2. Pflichtfelder ausfüllen
-    const commonNameInput = dialog.locator('[id$="commonName"]');
-    await commonNameInput.fill(fishName);
+    // 2. Pflichtfelder ausfüllen + speichern (AJAX POST + Client-Redirect)
+    await fillRequiredEntryFields(page, fishName, todayStr());
+    await saveEntryPage(page);
 
-    // DatePicker: Wert direkt setzen (pressSequentially funktioniert nicht mit PF-Mask)
-    const dateInput = dialog.locator('[id$="addedOn_input"]');
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    const dateStr = `${dd}.${mm}.${yyyy}`;
-    // fill() setzt den Wert direkt, dann blur um PrimeFaces Change-Event auszulösen
-    await dateInput.fill(dateStr);
-    // Klick auf den Artname-Feld, um DatePicker-Overlay zu schließen + blur auszulösen
-    await commonNameInput.click();
-    await page.waitForTimeout(300);
-
-    // 3. Speichern
-    const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
-    await saveButton.scrollIntoViewIfNeeded();
-    // toBeVisible() vor dem Click sicherstellen (AGENTS.md: Sichtbarkeit explizit prüfen)
-    await expect(saveButton).toBeVisible({ timeout: 5_000 });
-    // force:true nötig weil PrimeFaces DatePicker-Overlay nach blur() noch kurz sichtbar ist
-    // und den Save-Button überdecken kann — eigentlicher Layout-Bug in PF DatePicker z-index
-    const [saveResponse] = await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 15_000 },
-      ),
-      saveButton.click({ force: true }),
-    ]);
-    await page.waitForLoadState('networkidle');
-
-    // 4. Dialog sollte sich geschlossen haben
-    await expect(dialog).not.toBeVisible({ timeout: 10_000 });
-
-    // 5. Fisch-Name in der "Aktuell im Becken"-Tabelle sichtbar
+    // 3. Fisch-Name in der "Aktuell im Becken"-Tabelle sichtbar
+    //    (Tank-Auswahl überlebt den Redirect via userSession.getSelectedTank())
     await expect(page.locator('#fishStockForm')).toContainText(fishName, { timeout: 10_000 });
 
-    // ── 6. Edit-Dialog öffnen und vorausgefüllte Felder prüfen ──
-    const fishRow = page.locator('tr').filter({ hasText: fishName }).first();
-    await expect(fishRow).toBeVisible({ timeout: 5_000 });
+    // ── 4. Edit-Page öffnen und vorausgefüllte Felder prüfen ──
+    await openEditFishPage(page, fishName);
 
-    // Edit-Button (Pencil-Icon) klicken
-    const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
-    await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 10_000 },
-      ),
-      editButton.click(),
-    ]);
-
-    // Dialog muss sichtbar sein
-    const editDialog = page.locator('.ui-dialog').filter({ hasText: /bearbeiten|edit/i }).first();
-    await expect(editDialog).toBeVisible({ timeout: 10_000 });
+    // Header wechselt zu "Bearbeiten" (de) / "Edit" (en)
+    await expect(page.locator('h2').first()).toContainText(/Bearbeiten|Edit/i);
 
     // Artname (commonName) muss vorausgefüllt sein
-    const editCommonName = editDialog.locator('[id$="commonName"]');
+    const editCommonName = page.locator('#fishEntryForm [id$="commonName"]');
     await expect(editCommonName).toHaveValue(fishName);
 
     // Einzugsdatum muss vorausgefüllt sein (dd.MM.yyyy Format)
-    const editDateInput = editDialog.locator('[id$="addedOn_input"]');
-    await expect(editDateInput).toHaveValue(dateStr);
+    const editDateInput = page.locator('#fishEntryForm [id$="addedOn_input"]');
+    await expect(editDateInput).toHaveValue(todayStr());
 
-    // Dialog schließen
-    await page.keyboard.press('Escape');
-    await expect(editDialog).not.toBeVisible({ timeout: 5_000 });
+    // Zurück per Abbruch
+    await cancelEntryPage(page);
 
     // ── Cleanup: Fisch löschen ──
-    const fishRowCleanup = page.locator('tr').filter({ hasText: fishName }).first();
-    if (await fishRowCleanup.isVisible()) {
-      await fishRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
-      await page.waitForLoadState('networkidle');
-      await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
-    }
+    await deleteFish(page, fishName);
   });
 
   // ── Edit-Save: kein Duplikat (Bug 3 Regression-Test) ───────
@@ -269,93 +325,43 @@ test.describe('Fish Stock View', () => {
     const fishName = `E2E-EditTest-${Date.now()}`;
 
     // 1. Fisch anlegen
-    const dialog = await openAddFishDialog(page);
-    const commonNameInput = dialog.locator('[id$="commonName"]');
-    await commonNameInput.fill(fishName);
-
-    const dateInput = dialog.locator('[id$="addedOn_input"]');
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    const dateStr = `${dd}.${mm}.${yyyy}`;
-    await dateInput.fill(dateStr);
-    await commonNameInput.click();
-    await page.waitForTimeout(300);
-
-    const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
-    await saveButton.scrollIntoViewIfNeeded();
-    await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 15_000 },
-      ),
-      saveButton.click({ force: true }),
-    ]);
-    await page.waitForLoadState('networkidle');
-    await expect(dialog).not.toBeVisible({ timeout: 10_000 });
+    await openAddFishPage(page);
+    await fillRequiredEntryFields(page, fishName, todayStr());
+    await saveEntryPage(page);
     await expect(page.locator('#fishStockForm')).toContainText(fishName, { timeout: 10_000 });
 
     // 2. Anzahl der Zeilen mit diesem Fischnamen zählen (sollte exakt 1 sein)
-    const rowsBefore = await page.locator('tr').filter({ hasText: fishName }).count();
+    const rowsBefore = await page.locator('#fishStockForm tr').filter({ hasText: fishName }).count();
     expect(rowsBefore).toBe(1);
 
-    // 3. Edit-Dialog öffnen
-    const fishRow = page.locator('tr').filter({ hasText: fishName }).first();
-    const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
-    await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 10_000 },
-      ),
-      editButton.click(),
-    ]);
-
-    const editDialog = page.locator('.ui-dialog').filter({ hasText: /bearbeiten|edit/i }).first();
-    await expect(editDialog).toBeVisible({ timeout: 10_000 });
+    // 3. Edit-Page öffnen
+    await openEditFishPage(page, fishName);
 
     // 4. Nickname hinzufügen und speichern
-    const nicknameInput = editDialog.locator('[id$="nickname"]');
+    const nicknameInput = page.locator('#fishEntryForm [id$="nickname"]');
+    await expect(nicknameInput).toBeVisible({ timeout: 5_000 });
     await nicknameInput.fill('Nemo-Edit-Test');
-
-    const editSaveButton = editDialog.locator('button').filter({ hasText: /speicher|save/i });
-    await editSaveButton.scrollIntoViewIfNeeded();
-    // toBeVisible() vor dem Click sicherstellen (AGENTS.md: Sichtbarkeit explizit prüfen)
-    await expect(editSaveButton).toBeVisible({ timeout: 5_000 });
-    // force:true nötig wegen potentiellem PrimeFaces DatePicker-Overlay (z-index Bug)
-    await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 15_000 },
-      ),
-      editSaveButton.click({ force: true }),
-    ]);
-    await page.waitForLoadState('networkidle');
-    await expect(editDialog).not.toBeVisible({ timeout: 10_000 });
+    await saveEntryPage(page);
 
     // 5. KERN-ASSERTION: Es darf KEIN Duplikat entstanden sein — immer noch genau 1 Zeile
-    const rowsAfter = await page.locator('tr').filter({ hasText: fishName }).count();
+    const rowsAfter = await page.locator('#fishStockForm tr').filter({ hasText: fishName }).count();
     expect(rowsAfter).toBe(1);
 
-    // 6. Cleanup: Fisch löschen
-    const fishRowCleanup = page.locator('tr').filter({ hasText: fishName }).first();
-    if (await fishRowCleanup.isVisible()) {
-      await fishRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
-      await page.waitForLoadState('networkidle');
-      await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
-    }
+    // 6. Die Editierung wirkt sich sichtbar aus: Nickname in der Zeile
+    const fishRow = page.locator('#fishStockForm tr').filter({ hasText: fishName }).first();
+    await expect(fishRow).toContainText('Nemo-Edit-Test');
+
+    // 7. Cleanup: Fisch löschen
+    await deleteFish(page, fishName);
   });
 
   // ── Foto-Upload ─────────────────────────────────────────────
 
   test('Foto-Upload: Datei kann ausgewählt werden und accept-Attribut stimmt', async ({ page }) => {
-    const dialog = await openAddFishDialog(page);
+    await openAddFishPage(page);
 
-    // File-Input finden (plain HTML input, kein PrimeFaces — wegen AJAX-Upload-Bug)
-    const fileInput = dialog.locator('input[type="file"]');
+    // File-Input finden (plain HTML input, kein PrimeFaces)
+    const fileInput = page.locator('#photoFileInput');
     await expect(fileInput).toBeAttached();
 
     // accept-Attribut prüfen (nur Bildformate)
@@ -363,63 +369,40 @@ test.describe('Fish Stock View', () => {
     expect(accept).toContain('image/jpeg');
     expect(accept).toContain('image/png');
 
-    // Testbild setzen
+    // Testbild setzen → onchange-JS zeigt den Dateinamen an
     const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');
     await fileInput.setInputFiles(testImagePath);
+    const fileNameDisplay = page.locator('#photoFileNameDisplay');
+    await expect(fileNameDisplay).toContainText('test-fish.png', { timeout: 5_000 });
 
     // Kein Fehler in der Message-Area
-    const errorMessages = dialog.locator('.ui-messages-error');
+    const errorMessages = page.locator('#fishEntryMessages .ui-messages-error');
     await expect(errorMessages).not.toBeVisible({ timeout: 3_000 });
 
-    // Dialog per Escape schließen
-    await page.keyboard.press('Escape');
+    // Zurück per Abbruch
+    await cancelEntryPage(page);
   });
 
-  test('Foto-Upload: Thumbnail in Tabelle sichtbar, Vorschau im Edit-Dialog', async ({ page }) => {
+  test('Foto-Upload: Thumbnail in Tabelle sichtbar, Vorschau auf der Edit-Seite', async ({ page }) => {
     const fishName = `E2E-FotoTest-${Date.now()}`;
     const testImagePath = path.resolve(__dirname, 'fixtures', 'test-fish.png');
 
     // ── 1. Fisch anlegen + Foto hochladen ──
-    const dialog = await openAddFishDialog(page);
+    await openAddFishPage(page);
+    await fillRequiredEntryFields(page, fishName, todayStr());
 
-    const commonNameInput = dialog.locator('[id$="commonName"]');
-    await commonNameInput.fill(fishName);
-
-    const dateInput = dialog.locator('[id$="addedOn_input"]');
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    await dateInput.fill(`${dd}.${mm}.${yyyy}`);
-    await commonNameInput.click();
-    await page.waitForTimeout(300);
-
-    // Foto setzen
-    const fileInput = dialog.locator('input[type="file"]');
+    // Foto setzen (wird nach dem Speichern per fetch POST /secured/fishPhoto hochgeladen)
+    const fileInput = page.locator('#photoFileInput');
     await fileInput.setInputFiles(testImagePath);
 
-    // Speichern
-    const saveButton = dialog.locator('button').filter({ hasText: /speicher|save/i });
-    await saveButton.scrollIntoViewIfNeeded();
-    await expect(saveButton).toBeVisible({ timeout: 5_000 });
-    // force:true wegen potentiellem PrimeFaces DatePicker-Overlay (z-index Bug)
-    await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 15_000 },
-      ),
-      saveButton.click({ force: true }),
-    ]);
-    await page.waitForLoadState('networkidle');
-    await expect(dialog).not.toBeVisible({ timeout: 10_000 });
+    await saveEntryPage(page);
     await expect(page.locator('#fishStockForm')).toContainText(fishName, { timeout: 10_000 });
 
     // ── 2. Thumbnail in "Currently in Tank"-Tabelle prüfen ──
-    const fishRow = page.locator('tr').filter({ hasText: fishName }).first();
+    const fishRow = page.locator('#fishStockForm tr').filter({ hasText: fishName }).first();
     await expect(fishRow).toBeVisible({ timeout: 5_000 });
 
-    // KERN-ASSERTION 1: <img> statt pi-image-Icon — das Thumbnail muss sichtbar sein
+    // KERN-ASSERTION 1: <img> statt Placeholder — das Thumbnail muss sichtbar sein
     const thumbnail = fishRow.locator('img');
     await expect(thumbnail).toBeVisible({ timeout: 8_000 });
 
@@ -437,22 +420,11 @@ test.describe('Fish Stock View', () => {
     expect(styles.display).not.toBe('none');
     expect(styles.src).toContain('fishPhoto');
 
-    // ── 3. Edit-Dialog öffnen — Foto-Vorschau muss sichtbar sein ──
-    const editButton = fishRow.locator('button').filter({ has: page.locator('.pi-pencil') });
-    await Promise.all([
-      page.waitForResponse(resp =>
-          resp.url().includes('fishStockView') && resp.status() === 200
-          && resp.request().method() === 'POST',
-        { timeout: 10_000 },
-      ),
-      editButton.click(),
-    ]);
+    // ── 3. Edit-Page öffnen — Foto-Vorschau muss sichtbar sein ──
+    await openEditFishPage(page, fishName);
 
-    const editDialog = page.locator('.ui-dialog').filter({ hasText: /bearbeiten|edit/i }).first();
-    await expect(editDialog).toBeVisible({ timeout: 10_000 });
-
-    // KERN-ASSERTION 2: Foto-Vorschau im Edit-Dialog sichtbar (id="currentPhotoPreview")
-    const photoPreview = editDialog.locator('[id$="currentPhotoPreview"]');
+    // KERN-ASSERTION 2: Foto-Vorschau auf der Edit-Seite sichtbar (id="currentPhotoPreview")
+    const photoPreview = page.locator('[id$="currentPhotoPreview"]');
     await expect(photoPreview).toBeVisible({ timeout: 8_000 });
 
     // Auch per computed styles validieren (AGENTS.md)
@@ -467,25 +439,19 @@ test.describe('Fish Stock View', () => {
     expect(previewStyles.width).not.toBe('0px');
     expect(previewStyles.height).not.toBe('0px');
 
-    await page.keyboard.press('Escape');
-    await expect(editDialog).not.toBeVisible({ timeout: 5_000 });
+    await cancelEntryPage(page);
 
     // ── Cleanup ──
-    const fishRowCleanup = page.locator('tr').filter({ hasText: fishName }).first();
-    if (await fishRowCleanup.isVisible()) {
-      await fishRowCleanup.locator('button').filter({ has: page.locator('.pi-trash') }).click();
-      await page.waitForLoadState('networkidle');
-      await expect(page.locator('#fishStockForm')).not.toContainText(fishName, { timeout: 10_000 });
-    }
+    await deleteFish(page, fishName);
   });
 
   // ── Katalog-Vorschlag ──────────────────────────────────────
 
   test('Katalog-Vorschlag: Link navigiert zur Proposal-Seite mit i18n-Tabs', async ({ page }) => {
-    const dialog = await openAddFishDialog(page);
+    await openAddFishPage(page);
 
     // "Neuen Katalogeintrag vorschlagen"-Link finden
-    const proposalLink = dialog.locator('a').filter({ hasText: /vorschlagen|propose/i });
+    const proposalLink = page.locator('#fishEntryForm a').filter({ hasText: /vorschlagen|propose/i });
     await expect(proposalLink).toBeVisible();
 
     // href prüfen
@@ -565,10 +531,10 @@ test.describe('Fish Stock View', () => {
   // ── Katalog-Suche (AutoComplete) ────────────────────────────
 
   test('Katalog-Suche: AutoComplete-Feld reagiert auf Eingabe ohne Fehler', async ({ page }) => {
-    const dialog = await openAddFishDialog(page);
+    await openAddFishPage(page);
 
     // AutoComplete-Input finden
-    const acInput = dialog.locator('[id$="catalogueSearch_input"]');
+    const acInput = page.locator('#fishEntryForm [id$="catalogueSearch_input"]');
     await expect(acInput).toBeVisible();
 
     // Mindestens 2 Zeichen tippen → AJAX-Suche
@@ -586,8 +552,8 @@ test.describe('Fish Stock View', () => {
     // Kein Server-Fehler
     await expect(page.locator('body')).not.toContainText('500');
 
-    // Dialog per Escape schließen
-    await page.keyboard.press('Escape');
+    // Zurück per Abbruch
+    await cancelEntryPage(page);
   });
 
 });
