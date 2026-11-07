@@ -10,7 +10,7 @@
 
     <groupId>de.bluewhale</groupId>
     <artifactId>sabi-webclient</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
     <name>sabi-webclient</name>
     <description>A JSF based webclient for sabi.</description>
@@ -56,7 +56,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>25</java.version>
         <joinfaces.version>6.1.2</joinfaces.version>
-        <sabi.boundary.version>1.2.17</sabi.boundary.version>
+        <sabi.boundary.version>1.2.18</sabi.boundary.version>
         <passay.version>2.0.0</passay.version>
         <cyclonedx.maven.plugin.version>2.9.3</cyclonedx.maven.plugin.version>
         <owasp.plugin.version>13.0.0</owasp.plugin.version>

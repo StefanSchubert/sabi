@@ -98,7 +98,7 @@ public class ReefDataExportServiceTest {
     @MockitoBean
     private TankMaintenanceProfileRepository tankMaintenanceProfileRepository;
     @MockitoBean
-    private WaterChangeRepository waterChangeRepository;
+    private MaintenanceEventRepository maintenanceEventRepository;
 
     private static final TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
@@ -321,22 +321,24 @@ public class ReefDataExportServiceTest {
         profile.setCarbonMode(CarbonMode.INTERVAL);
         profile.setCarbonReplacementIntervalDays(28);
 
-        WaterChangeEntity newer = new WaterChangeEntity();
+        MaintenanceEventEntity newer = new MaintenanceEventEntity();
         newer.setAquariumId(aquarium.getId());
+        newer.setMaintenanceType("WATER_CHANGE");
         newer.setChangedOn(LocalDate.of(2026, 10, 20));
         newer.setPercentage(25);
         newer.setNote("partial change");
 
-        WaterChangeEntity older = new WaterChangeEntity();
+        MaintenanceEventEntity older = new MaintenanceEventEntity();
         older.setAquariumId(aquarium.getId());
+        older.setMaintenanceType("CARBON_REPLACEMENT");
         older.setChangedOn(LocalDate.of(2026, 10, 3));
-        older.setPercentage(50);
+        older.setPercentage(null);
         older.setNote(null);
 
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
         given(tankMaintenanceProfileRepository.findByAquariumId(aquarium.getId())).willReturn(Optional.of(profile));
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId()))
+        given(maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId()))
                 .willReturn(List.of(newer, older));
 
         ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
@@ -345,18 +347,20 @@ public class ReefDataExportServiceTest {
         assertNotNull(maintenance, "maintenance block must be present (FR-016)");
 
         // regular interval: exact values
-        assertNotNull(maintenance.getWaterChanges().getRegularInterval());
-        assertEquals(21, maintenance.getWaterChanges().getRegularInterval().getIntervalDays());
-        assertEquals(25, maintenance.getWaterChanges().getRegularInterval().getPercentage());
+        assertNotNull(maintenance.getRegularInterval());
+        assertEquals(21, maintenance.getRegularInterval().getIntervalDays());
+        assertEquals(25, maintenance.getRegularInterval().getPercentage());
 
-        // records: newest first, ISO-8601 date-only, note as entered / null when absent
-        assertEquals(2, maintenance.getWaterChanges().getRecords().size());
-        assertEquals("2026-10-20", maintenance.getWaterChanges().getRecords().get(0).getDate());
-        assertEquals(25, maintenance.getWaterChanges().getRecords().get(0).getPercentage());
-        assertEquals("partial change", maintenance.getWaterChanges().getRecords().get(0).getNote());
-        assertEquals("2026-10-03", maintenance.getWaterChanges().getRecords().get(1).getDate());
-        assertEquals(50, maintenance.getWaterChanges().getRecords().get(1).getPercentage());
-        assertNull(maintenance.getWaterChanges().getRecords().get(1).getNote());
+        // events: newest first, ISO-8601 date-only, note as entered / null when absent
+        assertEquals(2, maintenance.getEvents().size());
+        assertEquals("WATER_CHANGE", maintenance.getEvents().get(0).getType());
+        assertEquals("2026-10-20", maintenance.getEvents().get(0).getDate());
+        assertEquals(25, maintenance.getEvents().get(0).getPercentage());
+        assertEquals("partial change", maintenance.getEvents().get(0).getNote());
+        assertEquals("CARBON_REPLACEMENT", maintenance.getEvents().get(1).getType());
+        assertEquals("2026-10-03", maintenance.getEvents().get(1).getDate());
+        assertNull(maintenance.getEvents().get(1).getPercentage(), "carbon replacements carry no percentage");
+        assertNull(maintenance.getEvents().get(1).getNote());
 
         // activated carbon: INTERVAL mode with replacement interval
         assertTrue(maintenance.getActivatedCarbon().getEnabled());
@@ -372,14 +376,14 @@ public class ReefDataExportServiceTest {
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
         given(tankMaintenanceProfileRepository.findByAquariumId(aquarium.getId())).willReturn(Optional.empty());
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId())).willReturn(List.of());
+        given(maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId())).willReturn(List.of());
 
         ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
 
         MaintenanceExportTo maintenance = result.getAquariums().getFirst().getMaintenance();
         assertNotNull(maintenance, "maintenance block must always be present (FR-016)");
-        assertNull(maintenance.getWaterChanges().getRegularInterval(), "regularInterval must be null without data");
-        assertTrue(maintenance.getWaterChanges().getRecords().isEmpty(), "records must be an empty list");
+        assertNull(maintenance.getRegularInterval(), "regularInterval must be null without data");
+        assertTrue(maintenance.getEvents().isEmpty(), "events must be an empty list");
         assertFalse(maintenance.getActivatedCarbon().getEnabled());
         assertNull(maintenance.getActivatedCarbon().getMode());
         assertNull(maintenance.getActivatedCarbon().getReplacementIntervalDays());
@@ -398,7 +402,7 @@ public class ReefDataExportServiceTest {
         given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
         given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
         given(tankMaintenanceProfileRepository.findByAquariumId(aquarium.getId())).willReturn(Optional.of(profile));
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId())).willReturn(List.of());
+        given(maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId())).willReturn(List.of());
 
         ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
 

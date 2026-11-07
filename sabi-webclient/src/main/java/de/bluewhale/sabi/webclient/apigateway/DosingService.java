@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 
 import java.io.Serializable;
@@ -23,4 +24,10 @@ public interface DosingService extends Serializable {
     DosingTo updateDosing(Long aquariumId, Long dosingId, DosingTo dosing, String token) throws BusinessException;
 
     void deleteDosing(Long aquariumId, Long dosingId, String token) throws BusinessException;
+
+    /**
+     * Distinct product names, categories and dosing methods the user has already recorded
+     * (autocomplete suggestions for the dosing form).
+     */
+    DosingSuggestionsTo getSuggestions(String token) throws BusinessException;
 }

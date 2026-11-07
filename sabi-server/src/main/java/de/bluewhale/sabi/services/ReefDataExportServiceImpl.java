@@ -98,7 +98,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     private TankMaintenanceProfileRepository tankMaintenanceProfileRepository;
 
     @Autowired
-    private WaterChangeRepository waterChangeRepository;
+    private MaintenanceEventRepository maintenanceEventRepository;
 
     // -------------------------------------------------------------------------
     // Public API
@@ -448,7 +448,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
     /**
      * Builds the per-aquarium maintenance export block (007, FR-013/FR-016).
      * The block is always returned: without data it carries a null regular interval,
-     * an empty records list and disabled activated carbon.
+     * an empty events list and disabled activated carbon.
      */
     private MaintenanceExportTo buildMaintenanceExport(Long aquariumId) {
         MaintenanceExportTo maintenance = new MaintenanceExportTo();
@@ -461,7 +461,7 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
                 RegularIntervalExportTo interval = new RegularIntervalExportTo();
                 interval.setIntervalDays(profile.getRegularIntervalDays());
                 interval.setPercentage(profile.getRegularPercentage());
-                maintenance.getWaterChanges().setRegularInterval(interval);
+                maintenance.setRegularInterval(interval);
             }
             if (Boolean.TRUE.equals(profile.getCarbonEnabled())) {
                 ActivatedCarbonExportTo carbon = maintenance.getActivatedCarbon();
@@ -475,13 +475,14 @@ public class ReefDataExportServiceImpl implements ReefDataExportService {
             }
         }
 
-        // Water change records, newest first (repository query)
-        for (WaterChangeEntity record : waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(aquariumId)) {
-            WaterChangeRecordExportTo rec = new WaterChangeRecordExportTo();
+        // Maintenance events (water changes + carbon replacements), newest first (repository query)
+        for (MaintenanceEventEntity record : maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquariumId)) {
+            MaintenanceEventRecordExportTo rec = new MaintenanceEventRecordExportTo();
+            rec.setType(record.getMaintenanceType());
             rec.setDate(record.getChangedOn() != null ? record.getChangedOn().toString() : null);
             rec.setPercentage(record.getPercentage());
             rec.setNote(record.getNote());
-            maintenance.getWaterChanges().getRecords().add(rec);
+            maintenance.getEvents().add(rec);
         }
 
         return maintenance;

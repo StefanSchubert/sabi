@@ -113,3 +113,9 @@ e2e/tests/maintenanceFlow.spec.ts              # NEW Playwright E2E (coralStockF
 ## Complexity Tracking
 
 > No Constitution Check violations — this section is intentionally empty (no justification needed).
+
+> **Addendum 2026-11-06 (rework)**: Post-delivery defect fixes generalized the event table
+> (`aquarium_maintenance` + `maintenance_type`), added carbon replacement events, dosing
+> autocomplete (`GET /api/tank/dosing/suggestions`) and session-based re-entry state.
+> Scope details in `tasks.md` ("Rework 2026-11-06"); the plan's architecture (dosing-feature
+> layering, gateway + request-scoped views, boundary DTOs) is unchanged.

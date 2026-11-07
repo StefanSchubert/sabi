@@ -7,11 +7,11 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import de.bluewhale.sabi.services.MaintenanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,8 +38,8 @@ import static de.bluewhale.sabi.api.HttpHeader.AUTH_TOKEN;
 
 /**
  * REST controller for the per-aquarium maintenance data: regular water exchange interval,
- * recorded water change events and the activated carbon setting. Ownership is enforced on
- * every endpoint, including reads (SC-006).
+ * recorded maintenance events (water changes and carbon replacements) and the activated carbon
+ * setting. Ownership is enforced on every endpoint, including reads (SC-006).
  */
 @RestController
 @RequestScope
@@ -52,7 +52,7 @@ public class MaintenanceController {
         this.maintenanceService = maintenanceService;
     }
 
-    @Operation(summary = "Return the full maintenance block (profile + water changes, newest first) for a tank.")
+    @Operation(summary = "Return the full maintenance block (profile + events, newest first) for a tank.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Maintenance block returned."),
             @ApiResponse(responseCode = "401", description = "Unauthorized."),
@@ -98,53 +98,55 @@ public class MaintenanceController {
         return errorOr(result, HttpStatus.OK);
     }
 
-    @Operation(summary = "Create a water change record for a tank. Back-dating allowed, future dates rejected.")
+    @Operation(summary = "Create a maintenance event for a tank (water change or carbon replacement). "
+            + "Back-dating allowed, future dates rejected.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Water change record created."),
-            @ApiResponse(responseCode = "400", description = "Invalid water change payload (date, percentage range, note length)."),
+            @ApiResponse(responseCode = "201", description = "Maintenance event created."),
+            @ApiResponse(responseCode = "400", description = "Invalid event payload (date, type-specific percentage rules, note length)."),
             @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user.")
     })
-    @PostMapping(value = "/{tankId}/maintenance/water-changes", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/{tankId}/maintenance/events", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WaterChangeTo> createWaterChange(
+    public ResponseEntity<MaintenanceEventTo> createMaintenanceEvent(
             @RequestHeader(name = AUTH_TOKEN, required = true) String token,
-            @PathVariable Long tankId, @RequestBody @Valid WaterChangeTo waterChangeTo, Principal principal) {
-        ResultTo<WaterChangeTo> result = maintenanceService.createWaterChange(tankId, waterChangeTo, principal.getName());
+            @PathVariable Long tankId, @RequestBody @Valid MaintenanceEventTo eventTo, Principal principal) {
+        ResultTo<MaintenanceEventTo> result = maintenanceService.createMaintenanceEvent(tankId, eventTo, principal.getName());
         return errorOr(result, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Update an existing water change record of a tank. The client must echo the optlock version.")
+    @Operation(summary = "Update an existing maintenance event of a tank. The client must echo the optlock version. "
+            + "The maintenance type of a record cannot be changed.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Water change record updated."),
-            @ApiResponse(responseCode = "400", description = "Invalid water change payload (date, percentage range, note length)."),
+            @ApiResponse(responseCode = "200", description = "Maintenance event updated."),
+            @ApiResponse(responseCode = "400", description = "Invalid event payload (date, type-specific percentage rules, note length)."),
             @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user or record was not found."),
             @ApiResponse(responseCode = "409", description = "Optimistic locking conflict.")
     })
-    @PutMapping(value = "/{tankId}/maintenance/water-changes/{recordId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PutMapping(value = "/{tankId}/maintenance/events/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WaterChangeTo> updateWaterChange(
+    public ResponseEntity<MaintenanceEventTo> updateMaintenanceEvent(
             @RequestHeader(name = AUTH_TOKEN, required = true) String token,
-            @PathVariable Long tankId, @PathVariable Long recordId,
-            @RequestBody @Valid WaterChangeTo waterChangeTo, Principal principal) {
+            @PathVariable Long tankId, @PathVariable Long eventId,
+            @RequestBody @Valid MaintenanceEventTo eventTo, Principal principal) {
         try {
-            ResultTo<WaterChangeTo> result =
-                    maintenanceService.updateWaterChange(tankId, recordId, waterChangeTo, principal.getName());
+            ResultTo<MaintenanceEventTo> result =
+                    maintenanceService.updateMaintenanceEvent(tankId, eventId, eventTo, principal.getName());
             return errorOr(result, HttpStatus.OK);
         } catch (ObjectOptimisticLockingFailureException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
-    @Operation(summary = "Delete a water change record of a tank.")
+    @Operation(summary = "Delete a maintenance event of a tank.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Water change record deleted."),
+            @ApiResponse(responseCode = "200", description = "Maintenance event deleted."),
             @ApiResponse(responseCode = "403", description = "Aquarium does not belong to user or record was not found.")
     })
-    @DeleteMapping(value = "/{tankId}/maintenance/water-changes/{recordId}")
-    public ResponseEntity<Void> deleteWaterChange(
+    @DeleteMapping(value = "/{tankId}/maintenance/events/{eventId}")
+    public ResponseEntity<Void> deleteMaintenanceEvent(
             @RequestHeader(name = AUTH_TOKEN, required = true) String token,
-            @PathVariable Long tankId, @PathVariable Long recordId, Principal principal) {
-        ResultTo<WaterChangeTo> result = maintenanceService.deleteWaterChange(tankId, recordId, principal.getName());
+            @PathVariable Long tankId, @PathVariable Long eventId, Principal principal) {
+        ResultTo<MaintenanceEventTo> result = maintenanceService.deleteMaintenanceEvent(tankId, eventId, principal.getName());
         if (Message.CATEGORY.ERROR.equals(result.getMessage().getType())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

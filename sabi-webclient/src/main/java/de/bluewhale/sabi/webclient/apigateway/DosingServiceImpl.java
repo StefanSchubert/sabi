@@ -9,6 +9,7 @@ import tools.jackson.core.JacksonException;
 import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import jakarta.inject.Named;
@@ -64,6 +65,18 @@ public class DosingServiceImpl extends APIServiceImpl implements DosingService {
         } catch (RestClientException e) {
             log.error("Failed to delete dosing_id={} for aquarium_id={}", dosingId, aquariumId, e);
             throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
+        }
+    }
+
+    @Override
+    public DosingSuggestionsTo getSuggestions(String token) throws BusinessException {
+        String uri = sabiBackendUrl + Endpoint.TANKS.getPath() + "/dosing/suggestions";
+        ResponseEntity<String> response = getAPIResponseFor(uri, token, HttpMethod.GET);
+        try {
+            return objectMapper.readValue(response.getBody(), DosingSuggestionsTo.class);
+        } catch (JacksonException e) {
+            log.error("Failed to parse dosing suggestions", e);
+            throw new BusinessException(CommonExceptionCodes.INTERNAL_ERROR);
         }
     }
 

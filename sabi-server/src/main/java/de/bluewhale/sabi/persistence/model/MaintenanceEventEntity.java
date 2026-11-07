@@ -18,13 +18,14 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 
 /**
- * JPA entity for a recorded water change event (date-only precision, back-dating allowed).
+ * JPA entity for a recorded maintenance event (date-only precision, back-dating allowed).
+ * Water changes carry a percentage of the tank volume; carbon replacements have a NULL percentage.
  */
-@Table(name = "aquarium_water_change", schema = "sabi")
+@Table(name = "aquarium_maintenance", schema = "sabi")
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class WaterChangeEntity extends Auditable {
+public class MaintenanceEventEntity extends Auditable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -36,11 +37,15 @@ public class WaterChangeEntity extends Auditable {
     @Basic
     private Long aquariumId;
 
+    @Column(name = "maintenance_type", nullable = false, length = 32)
+    @Basic
+    private String maintenanceType;
+
     @Column(name = "changed_on", nullable = false)
     @Basic
     private LocalDate changedOn;
 
-    @Column(name = "percentage", nullable = false)
+    @Column(name = "percentage")
     @Basic
     private Integer percentage;
 

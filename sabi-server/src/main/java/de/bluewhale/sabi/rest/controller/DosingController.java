@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.exception.Message;
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.services.DosingService;
@@ -57,6 +58,17 @@ public class DosingController {
             @RequestHeader(name = AUTH_TOKEN, required = true) String token,
             @PathVariable Long tankId, Principal principal) {
         return ResponseEntity.ok(dosingService.listDosingsForTank(tankId, principal.getName()));
+    }
+
+    @Operation(summary = "Distinct product names, categories and dosing methods the user has already recorded "
+            + "(autocomplete suggestions for the dosing form).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Suggestions returned.")
+    })
+    @GetMapping(value = "/dosing/suggestions", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DosingSuggestionsTo> getSuggestions(
+            @RequestHeader(name = AUTH_TOKEN, required = true) String token, Principal principal) {
+        return ResponseEntity.ok(dosingService.getSuggestions(principal.getName()));
     }
 
     @Operation(summary = "Create a standalone dosing record.")

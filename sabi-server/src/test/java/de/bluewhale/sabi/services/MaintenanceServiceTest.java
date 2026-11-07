@@ -9,19 +9,20 @@ import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.MaintenanceMapperImpl;
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
 import de.bluewhale.sabi.model.CarbonMode;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
+import de.bluewhale.sabi.model.MaintenanceEventType;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.MaintenanceEventEntity;
 import de.bluewhale.sabi.persistence.model.TankMaintenanceProfileEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.persistence.model.WaterChangeEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
+import de.bluewhale.sabi.persistence.repositories.MaintenanceEventRepository;
 import de.bluewhale.sabi.persistence.repositories.TankMaintenanceProfileRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import de.bluewhale.sabi.persistence.repositories.WaterChangeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class MaintenanceServiceTest {
     TankMaintenanceProfileRepository profileRepository;
 
     @Mock
-    WaterChangeRepository waterChangeRepository;
+    MaintenanceEventRepository eventRepository;
 
     @Mock
     AquariumRepository aquariumRepository;
@@ -70,7 +71,7 @@ class MaintenanceServiceTest {
 
     @BeforeEach
     void setUp() {
-        maintenanceService = new MaintenanceServiceImpl(profileRepository, waterChangeRepository,
+        maintenanceService = new MaintenanceServiceImpl(profileRepository, eventRepository,
                 aquariumRepository, userRepository, new MaintenanceMapperImpl());
     }
 
@@ -85,18 +86,18 @@ class MaintenanceServiceTest {
 
         assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
         assertNull(result.getValue());
-        verify(waterChangeRepository, never()).findByAquariumIdOrderByChangedOnDesc(any());
+        verify(eventRepository, never()).findByAquariumIdOrderByChangedOnDesc(any());
     }
 
     @Test
-    void createWaterChange_forForeignAquarium_returnsErrorAndNeverSaves() {
+    void createMaintenanceEvent_forForeignAquarium_returnsErrorAndNeverSaves() {
         given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(null);
 
-        ResultTo<WaterChangeTo> result = maintenanceService.createWaterChange(AQUARIUM_ID, validWaterChange(), USER_EMAIL);
+        ResultTo<MaintenanceEventTo> result = maintenanceService.createMaintenanceEvent(AQUARIUM_ID, validWaterChange(), USER_EMAIL);
 
         assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
-        verify(waterChangeRepository, never()).saveAndFlush(any());
+        verify(eventRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -122,40 +123,40 @@ class MaintenanceServiceTest {
     }
 
     @Test
-    void updateWaterChange_recordNotInThisTank_returnsErrorAndNeverSaves() {
+    void updateMaintenanceEvent_recordNotInThisTank_returnsErrorAndNeverSaves() {
         given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
-        given(waterChangeRepository.findByIdAndAquariumId(77L, AQUARIUM_ID)).willReturn(Optional.empty());
+        given(eventRepository.findByIdAndAquariumId(77L, AQUARIUM_ID)).willReturn(Optional.empty());
 
-        ResultTo<WaterChangeTo> result = maintenanceService.updateWaterChange(AQUARIUM_ID, 77L, validWaterChange(), USER_EMAIL);
+        ResultTo<MaintenanceEventTo> result = maintenanceService.updateMaintenanceEvent(AQUARIUM_ID, 77L, validWaterChange(), USER_EMAIL);
 
         assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
-        verify(waterChangeRepository, never()).save(any());
+        verify(eventRepository, never()).save(any());
     }
 
     @Test
-    void deleteWaterChange_recordNotInThisTank_returnsErrorAndNeverDeletes() {
+    void deleteMaintenanceEvent_recordNotInThisTank_returnsErrorAndNeverDeletes() {
         given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
-        given(waterChangeRepository.findByIdAndAquariumId(77L, AQUARIUM_ID)).willReturn(Optional.empty());
+        given(eventRepository.findByIdAndAquariumId(77L, AQUARIUM_ID)).willReturn(Optional.empty());
 
-        ResultTo<WaterChangeTo> result = maintenanceService.deleteWaterChange(AQUARIUM_ID, 77L, USER_EMAIL);
+        ResultTo<MaintenanceEventTo> result = maintenanceService.deleteMaintenanceEvent(AQUARIUM_ID, 77L, USER_EMAIL);
 
         assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
-        verify(waterChangeRepository, never()).delete(any());
+        verify(eventRepository, never()).delete(any());
     }
 
-    // ---- read: profile + records, defaults when no profile row ----
+    // ---- read: profile + events, defaults when no profile row ----
 
     @Test
-    void getMaintenanceForTank_asOwner_returnsProfileAndWaterChanges() {
+    void getMaintenanceForTank_asOwner_returnsProfileAndEvents() {
         given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
         given(profileRepository.findByAquariumId(AQUARIUM_ID))
                 .willReturn(Optional.of(profile(21, 25, true, CarbonMode.INTERVAL, 28)));
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of(
-                waterChange(1L, LocalDate.of(2026, 10, 20), 25, "partial change"),
-                waterChange(2L, LocalDate.of(2026, 10, 3), 50, null)));
+        given(eventRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of(
+                maintenanceEvent(1L, MaintenanceEventType.WATER_CHANGE, LocalDate.of(2026, 10, 20), 25, "partial change"),
+                maintenanceEvent(2L, MaintenanceEventType.CARBON_REPLACEMENT, LocalDate.of(2026, 10, 3), null, "new filter media")));
 
         ResultTo<MaintenanceTo> result = maintenanceService.getMaintenanceForTank(AQUARIUM_ID, USER_EMAIL);
 
@@ -166,9 +167,12 @@ class MaintenanceServiceTest {
         assertTrue(to.getProfile().getCarbonEnabled());
         assertEquals(CarbonMode.INTERVAL, to.getProfile().getCarbonMode());
         assertEquals(28, to.getProfile().getCarbonReplacementIntervalDays());
-        assertEquals(2, to.getWaterChanges().size());
-        assertEquals(LocalDate.of(2026, 10, 20), to.getWaterChanges().get(0).getChangedOn());
-        assertEquals("partial change", to.getWaterChanges().get(0).getNote());
+        assertEquals(2, to.getEvents().size());
+        assertEquals(MaintenanceEventType.WATER_CHANGE, to.getEvents().get(0).getMaintenanceType());
+        assertEquals(LocalDate.of(2026, 10, 20), to.getEvents().get(0).getChangedOn());
+        assertEquals("partial change", to.getEvents().get(0).getNote());
+        assertEquals(MaintenanceEventType.CARBON_REPLACEMENT, to.getEvents().get(1).getMaintenanceType());
+        assertNull(to.getEvents().get(1).getPercentage());
     }
 
     @Test
@@ -176,7 +180,7 @@ class MaintenanceServiceTest {
         given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
         given(profileRepository.findByAquariumId(AQUARIUM_ID)).willReturn(Optional.empty());
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of());
+        given(eventRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of());
 
         ResultTo<MaintenanceTo> result = maintenanceService.getMaintenanceForTank(AQUARIUM_ID, USER_EMAIL);
 
@@ -187,7 +191,7 @@ class MaintenanceServiceTest {
         assertFalse(profile.getCarbonEnabled());
         assertNull(profile.getCarbonMode());
         assertNull(profile.getCarbonReplacementIntervalDays());
-        assertTrue(result.getValue().getWaterChanges().isEmpty());
+        assertTrue(result.getValue().getEvents().isEmpty());
     }
 
     // ---- regular interval: upsert / clear / lazy profile creation ----
@@ -283,26 +287,26 @@ class MaintenanceServiceTest {
         assertNull(captor.getValue().getCarbonReplacementIntervalDays());
     }
 
-    // ---- water change records: path-derived aquariumId, trim-to-null ----
+    // ---- maintenance events: path-derived aquariumId, trim-to-null, type-specific rules ----
 
     @Test
     void createWaterChange_setsAquariumIdFromPathAndNormalizesNote() {
-        WaterChangeTo to = validWaterChange();
+        MaintenanceEventTo to = validWaterChange();
         to.setAquariumId(999L); // must be ignored, taken from the path
         to.setNote("   ");
 
         given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
         given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
-        given(waterChangeRepository.saveAndFlush(any())).willAnswer(invocation -> {
-            WaterChangeEntity entity = invocation.getArgument(0);
+        given(eventRepository.saveAndFlush(any())).willAnswer(invocation -> {
+            MaintenanceEventEntity entity = invocation.getArgument(0);
             entity.setId(42L);
             return entity;
         });
 
-        ResultTo<WaterChangeTo> result = maintenanceService.createWaterChange(AQUARIUM_ID, to, USER_EMAIL);
+        ResultTo<MaintenanceEventTo> result = maintenanceService.createMaintenanceEvent(AQUARIUM_ID, to, USER_EMAIL);
 
-        ArgumentCaptor<WaterChangeEntity> captor = ArgumentCaptor.forClass(WaterChangeEntity.class);
-        verify(waterChangeRepository).saveAndFlush(captor.capture());
+        ArgumentCaptor<MaintenanceEventEntity> captor = ArgumentCaptor.forClass(MaintenanceEventEntity.class);
+        verify(eventRepository).saveAndFlush(captor.capture());
         assertEquals(AQUARIUM_ID, captor.getValue().getAquariumId());
         assertNull(captor.getValue().getNote(), "blank note must be normalized to null");
         assertEquals(Message.CATEGORY.INFO, result.getMessage().getType());
@@ -310,9 +314,79 @@ class MaintenanceServiceTest {
     }
 
     @Test
-    void futureDatedWaterChange_failsValidationPredicate() {
-        WaterChangeTo to = new WaterChangeTo();
+    void createCarbonReplacement_neverPersistsAPercentage() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.CARBON_REPLACEMENT);
+        to.setChangedOn(LocalDate.of(2026, 10, 26));
+        to.setPercentage(50); // must be stripped by the service
+
+        given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
+        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
+        given(eventRepository.saveAndFlush(any())).willAnswer(invocation -> {
+            MaintenanceEventEntity entity = invocation.getArgument(0);
+            entity.setId(43L);
+            return entity;
+        });
+
+        ResultTo<MaintenanceEventTo> result = maintenanceService.createMaintenanceEvent(AQUARIUM_ID, to, USER_EMAIL);
+
+        ArgumentCaptor<MaintenanceEventEntity> captor = ArgumentCaptor.forClass(MaintenanceEventEntity.class);
+        verify(eventRepository).saveAndFlush(captor.capture());
+        assertNull(captor.getValue().getPercentage(), "carbon replacements must not carry a percentage");
+        assertEquals(MaintenanceEventType.CARBON_REPLACEMENT.name(), captor.getValue().getMaintenanceType());
+        assertEquals(Message.CATEGORY.INFO, result.getMessage().getType());
+    }
+
+    @Test
+    void updateWaterChange_withCarbonTypedPayload_missingPercentage_isRejected() {
+        MaintenanceEventEntity existing = maintenanceEvent(5L, MaintenanceEventType.WATER_CHANGE,
+                LocalDate.of(2026, 10, 20), 25, null);
+
+        given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
+        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
+        given(eventRepository.findByIdAndAquariumId(5L, AQUARIUM_ID)).willReturn(Optional.of(existing));
+
+        // Payload typed as CARBON_REPLACEMENT carries no percentage; the stored record is a
+        // WATER_CHANGE and must keep its percentage, so the update is rejected.
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.CARBON_REPLACEMENT);
+        to.setChangedOn(LocalDate.of(2026, 10, 21));
+
+        ResultTo<MaintenanceEventTo> result = maintenanceService.updateMaintenanceEvent(AQUARIUM_ID, 5L, to, USER_EMAIL);
+
+        assertEquals(Message.CATEGORY.ERROR, result.getMessage().getType());
+        verify(eventRepository, never()).save(any());
+    }
+
+    @Test
+    void updateCarbonReplacement_stripsPercentageFromPayload() {
+        MaintenanceEventEntity existing = maintenanceEvent(6L, MaintenanceEventType.CARBON_REPLACEMENT,
+                LocalDate.of(2026, 10, 20), null, "old media");
+
+        given(userRepository.getByEmail(USER_EMAIL)).willReturn(user(7L));
+        given(aquariumRepository.getAquariumEntityByIdAndUser_IdIs(AQUARIUM_ID, 7L)).willReturn(aquarium());
+        given(eventRepository.findByIdAndAquariumId(6L, AQUARIUM_ID)).willReturn(Optional.of(existing));
+        given(eventRepository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
+
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.CARBON_REPLACEMENT);
+        to.setChangedOn(LocalDate.of(2026, 10, 21));
+        to.setPercentage(30); // must be stripped
+
+        ResultTo<MaintenanceEventTo> result = maintenanceService.updateMaintenanceEvent(AQUARIUM_ID, 6L, to, USER_EMAIL);
+
+        ArgumentCaptor<MaintenanceEventEntity> captor = ArgumentCaptor.forClass(MaintenanceEventEntity.class);
+        verify(eventRepository).save(captor.capture());
+        assertNull(captor.getValue().getPercentage());
+        assertEquals(Message.CATEGORY.INFO, result.getMessage().getType());
+    }
+
+    @Test
+    void futureDatedMaintenanceEvent_failsValidationPredicate() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.WATER_CHANGE);
         to.setChangedOn(LocalDate.now().plusDays(1));
+        to.setPercentage(25);
 
         assertFalse(to.isChangedOnNotInFuture(), "future dates must fail the Bean Validation predicate (400 in the IT)");
     }
@@ -333,7 +407,7 @@ class MaintenanceServiceTest {
     }
 
     private TankMaintenanceProfileEntity profile(Integer intervalDays, Integer percentage,
-                                                 Boolean carbonEnabled, CarbonMode mode, Integer replacementDays) {
+                                                  Boolean carbonEnabled, CarbonMode mode, Integer replacementDays) {
         TankMaintenanceProfileEntity entity = new TankMaintenanceProfileEntity();
         entity.setId(5L);
         entity.setAquariumId(AQUARIUM_ID);
@@ -345,18 +419,21 @@ class MaintenanceServiceTest {
         return entity;
     }
 
-    private WaterChangeEntity waterChange(Long id, LocalDate changedOn, Integer percentage, String note) {
-        WaterChangeEntity entity = new WaterChangeEntity();
+    private MaintenanceEventEntity maintenanceEvent(Long id, MaintenanceEventType type, LocalDate changedOn,
+                                                    Integer percentage, String note) {
+        MaintenanceEventEntity entity = new MaintenanceEventEntity();
         entity.setId(id);
         entity.setAquariumId(AQUARIUM_ID);
+        entity.setMaintenanceType(type.name());
         entity.setChangedOn(changedOn);
         entity.setPercentage(percentage);
         entity.setNote(note);
         return entity;
     }
 
-    private WaterChangeTo validWaterChange() {
-        WaterChangeTo to = new WaterChangeTo();
+    private MaintenanceEventTo validWaterChange() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.WATER_CHANGE);
         to.setChangedOn(LocalDate.of(2026, 10, 26));
         to.setPercentage(25);
         return to;

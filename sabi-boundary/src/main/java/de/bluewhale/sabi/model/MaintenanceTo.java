@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * The complete maintenance block of an aquarium: the profile (regular interval + activated carbon)
- * and all recorded water change events, newest first.
+ * and all recorded maintenance events (water changes and carbon replacements), newest first.
  */
 @Data
 public class MaintenanceTo implements Serializable {
@@ -22,6 +22,6 @@ public class MaintenanceTo implements Serializable {
     @Schema(description = "The maintenance profile of the aquarium.")
     private MaintenanceProfileTo profile = new MaintenanceProfileTo();
 
-    @Schema(description = "Recorded water change events, newest first.")
-    private List<WaterChangeTo> waterChanges = new ArrayList<>();
+    @Schema(description = "Recorded maintenance events, newest first.")
+    private List<MaintenanceEventTo> events = new ArrayList<>();
 }

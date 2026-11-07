@@ -5,6 +5,7 @@
 
 package de.bluewhale.sabi.services;
 
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 import de.bluewhale.sabi.model.ResultTo;
 import jakarta.validation.constraints.NotNull;
@@ -32,4 +33,11 @@ public interface DosingService {
     @Transactional
     @NotNull
     ResultTo<DosingTo> deleteDosing(@NotNull Long aquariumId, @NotNull Long dosingId, @NotNull String userEmail);
+
+    /**
+     * Returns distinct product names, categories and dosing methods the user has already
+     * recorded in any of their active tanks, for use as autocomplete suggestions.
+     */
+    @NotNull
+    DosingSuggestionsTo getSuggestions(@NotNull String userEmail);
 }

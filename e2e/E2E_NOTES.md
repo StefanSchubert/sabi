@@ -33,6 +33,21 @@ Build: `cd sabi-webclient && mvn package -DskipTests` (~1 min). Run:
 4. **`networkidle` races with XHR dispatch.** The AJAX POST for a change event can be
    dispatched after `networkidle` is reached → always register
    `page.waitForResponse(...)` BEFORE the triggering click (`Promise.all` pattern).
+5. **Hidden `<select>` carries an `_input` suffix (live-verified 2026-11).** PF 15 renders
+   the hidden `<select>` with the client ID **plus `_input`** (e.g.
+   `dosingForm:aquarium_input`, `measureform:tankselection_input`) inside a
+   `.ui-helper-hidden-accessible` div (`tabindex="-1" aria-hidden="true"`). The menu
+   `<div>` keeps the plain client ID (`dosingForm:aquarium`), the label span is
+   `..._label`, the panel `[id$=":<field>_panel"]` is appended to `<body>`.
+   **Locator for the hidden select: `select[id$=":<field>_input"]`** —
+   `select[id$=":<field>"]` matches nothing ("element(s) not found").
+   Clicking the label opens the panel with NO POST; clicking an item fires the valueChange
+   POST. Items: `li.ui-selectonemenu-item`; option values are locale-independent (tank ID /
+   enum name). `p:autoComplete`: use `pressSequentially` (not `fill`) so keyup fires the
+   query; panel per field `[id$=":<field>_panel"]` (PF renders ONE panel per
+   autocomplete, all present in the DOM → a global `.ui-autocomplete-panel` locator
+   violates strict mode on forms with multiple autocompletes), items
+   `.ui-autocomplete-item`.
 
 **Decision (007-water-maintenance-tracking, 2026-11):** for pages under E2E test, use plain
 `<h:selectOneMenu>` (native `<select>`) instead of `p:selectOneMenu` where deterministic

@@ -1,6 +1,6 @@
 # History of changes (since 5/2022)
 
-## Next Release (unreleased — maintainer assigns the release number)
+## Release 1.4.1
 
 ### Feature
 

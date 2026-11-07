@@ -141,3 +141,8 @@
 | MariaDB + EclipseLink JPA + Flyway | per constitution | Schema evolution via new migration only (D11) |
 
 No new external dependencies are introduced by this feature (spec NFR Portability).
+
+> **Addendum 2026-11-06 (rework)**: The event table was generalized from `aquarium_water_change`
+> to `aquarium_maintenance` with a `maintenance_type` discriminator so that carbon replacements
+> are stored with the same mechanism as water changes (see `data-model.md` and `tasks.md`
+> "Rework 2026-11-06" for the full scope). No new dependencies were introduced by the rework.

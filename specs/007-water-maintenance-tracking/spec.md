@@ -135,7 +135,7 @@ A user downloads their AI chatbot data export. Each aquarium in the JSON now con
 
 **Acceptance Scenarios**:
 
-1. **Given** a user with maintenance data for at least one aquarium, **When** they download the AI export, **Then** each aquarium's data block contains a `maintenance` object with `waterChanges` (regular interval + records) and `activatedCarbon`.
+1. **Given** a user with maintenance data for at least one aquarium, **When** they download the AI export, **Then** each aquarium's data block contains a `maintenance` object with `regularInterval`, `events[]` (water changes + carbon replacements) and `activatedCarbon`.
 2. **Given** an aquarium with no maintenance data, **When** the user downloads the export, **Then** the `maintenance` block is still present with an empty records array, a null regular interval, and carbon disabled — no error is returned.
 3. **Given** the downloaded export, **When** inspecting the `maintenance` block, **Then** all field names are human-readable English (consistent with the existing export style), dates are ISO-8601, and no personal data appears.
 4. **Given** a recorded water change, **When** inspecting the export, **Then** it contains the date and the percentage of tank volume (and the note, if provided).
@@ -186,7 +186,8 @@ A user downloads their AI chatbot data export. Each aquarium in the JSON now con
 **AI-JSON Export Integration**
 
 - **FR-013**: The AI export MUST include a `maintenance` object in each aquarium's data block containing:
-  - `waterChanges`: an object with `regularInterval` (object `{intervalDays, percentage}` or `null`) and `records` (array of `{date, percentage, note}`, empty array when none);
+  - `regularInterval`: an object `{intervalDays, percentage}` or `null` when no regular interval is set;
+  - `events`: an array of `{type, date, percentage, note}` (`type` is `WATER_CHANGE` or `CARBON_REPLACEMENT`; `percentage` is `null` for carbon replacements), empty array when none;
   - `activatedCarbon`: an object `{enabled, mode, replacementIntervalDays}` where `mode` and `replacementIntervalDays` are `null` when disabled or in continuous mode.
   - No `supplements` field: supplement/dosing data is already exported in the existing top-level `dosings` array (see Clarifications 2026-10-26).
 - **FR-014**: The export MUST use human-readable English field names consistent with the existing export style, ISO-8601 dates, and MUST NOT contain any personal identifying data.

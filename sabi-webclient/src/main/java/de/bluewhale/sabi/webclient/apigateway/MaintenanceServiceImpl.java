@@ -10,10 +10,10 @@ import de.bluewhale.sabi.api.Endpoint;
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.exception.CommonExceptionCodes;
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import de.bluewhale.sabi.webclient.utils.RestHelper;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
@@ -63,35 +63,35 @@ public class MaintenanceServiceImpl extends APIServiceImpl implements Maintenanc
     }
 
     @Override
-    public WaterChangeTo createWaterChange(Long aquariumId, WaterChangeTo waterChange, String token)
+    public MaintenanceEventTo createMaintenanceEvent(Long aquariumId, MaintenanceEventTo event, String token)
             throws BusinessException {
-        return exchange(maintenanceUri(aquariumId) + "/water-changes", HttpMethod.POST,
-                aquariumId, waterChange, WaterChangeTo.class, token);
+        return exchange(maintenanceUri(aquariumId) + "/events", HttpMethod.POST,
+                aquariumId, event, MaintenanceEventTo.class, token);
     }
 
     @Override
-    public WaterChangeTo updateWaterChange(Long aquariumId, Long recordId, WaterChangeTo waterChange, String token)
+    public MaintenanceEventTo updateMaintenanceEvent(Long aquariumId, Long eventId, MaintenanceEventTo event, String token)
             throws BusinessException {
-        return exchange(maintenanceUri(aquariumId) + "/water-changes/" + recordId, HttpMethod.PUT,
-                aquariumId, waterChange, WaterChangeTo.class, token);
+        return exchange(maintenanceUri(aquariumId) + "/events/" + eventId, HttpMethod.PUT,
+                aquariumId, event, MaintenanceEventTo.class, token);
     }
 
     @Override
-    public void deleteWaterChange(Long aquariumId, Long recordId, String token) throws BusinessException {
+    public void deleteMaintenanceEvent(Long aquariumId, Long eventId, String token) throws BusinessException {
         try {
             HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
             ResponseEntity<String> response = new RestTemplate().exchange(
-                    maintenanceUri(aquariumId) + "/water-changes/" + recordId, HttpMethod.DELETE,
+                    maintenanceUri(aquariumId) + "/events/" + eventId, HttpMethod.DELETE,
                     new HttpEntity<>(headers), String.class);
             renewBackendToken(response);
         } catch (RestClientException e) {
-            log.error("Failed to delete water change record_id={} for aquarium_id={}", recordId, aquariumId, e);
+            log.error("Failed to delete maintenance event_id={} for aquarium_id={}", eventId, aquariumId, e);
             throw new BusinessException(CommonExceptionCodes.NETWORK_ERROR);
         }
     }
 
     private <T> T exchange(String uri, HttpMethod method, Long aquariumId, Object body,
-                           Class<T> responseType, String token) throws BusinessException {
+                            Class<T> responseType, String token) throws BusinessException {
         try {
             HttpHeaders headers = RestHelper.prepareAuthedHttpHeader(token);
             String json = objectMapper.writeValueAsString(body);

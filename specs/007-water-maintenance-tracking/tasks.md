@@ -248,6 +248,23 @@ With multiple developers:
 
 ---
 
+## Rework 2026-11-06 (post-delivery defect fixes)
+
+Five defects were reported against the delivered feature (commit `bc99e4a`) and fixed in a follow-up pass. The original task list above is historical; this addendum records the rework scope.
+
+- **R1 — Menu icon**: `header.xhtml` used `pi-tint`, which does not exist in PrimeIcons → replaced with `pi pi-wrench`.
+- **R2 — Data model**: event table generalized from `aquarium_water_change` to `aquarium_maintenance` with a `maintenance_type` discriminator (`WATER_CHANGE` | `CARBON_REPLACEMENT`); new migration `V1_8_0_16__generalizeAquariumMaintenance.sql` (rename + add column, `percentage` nullable). Boundary: `WaterChangeTo/Entity/Repository` → `MaintenanceEvent*`, new `MaintenanceEventType` enum, `MaintenanceTo.waterChanges` → `events`.
+- **R3 — Carbon replacement events**: carbon now supports regular interval (profile, unchanged) **plus** individual replacement events in the same events table; UI section "Carbon Replacements" in `maintenanceView.xhtml` (date + note, no percentage); API `/events` is type-generic with type-specific `@AssertTrue` validation (400).
+- **R4 — Dosing autocomplete**: product/category/method fields are `p:autoComplete` backed by new endpoint `GET /api/tank/dosing/suggestions` (user-scoped, active tanks, case-insensitive dedup); free text always allowed; suggestions refreshed after each successful save.
+- **R5 — Re-entry state**: last selected tank persisted in session-scoped `UserSession.lastSelectedTankId`; restored in DosingView, MaintenanceView and MeasurementListView (validated against the user's tanks).
+- **API**: `/maintenance/water-changes` → `/{tankId}/maintenance/events` (GET/POST) + `/{tankId}/maintenance/events/{eventId}` (PUT/DELETE); type fixed at creation, never merged on update.
+- **Export**: `MaintenanceExportTo` restructured to flat `regularInterval` + generic `events[]` + `activatedCarbon`; schema version stays `1.1` (block ships in 1.4.1, never released in the old shape — C-3 not triggered).
+- **Boundary**: version 1.2.17 → 1.2.18 in all three poms, `mvn install` + jar verified.
+- **Tests**: `MaintenanceServiceTest` 18/18, `ReefDataExportServiceTest` 6/6, `MaintenanceControllerIT` 24/24 (incl. new type-validation cases), `DosingControllerIT` 6/6 (3 new suggestions tests); full `sabi-server mvn test` green. Playwright: `maintenanceFlow.spec.ts` extended (4 sections + carbon replacement CRUD), new `dosingFlow.spec.ts` (re-entry + autocomplete) and `measureReentry.spec.ts`.
+- **Docs**: `data-model.md`, `contracts/maintenance-api.md`, `contracts/ai-export-maintenance-block.md` rewritten with dated rework notes; this addendum covers the historical files.
+
+---
+
 ## Notes
 
 - [P] tasks = different files, no dependencies

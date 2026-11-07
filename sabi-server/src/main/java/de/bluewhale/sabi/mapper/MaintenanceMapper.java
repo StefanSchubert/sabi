@@ -6,11 +6,12 @@
 package de.bluewhale.sabi.mapper;
 
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
+import de.bluewhale.sabi.model.MaintenanceEventType;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
+import de.bluewhale.sabi.persistence.model.MaintenanceEventEntity;
 import de.bluewhale.sabi.persistence.model.TankMaintenanceProfileEntity;
-import de.bluewhale.sabi.persistence.model.WaterChangeEntity;
 import jakarta.validation.constraints.NotNull;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -28,27 +29,37 @@ public interface MaintenanceMapper {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "aquariumId", source = "aquariumId")
+    @Mapping(target = "maintenanceType", source = "maintenanceType")
     @Mapping(target = "changedOn", source = "changedOn")
     @Mapping(target = "percentage", source = "percentage")
     @Mapping(target = "note", source = "note")
     @Mapping(target = "createdOn", source = "createdOn")
     @Mapping(target = "updatedOn", source = "lastmodOn")
     @Mapping(target = "optlock", source = "optlock")
-    WaterChangeTo mapEntityToTo(@NotNull WaterChangeEntity entity);
+    MaintenanceEventTo mapEntityToTo(@NotNull MaintenanceEventEntity entity);
 
-    List<WaterChangeTo> mapEntitiesToTos(@NotNull List<WaterChangeEntity> entities);
+    List<MaintenanceEventTo> mapEntitiesToTos(@NotNull List<MaintenanceEventEntity> entities);
 
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "maintenanceType", source = "maintenanceType")
+    @Mapping(target = "changedOn", source = "changedOn")
+    @Mapping(target = "percentage", source = "percentage")
+    @Mapping(target = "note", source = "note")
+    MaintenanceEventEntity mapToToEntity(@NotNull MaintenanceEventTo to);
+
+    /**
+     * Merges a PUT payload into an existing event. The maintenance type is intentionally
+     * NOT merged: the type of a recorded event is fixed at creation time.
+     */
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "changedOn", source = "changedOn")
     @Mapping(target = "percentage", source = "percentage")
     @Mapping(target = "note", source = "note")
-    WaterChangeEntity mapToToEntity(@NotNull WaterChangeTo to);
+    void mergeToIntoEntity(@NotNull MaintenanceEventTo to, @NotNull @MappingTarget MaintenanceEventEntity entity);
 
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "changedOn", source = "changedOn")
-    @Mapping(target = "percentage", source = "percentage")
-    @Mapping(target = "note", source = "note")
-    void mergeToIntoEntity(@NotNull WaterChangeTo to, @NotNull @MappingTarget WaterChangeEntity entity);
+    default MaintenanceEventType stringToMaintenanceType(String value) {
+        return value == null ? null : MaintenanceEventType.fromString(value);
+    }
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "regularIntervalDays", source = "regularIntervalDays")
@@ -62,12 +73,12 @@ public interface MaintenanceMapper {
     @Mapping(target = "regularIntervalDays", source = "intervalDays")
     @Mapping(target = "regularPercentage", source = "percentage")
     void mergeIntervalIntoEntity(@NotNull WaterChangeIntervalTo to,
-                                 @NotNull @MappingTarget TankMaintenanceProfileEntity entity);
+                                  @NotNull @MappingTarget TankMaintenanceProfileEntity entity);
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "carbonEnabled", source = "enabled")
     @Mapping(target = "carbonMode", source = "mode")
     @Mapping(target = "carbonReplacementIntervalDays", source = "replacementIntervalDays")
     void mergeCarbonIntoEntity(@NotNull ActivatedCarbonTo to,
-                               @NotNull @MappingTarget TankMaintenanceProfileEntity entity);
+                                @NotNull @MappingTarget TankMaintenanceProfileEntity entity);
 }

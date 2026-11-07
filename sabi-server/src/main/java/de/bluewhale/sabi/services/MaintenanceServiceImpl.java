@@ -8,19 +8,20 @@ package de.bluewhale.sabi.services;
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.MaintenanceMapper;
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
+import de.bluewhale.sabi.model.MaintenanceEventType;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.MaintenanceEventEntity;
 import de.bluewhale.sabi.persistence.model.TankMaintenanceProfileEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.persistence.model.WaterChangeEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
+import de.bluewhale.sabi.persistence.repositories.MaintenanceEventRepository;
 import de.bluewhale.sabi.persistence.repositories.TankMaintenanceProfileRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import de.bluewhale.sabi.persistence.repositories.WaterChangeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ import java.util.Optional;
 
 /**
  * Implements ownership-safe maintenance operations: regular water exchange interval, recorded
- * water change events and the activated carbon setting. Logging is PII-safe: only the
- * aquarium ID is logged, never the caller's email.
+ * maintenance events (water changes and carbon replacements) and the activated carbon setting.
+ * Logging is PII-safe: only the aquarium ID is logged, never the caller's email.
  */
 @Service
 @Transactional(readOnly = true)
@@ -40,18 +41,18 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     private static final Logger log = LoggerFactory.getLogger(MaintenanceServiceImpl.class);
 
     private final TankMaintenanceProfileRepository profileRepository;
-    private final WaterChangeRepository waterChangeRepository;
+    private final MaintenanceEventRepository eventRepository;
     private final AquariumRepository aquariumRepository;
     private final UserRepository userRepository;
     private final MaintenanceMapper maintenanceMapper;
 
     public MaintenanceServiceImpl(TankMaintenanceProfileRepository profileRepository,
-                                  WaterChangeRepository waterChangeRepository,
+                                  MaintenanceEventRepository eventRepository,
                                   AquariumRepository aquariumRepository,
                                   UserRepository userRepository,
                                   MaintenanceMapper maintenanceMapper) {
         this.profileRepository = profileRepository;
-        this.waterChangeRepository = waterChangeRepository;
+        this.eventRepository = eventRepository;
         this.aquariumRepository = aquariumRepository;
         this.userRepository = userRepository;
         this.maintenanceMapper = maintenanceMapper;
@@ -81,15 +82,15 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         maintenance.setProfile(profile
                 .map(maintenanceMapper::mapProfileEntityToTo)
                 .orElseGet(MaintenanceProfileTo::new));
-        maintenance.setWaterChanges(
-                maintenanceMapper.mapEntitiesToTos(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(aquariumId)));
+        maintenance.setEvents(
+                maintenanceMapper.mapEntitiesToTos(eventRepository.findByAquariumIdOrderByChangedOnDesc(aquariumId)));
         return new ResultTo<>(maintenance, Message.info(TankMessageCodes.UPDATE_SUCCEEDED));
     }
 
     @Override
     @Transactional
     public ResultTo<MaintenanceProfileTo> updateWaterChangeInterval(Long aquariumId, WaterChangeIntervalTo intervalTo,
-                                                                    String userEmail) {
+                                                                     String userEmail) {
         if (resolveOwnedAquarium(aquariumId, userEmail) == null) {
             logRejectedAccess(aquariumId);
             return ownershipError(aquariumId);
@@ -104,7 +105,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     @Override
     @Transactional
     public ResultTo<MaintenanceProfileTo> updateActivatedCarbon(Long aquariumId, ActivatedCarbonTo carbonTo,
-                                                                String userEmail) {
+                                                                 String userEmail) {
         if (resolveOwnedAquarium(aquariumId, userEmail) == null) {
             logRejectedAccess(aquariumId);
             return ownershipError(aquariumId);
@@ -124,60 +125,69 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     @Transactional
-    public ResultTo<WaterChangeTo> createWaterChange(Long aquariumId, WaterChangeTo waterChangeTo, String userEmail) {
+    public ResultTo<MaintenanceEventTo> createMaintenanceEvent(Long aquariumId, MaintenanceEventTo eventTo,
+                                                                String userEmail) {
         if (resolveOwnedAquarium(aquariumId, userEmail) == null) {
             logRejectedAccess(aquariumId);
             return ownershipError(aquariumId);
         }
 
-        WaterChangeEntity entity = maintenanceMapper.mapToToEntity(waterChangeTo);
+        MaintenanceEventEntity entity = maintenanceMapper.mapToToEntity(eventTo);
         entity.setId(null);
         entity.setAquariumId(aquariumId); // always taken from the path, never from the body
         normalize(entity);
         // saveAndFlush (not save): EclipseLink defers the IDENTITY insert to flush time, so with
         // plain save() the generated id is still null when we map the entity to the response TO.
         // The contract (maintenance-api.md) requires the 201 body to carry the id.
-        WaterChangeEntity saved = waterChangeRepository.saveAndFlush(entity);
+        MaintenanceEventEntity saved = eventRepository.saveAndFlush(entity);
         return new ResultTo<>(maintenanceMapper.mapEntityToTo(saved), Message.info(TankMessageCodes.CREATE_SUCCEEDED));
     }
 
     @Override
     @Transactional
-    public ResultTo<WaterChangeTo> updateWaterChange(Long aquariumId, Long recordId, WaterChangeTo waterChangeTo,
-                                                     String userEmail) {
+    public ResultTo<MaintenanceEventTo> updateMaintenanceEvent(Long aquariumId, Long eventId, MaintenanceEventTo eventTo,
+                                                               String userEmail) {
         if (resolveOwnedAquarium(aquariumId, userEmail) == null) {
             logRejectedAccess(aquariumId);
             return ownershipError(aquariumId);
         }
 
-        Optional<WaterChangeEntity> existing = waterChangeRepository.findByIdAndAquariumId(recordId, aquariumId);
+        Optional<MaintenanceEventEntity> existing = eventRepository.findByIdAndAquariumId(eventId, aquariumId);
         if (existing.isEmpty()) {
             logRejectedAccess(aquariumId);
-            return ownershipError(recordId);
+            return ownershipError(eventId);
         }
 
-        WaterChangeEntity entity = existing.get();
-        maintenanceMapper.mergeToIntoEntity(waterChangeTo, entity);
+        MaintenanceEventEntity entity = existing.get();
+        maintenanceMapper.mergeToIntoEntity(eventTo, entity);
         normalize(entity);
-        WaterChangeEntity saved = waterChangeRepository.save(entity);
+        if (MaintenanceEventType.WATER_CHANGE.name().equals(entity.getMaintenanceType()) && entity.getPercentage() == null) {
+            // A water change must keep its percentage. This happens when the payload was typed as
+            // CARBON_REPLACEMENT (no percentage) but targets a WATER_CHANGE record.
+            log.warn("Rejected maintenance event update: missing percentage on water change, aquarium_id={}, event_id={}",
+                    aquariumId, eventId);
+            return ownershipError(eventId);
+        }
+
+        MaintenanceEventEntity saved = eventRepository.save(entity);
         return new ResultTo<>(maintenanceMapper.mapEntityToTo(saved), Message.info(TankMessageCodes.UPDATE_SUCCEEDED));
     }
 
     @Override
     @Transactional
-    public ResultTo<WaterChangeTo> deleteWaterChange(Long aquariumId, Long recordId, String userEmail) {
+    public ResultTo<MaintenanceEventTo> deleteMaintenanceEvent(Long aquariumId, Long eventId, String userEmail) {
         if (resolveOwnedAquarium(aquariumId, userEmail) == null) {
             logRejectedAccess(aquariumId);
             return ownershipError(aquariumId);
         }
 
-        Optional<WaterChangeEntity> existing = waterChangeRepository.findByIdAndAquariumId(recordId, aquariumId);
+        Optional<MaintenanceEventEntity> existing = eventRepository.findByIdAndAquariumId(eventId, aquariumId);
         if (existing.isEmpty()) {
             logRejectedAccess(aquariumId);
-            return ownershipError(recordId);
+            return ownershipError(eventId);
         }
 
-        waterChangeRepository.delete(existing.get());
+        eventRepository.delete(existing.get());
         return new ResultTo<>(null, Message.info(TankMessageCodes.REMOVAL_SUCCEEDED));
     }
 
@@ -194,8 +204,12 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         return new ResultTo<>(null, Message.error(TankMessageCodes.NOT_YOUR_TANK, id));
     }
 
-    private void normalize(WaterChangeEntity entity) {
+    private void normalize(MaintenanceEventEntity entity) {
         entity.setNote(trimToNull(entity.getNote()));
+        if (MaintenanceEventType.CARBON_REPLACEMENT.name().equals(entity.getMaintenanceType())) {
+            // Carbon replacements never carry a percentage, even if the client sent one.
+            entity.setPercentage(null);
+        }
     }
 
     private String trimToNull(String value) {

@@ -39,8 +39,8 @@ Runnable validation scenarios proving the feature works end-to-end. Implementati
 1. With the data from Scenarios 1+3 in place, open User Profile → download the AI export (`sabi-reef-data-YYYY-MM-DD.json`).
 2. Verify per the contract in [contracts/ai-export-maintenance-block.md](contracts/ai-export-maintenance-block.md):
    - `_meta.sabiSchemaVersion` == `"1.1"`.
-   - Every aquarium block contains `maintenance` with `waterChanges.regularInterval`, `waterChanges.records[]` (date/percentage/note, newest first) and `activatedCarbon` — values exactly as entered.
-   - An aquarium **without** maintenance data still has the full block with `regularInterval: null`, `records: []`, carbon disabled (FR-016).
+   - Every aquarium block contains `maintenance` with `regularInterval`, `events[]` (type/date/percentage/note, newest first; `percentage` is `null` for `CARBON_REPLACEMENT`) and `activatedCarbon` — values exactly as entered.
+   - An aquarium **without** maintenance data still has the full block with `regularInterval: null`, `events: []`, carbon disabled (FR-016).
    - No `supplements` field; dosing data still in the top-level `dosings` array (Clarification #3).
    - All existing fields unchanged compared to a pre-feature export (additive only, FR-015).
 3. Paste into an AI chatbot: "How often and to which percentage is water changed?" → correct answer from the block (SC-004).
@@ -53,10 +53,10 @@ curl -s -o /dev/null -w "%{http_code}\n" \
   -H "Authorization: Bearer <userB-token>" \
   http://localhost:8081/api/tank/1/maintenance
 
-# Same for PUT interval / carbon and POST/PUT/DELETE water-changes → 403
+# Same for PUT interval / carbon and POST/PUT/DELETE events → 403
 ```
 
-- Delete the "Freshwater" tank in the UI → its maintenance profile + water change rows are gone (verify via `GET /api/tank/2/maintenance` → 403, or DB: no rows in `aquarium_maintenance_profile` / `aquarium_water_change` with `aquarium_id = 2`).
+- Delete the "Freshwater" tank in the UI → its maintenance profile + maintenance event rows are gone (verify via `GET /api/tank/2/maintenance` → 403, or DB: no rows in `aquarium_maintenance_profile` / `aquarium_maintenance` with `aquarium_id = 2`).
 
 ## Automated validation
 

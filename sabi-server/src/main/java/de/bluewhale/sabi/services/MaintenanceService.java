@@ -6,18 +6,19 @@
 package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Manages the per-aquarium maintenance data: regular water exchange interval, recorded water
- * change events and the activated carbon setting. Every operation is ownership-checked; a
- * missing or foreign aquarium yields an ERROR result (mapped to 403 by the controller).
+ * Manages the per-aquarium maintenance data: regular water exchange interval, recorded
+ * maintenance events (water changes and carbon replacements) and the activated carbon setting.
+ * Every operation is ownership-checked; a missing or foreign aquarium yields an ERROR result
+ * (mapped to 403 by the controller).
  */
 public interface MaintenanceService {
 
@@ -27,29 +28,29 @@ public interface MaintenanceService {
     @Transactional
     @NotNull
     ResultTo<MaintenanceProfileTo> updateWaterChangeInterval(@NotNull Long aquariumId,
-                                                             @NotNull WaterChangeIntervalTo intervalTo,
-                                                             @NotNull String userEmail);
+                                                              @NotNull WaterChangeIntervalTo intervalTo,
+                                                              @NotNull String userEmail);
 
     @Transactional
     @NotNull
     ResultTo<MaintenanceProfileTo> updateActivatedCarbon(@NotNull Long aquariumId,
-                                                         @NotNull ActivatedCarbonTo carbonTo,
-                                                         @NotNull String userEmail);
+                                                          @NotNull ActivatedCarbonTo carbonTo,
+                                                          @NotNull String userEmail);
 
     @Transactional
     @NotNull
-    ResultTo<WaterChangeTo> createWaterChange(@NotNull Long aquariumId,
-                                              @NotNull WaterChangeTo waterChangeTo,
-                                              @NotNull String userEmail);
+    ResultTo<MaintenanceEventTo> createMaintenanceEvent(@NotNull Long aquariumId,
+                                                        @NotNull MaintenanceEventTo eventTo,
+                                                        @NotNull String userEmail);
 
     @Transactional
     @NotNull
-    ResultTo<WaterChangeTo> updateWaterChange(@NotNull Long aquariumId, @NotNull Long recordId,
-                                              @NotNull WaterChangeTo waterChangeTo,
-                                              @NotNull String userEmail);
+    ResultTo<MaintenanceEventTo> updateMaintenanceEvent(@NotNull Long aquariumId, @NotNull Long eventId,
+                                                        @NotNull MaintenanceEventTo eventTo,
+                                                        @NotNull String userEmail);
 
     @Transactional
     @NotNull
-    ResultTo<WaterChangeTo> deleteWaterChange(@NotNull Long aquariumId, @NotNull Long recordId,
-                                              @NotNull String userEmail);
+    ResultTo<MaintenanceEventTo> deleteMaintenanceEvent(@NotNull Long aquariumId, @NotNull Long eventId,
+                                                        @NotNull String userEmail);
 }

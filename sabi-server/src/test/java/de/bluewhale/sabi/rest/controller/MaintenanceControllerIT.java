@@ -7,18 +7,19 @@ package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
 import de.bluewhale.sabi.model.CarbonMode;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
+import de.bluewhale.sabi.model.MaintenanceEventType;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
+import de.bluewhale.sabi.persistence.model.MaintenanceEventEntity;
 import de.bluewhale.sabi.persistence.model.TankMaintenanceProfileEntity;
 import de.bluewhale.sabi.persistence.model.UserEntity;
-import de.bluewhale.sabi.persistence.model.WaterChangeEntity;
 import de.bluewhale.sabi.persistence.repositories.AquariumRepository;
+import de.bluewhale.sabi.persistence.repositories.MaintenanceEventRepository;
 import de.bluewhale.sabi.persistence.repositories.TankMaintenanceProfileRepository;
 import de.bluewhale.sabi.persistence.repositories.UserRepository;
-import de.bluewhale.sabi.persistence.repositories.WaterChangeRepository;
 import de.bluewhale.sabi.security.TokenAuthenticationService;
 import de.bluewhale.sabi.util.RestHelper;
 import org.junit.jupiter.api.Tag;
@@ -71,7 +72,7 @@ class MaintenanceControllerIT extends CommonTestController {
     TankMaintenanceProfileRepository profileRepository;
 
     @MockitoBean
-    WaterChangeRepository waterChangeRepository;
+    MaintenanceEventRepository eventRepository;
 
     @Autowired
     JsonMapper objectMapper;
@@ -79,12 +80,13 @@ class MaintenanceControllerIT extends CommonTestController {
     // ---- GET: full block, defaults, 403 on reads (SC-006) ----
 
     @Test
-    void getMaintenance_asOwner_returns200WithProfileAndRecords() throws Exception {
+    void getMaintenance_asOwner_returns200WithProfileAndEvents() throws Exception {
         mockOwnedAquarium();
         given(profileRepository.findByAquariumId(AQUARIUM_ID))
                 .willReturn(Optional.of(profile(21, 25, true, CarbonMode.INTERVAL, 28)));
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of(
-                waterChange(RECORD_ID, LocalDate.of(2026, 10, 20), 25, "partial change")));
+        given(eventRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of(
+                maintenanceEvent(RECORD_ID, MaintenanceEventType.WATER_CHANGE, LocalDate.of(2026, 10, 20), 25, "partial change"),
+                maintenanceEvent(78L, MaintenanceEventType.CARBON_REPLACEMENT, LocalDate.of(2026, 10, 3), null, "new media")));
 
         var response = restClient.get()
                 .uri("/api/tank/" + AQUARIUM_ID + "/maintenance")
@@ -99,16 +101,19 @@ class MaintenanceControllerIT extends CommonTestController {
         assertTrue(body.getProfile().getCarbonEnabled());
         assertEquals(CarbonMode.INTERVAL, body.getProfile().getCarbonMode());
         assertEquals(28, body.getProfile().getCarbonReplacementIntervalDays());
-        assertEquals(1, body.getWaterChanges().size());
-        assertEquals(LocalDate.of(2026, 10, 20), body.getWaterChanges().get(0).getChangedOn());
-        assertEquals("partial change", body.getWaterChanges().get(0).getNote());
+        assertEquals(2, body.getEvents().size());
+        assertEquals(MaintenanceEventType.WATER_CHANGE, body.getEvents().get(0).getMaintenanceType());
+        assertEquals(LocalDate.of(2026, 10, 20), body.getEvents().get(0).getChangedOn());
+        assertEquals("partial change", body.getEvents().get(0).getNote());
+        assertEquals(MaintenanceEventType.CARBON_REPLACEMENT, body.getEvents().get(1).getMaintenanceType());
+        assertNull(body.getEvents().get(1).getPercentage());
     }
 
     @Test
     void getMaintenance_withoutProfileRow_returnsDefaults() throws Exception {
         mockOwnedAquarium();
         given(profileRepository.findByAquariumId(AQUARIUM_ID)).willReturn(Optional.empty());
-        given(waterChangeRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of());
+        given(eventRepository.findByAquariumIdOrderByChangedOnDesc(AQUARIUM_ID)).willReturn(List.of());
 
         var response = restClient.get()
                 .uri("/api/tank/" + AQUARIUM_ID + "/maintenance")
@@ -123,7 +128,7 @@ class MaintenanceControllerIT extends CommonTestController {
         assertFalse(body.getProfile().getCarbonEnabled());
         assertNull(body.getProfile().getCarbonMode());
         assertNull(body.getProfile().getCarbonReplacementIntervalDays());
-        assertTrue(body.getWaterChanges().isEmpty());
+        assertTrue(body.getEvents().isEmpty());
     }
 
     @Test
@@ -142,19 +147,19 @@ class MaintenanceControllerIT extends CommonTestController {
         }
     }
 
-    // ---- POST water-changes: 201, 403, 400 validation ----
+    // ---- POST events: 201, 403, 400 validation (generic + type-specific) ----
 
     @Test
     void createWaterChange_asOwner_returns201() throws Exception {
         mockOwnedAquarium();
-        given(waterChangeRepository.save(any())).willAnswer(invocation -> {
-            WaterChangeEntity entity = invocation.getArgument(0);
+        given(eventRepository.saveAndFlush(any())).willAnswer(invocation -> {
+            MaintenanceEventEntity entity = invocation.getArgument(0);
             entity.setId(RECORD_ID);
             return entity;
         });
 
         var response = restClient.post()
-                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes")
+                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events")
                 .headers(headers -> headers.addAll(headers()))
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .body(objectMapper.writeValueAsString(validWaterChange()))
@@ -162,18 +167,42 @@ class MaintenanceControllerIT extends CommonTestController {
                 .toEntity(String.class);
 
         assertEquals(201, response.getStatusCode().value());
-        WaterChangeTo created = objectMapper.readValue(response.getBody(), WaterChangeTo.class);
+        MaintenanceEventTo created = objectMapper.readValue(response.getBody(), MaintenanceEventTo.class);
         assertEquals(RECORD_ID, created.getId());
         assertEquals(AQUARIUM_ID, created.getAquariumId());
+        assertEquals(MaintenanceEventType.WATER_CHANGE, created.getMaintenanceType());
     }
 
     @Test
-    void createWaterChange_asNonOwner_returns403() {
+    void createCarbonReplacement_asOwner_returns201WithoutPercentage() throws Exception {
+        mockOwnedAquarium();
+        given(eventRepository.saveAndFlush(any())).willAnswer(invocation -> {
+            MaintenanceEventEntity entity = invocation.getArgument(0);
+            entity.setId(RECORD_ID);
+            return entity;
+        });
+
+        var response = restClient.post()
+                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events")
+                .headers(headers -> headers.addAll(headers()))
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(validCarbonReplacement()))
+                .retrieve()
+                .toEntity(String.class);
+
+        assertEquals(201, response.getStatusCode().value());
+        MaintenanceEventTo created = objectMapper.readValue(response.getBody(), MaintenanceEventTo.class);
+        assertEquals(MaintenanceEventType.CARBON_REPLACEMENT, created.getMaintenanceType());
+        assertNull(created.getPercentage(), "carbon replacements must not carry a percentage");
+    }
+
+    @Test
+    void createMaintenanceEvent_asNonOwner_returns403() {
         mockForeignAquarium();
 
         try {
             restClient.post()
-                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes")
+                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events")
                     .headers(headers -> headers.addAll(headers()))
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                     .body(objectMapper.writeValueAsString(validWaterChange()))
@@ -183,55 +212,73 @@ class MaintenanceControllerIT extends CommonTestController {
         } catch (HttpClientErrorException e) {
             assertEquals(403, e.getStatusCode().value());
         }
-        verify(waterChangeRepository, never()).save(any());
+        verify(eventRepository, never()).saveAndFlush(any());
     }
 
     @Test
-    void createWaterChange_withFutureDate_returns400() throws Exception {
-        WaterChangeTo future = validWaterChange();
+    void createMaintenanceEvent_withFutureDate_returns400() throws Exception {
+        MaintenanceEventTo future = validWaterChange();
         future.setChangedOn(LocalDate.now().plusDays(1));
 
-        expect400("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes", future);
-        verify(waterChangeRepository, never()).save(any());
+        expect400("/api/tank/" + AQUARIUM_ID + "/maintenance/events", future);
+        verify(eventRepository, never()).saveAndFlush(any());
     }
 
     @Test
-    void createWaterChange_withPercentageOutOfRange_returns400() throws Exception {
-        WaterChangeTo tooLow = validWaterChange();
+    void createWaterChange_withoutPercentage_returns400() throws Exception {
+        MaintenanceEventTo noPercentage = validWaterChange();
+        noPercentage.setPercentage(null);
+
+        expect400("/api/tank/" + AQUARIUM_ID + "/maintenance/events", noPercentage);
+        verify(eventRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void createCarbonReplacement_withPercentage_returns400() throws Exception {
+        MaintenanceEventTo withPercentage = validCarbonReplacement();
+        withPercentage.setPercentage(50);
+
+        expect400("/api/tank/" + AQUARIUM_ID + "/maintenance/events", withPercentage);
+        verify(eventRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void createMaintenanceEvent_withPercentageOutOfRange_returns400() throws Exception {
+        MaintenanceEventTo tooLow = validWaterChange();
         tooLow.setPercentage(0);
-        WaterChangeTo tooHigh = validWaterChange();
+        MaintenanceEventTo tooHigh = validWaterChange();
         tooHigh.setPercentage(101);
 
-        String uri = "/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes";
+        String uri = "/api/tank/" + AQUARIUM_ID + "/maintenance/events";
         expect400(uri, tooLow);
         expect400(uri, tooHigh);
-        verify(waterChangeRepository, never()).save(any());
+        verify(eventRepository, never()).saveAndFlush(any());
     }
 
     @Test
-    void createWaterChange_withNoteTooLong_returns400() throws Exception {
-        WaterChangeTo longNote = validWaterChange();
+    void createMaintenanceEvent_withNoteTooLong_returns400() throws Exception {
+        MaintenanceEventTo longNote = validWaterChange();
         longNote.setNote("x".repeat(201));
 
-        expect400("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes", longNote);
-        verify(waterChangeRepository, never()).save(any());
+        expect400("/api/tank/" + AQUARIUM_ID + "/maintenance/events", longNote);
+        verify(eventRepository, never()).saveAndFlush(any());
     }
 
-    // ---- PUT water-changes/{recordId}: 200, 403 record-level, 409 stale optlock ----
+    // ---- PUT events/{eventId}: 200, 403 record-level, 409 stale optlock ----
 
     @Test
     void updateWaterChange_asOwner_returns200() throws Exception {
         mockOwnedAquarium();
-        given(waterChangeRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
-                .willReturn(Optional.of(waterChange(RECORD_ID, LocalDate.of(2026, 10, 3), 50, null)));
-        given(waterChangeRepository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
+        given(eventRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
+                .willReturn(Optional.of(maintenanceEvent(RECORD_ID, MaintenanceEventType.WATER_CHANGE, LocalDate.of(2026, 10, 3), 50, null)));
+        given(eventRepository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
 
-        WaterChangeTo update = validWaterChange();
+        MaintenanceEventTo update = validWaterChange();
         update.setChangedOn(LocalDate.of(2026, 10, 21));
         update.setPercentage(30);
 
         var response = restClient.put()
-                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes/" + RECORD_ID)
+                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID)
                 .headers(headers -> headers.addAll(headers()))
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .body(objectMapper.writeValueAsString(update))
@@ -239,19 +286,56 @@ class MaintenanceControllerIT extends CommonTestController {
                 .toEntity(String.class);
 
         assertEquals(200, response.getStatusCode().value());
-        WaterChangeTo updated = objectMapper.readValue(response.getBody(), WaterChangeTo.class);
+        MaintenanceEventTo updated = objectMapper.readValue(response.getBody(), MaintenanceEventTo.class);
         assertEquals(LocalDate.of(2026, 10, 21), updated.getChangedOn());
         assertEquals(30, updated.getPercentage());
     }
 
     @Test
-    void updateWaterChange_recordNotInThisTank_returns403() {
+    void updateCarbonReplacement_withPercentage_returns400() throws Exception {
+        // A CARBON_REPLACEMENT payload that carries a percentage is rejected at the TO level by
+        // @AssertTrue isCarbonReplacementPercentageAbsent (400) before the service runs, so the
+        // service-level strip path is unreachable via the API. That defense-in-depth path is
+        // covered by MaintenanceServiceTest.updateCarbonReplacement_stripsPercentageFromPayload.
+        MaintenanceEventTo update = validCarbonReplacement();
+        update.setChangedOn(LocalDate.of(2026, 10, 21));
+        update.setPercentage(30);
+
+        expect400(org.springframework.http.HttpMethod.PUT, "/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID, update);
+        verify(eventRepository, never()).save(any());
+    }
+
+    @Test
+    void updateWaterChange_withCarbonTypedPayload_missingPercentage_returns403() {
         mockOwnedAquarium();
-        given(waterChangeRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID)).willReturn(Optional.empty());
+        given(eventRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
+                .willReturn(Optional.of(maintenanceEvent(RECORD_ID, MaintenanceEventType.WATER_CHANGE, LocalDate.of(2026, 10, 3), 50, null)));
+
+        // Payload typed as CARBON_REPLACEMENT carries no percentage; the stored record is a
+        // WATER_CHANGE that must keep its percentage, so the update is rejected.
+        try {
+            restClient.put()
+                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID)
+                    .headers(headers -> headers.addAll(headers()))
+                    .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                    .body(objectMapper.writeValueAsString(validCarbonReplacement()))
+                    .retrieve()
+                    .toEntity(String.class);
+            fail("Expected 403 when a water change would lose its percentage");
+        } catch (HttpClientErrorException e) {
+            assertEquals(403, e.getStatusCode().value());
+        }
+        verify(eventRepository, never()).save(any());
+    }
+
+    @Test
+    void updateMaintenanceEvent_recordNotInThisTank_returns403() {
+        mockOwnedAquarium();
+        given(eventRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID)).willReturn(Optional.empty());
 
         try {
             restClient.put()
-                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes/" + RECORD_ID)
+                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID)
                     .headers(headers -> headers.addAll(headers()))
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                     .body(objectMapper.writeValueAsString(validWaterChange()))
@@ -261,20 +345,20 @@ class MaintenanceControllerIT extends CommonTestController {
         } catch (HttpClientErrorException e) {
             assertEquals(403, e.getStatusCode().value());
         }
-        verify(waterChangeRepository, never()).save(any());
+        verify(eventRepository, never()).save(any());
     }
 
     @Test
-    void updateWaterChange_staleOptlock_returns409() {
+    void updateMaintenanceEvent_staleOptlock_returns409() {
         mockOwnedAquarium();
-        given(waterChangeRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
-                .willReturn(Optional.of(waterChange(RECORD_ID, LocalDate.of(2026, 10, 3), 50, null)));
-        given(waterChangeRepository.save(any())).willThrow(
-                new ObjectOptimisticLockingFailureException(WaterChangeEntity.class, RECORD_ID));
+        given(eventRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
+                .willReturn(Optional.of(maintenanceEvent(RECORD_ID, MaintenanceEventType.WATER_CHANGE, LocalDate.of(2026, 10, 3), 50, null)));
+        given(eventRepository.save(any())).willThrow(
+                new ObjectOptimisticLockingFailureException(MaintenanceEventEntity.class, RECORD_ID));
 
         try {
             restClient.put()
-                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes/" + RECORD_ID)
+                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID)
                     .headers(headers -> headers.addAll(headers()))
                     .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                     .body(objectMapper.writeValueAsString(validWaterChange()))
@@ -286,31 +370,31 @@ class MaintenanceControllerIT extends CommonTestController {
         }
     }
 
-    // ---- DELETE water-changes/{recordId}: 200, 403 ----
+    // ---- DELETE events/{eventId}: 200, 403 ----
 
     @Test
-    void deleteWaterChange_asOwner_returns200() {
+    void deleteMaintenanceEvent_asOwner_returns200() {
         mockOwnedAquarium();
-        given(waterChangeRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
-                .willReturn(Optional.of(waterChange(RECORD_ID, LocalDate.of(2026, 10, 3), 50, null)));
+        given(eventRepository.findByIdAndAquariumId(RECORD_ID, AQUARIUM_ID))
+                .willReturn(Optional.of(maintenanceEvent(RECORD_ID, MaintenanceEventType.WATER_CHANGE, LocalDate.of(2026, 10, 3), 50, null)));
 
         var response = restClient.delete()
-                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes/" + RECORD_ID)
+                .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID)
                 .headers(headers -> headers.addAll(headers()))
                 .retrieve()
                 .toEntity(String.class);
 
         assertEquals(200, response.getStatusCode().value());
-        verify(waterChangeRepository).delete(any());
+        verify(eventRepository).delete(any());
     }
 
     @Test
-    void deleteWaterChange_asNonOwner_returns403() {
+    void deleteMaintenanceEvent_asNonOwner_returns403() {
         mockForeignAquarium();
 
         try {
             restClient.delete()
-                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/water-changes/" + RECORD_ID)
+                    .uri("/api/tank/" + AQUARIUM_ID + "/maintenance/events/" + RECORD_ID)
                     .headers(headers -> headers.addAll(headers()))
                     .retrieve()
                     .toEntity(String.class);
@@ -318,7 +402,7 @@ class MaintenanceControllerIT extends CommonTestController {
         } catch (HttpClientErrorException e) {
             assertEquals(403, e.getStatusCode().value());
         }
-        verify(waterChangeRepository, never()).delete(any());
+        verify(eventRepository, never()).delete(any());
     }
 
     // ---- PUT water-change-interval: 200 upsert, 400 both-or-neither, 403 ----
@@ -460,15 +544,23 @@ class MaintenanceControllerIT extends CommonTestController {
         return RestHelper.prepareAuthedHttpHeader(TokenAuthenticationService.createAuthorizationTokenFor(OWNER_EMAIL));
     }
 
-    private WaterChangeTo validWaterChange() {
-        WaterChangeTo to = new WaterChangeTo();
+    private MaintenanceEventTo validWaterChange() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.WATER_CHANGE);
         to.setChangedOn(LocalDate.of(2026, 10, 26));
         to.setPercentage(25);
         return to;
     }
 
+    private MaintenanceEventTo validCarbonReplacement() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.CARBON_REPLACEMENT);
+        to.setChangedOn(LocalDate.of(2026, 10, 26));
+        return to;
+    }
+
     private TankMaintenanceProfileEntity profile(Integer intervalDays, Integer percentage,
-                                                 Boolean carbonEnabled, CarbonMode mode, Integer replacementDays) {
+                                                  Boolean carbonEnabled, CarbonMode mode, Integer replacementDays) {
         TankMaintenanceProfileEntity entity = new TankMaintenanceProfileEntity();
         entity.setId(5L);
         entity.setAquariumId(AQUARIUM_ID);
@@ -480,10 +572,12 @@ class MaintenanceControllerIT extends CommonTestController {
         return entity;
     }
 
-    private WaterChangeEntity waterChange(Long id, LocalDate changedOn, Integer percentage, String note) {
-        WaterChangeEntity entity = new WaterChangeEntity();
+    private MaintenanceEventEntity maintenanceEvent(Long id, MaintenanceEventType type, LocalDate changedOn,
+                                                    Integer percentage, String note) {
+        MaintenanceEventEntity entity = new MaintenanceEventEntity();
         entity.setId(id);
         entity.setAquariumId(AQUARIUM_ID);
+        entity.setMaintenanceType(type.name());
         entity.setChangedOn(changedOn);
         entity.setPercentage(percentage);
         entity.setNote(note);

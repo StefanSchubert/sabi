@@ -67,6 +67,18 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
             if (tanks.size() == 1) {
                 // default selection if user has only one tank
                 measurement.setAquariumId(tanks.get(0).getId());
+            } else if (measurement.getAquariumId() == null) {
+                // Re-entry from the menu: restore the tank the user last selected (spec 007,
+                // issue "re-entry shows empty lists"). The ID is validated against the user's tanks.
+                Long lastSelected = userSession.getLastSelectedTankId();
+                if (lastSelected != null) {
+                    for (AquariumTo tank : tanks) {
+                        if (tank.getId().equals(lastSelected)) {
+                            measurement.setAquariumId(lastSelected);
+                            break;
+                        }
+                    }
+                }
             }
         } catch (BusinessException e) {
             tanks = Collections.emptyList();
@@ -132,8 +144,17 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         return MEASUREMENT_VIEW_PAGE.getNavigationableAddress();
     }
 
+    /**
+     * AJAX listener for the tank selectOneMenu: persists the selected tank in the session so
+     * that re-entering this view restores the user's selection (spec 007, issue: re-entry).
+     */
+    public void onTankSelect() {
+        userSession.setLastSelectedTankId(measurement.getAquariumId());
+    }
+
     public String save() {
         if (allDataProvided(measurement)) {
+            userSession.setLastSelectedTankId(measurement.getAquariumId());
             try {
                 measurementService.save(measurement, userSession.getSabiBackendToken());
                 fetchUsersLatestMeasurements();

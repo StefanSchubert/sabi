@@ -7,16 +7,16 @@ package de.bluewhale.sabi.webclient.apigateway;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.MaintenanceTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 
 import java.io.Serializable;
 
 /**
  * Gateway for the per-aquarium maintenance data: regular water exchange interval, recorded
- * water change events and the activated carbon setting.
+ * maintenance events (water changes and carbon replacements) and the activated carbon setting.
  */
 public interface MaintenanceService extends Serializable {
 
@@ -28,10 +28,11 @@ public interface MaintenanceService extends Serializable {
     MaintenanceProfileTo updateActivatedCarbon(Long aquariumId, ActivatedCarbonTo carbon, String token)
             throws BusinessException;
 
-    WaterChangeTo createWaterChange(Long aquariumId, WaterChangeTo waterChange, String token) throws BusinessException;
-
-    WaterChangeTo updateWaterChange(Long aquariumId, Long recordId, WaterChangeTo waterChange, String token)
+    MaintenanceEventTo createMaintenanceEvent(Long aquariumId, MaintenanceEventTo event, String token)
             throws BusinessException;
 
-    void deleteWaterChange(Long aquariumId, Long recordId, String token) throws BusinessException;
+    MaintenanceEventTo updateMaintenanceEvent(Long aquariumId, Long eventId, MaintenanceEventTo event, String token)
+            throws BusinessException;
+
+    void deleteMaintenanceEvent(Long aquariumId, Long eventId, String token) throws BusinessException;
 }

@@ -10,12 +10,14 @@
  * E2E-Tests: Maintenance Flow (007-water-maintenance-tracking)
  *
  * Covers:
- *  1. Maintenance View — basic rendering, all three sections, CSS visibility of interactive elements
+ *  1. Maintenance View — basic rendering, all four sections, CSS visibility of interactive elements
  *  2. Tank selection via native <select> (h:selectOneMenu — see e2e/E2E_NOTES.md for why)
  *  3. Regular interval — set, persist across reload, clear
  *  4. Water change records — create (today + back-dated), newest-first order, edit, delete
  *  5. Activated carbon — enable, mode required, INTERVAL range validation, CONTINUOUS, disable (FR-011)
- *  6. Supplements cross-link — opens dosing view with tank pre-selected
+ *  6. Carbon replacement records — create (today + back-dated), no percentage column,
+ *     newest-first order, edit note, delete
+ *  7. Supplements cross-link — opens dosing view with tank pre-selected
  *
  * Rules (AGENTS.md): REAL clicks only (no force, no page.evaluate clicks),
  * explicit visibility assertions, computed width/height > 0 checks, cleanup of created records.
@@ -41,6 +43,7 @@ const RE = {
   waterChangesSection: /Water Changes|Wasserwechsel/,
   supplementsSection: /Supplements|Zusatzmittel/,
   carbonSection: /Activated Carbon|Aktivkohle/,
+  carbonReplacementsSection: /Carbon Replacements|Aktivkohle-Wechsel/,
   crossLink: /Open Dosing view|Dosierungsfunktion öffnen/,
   carbonNotUsed: /Not used|Nicht in Gebrauch/,
   selectPlaceholder: /Select one|Auswählen/,
@@ -150,17 +153,18 @@ test.describe('Maintenance Flow', () => {
 
   // ── 1. Basis-Rendering ───────────────────────────────────────
 
-  test('maintenanceView rendert alle drei Sektionen ohne rohe i18n-Keys', async ({ page }) => {
+  test('maintenanceView rendert alle vier Sektionen ohne rohe i18n-Keys', async ({ page }) => {
     // Keine rohen Keys / Fehlplatzhalter
     await expect(page.locator('body')).not.toContainText('???');
     await expect(page.locator('body')).not.toContainText('maintenance.page.title');
     await expect(page.locator('body')).not.toContainText('common.select.l');
     await expect(page.locator('body')).not.toContainText('maintenance.carbon');
 
-    // Alle drei Sektions-Überschriften sichtbar (bilingual, locale-unabhängig)
+    // Alle vier Sektions-Überschriften sichtbar (bilingual, locale-unabhängig)
     await expect(page.locator('h3').filter({ hasText: RE.waterChangesSection }).first()).toBeVisible();
     await expect(page.locator('h3').filter({ hasText: RE.supplementsSection }).first()).toBeVisible();
     await expect(page.locator('h3').filter({ hasText: RE.carbonSection }).first()).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: RE.carbonReplacementsSection }).first()).toBeVisible();
 
     // Back-Link vorhanden (UI_StyleGuide)
     await expect(page.locator('.sabi-back-link').first()).toBeVisible();
@@ -180,6 +184,8 @@ test.describe('Maintenance Flow', () => {
     await expectCssVisible(page, '[id$=":saveWaterChangeButton"]');
     await expectCssVisible(page, '[id$=":newRecordButton"]');
     await expectCssVisible(page, '[id$=":saveCarbonButton"]');
+    await expectCssVisible(page, '[id$=":saveCarbonReplacementButton"]');
+    await expectCssVisible(page, '[id$=":newCarbonReplacementButton"]');
     await expectCssVisible(page, '[id$=":cancelButton"]');
     const crossLink = page.locator('a').filter({ hasText: RE.crossLink });
     await expect(crossLink.first()).toBeVisible();
@@ -407,7 +413,96 @@ test.describe('Maintenance Flow', () => {
     await expect(page.locator('#maintenanceForm').getByText(RE.carbonNotUsed).first()).toBeVisible();
   });
 
-  // ── 6. Cross-Link zur Dosierungsfunktion ─────────────────────
+  // ── 6. Aktivkohle-Wechsel (Carbon Replacements) ──────────────
+
+  test('Aktivkohle-Wechsel erfassen (heute + rückdatiert), ohne Prozent-Spalte, Reihenfolge, bearbeiten, löschen', async ({ page }) => {
+    const todayNote = `E2E-CarbonHeute-${Date.now()}`;
+    const pastNote = `E2E-CarbonRueckstand-${Date.now()}`;
+    const editedNote = `E2E-CarbonEditiert-${Date.now()}`;
+
+    const dateInput = page.locator('[id$=":carbonChangedOn_input"]');
+    const noteInput = page.locator('[id$=":carbonNote"]');
+    const saveRecord = page.locator('[id$=":saveCarbonReplacementButton"]');
+    const resetButton = page.locator('[id$=":newCarbonReplacementButton"]');
+    const table = page.locator('[id$=":carbonReplacementTable"]');
+
+    // 1. Heutiger Wechsel: Datum ist heute vorbefüllt, Notiz erfassen
+    await expect(dateInput).toBeVisible();
+    await expect(dateInput).toHaveValue(formatDate(new Date()));
+    await noteInput.fill(todayNote);
+    await expect(saveRecord).toBeVisible();
+    await Promise.all([waitForAjaxPost(page), saveRecord.click()]);
+    await page.waitForLoadState('networkidle');
+
+    const todayRow = table.locator('tbody tr').filter({ hasText: todayNote });
+    await expect(todayRow).toBeVisible({ timeout: 8_000 });
+
+    // 2. Tabellenstruktur: genau 4 Spalten (Datum, Notiz, Bearbeiten, Löschen) —
+    //    KEINE Prozent-Spalte (carbon replacements carry no percentage)
+    await expect(table.locator('thead th')).toHaveCount(4);
+    const headerText = (await table.locator('thead').innerText()) ?? '';
+    expect(headerText, 'Carbon-Replacement-Tabelle darf keine Prozent-Spalte enthalten')
+      .not.toMatch(/Prozentsatz|Percentage/);
+
+    // 3. Rückdatierter Wechsel (14 Tage zurück)
+    await expect(resetButton).toBeVisible();
+    await Promise.all([waitForAjaxPost(page), resetButton.click()]);
+    await page.waitForLoadState('networkidle');
+
+    const past = new Date();
+    past.setDate(past.getDate() - 14);
+    await dateInput.fill(formatDate(past));
+    await noteInput.fill(pastNote);
+    await Promise.all([waitForAjaxPost(page), saveRecord.click()]);
+    await page.waitForLoadState('networkidle');
+
+    const pastRow = table.locator('tbody tr').filter({ hasText: pastNote });
+    await expect(pastRow).toBeVisible({ timeout: 8_000 });
+
+    // 4. Reihenfolge: neueste zuerst (heute vor rückdatiert)
+    const rows = table.locator('tbody tr');
+    const todayIndex = await rows.filter({ hasText: todayNote }).first().evaluate((el) =>
+      Array.from(el.parentElement.children).indexOf(el));
+    const pastIndex = await rows.filter({ hasText: pastNote }).first().evaluate((el) =>
+      Array.from(el.parentElement.children).indexOf(el));
+    expect(todayIndex, 'heutiger Eintrag muss vor rückdatiertem erscheinen').toBeLessThan(pastIndex);
+
+    // 5. Bearbeiten: Notiz des rückdatierten Eintrags ändern
+    const editButton = pastRow.locator('button').filter({ has: page.locator('.pi-pencil') });
+    await expect(editButton).toBeVisible();
+    await Promise.all([waitForAjaxPost(page), editButton.click()]);
+    await page.waitForLoadState('networkidle');
+
+    await expect(noteInput).toHaveValue(pastNote);
+    await noteInput.fill(editedNote);
+    await Promise.all([waitForAjaxPost(page), saveRecord.click()]);
+    await page.waitForLoadState('networkidle');
+
+    // Persistenz: Reload → geänderte Notiz (Notiz-Zelle, Spalte 1)
+    await page.reload({ waitUntil: 'networkidle' });
+    await selectTank(page);
+    const editedRow = table.locator('tbody tr').filter({ hasText: editedNote });
+    await expect(editedRow).toBeVisible({ timeout: 8_000 });
+    await expect(editedRow.locator('td').nth(1)).toHaveText(editedNote);
+
+    // 6. Löschen: rückdatierten Eintrag entfernen
+    const deleteButton = editedRow.locator('button').filter({ has: page.locator('.pi-trash') });
+    await expect(deleteButton).toBeVisible();
+    await Promise.all([waitForAjaxPost(page), deleteButton.click()]);
+    await page.waitForLoadState('networkidle');
+    await expect(table.locator('tbody tr').filter({ hasText: editedNote })).toHaveCount(0);
+
+    // ── Cleanup: heutigen Eintrag löschen ──
+    const cleanupRow = table.locator('tbody tr').filter({ hasText: todayNote });
+    await expect(cleanupRow).toBeVisible({ timeout: 8_000 });
+    const cleanupDelete = cleanupRow.locator('button').filter({ has: page.locator('.pi-trash') });
+    await expect(cleanupDelete).toBeVisible();
+    await Promise.all([waitForAjaxPost(page), cleanupDelete.click()]);
+    await page.waitForLoadState('networkidle');
+    await expect(table.locator('tbody tr').filter({ hasText: todayNote })).toHaveCount(0);
+  });
+
+  // ── 7. Cross-Link zur Dosierungsfunktion ─────────────────────
 
   test('Cross-Link öffnet Dosing-View mit vorselektiertem Tank', async ({ page }) => {
     const link = page.locator('a').filter({ hasText: RE.crossLink });

@@ -9,9 +9,10 @@ import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.ActivatedCarbonTo;
 import de.bluewhale.sabi.model.AquariumTo;
 import de.bluewhale.sabi.model.CarbonMode;
+import de.bluewhale.sabi.model.MaintenanceEventTo;
+import de.bluewhale.sabi.model.MaintenanceEventType;
 import de.bluewhale.sabi.model.MaintenanceProfileTo;
 import de.bluewhale.sabi.model.WaterChangeIntervalTo;
-import de.bluewhale.sabi.model.WaterChangeTo;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
 import de.bluewhale.sabi.webclient.apigateway.MaintenanceService;
 import de.bluewhale.sabi.webclient.apigateway.TankService;
@@ -34,8 +35,8 @@ import java.util.List;
 
 /**
  * Controller for the per-aquarium maintenance page: regular water exchange interval, recorded
- * water change events and the activated carbon setting. Tank selection is persisted in the view
- * map (DosingView pattern), not in the session.
+ * maintenance events (water changes and carbon replacements) and the activated carbon setting.
+ * The selected tank is persisted in the session so that re-entering the page restores it.
  */
 @Named
 @RequestScope
@@ -59,8 +60,10 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
     @Setter(AccessLevel.NONE)
     private Long selectedAquariumId;
     private MaintenanceProfileTo profile = new MaintenanceProfileTo();
-    private List<WaterChangeTo> waterChanges = Collections.emptyList();
-    private WaterChangeTo waterChange = newWaterChange();
+    private List<MaintenanceEventTo> waterChanges = Collections.emptyList();
+    private List<MaintenanceEventTo> carbonReplacements = Collections.emptyList();
+    private MaintenanceEventTo waterChange = newWaterChange();
+    private MaintenanceEventTo carbonReplacement = newCarbonReplacement();
 
     @PostConstruct
     public void init() {
@@ -68,6 +71,11 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             selectedAquariumId = (Long) FacesContext.getCurrentInstance().getViewRoot().getViewMap()
                     .get(SELECTED_AQUARIUM_VIEW_KEY);
+            if (selectedAquariumId == null) {
+                // Re-entry from the menu: restore the tank the user last selected (spec 007,
+                // issue "re-entry shows empty lists"). The ID is validated against the user's tanks.
+                selectedAquariumId = resolveOwnedTankFromSession();
+            }
             if (selectedAquariumId == null && tanks.size() == 1) {
                 setSelectedAquariumId(tanks.get(0).getId());
             }
@@ -80,8 +88,23 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
         }
     }
 
+    private Long resolveOwnedTankFromSession() {
+        Long lastSelected = userSession.getLastSelectedTankId();
+        if (lastSelected == null) {
+            return null;
+        }
+        for (AquariumTo tank : tanks) {
+            if (tank.getId().equals(lastSelected)) {
+                return lastSelected;
+            }
+        }
+        // Stale value (tank deleted or no longer owned) — ignore it.
+        return null;
+    }
+
     public void onAquariumChange() {
         resetWaterChangeForm();
+        resetCarbonReplacementForm();
         loadMaintenance();
     }
 
@@ -89,9 +112,11 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
         this.selectedAquariumId = selectedAquariumId;
         if (selectedAquariumId == null) {
             FacesContext.getCurrentInstance().getViewRoot().getViewMap().remove(SELECTED_AQUARIUM_VIEW_KEY);
+            userSession.setLastSelectedTankId(null);
         } else {
             FacesContext.getCurrentInstance().getViewRoot().getViewMap()
                     .put(SELECTED_AQUARIUM_VIEW_KEY, selectedAquariumId);
+            userSession.setLastSelectedTankId(selectedAquariumId);
         }
     }
 
@@ -169,11 +194,12 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
             MessageUtil.warn("maintenanceMessages", "common.incompleted_formdata.t", userSession.getLocale());
             return;
         }
+        waterChange.setMaintenanceType(MaintenanceEventType.WATER_CHANGE);
         try {
             if (waterChange.getId() == null) {
-                maintenanceService.createWaterChange(selectedAquariumId, waterChange, userSession.getSabiBackendToken());
+                maintenanceService.createMaintenanceEvent(selectedAquariumId, waterChange, userSession.getSabiBackendToken());
             } else {
-                maintenanceService.updateWaterChange(selectedAquariumId, waterChange.getId(), waterChange,
+                maintenanceService.updateMaintenanceEvent(selectedAquariumId, waterChange.getId(), waterChange,
                         userSession.getSabiBackendToken());
             }
             resetWaterChangeForm();
@@ -185,21 +211,63 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
         }
     }
 
-    public void editWaterChange(WaterChangeTo existing) {
+    public void editWaterChange(MaintenanceEventTo existing) {
         waterChange = existing;
     }
 
-    public void deleteWaterChange(WaterChangeTo existing) {
+    public void deleteWaterChange(MaintenanceEventTo existing) {
+        deleteEvent(existing, "maintenance.delete.success.t");
+    }
+
+    public void saveCarbonReplacement() {
+        if (carbonReplacement.getChangedOn() == null) {
+            MessageUtil.warn("maintenanceMessages", "common.incompleted_formdata.t", userSession.getLocale());
+            return;
+        }
+        if (carbonReplacement.getChangedOn().isAfter(LocalDate.now())) {
+            MessageUtil.warn("maintenanceMessages", "common.incompleted_formdata.t", userSession.getLocale());
+            return;
+        }
+        carbonReplacement.setMaintenanceType(MaintenanceEventType.CARBON_REPLACEMENT);
+        carbonReplacement.setPercentage(null); // carbon replacements never carry a percentage
         try {
-            maintenanceService.deleteWaterChange(existing.getAquariumId(), existing.getId(),
+            if (carbonReplacement.getId() == null) {
+                maintenanceService.createMaintenanceEvent(selectedAquariumId, carbonReplacement, userSession.getSabiBackendToken());
+            } else {
+                maintenanceService.updateMaintenanceEvent(selectedAquariumId, carbonReplacement.getId(), carbonReplacement,
+                        userSession.getSabiBackendToken());
+            }
+            resetCarbonReplacementForm();
+            loadMaintenance();
+            MessageUtil.info("maintenanceMessages", "common.save.confirmation.t", userSession.getLocale());
+        } catch (BusinessException e) {
+            log.error("Could not save carbon replacement for aquarium_id={}", selectedAquariumId, e);
+            MessageUtil.error("maintenanceMessages", "common.error.internal_server_problem.t", userSession.getLocale());
+        }
+    }
+
+    public void editCarbonReplacement(MaintenanceEventTo existing) {
+        carbonReplacement = existing;
+    }
+
+    public void deleteCarbonReplacement(MaintenanceEventTo existing) {
+        deleteEvent(existing, "maintenance.delete.carbon.success.t");
+    }
+
+    private void deleteEvent(MaintenanceEventTo existing, String successMessageKey) {
+        try {
+            maintenanceService.deleteMaintenanceEvent(existing.getAquariumId(), existing.getId(),
                     userSession.getSabiBackendToken());
             if (existing.getId().equals(waterChange.getId())) {
                 resetWaterChangeForm();
             }
+            if (existing.getId().equals(carbonReplacement.getId())) {
+                resetCarbonReplacementForm();
+            }
             loadMaintenance();
-            MessageUtil.info("maintenanceMessages", "maintenance.delete.success.t", userSession.getLocale());
+            MessageUtil.info("maintenanceMessages", successMessageKey, userSession.getLocale());
         } catch (BusinessException e) {
-            log.error("Could not delete water change record_id={} for aquarium_id={}", existing.getId(),
+            log.error("Could not delete maintenance event_id={} for aquarium_id={}", existing.getId(),
                     existing.getAquariumId(), e);
             MessageUtil.error("maintenanceMessages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
@@ -209,12 +277,16 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
         waterChange = newWaterChange();
     }
 
+    public void resetCarbonReplacementForm() {
+        carbonReplacement = newCarbonReplacement();
+    }
+
     public CarbonMode[] getCarbonModes() {
         return CarbonMode.values();
     }
 
     /**
-     * Today as picker pattern string, used as maxDate for the water change date picker.
+     * Today as picker pattern string, used as maxDate for the event date pickers.
      */
     public String getToday() {
         return LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"));
@@ -233,22 +305,39 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
         if (selectedAquariumId == null) {
             profile = new MaintenanceProfileTo();
             waterChanges = Collections.emptyList();
+            carbonReplacements = Collections.emptyList();
             return;
         }
         try {
             var maintenance = maintenanceService.getMaintenanceForTank(selectedAquariumId, userSession.getSabiBackendToken());
             profile = maintenance.getProfile() != null ? maintenance.getProfile() : new MaintenanceProfileTo();
-            waterChanges = maintenance.getWaterChanges() != null ? maintenance.getWaterChanges() : Collections.emptyList();
+            List<MaintenanceEventTo> events =
+                    maintenance.getEvents() != null ? maintenance.getEvents() : Collections.emptyList();
+            waterChanges = events.stream()
+                    .filter(event -> event.getMaintenanceType() == MaintenanceEventType.WATER_CHANGE)
+                    .toList();
+            carbonReplacements = events.stream()
+                    .filter(event -> event.getMaintenanceType() == MaintenanceEventType.CARBON_REPLACEMENT)
+                    .toList();
         } catch (BusinessException e) {
             profile = new MaintenanceProfileTo();
             waterChanges = Collections.emptyList();
+            carbonReplacements = Collections.emptyList();
             log.error("Could not load maintenance for aquarium_id={}", selectedAquariumId, e);
             MessageUtil.error("maintenanceMessages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
     }
 
-    private WaterChangeTo newWaterChange() {
-        WaterChangeTo to = new WaterChangeTo();
+    private MaintenanceEventTo newWaterChange() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.WATER_CHANGE);
+        to.setChangedOn(LocalDate.now());
+        return to;
+    }
+
+    private MaintenanceEventTo newCarbonReplacement() {
+        MaintenanceEventTo to = new MaintenanceEventTo();
+        to.setMaintenanceType(MaintenanceEventType.CARBON_REPLACEMENT);
         to.setChangedOn(LocalDate.now());
         return to;
     }
