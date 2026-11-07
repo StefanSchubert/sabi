@@ -1124,6 +1124,39 @@ body.dark-mode .credits-who a {
 }
 
 /* =====================================================================
+   Maintenance view — carbon section visibility (maintenanceView.xhtml)
+
+   All carbon components are always rendered server-side (see the XHTML
+   comment): `rendered=` gating on carbonEnabled breaks the JSF component
+   tree across partial requests, because the @RequestScope bean reloads DB
+   state on every request and Mojarra re-evaluates rendered= against that
+   state during Restore View — a gated menu drops out of the tree while
+   the client still has it open and its submitted value is discarded.
+   Visibility is derived purely from DOM state via :has():
+     - mode row shown     ⇔ carbon checkbox is checked
+     - interval row shown ⇔ checkbox checked AND menu has INTERVAL selected
+   :has() re-evaluates live, so visibility stays correct after every AJAX
+   re-render without any JavaScript.
+
+   The mode menu is a NATIVE <select> (h:selectOneMenu) carrying the
+   carbon-mode-row class itself — hence `select.carbon-mode-row`, not
+   `.carbon-mode-row select` (which assumed a PF wrapper div around a
+   hidden select). The label also carries the class, so both are toggled.
+   ===================================================================== */
+#maintenanceForm .carbon-mode-row,
+#maintenanceForm .carbon-interval-row {
+    display: none;
+}
+
+#maintenanceForm .sabi-form-grid:has(input[id$=":carbonEnabled_input"]:checked) .carbon-mode-row {
+    display: block;
+}
+
+#maintenanceForm .sabi-form-grid:has(input[id$=":carbonEnabled_input"]:checked):has(select.carbon-mode-row > option[value="INTERVAL"]:checked) .carbon-interval-row {
+    display: block;
+}
+
+/* =====================================================================
    Credits Page
    ===================================================================== */
 .credits-grid {

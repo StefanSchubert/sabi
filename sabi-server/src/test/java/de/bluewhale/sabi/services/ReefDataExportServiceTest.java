@@ -11,8 +11,10 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import de.bluewhale.sabi.model.AquariumExportTo;
+import de.bluewhale.sabi.model.CarbonMode;
 import de.bluewhale.sabi.model.DosingExportTo;
 import de.bluewhale.sabi.model.MeasurementExportTo;
+import de.bluewhale.sabi.model.MaintenanceExportTo;
 import de.bluewhale.sabi.model.ReefDataExportTo;
 import de.bluewhale.sabi.persistence.model.*;
 import de.bluewhale.sabi.persistence.repositories.*;
@@ -37,6 +39,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Optional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static de.bluewhale.sabi.util.TestContainerVersions.MARIADB_12_2_2;
@@ -91,6 +95,10 @@ public class ReefDataExportServiceTest {
     private RemedyRepository remedyRepository;
     @MockitoBean
     private DosingRepository dosingRepository;
+    @MockitoBean
+    private TankMaintenanceProfileRepository tankMaintenanceProfileRepository;
+    @MockitoBean
+    private MaintenanceEventRepository maintenanceEventRepository;
 
     private static final TestDataFactory testDataFactory = TestDataFactory.getInstance();
 
@@ -298,5 +306,110 @@ public class ReefDataExportServiceTest {
         assertEquals("Calcium", exportedDosing.getProductName());
         assertEquals(new BigDecimal("5.5"), exportedDosing.getAmount());
         assertEquals("ml", exportedDosing.getAmountUnit());
+    }
+
+    @Test
+    public void testMaintenanceBlockIsIncludedInExport() {
+        UserEntity user = buildTestUser();
+        AquariumEntity aquarium = buildTestAquarium();
+
+        TankMaintenanceProfileEntity profile = new TankMaintenanceProfileEntity();
+        profile.setAquariumId(aquarium.getId());
+        profile.setRegularIntervalDays(21);
+        profile.setRegularPercentage(25);
+        profile.setCarbonEnabled(true);
+        profile.setCarbonMode(CarbonMode.INTERVAL);
+        profile.setCarbonReplacementIntervalDays(28);
+
+        MaintenanceEventEntity newer = new MaintenanceEventEntity();
+        newer.setAquariumId(aquarium.getId());
+        newer.setMaintenanceType("WATER_CHANGE");
+        newer.setChangedOn(LocalDate.of(2026, 10, 20));
+        newer.setPercentage(25);
+        newer.setNote("partial change");
+
+        MaintenanceEventEntity older = new MaintenanceEventEntity();
+        older.setAquariumId(aquarium.getId());
+        older.setMaintenanceType("CARBON_REPLACEMENT");
+        older.setChangedOn(LocalDate.of(2026, 10, 3));
+        older.setPercentage(null);
+        older.setNote(null);
+
+        given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
+        given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
+        given(tankMaintenanceProfileRepository.findByAquariumId(aquarium.getId())).willReturn(Optional.of(profile));
+        given(maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId()))
+                .willReturn(List.of(newer, older));
+
+        ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
+
+        MaintenanceExportTo maintenance = result.getAquariums().getFirst().getMaintenance();
+        assertNotNull(maintenance, "maintenance block must be present (FR-016)");
+
+        // regular interval: exact values
+        assertNotNull(maintenance.getRegularInterval());
+        assertEquals(21, maintenance.getRegularInterval().getIntervalDays());
+        assertEquals(25, maintenance.getRegularInterval().getPercentage());
+
+        // events: newest first, ISO-8601 date-only, note as entered / null when absent
+        assertEquals(2, maintenance.getEvents().size());
+        assertEquals("WATER_CHANGE", maintenance.getEvents().get(0).getType());
+        assertEquals("2026-10-20", maintenance.getEvents().get(0).getDate());
+        assertEquals(25, maintenance.getEvents().get(0).getPercentage());
+        assertEquals("partial change", maintenance.getEvents().get(0).getNote());
+        assertEquals("CARBON_REPLACEMENT", maintenance.getEvents().get(1).getType());
+        assertEquals("2026-10-03", maintenance.getEvents().get(1).getDate());
+        assertNull(maintenance.getEvents().get(1).getPercentage(), "carbon replacements carry no percentage");
+        assertNull(maintenance.getEvents().get(1).getNote());
+
+        // activated carbon: INTERVAL mode with replacement interval
+        assertTrue(maintenance.getActivatedCarbon().getEnabled());
+        assertEquals("INTERVAL", maintenance.getActivatedCarbon().getMode());
+        assertEquals(28, maintenance.getActivatedCarbon().getReplacementIntervalDays());
+    }
+
+    @Test
+    public void testMaintenanceBlockHasEmptyDefaultsWithoutData() {
+        UserEntity user = buildTestUser();
+        AquariumEntity aquarium = buildTestAquarium();
+
+        given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
+        given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
+        given(tankMaintenanceProfileRepository.findByAquariumId(aquarium.getId())).willReturn(Optional.empty());
+        given(maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId())).willReturn(List.of());
+
+        ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
+
+        MaintenanceExportTo maintenance = result.getAquariums().getFirst().getMaintenance();
+        assertNotNull(maintenance, "maintenance block must always be present (FR-016)");
+        assertNull(maintenance.getRegularInterval(), "regularInterval must be null without data");
+        assertTrue(maintenance.getEvents().isEmpty(), "events must be an empty list");
+        assertFalse(maintenance.getActivatedCarbon().getEnabled());
+        assertNull(maintenance.getActivatedCarbon().getMode());
+        assertNull(maintenance.getActivatedCarbon().getReplacementIntervalDays());
+    }
+
+    @Test
+    public void testMaintenanceExportContinuousCarbonHasNullMode() {
+        UserEntity user = buildTestUser();
+        AquariumEntity aquarium = buildTestAquarium();
+
+        TankMaintenanceProfileEntity profile = new TankMaintenanceProfileEntity();
+        profile.setAquariumId(aquarium.getId());
+        profile.setCarbonEnabled(true);
+        profile.setCarbonMode(CarbonMode.CONTINUOUS);
+
+        given(userRepository.getByEmail(TESTUSER_EMAIL1)).willReturn(user);
+        given(aquariumRepository.findAllByUser_IdIs(TEST_USER_ID)).willReturn(List.of(aquarium));
+        given(tankMaintenanceProfileRepository.findByAquariumId(aquarium.getId())).willReturn(Optional.of(profile));
+        given(maintenanceEventRepository.findByAquariumIdOrderByChangedOnDesc(aquarium.getId())).willReturn(List.of());
+
+        ReefDataExportTo result = reefDataExportService.buildExportForUser(TESTUSER_EMAIL1);
+
+        MaintenanceExportTo maintenance = result.getAquariums().getFirst().getMaintenance();
+        assertTrue(maintenance.getActivatedCarbon().getEnabled());
+        // FR-013: mode and replacementIntervalDays are null in continuous mode
+        assertNull(maintenance.getActivatedCarbon().getMode());
+        assertNull(maintenance.getActivatedCarbon().getReplacementIntervalDays());
     }
 }

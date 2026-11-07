@@ -62,7 +62,7 @@
         <passay.version>2.0.0</passay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <sabi.boundary.version>1.2.16</sabi.boundary.version>
+        <sabi.boundary.version>1.2.18</sabi.boundary.version>
         <springdoc.openapiv2.version>3.2.0</springdoc.openapiv2.version>
         <versions.maven.plugin.version>2.23.0</versions.maven.plugin.version>
         <!-- Because CVE announced after SpringBoot 4.1.1 was assembled. Nail tomcat patchlevel version

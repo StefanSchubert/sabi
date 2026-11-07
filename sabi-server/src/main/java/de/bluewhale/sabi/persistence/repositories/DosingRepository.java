@@ -20,5 +20,8 @@ public interface DosingRepository extends JpaRepository<DosingEntity, Long> {
     @NotNull
     List<DosingEntity> findByAquariumIdOrderByRecordedOnDesc(@NotNull Long aquariumId);
 
+    @NotNull
+    List<DosingEntity> findByAquariumIdIn(@NotNull List<Long> aquariumIds);
+
     Optional<DosingEntity> findByIdAndAquariumId(@NotNull Long id, @NotNull Long aquariumId);
 }

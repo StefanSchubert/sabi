@@ -29,15 +29,21 @@ async function login(page: Page, username = 'sabi@bluewhale.de', password = 'cli
 }
 
 // ──────────────────────────────────────────────────────────────
-// Helper: PrimeFaces selectOneMenu
+// Helper: PrimeFaces selectOneMenu (PF 15: verstecktes <select> mit _input-Suffix,
+// Panel ist body-appended — siehe e2e/E2E_NOTES.md)
 // ──────────────────────────────────────────────────────────────
-async function selectPrimeFacesOption(page: Page, containerSelector: string, optionText: string) {
-  const trigger = page.locator(`${containerSelector} .ui-selectonemenu-trigger`).first();
-  await expect(trigger).toBeVisible({ timeout: 8_000 });
-  await trigger.click();
-  const panel = page.locator('.ui-selectonemenu-panel').first();
-  await panel.waitFor({ state: 'visible', timeout: 8_000 });
-  await panel.locator('li.ui-selectonemenu-item').filter({ hasText: optionText }).click();
+async function selectPrimeFacesOption(page: Page, fieldSuffix: string, optionText: string | RegExp) {
+  const menu = page.locator(`#proposalForm .ui-selectonemenu:has(select[id$=":${fieldSuffix}_input"])`).first();
+  await expect(menu).toBeVisible({ timeout: 8_000 });
+  const label = menu.locator('.ui-selectonemenu-label');
+  await expect(label).toBeVisible();
+  await label.click(); // öffnet das Panel (reines Client-Side-Rendering, kein POST)
+  const panel = page.locator(`[id$=":${fieldSuffix}_panel"]`);
+  await expect(panel).toBeVisible({ timeout: 8_000 });
+  const item = panel.locator('li.ui-selectonemenu-item').filter({ hasText: optionText });
+  await expect(item).toBeVisible();
+  await item.click();
+  await page.waitForLoadState('networkidle');
 }
 
 test.describe('Coral Catalogue: Propose → Admin Approve → Autocomplete', () => {
@@ -62,10 +68,10 @@ test.describe('Coral Catalogue: Propose → Admin Approve → Autocomplete', () 
     await scientificNameInput.press('Tab');
     await page.waitForLoadState('networkidle');
 
-    // Select classification: LPS
-    await selectPrimeFacesOption(page, '[id$="classificationContainer"]', 'LPS');
-    // Select care level: Easy
-    await selectPrimeFacesOption(page, '[id$="careLevelContainer"]', /Easy|Einfach/);
+    // Select classification: LPS (de-Label "LPS (Großpolypige Steinkoralle)")
+    await selectPrimeFacesOption(page, 'classification', /LPS/);
+    // Select care level: Easy (de-Label "Einfach")
+    await selectPrimeFacesOption(page, 'careLevel', /Easy|Einfach/);
 
     // Fill German common name (first language tab)
     const commonNameDe = page.locator('[id$="commonName_de"], [id*="commonName"][id*="de"]').first();

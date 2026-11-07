@@ -45,17 +45,48 @@ async function selectPrimeFacesOption(page: Page, optionText: string) {
   await panel.locator('li.ui-selectonemenu-item').filter({ hasText: optionText }).click();
 }
 
-async function openAddFishDialog(page: Page) {
+/**
+ * Testfisch anlegen über die Standalone-Entry-Page (fishStockEntryPage.xhtml).
+ * Flow: Tank wählen → "Fisch hinzufügen" (ajax=false → volle Navigation) →
+ * Pflichtfelder ausfüllen → Speichern (AJAX POST + Client-Redirect zurück).
+ */
+async function createTestFish(page: Page, fishName: string, dateStr: string) {
   await Promise.all([
     waitForFishStockAjax(page),
     selectPrimeFacesOption(page, 'Nano-Reef'),
   ]);
+
   const addButton = page.locator('#fishStockForm button').filter({ hasText: /hinzuf|add/i }).first();
   await expect(addButton).toBeEnabled({ timeout: 10_000 });
-  await addButton.click();
-  const dialog = page.locator('.ui-dialog').filter({ hasText: /hinzuf|add fish/i }).first();
-  await expect(dialog).toBeVisible({ timeout: 10_000 });
-  return dialog;
+  await Promise.all([
+    page.waitForURL(/fishStockEntryPage/),
+    addButton.click(),
+  ]);
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('#fishEntryForm')).toBeAttached({ timeout: 10_000 });
+
+  const commonNameInput = page.locator('#fishEntryForm [id$="commonName"]');
+  await commonNameInput.fill(fishName);
+
+  const dateInput = page.locator('#fishEntryForm [id$="addedOn_input"]');
+  await dateInput.fill(dateStr);
+  // Klick auf das Name-Feld schließt ein evtl. geöffnetes DatePicker-Overlay + blur
+  await commonNameInput.click();
+
+  const saveButton = page.locator('#fishEntryForm button').filter({ hasText: /speicher|save/i }).first();
+  await expect(saveButton).toBeVisible({ timeout: 5_000 });
+  await saveButton.scrollIntoViewIfNeeded();
+  await Promise.all([
+    page.waitForResponse(resp =>
+      resp.url().includes('fishStockEntryPage') && resp.status() === 200
+      && resp.request().method() === 'POST',
+      { timeout: 15_000 }
+    ),
+    saveButton.click(),
+  ]);
+  // oncomplete → Client-Redirect zurück zu fishStockView.xhtml
+  await page.waitForURL(/fishStockView\.xhtml/, { timeout: 30_000 });
+  await page.waitForLoadState('networkidle');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -71,34 +102,12 @@ test.describe('Fish Departure Workflow', () => {
     await login(page);
     await page.goto('/secured/fishStockView.xhtml', { waitUntil: 'networkidle' });
 
-    // ─── 2. Fisch anlegen (Aquarium + Dialog öffnen) ─────────
-    const entryDialog = await openAddFishDialog(page);
-
-    const commonNameInput = entryDialog.locator('[id$="commonName"]');
-    await commonNameInput.fill(FISH_NAME);
-
+    // ─── 2. Fisch anlegen (Aquarium wählen + Entry-Page) ──────
     const today = new Date();
     const dateStr = String(today.getDate()).padStart(2, '0') + '.'
                   + String(today.getMonth() + 1).padStart(2, '0') + '.'
                   + today.getFullYear();
-    const dateInput = entryDialog.locator('[id$="addedOn_input"]');
-    await dateInput.fill(dateStr);
-    await commonNameInput.click(); // DatePicker schließen + blur
-    await page.waitForTimeout(300);
-
-    // Speichern (force:true wegen möglichem DatePicker-Overlay)
-    const saveButton = entryDialog.locator('button').filter({ hasText: /speicher|save/i });
-    await saveButton.scrollIntoViewIfNeeded();
-    await Promise.all([
-      page.waitForResponse(resp =>
-        resp.url().includes('fishStockView') && resp.status() === 200
-        && resp.request().method() === 'POST',
-        { timeout: 15_000 }
-      ),
-      saveButton.click({ force: true }),
-    ]);
-    await page.waitForLoadState('networkidle');
-    await expect(entryDialog).not.toBeVisible({ timeout: 10_000 });
+    await createTestFish(page, FISH_NAME, dateStr);
 
     const fishRow = page.locator('#fishStockForm tr').filter({ hasText: FISH_NAME }).first();
     await expect(fishRow).toBeVisible({ timeout: 8_000 });
@@ -155,11 +164,17 @@ test.describe('Fish Departure Workflow', () => {
 
     // Seite neu laden: stellt sicher dass Server-seitige Aktualisierung reflektiert wird
     await page.reload({ waitUntil: 'networkidle' });
-    // Aquarium wieder auswählen nach Reload (mit Promise.all Pattern)
-    await Promise.all([
-      waitForFishStockAjax(page),
-      selectPrimeFacesOption(page, 'Nano-Reef'),
-    ]);
+    // Aquarium-Auswahl überlebt den Reload (userSession.getSelectedTank() → FishStockView
+    // stellt selectedAquariumId wieder her). Nur auswählen, falls das Dropdown noch leer ist —
+    // dieselbe Option erneut zu wählen löst kein change-Event aus (kein AJAX-POST).
+    const dropdownLabel = page.locator('.ui-selectonemenu-label').first();
+    await expect(dropdownLabel).toBeVisible({ timeout: 8_000 });
+    if (!(await dropdownLabel.textContent())?.includes('Nano-Reef')) {
+      await Promise.all([
+        waitForFishStockAjax(page),
+        selectPrimeFacesOption(page, 'Nano-Reef'),
+      ]);
+    }
 
     // ─── 5. Fisch NICHT mehr in "Currently in Tank" ───────────
     await expect(

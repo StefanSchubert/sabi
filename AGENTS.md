@@ -73,6 +73,36 @@ for c in bom.get('components', []):
 
 ---
 
+## sabi-boundary: Version Bump + Local Install (MANDATORY)
+
+**Problem**: `sabi-server` and `sabi-webclient` do NOT resolve `sabi-boundary` from a Maven
+reactor build — they consume it as an external artifact (`de.bluewhale:sabi-boundary:<version>`)
+from the local repository `~/.m2`. If boundary sources are changed without bumping the version
+and reinstalling, the consumers silently keep compiling/running against the **stale jar** in
+`~/.m2` (missing new DTOs, old `SCHEMA_VERSION`, …). Agentic workflows hit this repeatedly:
+the build succeeds, but the new classes are not in the jar the server/webclient actually load.
+
+**Rule — after ANY change to `sabi-boundary` sources:**
+1. **Bump the artifact version** in `sabi-boundary/pom.xml` (e.g. `1.2.16` → `1.2.17`).
+   Never reuse a version that was already installed — the local repo serves the old jar under
+   that version number and staleness becomes invisible.
+2. **Update the reference in BOTH consumer poms** (property `sabi.boundary.version`):
+   - `sabi-server/pom.xml`
+   - `sabi-webclient/pom.xml`
+3. **Deploy to the local repository**: `cd sabi-boundary && mvn install -DskipTests`
+4. **Verify** that the installed jar actually contains the new classes:
+   `unzip -l ~/.m2/repository/de/bluewhale/sabi-boundary/<new-version>/sabi-boundary-<new-version>.jar | grep <NewClassName>`
+   Trust the jar listing, not the build log.
+
+**Why**: a fresh version number makes staleness *visible* — a missing `1.2.17` in `~/.m2`
+fails the build immediately, while a stale `1.2.16` fails silently at runtime/test time.
+
+**Redeploy note**: `devops/sabi_docker_sdk/server_redeploy.sh --boundary` runs
+`mvn install -DskipTests` in `sabi-boundary/`, but it does NOT bump the version — do the
+bump + pom updates in the working tree first, then run the script with `--boundary`.
+
+---
+
 ## Terminal Output (MANDATORY)
 
 **Problem**: The IntelliJ Copilot Plugin often does NOT display terminal output directly — the
@@ -196,22 +226,27 @@ Missing translations are a release blocker. After every feature implementation, 
 key is missing from any of the language files.
 
 **Encoding rule for `.properties` files:**
-- Spring Boot is configured with `spring.messages.encoding: UTF-8` → raw UTF-8 bytes are valid
-- `\uXXXX` escapes are still allowed and preferred for consistency with existing content
-- **NEVER** write raw Latin-1 bytes (`0x80`–`0xFF`) into properties files
+- Spring Boot is configured with `spring.messages.encoding: UTF-8` (Java 25 / Spring Boot 4) →
+  **native UTF-8 is the standard**: new keys use raw UTF-8 bytes for accented characters
+  (ä, ö, ü, ß, é, í, ó, …)
+- `\uXXXX` escapes remain valid and are used by legacy content in the existing bundles — do not
+  re-encode existing lines, but do not extend that convention for new keys either
+- **NEVER** save a bundle in Latin-1/ISO-8859-1 (single byte `0x80`–`0xFF` for accented chars) —
+  every bundle must decode cleanly as UTF-8 (strict)
 - **NEVER** insert U+FFFD replacement characters (`\xef\xbf\xbd`)
 
 **Python helper scripts for file operations:**
 - Always write as proper UTF-8: use the `create_file` tool (not heredoc in terminal)
 - Explicitly specify encoding when writing files: `open(path, 'w', encoding='utf-8')`
-- For binary byte operations on properties files: only use `\uXXXX` escape sequences as target
+- For byte-level checks on properties files: strict UTF-8 decode (rejects Latin-1) + no U+FFFD
 - Write helper scripts to `/tmp/` and call them with `python3 /tmp/scriptname.py`
 - **No heredoc** for Python code in the terminal — shell escaping corrupts special characters
 
 **When editing message bundles via tools:**
-- `replace_string_in_file` writes in the tool's file encoding → always specify special chars as `\uXXXX`
+- Bundles are mixed: legacy lines use `\uXXXX` escapes, new lines use raw UTF-8 → `oldString`
+  must match the exact bytes of the line being edited (verify with a byte-check first)
 - **WARNING: `replace_string_in_file` fails silently** when `oldString` contains raw UTF-8 chars
-  (ö, ü, è …) but the file uses `\uXXXX` escape sequences (or vice versa). The tool reports
+  (ö, ü, è …) but the file line uses `\uXXXX` escape sequences (or vice versa). The tool reports
   "success" but writes nothing.
 - **WARNING: `insert_edit_into_file` also fails silently** for `.properties` files — the tool
   reports "success" and even displays the file content including the new keys, but the keys are

@@ -7,6 +7,7 @@ package de.bluewhale.sabi.webclient.controller;
 
 import de.bluewhale.sabi.exception.BusinessException;
 import de.bluewhale.sabi.model.AquariumTo;
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 import de.bluewhale.sabi.model.DosingType;
 import de.bluewhale.sabi.webclient.CDIBeans.UserSession;
@@ -27,6 +28,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -55,6 +57,7 @@ public class DosingView extends AbstractControllerTools implements Serializable 
     @Setter(AccessLevel.NONE)
     private Long selectedAquariumId;
     private DosingTo dosing = newDosing();
+    private DosingSuggestionsTo suggestions = new DosingSuggestionsTo();
 
     @PostConstruct
     public void init() {
@@ -62,16 +65,73 @@ public class DosingView extends AbstractControllerTools implements Serializable 
             tanks = tankService.getUsersTanks(userSession.getSabiBackendToken());
             selectedAquariumId = (Long) FacesContext.getCurrentInstance().getViewRoot().getViewMap()
                     .get(SELECTED_AQUARIUM_VIEW_KEY);
-            if (selectedAquariumId == null && tanks.size() == 1) {
-                setSelectedAquariumId(tanks.get(0).getId());
+            if (selectedAquariumId == null) {
+                // Cross-link from other views (e.g. the Maintenance page): accept a validated
+                // aquariumId request parameter, but only for tanks that belong to this user.
+                selectedAquariumId = resolveOwnedTankFromRequestParameter();
+            }
+            if (selectedAquariumId == null) {
+                // Re-entry from the menu: restore the tank the user last selected (spec 007,
+                // issue "re-entry shows empty lists"). The ID is validated against the user's tanks.
+                selectedAquariumId = resolveOwnedTankFromSession();
+            }
+            if (selectedAquariumId == null) {
+                // Fresh session (e.g. after re-login): fall back to the first tank (lowest ID)
+                // so that existing data is shown instead of an empty placeholder.
+                setSelectedAquariumId(firstTankId());
             }
             if (selectedAquariumId != null) {
                 loadDosings();
             }
+            loadSuggestions();
         } catch (BusinessException e) {
             log.error("Could not load tanks for dosing page", e);
             MessageUtil.error("dosingMessages", "common.token.expired.t", userSession.getLocale());
         }
+    }
+
+    private Long resolveOwnedTankFromRequestParameter() {
+        String parameter = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+                .get("aquariumId");
+        if (parameter == null || parameter.isBlank()) {
+            return null;
+        }
+        try {
+            Long parameterId = Long.parseLong(parameter);
+            for (AquariumTo tank : tanks) {
+                if (tank.getId().equals(parameterId)) {
+                    return parameterId;
+                }
+            }
+        } catch (NumberFormatException e) {
+            log.warn("Ignored malformed aquariumId request parameter on dosing page");
+        }
+        return null;
+    }
+
+    private Long resolveOwnedTankFromSession() {
+        Long lastSelected = userSession.getLastSelectedTankId();
+        if (lastSelected == null) {
+            return null;
+        }
+        for (AquariumTo tank : tanks) {
+            if (tank.getId().equals(lastSelected)) {
+                return lastSelected;
+            }
+        }
+        // Stale value (tank deleted or no longer owned) — ignore it.
+        return null;
+    }
+
+    /**
+     * Deterministic fallback selection: the tank with the lowest ID. The backend returns tanks
+     * without a guaranteed order, so "first in list" would be non-deterministic.
+     */
+    private Long firstTankId() {
+        return tanks.stream()
+                .min(Comparator.comparing(AquariumTo::getId))
+                .map(AquariumTo::getId)
+                .orElse(null);
     }
 
     public void onAquariumChange() {
@@ -83,9 +143,11 @@ public class DosingView extends AbstractControllerTools implements Serializable 
         this.selectedAquariumId = selectedAquariumId;
         if (selectedAquariumId == null) {
             FacesContext.getCurrentInstance().getViewRoot().getViewMap().remove(SELECTED_AQUARIUM_VIEW_KEY);
+            userSession.setLastSelectedTankId(null);
         } else {
             FacesContext.getCurrentInstance().getViewRoot().getViewMap()
                     .put(SELECTED_AQUARIUM_VIEW_KEY, selectedAquariumId);
+            userSession.setLastSelectedTankId(selectedAquariumId);
         }
     }
 
@@ -107,6 +169,9 @@ public class DosingView extends AbstractControllerTools implements Serializable 
             }
             resetForm();
             loadDosings();
+            // Refresh the autocomplete suggestions so that values just saved are offered
+            // immediately without a page reload.
+            loadSuggestions();
             MessageUtil.info("dosingMessages", "common.save.confirmation.t", userSession.getLocale());
         } catch (BusinessException e) {
             log.error("Could not save dosing for aquarium_id={}", selectedAquariumId, e);
@@ -164,6 +229,41 @@ public class DosingView extends AbstractControllerTools implements Serializable 
             log.error("Could not load dosings for aquarium_id={}", selectedAquariumId, e);
             MessageUtil.error("dosingMessages", "common.error.internal_server_problem.t", userSession.getLocale());
         }
+    }
+
+    private void loadSuggestions() {
+        // Non-critical: a failure only means the form has no autocomplete suggestions.
+        try {
+            suggestions = dosingService.getSuggestions(userSession.getSabiBackendToken());
+        } catch (BusinessException e) {
+            suggestions = new DosingSuggestionsTo();
+            log.warn("Could not load dosing suggestions", e);
+        }
+    }
+
+    public List<String> productSuggestions(String query) {
+        return filterSuggestions(suggestions.getProductNames(), query);
+    }
+
+    public List<String> categorySuggestions(String query) {
+        return filterSuggestions(suggestions.getCategories(), query);
+    }
+
+    public List<String> methodSuggestions(String query) {
+        return filterSuggestions(suggestions.getDosingMethods(), query);
+    }
+
+    private List<String> filterSuggestions(List<String> values, String query) {
+        if (values == null || values.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (query == null || query.isBlank()) {
+            return values;
+        }
+        String lowerQuery = query.toLowerCase();
+        return values.stream()
+                .filter(value -> value.toLowerCase().contains(lowerQuery))
+                .toList();
     }
 
     private boolean isComplete() {

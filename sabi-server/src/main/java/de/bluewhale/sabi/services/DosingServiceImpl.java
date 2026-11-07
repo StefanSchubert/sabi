@@ -7,6 +7,7 @@ package de.bluewhale.sabi.services;
 
 import de.bluewhale.sabi.exception.Message;
 import de.bluewhale.sabi.mapper.DosingMapper;
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 import de.bluewhale.sabi.model.ResultTo;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeSet;
 
 /**
  * Implements ownership-safe CRUD operations for separate dosing records.
@@ -106,6 +108,42 @@ public class DosingServiceImpl implements DosingService {
 
         dosingRepository.delete(existing.get());
         return new ResultTo<>(null, Message.info(TankMessageCodes.REMOVAL_SUCCEEDED));
+    }
+
+    @Override
+    public DosingSuggestionsTo getSuggestions(String userEmail) {
+        UserEntity user = userRepository.getByEmail(userEmail);
+        if (user == null) {
+            return new DosingSuggestionsTo();
+        }
+
+        List<Long> aquariumIds = aquariumRepository.findAllByUser_IdIs(user.getId()).stream()
+                .map(AquariumEntity::getId)
+                .toList();
+        if (aquariumIds.isEmpty()) {
+            return new DosingSuggestionsTo();
+        }
+
+        TreeSet<String> productNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        TreeSet<String> categories = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        TreeSet<String> dosingMethods = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for (DosingEntity dosing : dosingRepository.findByAquariumIdIn(aquariumIds)) {
+            addIfPresent(productNames, dosing.getProductName());
+            addIfPresent(categories, dosing.getCategory());
+            addIfPresent(dosingMethods, dosing.getDosingMethod());
+        }
+
+        DosingSuggestionsTo suggestions = new DosingSuggestionsTo();
+        suggestions.setProductNames(List.copyOf(productNames));
+        suggestions.setCategories(List.copyOf(categories));
+        suggestions.setDosingMethods(List.copyOf(dosingMethods));
+        return suggestions;
+    }
+
+    private void addIfPresent(TreeSet<String> target, String value) {
+        if (value != null && !value.isBlank()) {
+            target.add(value.trim());
+        }
     }
 
     private ResultTo<DosingTo> ownershipError(Long id) {

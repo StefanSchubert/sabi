@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>SABI - #{msg['maintenance.page.title']}</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/masterLayout.xhtml">
+        <ui:define name="content">
+            <div style="margin-bottom:1rem;">
+                <h:link outcome="/secured/userportal" styleClass="sabi-back-link">
+                    &#8592; #{msg['menu.home.l']}
+                </h:link>
+            </div>
+            <h2>#{msg['maintenance.page.title']}</h2>
+            <h:form id="maintenanceForm">
+                <p:messages id="maintenanceMessages" showDetail="true" closable="true">
+                    <p:autoUpdate/>
+                </p:messages>
+                <h:inputHidden id="waterChangeId" value="#{maintenanceView.waterChange.id}"/>
+                <h:inputHidden id="waterChangeOptlock" value="#{maintenanceView.waterChange.optlock}"/>
+                <h:inputHidden id="carbonReplacementId" value="#{maintenanceView.carbonReplacement.id}"/>
+                <h:inputHidden id="carbonReplacementOptlock" value="#{maintenanceView.carbonReplacement.optlock}"/>
+
+                <div class="sabi-form-grid">
+                    <p:outputLabel for="aquarium" value="#{msg['common.tankchoice.l']}"/>
+                    <!-- Native <select> (h:selectOneMenu), NOT p:selectOneMenu: deterministic for
+                         Playwright (selectOption on the visible <select>, no trigger/panel dance,
+                         no PF 15 re-select quirk). p:ajax still fires on the native change event
+                         (JSF 2.3+ behavior events). See e2e/E2E_NOTES.md. -->
+                    <h:selectOneMenu id="aquarium" value="#{maintenanceView.selectedAquariumId}" required="true">
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{maintenanceView.tanks}" var="tank"
+                                       itemValue="#{tank.id}" itemLabel="#{tank.description}"/>
+                        <p:ajax listener="#{maintenanceView.onAquariumChange}" update="@form"/>
+                    </h:selectOneMenu>
+                </div>
+
+                <h3 style="color:var(--sabi-accent); margin-top:1.5rem; margin-bottom:0.5rem;">
+                    #{msg['maintenance.section.waterchanges.l']}
+                </h3>
+
+                <h4 style="margin-top:0;">#{msg['maintenance.section.interval.l']}</h4>
+                <div class="sabi-form-grid">
+                    <p:outputLabel for="intervalDays" value="#{msg['maintenance.field.interval_days.l']}"/>
+                    <p:inputText id="intervalDays" value="#{maintenanceView.profile.regularIntervalDays}">
+                        <f:convertNumber integerOnly="true"/>
+                        <f:validateLongRange minimum="1" maximum="365"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="intervalPercentage" value="#{msg['maintenance.field.interval_percentage.l']}"/>
+                    <p:inputText id="intervalPercentage" value="#{maintenanceView.profile.regularPercentage}">
+                        <f:convertNumber integerOnly="true"/>
+                        <f:validateLongRange minimum="1" maximum="100"/>
+                    </p:inputText>
+                </div>
+                <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                    <p:commandButton id="saveIntervalButton" value="#{msg['common.save.b']}" icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{maintenanceView.saveInterval}" process="@this intervalDays intervalPercentage" update="@form"/>
+                    <p:commandButton id="clearIntervalButton" value="#{msg['maintenance.button.clear_interval.b']}" icon="pi pi-eraser"
+                                     styleClass="ui-button-secondary"
+                                     action="#{maintenanceView.clearInterval}" process="@this" update="@form"/>
+                </div>
+
+                <h4 style="margin-top:1.5rem;">#{msg['maintenance.section.new_record.l']}</h4>
+                <div class="sabi-form-grid">
+                    <p:outputLabel for="changedOn" value="#{msg['maintenance.field.changed_on.l']}"/>
+                    <p:datePicker id="changedOn" value="#{maintenanceView.waterChange.changedOn}"
+                                  pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
+                                  maxDate="#{maintenanceView.today}" required="true"/>
+
+                    <p:outputLabel for="percentage" value="#{msg['maintenance.field.percentage.l']}"/>
+                    <p:inputText id="percentage" value="#{maintenanceView.waterChange.percentage}" required="true">
+                        <f:convertNumber integerOnly="true"/>
+                        <f:validateLongRange minimum="1" maximum="100"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="note" value="#{msg['maintenance.field.note.l']}"/>
+                    <p:inputTextarea id="note" value="#{maintenanceView.waterChange.note}" rows="3" autoResize="true">
+                        <f:validateLength maximum="200"/>
+                    </p:inputTextarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                    <p:commandButton id="saveWaterChangeButton" value="#{msg['common.save.b']}" icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{maintenanceView.saveWaterChange}" process="@this changedOn percentage note waterChangeId waterChangeOptlock" update="@form"/>
+                    <p:commandButton id="newRecordButton" value="#{msg['common.new_record.b']}" icon="pi pi-refresh"
+                                     action="#{maintenanceView.resetWaterChangeForm}" update="@form" immediate="true"/>
+                </div>
+
+                <p:dataTable id="waterChangeTable" value="#{maintenanceView.waterChanges}" var="waterChange"
+                             emptyMessage="#{msg['maintenance.list.empty.t']}" style="margin-top:1.5rem;">
+                    <p:column headerText="#{msg['maintenance.field.changed_on.l']}">
+                        <h:outputText value="#{waterChange.changedOn}">
+                            <f:convertDateTime type="localDate" pattern="dd.MM.yyyy" locale="#{userSession.locale}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="#{msg['maintenance.field.percentage.l']}">
+                        <h:outputText value="#{waterChange.percentage}"/>
+                    </p:column>
+                    <p:column headerText="#{msg['maintenance.field.note.l']}">
+                        <h:outputText value="#{waterChange.note}"/>
+                    </p:column>
+                    <p:column style="width:3rem; text-align:center;">
+                        <p:commandButton icon="pi pi-pencil" title="#{msg['common.edit.b']}"
+                                         action="#{maintenanceView.editWaterChange(waterChange)}"
+                                         process="@this" update="@form"/>
+                    </p:column>
+                    <p:column style="width:3rem; text-align:center;">
+                        <p:commandButton icon="pi pi-trash" title="#{msg['common.delete.b']}"
+                                         styleClass="ui-button-danger"
+                                         action="#{maintenanceView.deleteWaterChange(waterChange)}"
+                                         process="@this" update="@form"/>
+                    </p:column>
+                </p:dataTable>
+
+                <h3 style="color:var(--sabi-accent); margin-top:1.5rem; margin-bottom:0.5rem;">
+                    #{msg['maintenance.section.supplements.l']}
+                </h3>
+                <p style="margin-top:0;">#{msg['maintenance.supplements.hint.t']}</p>
+                <div style="margin-top:0.75rem;">
+                    <h:link outcome="dosingView" style="color:#0369a1;"
+                            rendered="#{maintenanceView.selectedAquariumId != null}">
+                        <h:outputText value="#{msg['maintenance.supplements.link.b']}"/>
+                        <f:param name="aquariumId" value="#{maintenanceView.selectedAquariumId}"/>
+                    </h:link>
+                </div>
+
+                <h3 style="color:var(--sabi-accent); margin-top:1.5rem; margin-bottom:0.5rem;">
+                    #{msg['maintenance.section.carbon.l']}
+                </h3>
+                <div class="sabi-form-grid">
+                    <!-- Carbon section: all components are ALWAYS rendered (no rendered= gating).
+                         The @RequestScope bean reloads the profile from the DB on every request and
+                         Mojarra re-evaluates rendered= against that state during Restore View of
+                         partial requests — a menu gated on carbonEnabled drops out of the component
+                         tree while the client still has it open, and its submitted value is
+                         silently discarded (unsaved multi-field state loss). Visibility is derived
+                         purely from DOM state via CSS :has() (see sabistyle.css) instead, and every
+                         change event carries the full carbon field set via process=. -->
+                    <p:outputLabel for="carbonEnabled" value="#{msg['maintenance.carbon.enabled.l']}"/>
+                    <p:selectBooleanCheckbox id="carbonEnabled" value="#{maintenanceView.profile.carbonEnabled}">
+                        <p:ajax event="change" process="@this carbonEnabled carbonMode carbonReplacementIntervalDays" update="@form"/>
+                    </p:selectBooleanCheckbox>
+
+                    <h:outputText value="#{msg['maintenance.carbon.not_used.t']}"
+                                  style="font-style:italic; color:#6b7280;"
+                                  rendered="#{!maintenanceView.profile.carbonEnabled}"/>
+
+                    <p:outputLabel for="carbonMode" value="#{msg['maintenance.carbon.mode.l']}"
+                                   styleClass="carbon-mode-row"/>
+                    <!-- Native <select> (h:selectOneMenu), NOT p:selectOneMenu — see the tank
+                         selector comment above and e2e/E2E_NOTES.md. styleClass lands on the
+                         <select> element itself (the CSS :has() rules in sabistyle.css match
+                         `select.carbon-mode-row`). -->
+                    <h:selectOneMenu id="carbonMode" value="#{maintenanceView.profile.carbonMode}"
+                                     styleClass="carbon-mode-row">
+                        <!-- Null placeholder: without it, an empty menu submits the first option
+                             (CONTINUOUS) on form post. No required="true" here — the bean validates
+                             instead (required would fire on a re-entered hidden component). -->
+                        <f:selectItem itemLabel="#{msg['common.select.l']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{maintenanceView.carbonModes}" var="mode" itemValue="#{mode}"
+                                       itemLabel="#{maintenanceView.getCarbonModeLabel(mode)}"/>
+                        <p:ajax event="change" process="@this carbonEnabled carbonMode carbonReplacementIntervalDays" update="@form"/>
+                    </h:selectOneMenu>
+
+                    <p:outputLabel for="carbonReplacementIntervalDays"
+                                   value="#{msg['maintenance.carbon.replacement_interval.l']}"
+                                   styleClass="carbon-interval-row"/>
+                    <p:inputText id="carbonReplacementIntervalDays"
+                                 value="#{maintenanceView.profile.carbonReplacementIntervalDays}"
+                                 styleClass="carbon-interval-row">
+                        <f:convertNumber integerOnly="true"/>
+                        <f:validateLongRange minimum="1" maximum="365"/>
+                    </p:inputText>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                    <p:commandButton id="saveCarbonButton" value="#{msg['common.save.b']}" icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{maintenanceView.saveCarbon}" process="@this carbonEnabled carbonMode carbonReplacementIntervalDays" update="@form"/>
+                </div>
+
+                <h3 style="color:var(--sabi-accent); margin-top:1.5rem; margin-bottom:0.5rem;">
+                    #{msg['maintenance.section.carbon_replacements.l']}
+                </h3>
+
+                <h4 style="margin-top:0;">#{msg['maintenance.section.new_carbon_replacement.l']}</h4>
+                <div class="sabi-form-grid">
+                    <p:outputLabel for="carbonChangedOn" value="#{msg['maintenance.field.changed_on.l']}"/>
+                    <p:datePicker id="carbonChangedOn" value="#{maintenanceView.carbonReplacement.changedOn}"
+                                  pattern="dd.MM.yyyy" showTime="false" locale="#{userSession.locale}"
+                                  maxDate="#{maintenanceView.today}" required="true"/>
+
+                    <p:outputLabel for="carbonNote" value="#{msg['maintenance.field.note.l']}"/>
+                    <p:inputTextarea id="carbonNote" value="#{maintenanceView.carbonReplacement.note}" rows="3" autoResize="true">
+                        <f:validateLength maximum="200"/>
+                    </p:inputTextarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+                    <p:commandButton id="saveCarbonReplacementButton" value="#{msg['common.save.b']}" icon="pi pi-check"
+                                     style="background:#065f46; border-color:#065f46; color:#ffffff;"
+                                     action="#{maintenanceView.saveCarbonReplacement}" process="@this carbonChangedOn carbonNote carbonReplacementId carbonReplacementOptlock" update="@form"/>
+                    <p:commandButton id="newCarbonReplacementButton" value="#{msg['common.new_record.b']}" icon="pi pi-refresh"
+                                     action="#{maintenanceView.resetCarbonReplacementForm}" update="@form" immediate="true"/>
+                </div>
+
+                <p:dataTable id="carbonReplacementTable" value="#{maintenanceView.carbonReplacements}" var="carbonReplacement"
+                             emptyMessage="#{msg['maintenance.list.carbon_empty.t']}" style="margin-top:1.5rem;">
+                    <p:column headerText="#{msg['maintenance.field.changed_on.l']}">
+                        <h:outputText value="#{carbonReplacement.changedOn}">
+                            <f:convertDateTime type="localDate" pattern="dd.MM.yyyy" locale="#{userSession.locale}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="#{msg['maintenance.field.note.l']}">
+                        <h:outputText value="#{carbonReplacement.note}"/>
+                    </p:column>
+                    <p:column style="width:3rem; text-align:center;">
+                        <p:commandButton icon="pi pi-pencil" title="#{msg['common.edit.b']}"
+                                         action="#{maintenanceView.editCarbonReplacement(carbonReplacement)}"
+                                         process="@this" update="@form"/>
+                    </p:column>
+                    <p:column style="width:3rem; text-align:center;">
+                        <p:commandButton icon="pi pi-trash" title="#{msg['common.delete.b']}"
+                                         styleClass="ui-button-danger"
+                                         action="#{maintenanceView.deleteCarbonReplacement(carbonReplacement)}"
+                                         process="@this" update="@form"/>
+                    </p:column>
+                </p:dataTable>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+                    <p:commandButton id="cancelButton" value="#{msg['common.cancel.b']}" icon="pi pi-times"
+                                     styleClass="ui-button-secondary" type="button"
+                                     onclick="window.location.href='#{request.contextPath}/secured/userportal.xhtml';"/>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

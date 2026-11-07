@@ -55,6 +55,7 @@
                                        itemValue="#{n.id}"
                                        itemLabel="#{n.description}"
                         />
+                        <p:ajax event="itemSelect" listener="#{measurementListView.onTankSelect()}"/>
                     </p:selectOneMenu>
 
                     <p:outputLabel for="unitselection" value="#{msg['measureview.measurekind.l']}"/>

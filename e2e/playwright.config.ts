@@ -17,7 +17,12 @@ export default defineConfig({
   timeout: 30_000,
   expect: { timeout: 8_000 },
   fullyParallel: false,
-  retries: 0,
+  // Die Suite läuft gegen EIN lokale Webclient-Instanz (:8088). Mit dem Default
+  // (1 Worker pro CPU-Core) überlasten die parallelen Browser den Single-JVM-Server
+  // und es entstehen sporadische Timeout-Failures (je nach Load andere Specs).
+  // → Weniger Worker + 1 Retry für stabile, reproduzierbare Läufe.
+  workers: 2,
+  retries: 1,
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:8088',

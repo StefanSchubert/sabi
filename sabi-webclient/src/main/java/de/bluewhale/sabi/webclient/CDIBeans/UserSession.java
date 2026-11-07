@@ -61,6 +61,13 @@ public class UserSession implements Serializable {
      */
     private AquariumTo selectedTank;
 
+    /**
+     * ID of the tank last selected in a tank-scoped view (measurements, dosing, maintenance).
+     * Persisted in the session so that re-entering a view restores the user's tank selection
+     * instead of starting with an empty list (spec 007, issue: re-entry shows empty lists).
+     */
+    private Long lastSelectedTankId;
+
     private Character numberGroupingSign;
     private Character numberDecimalSeparator;
 
@@ -259,6 +266,21 @@ public class UserSession implements Serializable {
 
     public void setSelectedTank(AquariumTo selectedTank) {
         this.selectedTank = selectedTank;
+    }
+
+    /**
+     * Returns the ID of the tank last selected in a tank-scoped view, or null if none was selected yet.
+     */
+    public Long getLastSelectedTankId() {
+        return lastSelectedTankId;
+    }
+
+    /**
+     * Persists the tank ID selected in a tank-scoped view (measurements, dosing, maintenance).
+     * Views validate the ID against the user's tanks before using it.
+     */
+    public void setLastSelectedTankId(Long lastSelectedTankId) {
+        this.lastSelectedTankId = lastSelectedTankId;
     }
 
     /**

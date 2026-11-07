@@ -6,6 +6,7 @@
 package de.bluewhale.sabi.rest.controller;
 
 import de.bluewhale.sabi.mapper.DosingMapper;
+import de.bluewhale.sabi.model.DosingSuggestionsTo;
 import de.bluewhale.sabi.model.DosingTo;
 import de.bluewhale.sabi.model.DosingType;
 import de.bluewhale.sabi.persistence.model.AquariumEntity;
@@ -29,9 +30,11 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -130,6 +133,81 @@ class DosingControllerIT extends CommonTestController {
             assertEquals(400, e.getStatusCode().value());
         }
         verify(dosingRepository, never()).save(any());
+    }
+
+    @Test
+    void getSuggestions_returnsDistinctValuesAcrossAllTanks() throws Exception {
+        UserEntity owner = owner();
+        AquariumEntity reefTank = new AquariumEntity();
+        reefTank.setId(10L);
+        reefTank.setUser(owner);
+        AquariumEntity freshTank = new AquariumEntity();
+        freshTank.setId(11L);
+        freshTank.setUser(owner);
+
+        given(userRepository.getByEmail(OWNER_EMAIL)).willReturn(owner);
+        given(aquariumRepository.findAllByUser_IdIs(owner.getId())).willReturn(List.of(reefTank, freshTank));
+        given(dosingRepository.findByAquariumIdIn(List.of(10L, 11L))).willReturn(List.of(
+                dosingEntity("magnesium", "trace element", "drop"),
+                // duplicate product name, case-insensitive — must be deduplicated
+                dosingEntity("Magnesium", "Trace Element", null),
+                // blank values must be ignored
+                dosingEntity("  ", "  ", null),
+                dosingEntity("iodine", "trace element", "dissolve")
+        ));
+
+        var response = restClient.get()
+                .uri("/api/tank/dosing/suggestions")
+                .headers(headers -> headers.addAll(headers()))
+                .retrieve()
+                .toEntity(String.class);
+
+        assertEquals(200, response.getStatusCode().value());
+        DosingSuggestionsTo suggestions = objectMapper.readValue(response.getBody(), DosingSuggestionsTo.class);
+        assertEquals(List.of("iodine", "magnesium"), suggestions.getProductNames());
+        assertEquals(List.of("trace element"), suggestions.getCategories());
+        assertEquals(List.of("dissolve", "drop"), suggestions.getDosingMethods());
+    }
+
+    @Test
+    void getSuggestions_asUnknownUser_returnsEmptySuggestions() throws Exception {
+        given(userRepository.getByEmail(OWNER_EMAIL)).willReturn(null);
+
+        var response = restClient.get()
+                .uri("/api/tank/dosing/suggestions")
+                .headers(headers -> headers.addAll(headers()))
+                .retrieve()
+                .toEntity(String.class);
+
+        assertEquals(200, response.getStatusCode().value());
+        DosingSuggestionsTo suggestions = objectMapper.readValue(response.getBody(), DosingSuggestionsTo.class);
+        assertTrue(suggestions.getProductNames().isEmpty());
+        assertTrue(suggestions.getCategories().isEmpty());
+        assertTrue(suggestions.getDosingMethods().isEmpty());
+    }
+
+    @Test
+    void getSuggestions_withoutTanks_returnsEmptySuggestions() throws Exception {
+        given(userRepository.getByEmail(OWNER_EMAIL)).willReturn(owner());
+        given(aquariumRepository.findAllByUser_IdIs(1L)).willReturn(List.of());
+
+        var response = restClient.get()
+                .uri("/api/tank/dosing/suggestions")
+                .headers(headers -> headers.addAll(headers()))
+                .retrieve()
+                .toEntity(String.class);
+
+        assertEquals(200, response.getStatusCode().value());
+        DosingSuggestionsTo suggestions = objectMapper.readValue(response.getBody(), DosingSuggestionsTo.class);
+        assertTrue(suggestions.getProductNames().isEmpty());
+    }
+
+    private DosingEntity dosingEntity(String productName, String category, String dosingMethod) {
+        DosingEntity entity = new DosingEntity();
+        entity.setProductName(productName);
+        entity.setCategory(category);
+        entity.setDosingMethod(dosingMethod);
+        return entity;
     }
 
     private UserEntity owner() {

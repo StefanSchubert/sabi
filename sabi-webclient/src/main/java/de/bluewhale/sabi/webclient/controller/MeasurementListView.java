@@ -25,6 +25,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,6 +68,24 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
             if (tanks.size() == 1) {
                 // default selection if user has only one tank
                 measurement.setAquariumId(tanks.get(0).getId());
+            } else if (measurement.getAquariumId() == null) {
+                // Re-entry from the menu: restore the tank the user last selected (spec 007,
+                // issue "re-entry shows empty lists"). The ID is validated against the user's tanks.
+                Long lastSelected = userSession.getLastSelectedTankId();
+                if (lastSelected != null) {
+                    for (AquariumTo tank : tanks) {
+                        if (tank.getId().equals(lastSelected)) {
+                            measurement.setAquariumId(lastSelected);
+                            break;
+                        }
+                    }
+                }
+            }
+            if (measurement.getAquariumId() == null) {
+                // Fresh session (e.g. after re-login): fall back to the first tank (lowest ID)
+                // so that existing data is shown instead of an empty placeholder.
+                measurement.setAquariumId(firstTankId());
+                userSession.setLastSelectedTankId(measurement.getAquariumId());
             }
         } catch (BusinessException e) {
             tanks = Collections.emptyList();
@@ -105,6 +124,17 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
     }
 
     /**
+     * Deterministic fallback selection: the tank with the lowest ID. The backend returns tanks
+     * without a guaranteed order, so "first in list" would be non-deterministic.
+     */
+    private Long firstTankId() {
+        return tanks.stream()
+                .min(Comparator.comparing(AquariumTo::getId))
+                .map(AquariumTo::getId)
+                .orElse(null);
+    }
+
+    /**
      * Used to request the Unitsign, when all you have is a reference Id.
      *
      * @param unitId technical key of the Unit.
@@ -132,8 +162,17 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
         return MEASUREMENT_VIEW_PAGE.getNavigationableAddress();
     }
 
+    /**
+     * AJAX listener for the tank selectOneMenu: persists the selected tank in the session so
+     * that re-entering this view restores the user's selection (spec 007, issue: re-entry).
+     */
+    public void onTankSelect() {
+        userSession.setLastSelectedTankId(measurement.getAquariumId());
+    }
+
     public String save() {
         if (allDataProvided(measurement)) {
+            userSession.setLastSelectedTankId(measurement.getAquariumId());
             try {
                 measurementService.save(measurement, userSession.getSabiBackendToken());
                 fetchUsersLatestMeasurements();

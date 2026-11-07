@@ -195,8 +195,9 @@ test.describe('Aquarium Event Logbook', () => {
     await expect(page).not.toHaveURL(/error/i);
     await expect(page).not.toHaveURL(/login/i);
 
-    // Public Report-Sektion muss gerendert sein
-    const reportPanel = page.locator('.ui-panel').filter({ hasText: /Report|Bericht/i }).first();
+    // Public Report-Sektion muss gerendert sein (Header-Text: de "Öffentliche Riff-Profile" /
+    // en "Public HouseReef Reports")
+    const reportPanel = page.locator('.ui-panel').filter({ hasText: /Riff-Profile|HouseReef Report/i }).first();
     await expect(reportPanel).toBeAttached({ timeout: 10_000 });
   });
 

@@ -1,6 +1,6 @@
 # Data Model: Email Measurement Reminders (sabi-69)
 
-**Feature**: `.specify/features/sabi-69-email-measurement-reminders/spec.md`
+**Feature**: `specs/sabi-69-email-measurement-reminders/spec.md`
 **Date**: 2026-10-24
 
 Entities are mapped to the existing JPA/EclipseLink model in `sabi-server`

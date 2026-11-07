@@ -45,7 +45,9 @@
                     </p:selectOneMenu>
 
                     <p:outputLabel for="productName" value="#{msg['dosing.field.product.l']}"/>
-                    <p:inputText id="productName" value="#{dosingView.dosing.productName}" required="true"/>
+                    <p:autoComplete id="productName" value="#{dosingView.dosing.productName}"
+                                    completeMethod="#{dosingView.productSuggestions}" minQueryLength="0"
+                                    forceAjax="true" required="true"/>
 
                     <p:outputLabel for="amount" value="#{msg['dosing.field.amount.l']}"/>
                     <p:inputText id="amount" value="#{dosingView.dosing.amount}" required="true">
@@ -57,10 +59,14 @@
                                  placeholder="#{msg['dosing.field.unit.placeholder.t']}"/>
 
                     <p:outputLabel for="category" value="#{msg['dosing.field.category.l']}"/>
-                    <p:inputText id="category" value="#{dosingView.dosing.category}"/>
+                    <p:autoComplete id="category" value="#{dosingView.dosing.category}"
+                                    completeMethod="#{dosingView.categorySuggestions}" minQueryLength="0"
+                                    forceAjax="true"/>
 
                     <p:outputLabel for="dosingMethod" value="#{msg['dosing.field.method.l']}"/>
-                    <p:inputText id="dosingMethod" value="#{dosingView.dosing.dosingMethod}"/>
+                    <p:autoComplete id="dosingMethod" value="#{dosingView.dosing.dosingMethod}"
+                                    completeMethod="#{dosingView.methodSuggestions}" minQueryLength="0"
+                                    forceAjax="true"/>
 
                     <p:outputLabel for="dosingInterval" value="#{msg['dosing.field.interval.l']}"/>
                     <p:inputText id="dosingInterval" value="#{dosingView.dosing.dosingInterval}"
