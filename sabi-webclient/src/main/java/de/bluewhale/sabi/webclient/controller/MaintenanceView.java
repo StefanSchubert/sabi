@@ -31,6 +31,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -76,8 +77,10 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
                 // issue "re-entry shows empty lists"). The ID is validated against the user's tanks.
                 selectedAquariumId = resolveOwnedTankFromSession();
             }
-            if (selectedAquariumId == null && tanks.size() == 1) {
-                setSelectedAquariumId(tanks.get(0).getId());
+            if (selectedAquariumId == null) {
+                // Fresh session (e.g. after re-login): fall back to the first tank (lowest ID)
+                // so that existing data is shown instead of an empty placeholder.
+                setSelectedAquariumId(firstTankId());
             }
             if (selectedAquariumId != null) {
                 loadMaintenance();
@@ -100,6 +103,17 @@ public class MaintenanceView extends AbstractControllerTools implements Serializ
         }
         // Stale value (tank deleted or no longer owned) — ignore it.
         return null;
+    }
+
+    /**
+     * Deterministic fallback selection: the tank with the lowest ID. The backend returns tanks
+     * without a guaranteed order, so "first in list" would be non-deterministic.
+     */
+    private Long firstTankId() {
+        return tanks.stream()
+                .min(Comparator.comparing(AquariumTo::getId))
+                .map(AquariumTo::getId)
+                .orElse(null);
     }
 
     public void onAquariumChange() {

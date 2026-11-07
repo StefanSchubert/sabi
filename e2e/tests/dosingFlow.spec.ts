@@ -131,9 +131,10 @@ test.describe('Dosing View', () => {
     const menu = page.locator('#dosingForm .ui-selectonemenu:has(select[id$=":aquarium_input"])').first();
     const label = menu.locator('.ui-selectonemenu-label');
 
-    // Frische Session, 2 Tanks → kein Auto-Select, Placeholder sichtbar
+    // Frische Session, 2 Tanks → Fallback auf den Tank mit der kleinsten ID (Nano-Reef),
+    // damit bereits erfasste Daten statt eines leeren Placeholders gezeigt werden.
     await expect(label).toBeVisible({ timeout: 8_000 });
-    await expect(label).toHaveText(RE.selectPlaceholder);
+    await expect(label).toContainText('Nano-Reef');
 
     // Freshwater (id=2) auswählen
     await selectPFOption(page, 'aquarium', '2', /Freshwater/);

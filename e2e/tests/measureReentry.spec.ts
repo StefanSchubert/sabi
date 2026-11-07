@@ -63,9 +63,10 @@ test.describe('Measurement View Re-Entry', () => {
     const menu = page.locator('#measureform .ui-selectonemenu:has(select[id$=":tankselection_input"])').first();
     const label = menu.locator('.ui-selectonemenu-label');
 
-    // Frische Session, 2 Tanks → kein Auto-Select, Placeholder sichtbar
+    // Frische Session, 2 Tanks → Fallback auf den Tank mit der kleinsten ID (Nano-Reef),
+    // damit bereits erfasste Daten statt eines leeren Placeholders gezeigt werden.
     await expect(label).toBeVisible({ timeout: 8_000 });
-    await expect(label).toHaveText(RE.selectPlaceholder);
+    await expect(label).toContainText('Nano-Reef');
 
     // Freshwater (id=2) im PF-Panel auswählen (itemSelect persistiert den Tank in der Session)
     await label.click(); // öffnet das Panel (reines Client-Side-Rendering, kein POST)

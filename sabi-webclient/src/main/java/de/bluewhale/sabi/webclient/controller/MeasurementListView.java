@@ -25,6 +25,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -80,6 +81,12 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
                     }
                 }
             }
+            if (measurement.getAquariumId() == null) {
+                // Fresh session (e.g. after re-login): fall back to the first tank (lowest ID)
+                // so that existing data is shown instead of an empty placeholder.
+                measurement.setAquariumId(firstTankId());
+                userSession.setLastSelectedTankId(measurement.getAquariumId());
+            }
         } catch (BusinessException e) {
             tanks = Collections.emptyList();
             log.error(e.getLocalizedMessage());
@@ -114,6 +121,17 @@ public class MeasurementListView extends AbstractControllerTools implements Seri
             log.error(e.getLocalizedMessage());
             MessageUtil.error("troubleMsg","common.token.expired.t",userSession.getLocale());
         }
+    }
+
+    /**
+     * Deterministic fallback selection: the tank with the lowest ID. The backend returns tanks
+     * without a guaranteed order, so "first in list" would be non-deterministic.
+     */
+    private Long firstTankId() {
+        return tanks.stream()
+                .min(Comparator.comparing(AquariumTo::getId))
+                .map(AquariumTo::getId)
+                .orElse(null);
     }
 
     /**

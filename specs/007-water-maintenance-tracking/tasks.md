@@ -265,6 +265,27 @@ Five defects were reported against the delivered feature (commit `bc99e4a`) and 
 
 ---
 
+## Rework 2026-11-07 (re-login shows no data)
+
+Reported defect: after logout + login, previously entered data is not shown in the Dosing or
+Maintenance UI.
+
+- **Root cause**: the tank selection lives in session-scoped `UserSession.lastSelectedTankId`.
+  Logout invalidates the session (`logout.xhtml` → `endSession()`), and multi-tank users had no
+  fallback (only single-tank auto-select) → placeholder + empty lists, although the data is in
+  the DB.
+- **Fix (webclient-only)**: `DosingView`, `MaintenanceView` and `MeasurementListView` now fall
+  back to the tank with the **lowest ID** when no session state exists, instead of leaving the
+  placeholder. Lowest ID because `AquariumRepository.findAllByUser_IdIsAndActiveIs` has no
+  explicit ordering. Session restore (R5) still takes precedence when present.
+- **Tests**: new `reloginReentry.spec.ts` (TDD — failed pre-fix, passes post-fix): creates a
+  dosing entry + water-change event on Nano-Reef (id=1), logs out via the header menu, re-logs
+  in and asserts both entries are visible **without** manual tank selection; cleanup via UI.
+  `dosingFlow.spec.ts` + `measureReentry.spec.ts`: fresh-session placeholder assertions updated
+  to expect the auto-selected Nano-Reef.
+
+---
+
 ## Notes
 
 - [P] tasks = different files, no dependencies
